@@ -52,8 +52,9 @@ function chooseExercise() {
 }
 
 function startDiagnostic() {
-  const pool = [...catalog.exercises].sort((a,b) => a.level.localeCompare(b.level));
-  diagnostic = { questions:pool.slice(0,4), index:0, score:0 };
+  const beginner = catalog.exercises.filter(exercise => exercise.level === "A1").slice(0,3);
+  const challenge = catalog.exercises.filter(exercise => exercise.level === "A2").slice(0,1);
+  diagnostic = { questions:[...beginner, ...challenge], index:0, score:0 };
   renderDiagnosticQuestion();
 }
 
