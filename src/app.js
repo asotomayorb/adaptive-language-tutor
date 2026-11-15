@@ -1,4 +1,4 @@
-import { createSession, recordAnswer, evaluateAnswer, buildSummary, getAdaptation, normalizeForComparison } from "./core/pedagogy.js";
+import { createSession, recordAnswer, evaluateAnswer, buildSummary, getAdaptation } from "./core/pedagogy.js";
 import { ptBR } from "./content/pt-BR.js";
 import { english } from "./content/en.js";
 
@@ -104,9 +104,7 @@ function renderLesson() {
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
   $("lesson-content").innerHTML = '<p class="eyebrow">TEMA: ' + topicLabels[session.config.topic].toUpperCase() + ' · NIVEL ' + levelLabel(session.config.level).toUpperCase() + '</p><h3>' + currentExercise.prompt + '</h3><p>' + (adaptation.message || "Elige una respuesta o escribe la tuya.") + '</p>';
-  const options = session.config.level === "zero" || adaptation.mode === "scaffold"
-    ? currentExercise.options.map((option,index) => '<button class="answer-option" data-choice="' + index + '">' + option + '</button>').join("")
-    : currentExercise.options.map((option,index) => '<button class="answer-option" data-choice="' + index + '">' + option + '</button>').join("");
+  const options = currentExercise.options.map((option,index) => '<button class="answer-option" data-choice="' + index + '">' + option + '</button>').join("");
   $("answer-area").innerHTML = options + '<input id="free-answer" class="answer-input" placeholder="También puedes escribir tu respuesta…"><button id="submit-free" class="secondary" type="button">Comprobar respuesta escrita</button>';
   $("answer-area").querySelectorAll("[data-choice]").forEach(button => button.addEventListener("click", () => submitAnswer(currentExercise.options[Number(button.dataset.choice)])));
   $("submit-free").addEventListener("click", () => submitAnswer($("free-answer").value));
