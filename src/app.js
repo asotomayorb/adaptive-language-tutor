@@ -1,21 +1,191 @@
-const $=id=>document.getElementById(id);
-const content={
-"Portugués brasileño":[
-{q:"¿Cómo dirías “Buenos días” en portugués?",a:["Boa noite","Bom dia","Até logo"],correct:1,word:"Bom dia",why:"Bom dia se usa para saludar durante la mañana."},
-{q:"Completa: Eu ___ chileno.",a:["sou","estou","é"],correct:0,word:"sou",why:"Ser expresa identidad: eu sou."},
-{q:"Traduce: “¿Dónde está el baño?”",a:["Quanto custa?","Onde fica o banheiro?","Que horas são?"],correct:1,word:"banheiro",why:"Onde fica pregunta dónde se encuentra algo."}],
-"Inglés":[
-{q:"¿Cómo dirías “Buenos días” en inglés?",a:["Good night","Good morning","See you"],correct:1,word:"Good morning",why:"Good morning se usa durante la mañana."},
-{q:"Completa: I ___ from Chile.",a:["is","are","am"],correct:2,word:"am",why:"Con I usamos el verbo to be en forma am."},
-{q:"Traduce: “¿Dónde está el baño?”",a:["How much is it?","Where is the bathroom?","What time is it?"],correct:1,word:"bathroom",why:"Where is pregunta dónde está algo."}]};
-const topics={daily:"vida cotidiana",travel:"viajes",food:"comida y restaurantes",work:"trabajo y estudios",random:"tema sorpresa"};
-const s={config:null,turn:0,streak:0,correct:0,errors:[],words:[],review:false};
-$("setup-form").addEventListener("submit",e=>{e.preventDefault();s.config={language:$("language").value,duration:+$("duration").value,level:$("level").value,topic:$("topic").value};s.turn=0;s.streak=0;s.correct=0;s.errors=[];s.words=[];$("setup-panel").classList.add("hidden");$("summary-panel").classList.add("hidden");$("lesson-panel").classList.remove("hidden");$("session-status").textContent="Sesión en curso";if(s.config.level==="diagnostic"){s.config.level="basic";$("feedback").textContent="Diagnóstico inicial pendiente de ampliación; comenzaremos con dificultad básica."; $("feedback").classList.remove("hidden");}draw();});
-function draw(){if(s.turn>=s.config.duration){finish();return}const list=content[s.config.language]||content.Inglés;const item=list[s.turn%list.length];$("lesson-phase").textContent=s.review?"REPASO":"CONVERSACIÓN GUIADA";$("turn-count").textContent="Turno "+(s.turn+1)+" / "+s.config.duration;$("progress-bar").style.width=(s.turn/s.config.duration*100)+"%";$("streak").textContent=s.streak;$("word-count").textContent=s.words.length;$("error-count").textContent=s.errors.length;$("lesson-content").innerHTML='<p class="eyebrow">TEMA: '+topics[s.config.topic].toUpperCase()+'</p><h3>'+item.q+'</h3><p>Selecciona una respuesta o escribe la tuya.</p>';$("answer-area").innerHTML=item.a.map((v,i)=>'<button class="answer-option" data-i="'+i+'">'+v+'</button>').join("")+'<input id="free-answer" class="answer-input" placeholder="Escribe tu respuesta…"><button id="submit-free" class="secondary">Comprobar respuesta escrita</button>';$("answer-area").querySelectorAll("[data-i]").forEach(b=>b.addEventListener("click",()=>check(+b.dataset.i===item.correct,item)));$("submit-free").addEventListener("click",()=>check($("free-answer").value.trim().toLowerCase()===item.a[item.correct].toLowerCase(),item));$("feedback").classList.add("hidden");$("hint-btn").disabled=false;}
-function check(ok,item){$("answer-area").querySelectorAll("button").forEach(b=>b.disabled=true);if(ok){s.streak++;s.correct++;s.words.push(item.word);feedback("¡Correcto! "+item.why,true)}else{s.streak=0;s.errors.push({question:item.q,answer:item.a[item.correct]});feedback("Respuesta de referencia: "+item.a[item.correct]+". "+item.why,false)}$("streak").textContent=s.streak;$("word-count").textContent=s.words.length;$("error-count").textContent=s.errors.length;const n=document.createElement("button");n.className="primary";n.textContent="Continuar →";n.onclick=()=>{s.turn++;s.review=false;draw()};$("answer-area").append(n)}
-function feedback(t,good){$("feedback").textContent=t;$("feedback").classList.remove("hidden","bad");if(!good)$("feedback").classList.add("bad")}
-$("hint-btn").onclick=()=>{const item=(content[s.config.language]||content.Inglés)[s.turn%(content[s.config.language]||content.Inglés).length];feedback("Pista: piensa en la estructura y las palabras clave. Referencia: "+item.a[item.correct],true)};
-$("review-btn").onclick=()=>{if(!s.errors.length){feedback("Todavía no hay errores registrados.",true);return}const e=s.errors[s.errors.length-1];$("lesson-phase").textContent="REPASO";$("lesson-content").innerHTML='<h3>Revisa esta respuesta</h3><p>'+e.question+'</p><p class="target-phrase">'+e.answer+'</p>';$("answer-area").innerHTML='<button class="primary" id="resume">Volver a la práctica →</button>';$("resume").onclick=()=>{s.review=false;draw()}};
-function finish(){$("lesson-panel").classList.add("hidden");$("summary-panel").classList.remove("hidden");$("session-status").textContent="Sesión finalizada";const pct=Math.round(s.correct/s.config.duration*100);$("summary-content").innerHTML='<p class="intro">Completaste '+s.config.duration+' turnos de '+s.config.language+'.</p><ul class="summary-list"><li>Respuestas correctas: '+s.correct+'/'+s.config.duration+' ('+pct+'%).</li><li>Palabras registradas: '+(s.words.join(", ")||"ninguna")+'.</li><li>Errores para reforzar: '+s.errors.length+'.</li><li>Tema: '+topics[s.config.topic]+'.</li></ul>'}
-$("new-session").onclick=()=>{$("summary-panel").classList.add("hidden");$("setup-panel").classList.remove("hidden");$("session-status").textContent="Nueva sesión"};
-$("export-btn").onclick=()=>{const blob=new Blob([JSON.stringify({date:new Date().toISOString(),config:s.config,correct:s.correct,errors:s.errors,vocabulary:s.words},null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="language-tutor-progress.json";a.click();URL.revokeObjectURL(url)};
+import { createSession, recordAnswer, evaluateAnswer, buildSummary, getAdaptation, normalizeForComparison } from "./core/pedagogy.js";
+import { ptBR } from "./content/pt-BR.js";
+import { english } from "./content/en.js";
+
+const $ = id => document.getElementById(id);
+const catalogs = { "Portugués brasileño": ptBR, "Inglés": english };
+const topicLabels = { daily:"vida cotidiana", travel:"viajes", food:"comida y restaurantes", work:"trabajo y estudios", random:"tema sorpresa" };
+let session = null;
+let catalog = null;
+let diagnostic = null;
+let currentExercise = null;
+let reviewExercise = null;
+let reviewMode = false;
+
+$("setup-form").addEventListener("submit", event => {
+  event.preventDefault();
+  catalog = catalogs[$("language").value];
+  if (!catalog) return;
+  const config = { language:catalog.label, languageId:catalog.id, duration:Number($("duration").value), level:$("level").value, topic:$("topic").value };
+  session = createSession(config);
+  reviewMode = false;
+  $("setup-panel").classList.add("hidden");
+  $("summary-panel").classList.add("hidden");
+  $("lesson-panel").classList.remove("hidden");
+  $("session-status").textContent = "Sesión en curso";
+  if (config.level === "diagnostic") startDiagnostic();
+  else { session.config.level = config.level; renderLesson(); }
+});
+
+function getTopicExercises() {
+  const matches = catalog.exercises.filter(exercise => session.config.topic === "random" || exercise.topic === session.config.topic);
+  return matches.length ? matches : catalog.exercises;
+}
+
+function chooseExercise() {
+  const exercises = getTopicExercises();
+  const adaptation = getAdaptation(session);
+  let candidates = exercises.filter(exercise => !session.answers.some(answer => answer.exerciseId === exercise.id));
+  if (!candidates.length) candidates = exercises;
+  if (adaptation.mode === "scaffold") {
+    const easier = candidates.filter(exercise => exercise.level === "A1");
+    if (easier.length) candidates = easier;
+  } else if (adaptation.mode === "challenge") {
+    const harder = candidates.filter(exercise => exercise.level === "A2");
+    if (harder.length) candidates = harder;
+  }
+  if (session.config.level === "zero") {
+    const beginner = candidates.filter(exercise => exercise.level === "A1");
+    if (beginner.length) candidates = beginner;
+  }
+  return candidates[session.turn % candidates.length];
+}
+
+function startDiagnostic() {
+  const pool = [...catalog.exercises].sort((a,b) => a.level.localeCompare(b.level));
+  diagnostic = { questions:pool.slice(0,4), index:0, score:0 };
+  renderDiagnosticQuestion();
+}
+
+function renderDiagnosticQuestion() {
+  const exercise = diagnostic.questions[diagnostic.index];
+  $("lesson-phase").textContent = "DIAGNÓSTICO · " + (diagnostic.index + 1) + " / 4";
+  $("turn-count").textContent = "Evaluación inicial";
+  $("progress-bar").style.width = (diagnostic.index / 4 * 100) + "%";
+  $("stats").hidden = true;
+  $("lesson-content").innerHTML = '<h3>' + exercise.prompt + '</h3><p>Responde según lo que ya sabes. Estas preguntas no cuentan en los turnos de práctica.</p>';
+  $("answer-area").innerHTML = exercise.options.map((option,index) => '<button class="answer-option" data-diagnostic="' + index + '">' + option + '</button>').join("");
+  $("answer-area").querySelectorAll("[data-diagnostic]").forEach(button => button.addEventListener("click", () => {
+    if (Number(button.dataset.diagnostic) === exercise.options.indexOf(exercise.target)) diagnostic.score += 1;
+    diagnostic.index += 1;
+    if (diagnostic.index < 4) renderDiagnosticQuestion();
+    else finishDiagnostic();
+  }));
+  $("hint-btn").hidden = true;
+  $("review-btn").hidden = true;
+  $("feedback").classList.add("hidden");
+}
+
+function finishDiagnostic() {
+  const score = diagnostic.score;
+  session.config.level = score <= 1 ? "zero" : score <= 3 ? "basic" : "intermediate";
+  session.config.diagnosticScore = score;
+  $("stats").hidden = false;
+  $("hint-btn").hidden = false;
+  $("review-btn").hidden = false;
+  $("feedback").textContent = "Nivel inicial estimado: " + levelLabel(session.config.level) + ". Es orientativo y se ajustará según tus respuestas.";
+  $("feedback").classList.remove("hidden","bad");
+  renderLesson();
+}
+
+function levelLabel(level) {
+  return ({zero:"principiante",basic:"básico",intermediate:"intermedio"})[level] || "básico";
+}
+
+function renderLesson() {
+  if (session.turn >= session.config.duration) { finishSession(); return; }
+  reviewMode = false;
+  currentExercise = chooseExercise();
+  const adaptation = getAdaptation(session);
+  $("lesson-phase").textContent = "CONVERSACIÓN GUIADA";
+  $("turn-count").textContent = "Turno " + (session.turn + 1) + " / " + session.config.duration;
+  $("progress-bar").style.width = (session.turn / session.config.duration * 100) + "%";
+  $("streak").textContent = session.streak;
+  $("word-count").textContent = session.vocabulary.length;
+  $("error-count").textContent = session.errors.length;
+  $("lesson-content").innerHTML = '<p class="eyebrow">TEMA: ' + topicLabels[session.config.topic].toUpperCase() + ' · NIVEL ' + levelLabel(session.config.level).toUpperCase() + '</p><h3>' + currentExercise.prompt + '</h3><p>' + (adaptation.message || "Elige una respuesta o escribe la tuya.") + '</p>';
+  const options = session.config.level === "zero" || adaptation.mode === "scaffold"
+    ? currentExercise.options.map((option,index) => '<button class="answer-option" data-choice="' + index + '">' + option + '</button>').join("")
+    : currentExercise.options.map((option,index) => '<button class="answer-option" data-choice="' + index + '">' + option + '</button>').join("");
+  $("answer-area").innerHTML = options + '<input id="free-answer" class="answer-input" placeholder="También puedes escribir tu respuesta…"><button id="submit-free" class="secondary" type="button">Comprobar respuesta escrita</button>';
+  $("answer-area").querySelectorAll("[data-choice]").forEach(button => button.addEventListener("click", () => submitAnswer(currentExercise.options[Number(button.dataset.choice)])));
+  $("submit-free").addEventListener("click", () => submitAnswer($("free-answer").value));
+  $("feedback").classList.add("hidden");
+  $("hint-btn").disabled = false;
+  $("hint-btn").hidden = false;
+  $("review-btn").hidden = false;
+}
+
+function submitAnswer(answer) {
+  const result = recordAnswer(session, currentExercise, answer);
+  $("answer-area").querySelectorAll("button").forEach(button => button.disabled = true);
+  if (result.correct) {
+    showFeedback("Correcto. " + currentExercise.explanation, true);
+  } else {
+    showFeedback("Respuesta de referencia: " + currentExercise.target + ". " + currentExercise.explanation, false);
+  }
+  updateStats();
+  const next = document.createElement("button");
+  next.className = "primary";
+  next.type = "button";
+  next.textContent = "Continuar →";
+  next.addEventListener("click", renderLesson);
+  $("answer-area").append(next);
+}
+
+function updateStats() {
+  $("streak").textContent = session.streak;
+  $("word-count").textContent = session.vocabulary.length;
+  $("error-count").textContent = session.errors.length;
+}
+function showFeedback(message, positive) {
+  $("feedback").textContent = message;
+  $("feedback").classList.remove("hidden","bad");
+  if (!positive) $("feedback").classList.add("bad");
+}
+
+$("hint-btn").addEventListener("click", () => {
+  if (!currentExercise) return;
+  showFeedback("Pista: " + currentExercise.hint, true);
+});
+
+$("review-btn").addEventListener("click", () => {
+  const lastError = [...session.errors].reverse().find(error => error.exerciseId);
+  if (!lastError) { showFeedback("Todavía no hay errores registrados para repasar.", true); return; }
+  reviewExercise = catalog.exercises.find(exercise => exercise.id === lastError.exerciseId);
+  if (!reviewExercise) return;
+  reviewMode = true;
+  $("lesson-phase").textContent = "REPASO";
+  $("lesson-content").innerHTML = '<h3>Intenta reconstruir esta frase:</h3><p>' + reviewExercise.prompt + '</p><p>La respuesta se comprobará sin consumir un turno de la sesión.</p>';
+  $("answer-area").innerHTML = '<input id="review-answer" class="answer-input" placeholder="Escribe tu respuesta…"><button class="primary" id="check-review" type="button">Comprobar repaso</button>';
+  $("check-review").addEventListener("click", () => {
+    const ok = evaluateAnswer($("review-answer").value, reviewExercise);
+    showFeedback(ok ? "Correcto. " + reviewExercise.explanation : "Respuesta de referencia: " + reviewExercise.target + ". " + reviewExercise.explanation, ok);
+    $("answer-area").innerHTML = '<button class="secondary" id="back-to-practice" type="button">Volver a la práctica</button>';
+    $("back-to-practice").addEventListener("click", renderLesson);
+  });
+});
+
+function finishSession() {
+  $("lesson-panel").classList.add("hidden");
+  $("summary-panel").classList.remove("hidden");
+  $("session-status").textContent = "Sesión finalizada";
+  const summary = buildSummary(session);
+  const diagnosticText = session.config.diagnosticScore === undefined ? "" : '<li>Diagnóstico inicial: ' + session.config.diagnosticScore + '/4 · nivel estimado ' + levelLabel(session.config.level) + '.</li>';
+  const focus = summary.recommendedFocus.length ? summary.recommendedFocus.join(", ") : "Mantener la práctica y ampliar vocabulario.";
+  $("summary-content").innerHTML = '<p class="intro">Completaste ' + summary.attempted + ' turnos de ' + session.config.language + '.</p><ul class="summary-list">' + diagnosticText + '<li>Respuestas correctas: ' + summary.correct + '/' + summary.attempted + ' (' + summary.accuracy + '%).</li><li>Mejor racha: ' + summary.bestStreak + '.</li><li>Vocabulario aprendido: ' + (summary.vocabulary.map(item => item.term + " (" + item.meaning + ")").join(", ") || "ninguno") + '.</li><li>Errores para reforzar: ' + summary.errors.length + '.</li><li>Próximo foco recomendado: ' + focus + '.</li></ul>';
+}
+
+$("new-session").addEventListener("click", () => {
+  $("summary-panel").classList.add("hidden");
+  $("setup-panel").classList.remove("hidden");
+  $("session-status").textContent = "Nueva sesión";
+});
+$("export-btn").addEventListener("click", () => {
+  const data = { exportedAt:new Date().toISOString(), summary:buildSummary(session), config:session.config, answers:session.answers };
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url; anchor.download = "language-tutor-progress.json"; anchor.click();
+  URL.revokeObjectURL(url);
+});
