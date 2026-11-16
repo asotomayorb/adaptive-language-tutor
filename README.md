@@ -13,9 +13,9 @@ Aplicación web de aprendizaje de idiomas cuyo tutor principal está diseñado p
 
 ## Estado actual
 
-La base del backend y los adaptadores de proveedores ya está creada. El endpoint `POST /api/tutor` acepta el contexto del alumno y devuelve una respuesta estructurada. El endpoint `GET /api/health` informa si existe un proveedor configurado.
+El frontend ya consulta `GET /api/health` al iniciar. Cuando detecta un proveedor configurado, deriva las sesiones al endpoint `POST /api/tutor`; cuando el backend no está disponible o no hay proveedor configurado, conserva el modo local como respaldo. En modo IA, las respuestas y actividades se generan y evalúan dinámicamente y el cliente envía el contexto de la sesión al backend.
 
-**Importante:** el frontend todavía utiliza el flujo local de ejercicios y no está conectado al endpoint de IA. Por tanto, esta entrega establece la infraestructura de integración, pero todavía no convierte la experiencia visible en un tutor impulsado por IA.
+La integración está implementada, pero todavía no se ha probado con credenciales reales ni se ha evaluado la calidad pedagógica de un modelo en uso real.
 
 ## Proveedores
 
@@ -62,7 +62,7 @@ La respuesta normalizada contiene `message`, `exercise`, `evaluation`, `learnerU
 npm test
 ```
 
-GitHub Actions ejecuta las pruebas al actualizar `main` o abrir un pull request. Las pruebas de adaptadores usan respuestas simuladas: no consumen API ni validan todavía la calidad real de cada modelo.
+GitHub Actions ejecuta `npm run check` y `npm test` al actualizar `main` o abrir un pull request. Las 26 pruebas actuales cubren el contrato de los adaptadores, el endpoint, la entrega de archivos estáticos y los módulos locales. Las pruebas de IA usan respuestas simuladas: no consumen API ni validan todavía la calidad real de cada modelo.
 
 ## Funciones locales existentes
 
@@ -74,11 +74,10 @@ GitHub Actions ejecuta las pruebas al actualizar `main` o abrir un pull request.
 - Repaso espaciado y progreso guardado en el navegador.
 - Resumen y exportación JSON.
 
-Estas funciones locales se mantendrán como respaldo y apoyo, pero la experiencia principal evolucionará hacia generación y evaluación dinámica mediante IA.
+Estas funciones locales se mantienen como modo de respaldo cuando no hay un proveedor de IA configurado. Cuando la API está disponible, el flujo principal utiliza el tutor dinámico.
 
 ## Limitaciones pendientes
 
-- El frontend aún no consume `/api/tutor`.
 - No hay autenticación ni perfiles multiusuario.
 - El progreso se guarda localmente y no se sincroniza entre dispositivos.
 - La respuesta estructurada depende de que el modelo respete el contrato; las respuestas inválidas se rechazan.
@@ -87,9 +86,9 @@ Estas funciones locales se mantendrán como respaldo y apoyo, pero la experienci
 
 ## Próximos hitos
 
-1. Conectar el flujo de sesión del frontend con `POST /api/tutor`, conservando el contexto de la conversación y el progreso.
-2. Añadir pruebas del endpoint, límites de entrada y errores de proveedor.
-3. Probar con un proveedor/modelo elegido por el usuario, midiendo calidad, latencia y costo.
+1. Configurar y probar un proveedor/modelo real elegido por el usuario, midiendo calidad, latencia y costo.
+2. Reforzar límites de uso, autenticación y protección contra abuso antes de exponer el backend públicamente.
+3. Refinar el prompt pedagógico con sesiones reales y evaluación humana.
 4. Añadir persistencia remota y perfiles cuando se defina el despliegue.
 5. Realizar pruebas humanas en móvil y escritorio.
 
