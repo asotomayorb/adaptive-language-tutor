@@ -38,6 +38,7 @@ export function persistSession(progress, session, summary, now = Date.now()) {
     completedAt: new Date(now).toISOString(),
     language: session.config.language,
     languageId,
+    estimatedLevel: session.config.estimatedLevel || null,
     attempted: summary.attempted,
     correct: summary.correct,
     accuracy: summary.accuracy
