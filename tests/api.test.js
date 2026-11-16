@@ -72,7 +72,7 @@ test("server serves the application shell and frontend modules", async () => {
 
 test("static server rejects path traversal", async () => {
   await withServer({ configured: false }, async base => {
-    const response = await fetch(base + "/%2e%2e/package.json");
+    const response = await fetch(base + "/%2e%2e%2fpackage.json");
     assert.equal(response.status, 404);
   });
 });
