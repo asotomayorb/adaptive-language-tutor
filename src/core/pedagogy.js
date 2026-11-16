@@ -95,3 +95,48 @@ export function buildSummary(session) {
 export function normalizeForComparison(value) {
   return normalize(value);
 }
+
+
+export function recordTutorEvaluation(session, {
+  exerciseId, prompt, submitted, expected = "", status = "not_applicable",
+  feedback = "", skill = "Producción"
+}) {
+  const evaluated = ["correct", "partially_correct", "incorrect"].includes(status);
+  const correct = status === "correct";
+  const attempt = {
+    turn: session.turn + 1,
+    exerciseId,
+    prompt,
+    submitted: String(submitted || "").trim(),
+    expected: String(expected || ""),
+    correct,
+    evaluationStatus: evaluated ? status : "not_applicable"
+  };
+
+  session.turn += 1;
+  session.answers.push(attempt);
+
+  if (!evaluated) return { attempt, correct: false, evaluated: false };
+
+  session.attempted += 1;
+  if (correct) {
+    session.correct += 1;
+    session.streak += 1;
+    session.bestStreak = Math.max(session.bestStreak, session.streak);
+    session.consecutiveCorrect += 1;
+    session.consecutiveErrors = 0;
+  } else {
+    session.streak = 0;
+    session.consecutiveErrors += 1;
+    session.consecutiveCorrect = 0;
+    if (status === "incorrect" || status === "partially_correct") {
+      session.errors.push({
+        ...attempt,
+        explanation: feedback || "",
+        skill: skill || "Producción"
+      });
+    }
+  }
+
+  return { attempt, correct, evaluated: true };
+}
