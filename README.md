@@ -41,7 +41,7 @@ GitHub Actions ejecuta las pruebas automáticamente al actualizar `main` o abrir
 
 ## Limitaciones conocidas
 
-- Los catálogos son pequeños y sirven para validar el flujo, no como curso completo.
+- Los catálogos incluyen ejercicios iniciales A1/A2 para cuatro temas, pero todavía no constituyen un curso completo ni han pasado una revisión pedagógica externa.
 - La evaluación libre compara respuestas normalizadas y variantes explícitas; todavía no interpreta semánticamente frases equivalentes.
 - El diagnóstico es orientativo, no una certificación de nivel.
 - El progreso se guarda en el almacenamiento local del navegador y dispositivo; no se sincroniza entre dispositivos ni navegadores. Si se borran los datos del sitio, se pierde el progreso local (se recomienda exportar una copia).
@@ -49,9 +49,8 @@ GitHub Actions ejecuta las pruebas automáticamente al actualizar `main` o abrir
 
 ## Próximos hitos
 
-1. Ampliar y revisar los contenidos lingüísticos con criterios de nivel.
+1. Revisar con docentes/nativos la naturalidad, variantes regionales y progresión de los ejercicios actuales.
 2. Completar perfiles y sincronización opcional entre dispositivos.
-3. Ampliar los catálogos y revisar los contenidos lingüísticos con criterios de nivel.
 4. Definir un contrato estructurado para tutor IA y evaluación semántica.
 5. Añadir backend seguro para integrar el proveedor de IA sin exponer credenciales.
 6. Completar pruebas de interfaz y pruebas humanas en móvil/escritorio.
