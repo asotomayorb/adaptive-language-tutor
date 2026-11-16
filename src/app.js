@@ -1,4 +1,4 @@
-import { createSession, recordAnswer, evaluateAnswer, buildSummary, getAdaptation, applyLearnerUpdate } from "./core/pedagogy.js";
+import { createSession, recordAnswer, recordTutorEvaluation, evaluateAnswer, buildSummary, getAdaptation, applyLearnerUpdate } from "./core/pedagogy.js";
 import { loadProgress, saveProgress, persistSession, getDueCards, gradeReview, getProgressStats } from "./core/storage.js";
 import { ptBR } from "./content/pt-BR.js";
 import { english } from "./content/en.js";
@@ -244,32 +244,15 @@ async function submitAITutorAnswer(answer) {
     ];
     applyLearnerUpdate(session, result.learnerUpdate);
     const evaluation = result.evaluation || {};
-    const correct = evaluation.status === "correct";
-    const attempt = {
-      turn: session.turn + 1,
+    recordTutorEvaluation(session, {
       exerciseId: "ai-turn-" + (session.turn + 1),
       prompt: aiCurrentExercise.prompt || aiLastResult.message,
       submitted: cleanAnswer,
       expected: aiCurrentExercise.expectedAnswer || "",
-      correct
-    };
-    session.attempted += 1;
-    session.turn += 1;
-    session.answers.push(attempt);
-    if (correct) {
-      session.correct += 1;
-      session.streak += 1;
-      session.bestStreak = Math.max(session.bestStreak, session.streak);
-      session.consecutiveCorrect += 1;
-      session.consecutiveErrors = 0;
-    } else {
-      session.streak = 0;
-      session.consecutiveErrors += 1;
-      session.consecutiveCorrect = 0;
-      if (evaluation.status === "incorrect" || evaluation.status === "partially_correct") {
-        session.errors.push({ ...attempt, explanation: evaluation.feedback || "", skill: evaluation.skill || "Producción" });
-      }
-    }
+      status: evaluation.status || "not_applicable",
+      feedback: evaluation.feedback || "",
+      skill: evaluation.skill || "Producción"
+    });
     for (const word of (result.learnerUpdate?.vocabulary || [])) {
       if (word.term && !session.vocabulary.some(item => item.term === word.term)) {
         session.vocabulary.push({ term: word.term, meaning: word.meaning || "", language: session.config.language });
