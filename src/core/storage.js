@@ -59,7 +59,7 @@ export function persistSession(progress, session, summary, now = Date.now()) {
     // Include the session timestamp and turn so one session cannot overwrite another.
     if (isAiCard && !String(error.expected || "").trim()) continue;
     const key = languageId + ":" + error.exerciseId +
-      (isAiCard ? ":session-" + now + "-turn-" + error.turn : "");
+      (isAiCard ? ":session-" + progress.sessions.length + "-" + now + "-turn-" + error.turn : "");
     const existing = progress.reviewCards.find(card => card.key === key);
     const card = {
       key, exerciseId: error.exerciseId, language: session.config.language,
