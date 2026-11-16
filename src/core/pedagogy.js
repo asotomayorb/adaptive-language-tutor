@@ -19,6 +19,20 @@ export function applyLearnerUpdate(session, learnerUpdate) {
     }
   }
   session.errorsToReview = session.errorsToReview.slice(-8);
+
+  session.vocabulary ||= [];
+  const vocabulary = Array.isArray(learnerUpdate?.vocabulary) ? learnerUpdate.vocabulary : [];
+  for (const item of vocabulary) {
+    if (typeof item?.term !== "string" || !item.term.trim()) continue;
+    const term = item.term.trim().slice(0, 100);
+    if (session.vocabulary.some(existing => existing.term?.toLocaleLowerCase() === term.toLocaleLowerCase())) continue;
+    session.vocabulary.push({
+      term,
+      meaning: typeof item.meaning === "string" ? item.meaning.trim().slice(0, 200) : "",
+      language: session.config.language
+    });
+  }
+
   return typeof estimatedLevel === "string" && estimatedLevel.trim()
     ? session.config.estimatedLevel
     : null;
