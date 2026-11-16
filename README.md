@@ -1,120 +1,128 @@
 # Adaptive Language Tutor
 
-Aplicación web de aprendizaje de idiomas cuyo tutor principal está diseñado para funcionar mediante una API de IA, con arquitectura independiente del proveedor.
+Aplicación web de aprendizaje de idiomas con un tutor conversacional de IA, arquitectura independiente del proveedor y un modo local de respaldo.
 
-## Arquitectura objetivo
+## Estado del proyecto
 
-- **Frontend** (`index.html`, `src/app.js`, `src/styles.css`): interfaz, configuración y presentación de la experiencia.
-- **Backend** (`server/`): valida solicitudes, conserva las credenciales fuera del navegador y comunica la aplicación con el proveedor seleccionado.
-- **Adaptador de IA** (`server/provider.js`): interfaz común para OpenAI, Anthropic, Gemini y servicios compatibles con la API de chat de OpenAI.
-- **Contrato pedagógico** (`server/prompts.js`): define el formato estructurado de las respuestas del tutor y las reglas de adaptación.
-- **Persistencia** (`src/core/storage.js`, actualmente local): conserva el progreso en el navegador; la sincronización remota será una etapa posterior.
-- **Catálogos** (`src/content/`): material lingüístico de referencia y respaldo, no el motor principal de generación de clases.
+**Estado general: desarrollo funcional en GitHub; todavía no listo para despliegue público ni para validación humana final.**
 
-## Estado actual
+Última actualización del registro: 16-11-2026. Rama de trabajo: `feature/ai-tutor-pedagogy`. Pull request asociado: [#2 – Improve adaptive tutor pedagogy and AI integration](https://github.com/asotomayorb/adaptive-language-tutor/pull/2).
 
-El frontend ya consulta `GET /api/health` al iniciar. Cuando detecta un proveedor configurado, deriva las sesiones al endpoint `POST /api/tutor`; cuando el backend no está disponible o no hay proveedor configurado, conserva el modo local como respaldo. En modo IA, las respuestas y actividades se generan y evalúan dinámicamente y el cliente envía el contexto de la sesión al backend.
+### Implementado en el código
 
-La integración está implementada, pero todavía no se ha probado con credenciales reales ni se ha evaluado la calidad pedagógica de un modelo en uso real.
+- Frontend web con configuración de idioma, duración, nivel y tema de sesión.
+- Tutor IA conectado desde el navegador al backend mediante `GET /api/health` y `POST /api/tutor`.
+- Adaptadores configurables para OpenAI, Anthropic, Gemini y proveedores compatibles con la API de chat de OpenAI.
+- Credenciales de IA gestionadas en el servidor, no en el navegador.
+- Contrato estructurado para los turnos del tutor: mensaje, actividad, evaluación, actualización del alumno y siguiente acción.
+- Prompt pedagógico con adaptación gradual, evaluación semántica, continuidad de sesión, pistas y cierre por duración.
+- Contexto conversacional reciente (hasta 12 intercambios) enviado al proveedor.
+- Modo local de respaldo con catálogos A1/A2 de portugués brasileño e inglés.
+- Progreso local, vocabulario, registro de errores, repaso espaciado y exportación JSON.
+- Protección básica del endpoint IA: cuerpo limitado a 32 KB, mensaje limitado a 8.000 caracteres, timeout externo de 30 segundos, máximo global de 60 solicitudes cada 10 minutos y máximo de 2 solicitudes simultáneas por instancia.
+- Pruebas automatizadas para API/servidor, proveedores, prompt, pedagogía y almacenamiento.
+- Workflow de GitHub Actions definido en `.github/workflows/tests.yml`; ejecuta `npm run check` y `npm test` con Node 20.
 
-## Proveedores
+### Verificado hasta ahora
 
-Configuración mediante variables de entorno del servidor:
+- La ruta `GET /api/health` está implementada en `server/index.js`.
+- La ruta `POST /api/tutor` valida la solicitud y llama al adaptador de IA.
+- Los cuatro adaptadores están implementados y tienen pruebas con respuestas simuladas.
+- Hay pruebas de endpoints, entrega de archivos estáticos, rechazo de path traversal, límites de solicitudes, contrato del prompt, lógica pedagógica y persistencia local.
+- La rama de trabajo y el PR #2 existen. El PR registra una ejecución de GitHub Actions exitosa para ambos comandos de validación; debe comprobarse de nuevo el estado de CI asociado al último commit antes de considerar cerrada esta etapa.
 
-| Variable | Función |
-|---|---|
-| `AI_PROVIDER` | `openai`, `anthropic`, `gemini` o `openai-compatible` |
-| `AI_API_KEY` | Credencial privada del proveedor |
-| `AI_MODEL` | Identificador del modelo elegido |
-| `AI_BASE_URL` | URL base para proveedores compatibles; obligatoria para `openai-compatible` |
-| `PORT` | Puerto HTTP (predeterminado: 3000) |
+**Importante:** que existan pruebas automatizadas no demuestra que una conversación con un proveedor real funcione ni que la enseñanza sea pedagógicamente adecuada. Las pruebas de proveedor utilizan respuestas simuladas y no consumen API.
 
-Para la validación inicial sin introducir un método de pago, `.env.example` propone Google Gemini (`gemini-3.8-flash`), sujeto a la disponibilidad y cuota gratuita de la cuenta. La API de Gemini ya está integrada mediante `generateContent`. OpenAI sigue disponible como proveedor alternativo: utiliza en `AI_MODEL` el identificador de modelo habilitado para tu cuenta. Cambiar `AI_PROVIDER`, `AI_MODEL` y, cuando corresponda, `AI_BASE_URL` permite cambiar de proveedor sin modificar la lógica pedagógica. La clave debe configurarse solo en el entorno del servidor o en un archivo `.env` local ignorado por Git.
+## Pendientes prioritarios
 
-**Privacidad del nivel gratuito:** Google indica que el contenido enviado mediante el nivel gratuito puede utilizarse para mejorar sus productos. Para esta etapa, probar solo con ejemplos ficticios y no introducir datos personales ni información sensible. Consulta las condiciones y cuotas vigentes en la [documentación oficial de precios](https://ai.google.dev/gemini-api/docs/pricing).
+### 1. Auditoría y validación técnica en GitHub
 
-## Ejecutar localmente
+- [ ] Ejecutar o confirmar `npm run check` y `npm test` sobre el último commit de la rama.
+- [ ] Revisar el flujo completo del frontend IA: inicio, envío, reintento, pistas, progreso, finalización y resumen.
+- [ ] Revisar estados de error, solicitudes simultáneas y consistencia de los turnos.
+- [ ] Revisar seguridad y límites del backend antes de cualquier despliegue público.
+- [ ] Resolver hallazgos y volver a ejecutar CI.
+
+### 2. Proveedor de IA real
+
+- [ ] Confirmar que el identificador de modelo configurado en `.env.example` está disponible para la cuenta y la API elegidas.
+- [ ] Configurar la clave como secreto privado en el entorno de ejecución; nunca compartirla en el chat ni subirla al repositorio.
+- [ ] Ejecutar una conversación real de principio a fin.
+- [ ] Comprobar idioma, dialecto, adaptación de nivel, evaluación de respuestas, continuidad, pistas, duración, errores, latencia y consumo/costo.
+- [ ] Comparar otro proveedor si el primero presenta problemas de cuota, calidad o costo.
+
+### 3. Prueba humana y producto
+
+- [ ] Probar en móvil y escritorio los flujos de portugués brasileño e inglés.
+- [ ] Evaluar si las actividades son variadas, naturales, progresivas y útiles.
+- [ ] Corregir problemas de interfaz y experiencia detectados en la prueba.
+- [ ] Confirmar que el modo local sigue funcionando si la API no está configurada o falla.
+
+### 4. Preparación para despliegue
+
+- [ ] Definir hosting y configuración de producción.
+- [ ] Incorporar autenticación y límites/cuotas por usuario antes de abrir el servicio al público. El límite actual es global, en memoria, compartido por todos los visitantes y se reinicia al reiniciar la instancia.
+- [ ] Evaluar persistencia remota y perfiles si se requiere sincronización entre dispositivos.
+- [ ] Revisar privacidad, tratamiento de datos y condiciones del proveedor elegido.
+- [ ] Completar revisión del PR y hacer merge solo después de validar los puntos anteriores.
+
+## Arquitectura
+
+- **Frontend:** `index.html`, `src/app.js`, `src/styles.css`.
+- **Backend HTTP:** `server/index.js`.
+- **Adaptadores de IA:** `server/provider.js`.
+- **Prompt y esquema de respuesta:** `server/prompts.js`.
+- **Cliente del tutor:** `src/core/tutor-client.js`.
+- **Pedagogía y modo local:** `src/core/pedagogy.js`, `src/content/`.
+- **Persistencia local:** `src/core/storage.js`.
+- **Pruebas:** `tests/`.
+
+## Configuración y ejecución local
 
 Requiere Node.js 20.6 o superior.
 
 1. Copiar `.env.example` a `.env`.
-2. Completar proveedor, clave y modelo en `.env`.
+2. Configurar `AI_PROVIDER`, `AI_API_KEY` y `AI_MODEL`. Para `openai-compatible`, configurar también `AI_BASE_URL`.
 3. Ejecutar:
 
 ```bash
 npm start
 ```
 
-La aplicación web y el backend quedan disponibles en `http://localhost:3000`. El frontend detecta automáticamente si hay un proveedor configurado: si lo hay, usa el tutor IA; si no, conserva el modo local. Comprobación del backend: `GET /api/health`.
+La aplicación queda disponible en `http://localhost:3000`. Para desarrollo con reinicio automático:
 
-## Contrato de tutoría
+```bash
+npm run dev
+```
 
-El endpoint `POST /api/tutor` recibe un objeto JSON con:
-- `userMessage` (obligatorio).
-- `task` (opcional).
-- `learner` (idioma objetivo, dialecto, nivel, idioma nativo, metas y preferencias).
-- `session` (objetivos y estado de la sesión).
-- `history` (últimos intercambios relevantes).
-
-La respuesta normalizada contiene `message`, `exercise`, `evaluation`, `learnerUpdate` y `nextAction`. El nivel estimado por el tutor se conserva en el contexto de la sesión y se muestra en el resumen cuando el modelo aporta una estimación. El contrato está definido en `server/prompts.js`. Las llamadas a proveedores externos tienen un timeout de 30 segundos para evitar que una solicitud bloqueada deje la sesión esperando indefinidamente.
-
-## Pruebas
-
-Ejecutar localmente:
+Validaciones:
 
 ```bash
 npm run check
 npm test
 ```
 
-GitHub Actions ejecuta ambos comandos al actualizar `main` o abrir un pull request hacia `main`. `npm run check` valida la sintaxis de los módulos principales; `npm test` ejecuta las pruebas automatizadas. Las pruebas cubren el contrato estructurado del tutor, los adaptadores de proveedores, el endpoint, la entrega de archivos estáticos y los módulos locales. Las pruebas de IA usan respuestas simuladas: no consumen API ni validan todavía la calidad real de cada modelo.
+### Variables de entorno
 
-## Funciones locales existentes
+| Variable | Uso |
+|---|---|
+| `AI_PROVIDER` | `openai`, `anthropic`, `gemini` o `openai-compatible` |
+| `AI_API_KEY` | Clave privada del proveedor |
+| `AI_MODEL` | Identificador del modelo habilitado en la cuenta |
+| `AI_BASE_URL` | URL base para proveedores compatibles; requerida para `openai-compatible` |
+| `PORT` | Puerto HTTP; predeterminado: 3000 |
 
-- Sesiones de 8, 15 o 25 turnos.
-- Diagnóstico orientativo inicial.
-- Catálogos A1/A2 de portugués brasileño e inglés.
-- Evaluación local por coincidencia normalizada.
-- Registro de errores y vocabulario.
-- Repaso espaciado y progreso guardado en el navegador.
-- Resumen y exportación JSON.
+El archivo `.env.example` contiene actualmente una configuración inicial propuesta para Gemini. La disponibilidad del modelo, cuota, condiciones y precio deben confirmarse en la cuenta y documentación oficial antes de una prueba real.
 
-Estas funciones locales se mantienen como modo de respaldo cuando no hay un proveedor de IA configurado. Cuando la API está disponible, el flujo principal utiliza el tutor dinámico.
+## Privacidad y seguridad
 
-## Limitaciones pendientes
+- No introducir claves API en frontend, commits, Issues, logs públicos ni conversaciones.
+- Si se usa el nivel gratuito de un proveedor, revisar sus condiciones de tratamiento de datos. Para pruebas iniciales utilizar únicamente datos ficticios.
+- No considerar el límite global actual como protección suficiente para un servicio público.
+- El progreso actual se guarda en el navegador; no existe sincronización remota ni cuenta de usuario.
 
-- No hay autenticación ni perfiles multiusuario.
-- El endpoint del tutor aplica un límite global en memoria de 60 solicitudes por cada 10 minutos y un máximo de 2 solicitudes simultáneas por instancia. El límite es compartido por todos los visitantes y se reinicia al reiniciar el servidor; no sustituye autenticación ni cuotas por usuario.
-- El progreso se guarda localmente y no se sincroniza entre dispositivos.
-- OpenAI usa Structured Outputs con un esquema JSON estricto; los demás adaptadores mantienen sus formatos nativos y el backend valida el contrato antes de devolver la respuesta.
-- No se ha realizado una prueba humana de conversación con credenciales reales.
-- La configuración de despliegue del backend y la gestión de secretos dependerán del hosting elegido.
+## Replit: aplazado hasta el final
 
-## Próximos hitos
+**Replit queda deliberadamente fuera del flujo de trabajo actual.** El desarrollo, auditoría, correcciones y validaciones se realizarán primero en GitHub sobre la rama indicada. No invertir más tiempo en depurar Replit durante esta etapa.
 
-1. Configurar y probar un proveedor/modelo real elegido por el usuario, midiendo calidad, latencia y costo.
-2. Incorporar autenticación y cuotas por usuario antes de exponer el backend públicamente; el límite global actual es solo una protección básica para pruebas.
-3. Refinar el prompt pedagógico con sesiones reales y evaluación humana.
-4. Añadir persistencia remota y perfiles cuando se defina el despliegue.
-5. Realizar pruebas humanas en móvil y escritorio.
-
-**Seguridad:** nunca incluir claves API en el frontend, en archivos versionados ni en registros del navegador.
-
-## Ejecutar en Replit
-
-La configuración de Replit está en `.replit` y utiliza `npm run dev`. El archivo `.env` es opcional: el backend carga ese archivo cuando existe, pero no lo exige. En Replit, configura las credenciales en **Secrets** (variables de entorno), sin crear ni subir un archivo con claves.
-
-Secrets necesarios para Gemini:
-- `AI_PROVIDER` = `gemini`
-- `AI_API_KEY` = clave privada de Google AI Studio
-- `AI_MODEL` = identificador de modelo disponible en tu cuenta
-
-Replit proporciona `PORT` automáticamente cuando corresponde; localmente el servidor usa el puerto 3000 si no se define otro. El servidor escucha en `0.0.0.0` para aceptar conexiones del entorno de ejecución.
-
-Después de pulsar Run, comprueba `/api/health`. Una respuesta con `status: "ok"` confirma que el servidor HTTP está activo. El campo `ai.configured` indica si el proveedor quedó configurado; no demuestra por sí solo que la clave tenga cuota o permisos válidos. La prueba real de Gemini se realiza enviando un turno al tutor.
-
-Comandos:
-- `npm run dev`: desarrollo con reinicio automático.
-- `npm start`: ejecución normal.
-- `npm test`: pruebas automatizadas.
-- `npm run check`: validación sintáctica de los módulos principales.
+Una vez que CI, la prueba real del proveedor y la prueba humana estén aprobadas, se revisarán la configuración de ejecución y el entorno de Replit como último paso. El archivo `.replit` está presente en la rama; eso, por sí solo, no confirma que el entorno de Replit esté correctamente configurado o que su compilación Nix funcione.
