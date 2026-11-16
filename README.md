@@ -29,7 +29,7 @@ Configuración mediante variables de entorno del servidor:
 | `AI_BASE_URL` | URL base para proveedores compatibles; obligatoria para `openai-compatible` |
 | `PORT` | Puerto HTTP (predeterminado: 3000) |
 
-Para la validación inicial sin introducir un método de pago, `.env.example` propone Google Gemini (`gemini-3.8-flash`), sujeto a la disponibilidad y cuota gratuita de la cuenta. La API de Gemini ya está integrada mediante `generateContent`. OpenAI sigue disponible como proveedor alternativo (`gpt-6-luna` en la configuración anterior); cambiar `AI_PROVIDER`, `AI_MODEL` y, cuando corresponda, `AI_BASE_URL` permite cambiar de proveedor sin modificar la lógica pedagógica. La clave debe configurarse solo en el entorno del servidor o en un archivo `.env` local ignorado por Git.
+Para la validación inicial sin introducir un método de pago, `.env.example` propone Google Gemini (`gemini-3.8-flash`), sujeto a la disponibilidad y cuota gratuita de la cuenta. La API de Gemini ya está integrada mediante `generateContent`. OpenAI sigue disponible como proveedor alternativo: utiliza en `AI_MODEL` el identificador de modelo habilitado para tu cuenta. Cambiar `AI_PROVIDER`, `AI_MODEL` y, cuando corresponda, `AI_BASE_URL` permite cambiar de proveedor sin modificar la lógica pedagógica. La clave debe configurarse solo en el entorno del servidor o en un archivo `.env` local ignorado por Git.
 
 **Privacidad del nivel gratuito:** Google indica que el contenido enviado mediante el nivel gratuito puede utilizarse para mejorar sus productos. Para esta etapa, probar solo con ejemplos ficticios y no introducir datos personales ni información sensible. Consulta las condiciones y cuotas vigentes en la [documentación oficial de precios](https://ai.google.dev/gemini-api/docs/pricing).
 
@@ -60,11 +60,14 @@ La respuesta normalizada contiene `message`, `exercise`, `evaluation`, `learnerU
 
 ## Pruebas
 
+Ejecutar localmente:
+
 ```bash
+npm run check
 npm test
 ```
 
-GitHub Actions ejecuta `npm run check` y `npm test` al actualizar `main` o abrir un pull request. Las pruebas cubren el contrato estructurado del tutor, los adaptadores de proveedores, el endpoint, la entrega de archivos estáticos y los módulos locales. Las pruebas de IA usan respuestas simuladas: no consumen API ni validan todavía la calidad real de cada modelo.
+GitHub Actions ejecuta ambos comandos al actualizar `main` o abrir un pull request hacia `main`. `npm run check` valida la sintaxis de los módulos principales; `npm test` ejecuta las pruebas automatizadas. Las pruebas cubren el contrato estructurado del tutor, los adaptadores de proveedores, el endpoint, la entrega de archivos estáticos y los módulos locales. Las pruebas de IA usan respuestas simuladas: no consumen API ni validan todavía la calidad real de cada modelo.
 
 ## Funciones locales existentes
 
@@ -95,7 +98,6 @@ Estas funciones locales se mantienen como modo de respaldo cuando no hay un prov
 5. Realizar pruebas humanas en móvil y escritorio.
 
 **Seguridad:** nunca incluir claves API en el frontend, en archivos versionados ni en registros del navegador.
-
 
 ## Ejecutar en Replit
 
