@@ -2,6 +2,7 @@ import { createSession, recordAnswer, evaluateAnswer, buildSummary, getAdaptatio
 import { loadProgress, saveProgress, persistSession, getDueCards, gradeReview, getProgressStats } from "./core/storage.js";
 import { ptBR } from "./content/pt-BR.js";
 import { english } from "./content/en.js";
+import { checkTutorHealth, requestTutorTurn } from "./core/tutor-client.js";
 
 const $ = id => document.getElementById(id);
 const catalogs = { "Portugués brasileño": ptBR, "Inglés": english };
@@ -15,6 +16,12 @@ let reviewMode = false;
 let progress = loadProgress();
 let dueReviewCards = [];
 let reviewIndex = 0;
+let aiConfigured = false;
+let aiReady = false;
+let aiMode = false;
+let aiHistory = [];
+let aiLastResult = null;
+let aiCurrentExercise = null;
 
 function refreshDashboard() {
   const languageId = catalogs[$("language").value]?.id;
@@ -32,6 +39,17 @@ function refreshDashboard() {
 }
 $("language").addEventListener("change", refreshDashboard);
 refreshDashboard();
+checkTutorHealth().then(status => {
+  aiConfigured = Boolean(status.ai?.configured);
+  $("ai-status").textContent = aiConfigured
+    ? "Tutor IA disponible · " + (status.ai.provider || "proveedor configurado")
+    : "API IA sin configurar · se mantiene el modo local";
+}).catch(() => {
+  $("ai-status").textContent = "Backend IA no disponible · se mantiene el modo local";
+}).finally(() => {
+  aiReady = true;
+  $("start-session").disabled = false;
+});
 
 function startSpacedReview() {
   catalog = catalogs[$("language").value];
@@ -43,6 +61,7 @@ function startSpacedReview() {
   $("lesson-panel").classList.remove("hidden");
   $("session-status").textContent = "Repaso programado";
   reviewMode = true;
+  aiMode = false;
   $("stats").hidden = true;
   $("hint-btn").hidden = true;
   $("review-btn").hidden = true;
@@ -83,6 +102,7 @@ function renderSpacedReview() {
 
 $("setup-form").addEventListener("submit", event => {
   event.preventDefault();
+  if (!aiReady) return;
   catalog = catalogs[$("language").value];
   if (!catalog) return;
   const config = { language:catalog.label, languageId:catalog.id, duration:Number($("duration").value), level:$("level").value, topic:$("topic").value };
@@ -91,10 +111,170 @@ $("setup-form").addEventListener("submit", event => {
   $("setup-panel").classList.add("hidden");
   $("summary-panel").classList.add("hidden");
   $("lesson-panel").classList.remove("hidden");
-  $("session-status").textContent = "Sesión en curso";
-  if (config.level === "diagnostic") startDiagnostic();
-  else { session.config.level = config.level; renderLesson(); }
+  $("session-status").textContent = aiConfigured ? "Tutor IA en sesión" : "Sesión local";
+  if (aiConfigured) {
+    startAITutorSession(config);
+  } else {
+    aiMode = false;
+    if (config.level === "diagnostic") startDiagnostic();
+    else { session.config.level = config.level; renderLesson(); }
+  }
 });
+
+function escapeHTML(value = "") {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+  })[char]);
+}
+
+function getAILearnerContext(config = session.config) {
+  return {
+    nativeLanguage: "es",
+    targetLanguage: config.languageId,
+    targetLanguageLabel: config.language,
+    level: config.level,
+    topic: config.topic,
+    sessionDuration: config.duration
+  };
+}
+
+async function startAITutorSession(config) {
+  aiMode = true;
+  aiHistory = [];
+  aiLastResult = null;
+  aiCurrentExercise = null;
+  $("stats").hidden = false;
+  $("hint-btn").hidden = false;
+  $("review-btn").hidden = true;
+  $("lesson-phase").textContent = "TUTOR IA · INICIO";
+  $("turn-count").textContent = "Preparando tu sesión…";
+  $("lesson-content").textContent = "El tutor está preparando una actividad adaptada a tu nivel.";
+  $("answer-area").innerHTML = "";
+  try {
+    const result = await requestTutorTurn({
+      task: "start_lesson",
+      learner: getAILearnerContext(config),
+      session: { duration: config.duration, turn: 0, topic: config.topic },
+      history: [],
+      userMessage: "Inicia mi sesión de aprendizaje. Preséntame una primera actividad adecuada a mi nivel y tema, y conversa conmigo en español mientras practico el idioma objetivo."
+    });
+    renderAITutorTurn(result);
+  } catch (error) {
+    showAITutorError(error, null);
+  }
+}
+
+function renderAITutorTurn(result) {
+  aiLastResult = result;
+  aiCurrentExercise = result.exercise || {};
+  $("lesson-phase").textContent = "TUTOR IA · CONVERSACIÓN";
+  $("turn-count").textContent = "Turno " + Math.min(session.turn + 1, session.config.duration) + " / " + session.config.duration;
+  $("progress-bar").style.width = (session.turn / session.config.duration * 100) + "%";
+  $("streak").textContent = session.streak;
+  $("word-count").textContent = session.vocabulary.length;
+  $("error-count").textContent = session.errors.length;
+
+  const message = '<p>' + escapeHTML(result.message || "") + '</p>';
+  const prompt = aiCurrentExercise.prompt
+    ? '<h3>' + escapeHTML(aiCurrentExercise.prompt) + '</h3>'
+    : '<p class="muted">Responde libremente para continuar la conversación.</p>';
+  const feedback = result.evaluation?.feedback
+    ? '<p class="ai-feedback">' + escapeHTML(result.evaluation.feedback) + '</p>'
+    : "";
+  $("lesson-content").innerHTML = message + feedback + prompt;
+  $("feedback").classList.add("hidden");
+  $("hint-btn").hidden = !aiCurrentExercise.hint;
+  $("review-btn").hidden = true;
+
+  if (result.nextAction === "finish" || session.turn >= session.config.duration) {
+    $("answer-area").innerHTML = '<button id="finish-ai-session" class="primary" type="button">Ver resumen →</button>';
+    $("finish-ai-session").addEventListener("click", finishSession);
+    return;
+  }
+
+  $("answer-area").innerHTML =
+    '<input id="ai-answer" class="answer-input" placeholder="Escribe tu respuesta…" autocomplete="off">' +
+    '<button id="submit-ai-answer" class="primary" type="button">Enviar respuesta →</button>';
+  $("submit-ai-answer").addEventListener("click", () => submitAITutorAnswer($("ai-answer").value));
+  $("ai-answer").addEventListener("keydown", event => {
+    if (event.key === "Enter") submitAITutorAnswer($("ai-answer").value);
+  });
+}
+
+async function submitAITutorAnswer(answer) {
+  const cleanAnswer = String(answer || "").trim();
+  if (!cleanAnswer) {
+    showFeedback("Escribe una respuesta antes de continuar.", false);
+    return;
+  }
+  $("submit-ai-answer").disabled = true;
+  $("ai-answer").disabled = true;
+  try {
+    const result = await requestTutorTurn({
+      task: "evaluate_and_continue",
+      learner: getAILearnerContext(),
+      session: { duration: session.config.duration, turn: session.turn + 1, topic: session.config.topic },
+      history: aiHistory,
+      userMessage: cleanAnswer
+    });
+    aiHistory.push(
+      { role: "assistant", content: JSON.stringify(aiLastResult) },
+      { role: "user", content: cleanAnswer }
+    );
+    const evaluation = result.evaluation || {};
+    const correct = evaluation.status === "correct";
+    const attempt = {
+      turn: session.turn + 1,
+      exerciseId: "ai-turn-" + (session.turn + 1),
+      prompt: aiCurrentExercise.prompt || aiLastResult.message,
+      submitted: cleanAnswer,
+      expected: aiCurrentExercise.expectedAnswer || "",
+      correct
+    };
+    session.attempted += 1;
+    session.turn += 1;
+    session.answers.push(attempt);
+    if (correct) {
+      session.correct += 1;
+      session.streak += 1;
+      session.bestStreak = Math.max(session.bestStreak, session.streak);
+      session.consecutiveCorrect += 1;
+      session.consecutiveErrors = 0;
+    } else {
+      session.streak = 0;
+      session.consecutiveErrors += 1;
+      session.consecutiveCorrect = 0;
+      if (evaluation.status === "incorrect" || evaluation.status === "partially_correct") {
+        session.errors.push({ ...attempt, explanation: evaluation.feedback || "", skill: evaluation.skill || "Producción" });
+      }
+    }
+    for (const word of (result.learnerUpdate?.vocabulary || [])) {
+      if (word.term && !session.vocabulary.some(item => item.term === word.term)) {
+        session.vocabulary.push({ term: word.term, meaning: word.meaning || "", language: session.config.language });
+      }
+    }
+    $("streak").textContent = session.streak;
+    $("word-count").textContent = session.vocabulary.length;
+    $("error-count").textContent = session.errors.length;
+    renderAITutorTurn(result);
+  } catch (error) {
+    showAITutorError(error, cleanAnswer);
+  }
+}
+
+function showAITutorError(error, previousAnswer) {
+  $("lesson-content").textContent = "No se pudo completar la solicitud al tutor IA.";
+  $("feedback").textContent = error.message || "Error de conexión.";
+  $("feedback").classList.remove("hidden", "bad");
+  $("feedback").classList.add("bad");
+  $("answer-area").innerHTML = previousAnswer
+    ? '<button id="retry-ai" class="primary" type="button">Reintentar envío</button>'
+    : '<button id="retry-ai" class="primary" type="button">Reintentar sesión</button>';
+  $("retry-ai").addEventListener("click", () => {
+    if (previousAnswer) submitAITutorAnswer(previousAnswer);
+    else startAITutorSession(session.config);
+  });
+}
 
 function getTopicExercises() {
   const matches = catalog.exercises.filter(exercise => session.config.topic === "random" || exercise.topic === session.config.topic);
@@ -213,6 +393,10 @@ function showFeedback(message, positive) {
 }
 
 $("hint-btn").addEventListener("click", () => {
+  if (aiMode) {
+    if (aiCurrentExercise?.hint) showFeedback("Pista: " + aiCurrentExercise.hint, true);
+    return;
+  }
   if (!currentExercise) return;
   showFeedback("Pista: " + currentExercise.hint, true);
 });
@@ -248,6 +432,7 @@ function finishSession() {
 }
 
 $("new-session").addEventListener("click", () => {
+  aiMode = false;
   $("summary-panel").classList.add("hidden");
   $("setup-panel").classList.remove("hidden");
   $("session-status").textContent = "Nueva sesión";
