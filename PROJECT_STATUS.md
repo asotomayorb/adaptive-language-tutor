@@ -82,6 +82,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 ### Flujo de sesión IA revisado parcialmente
 
 - [x] Inicio de sesión: envía configuración, contexto del alumno y tarea `start_lesson`.
+- [x] Unificar la aplicación de actualizaciones del alumno: el vocabulario del primer turno y de turnos posteriores se conserva, deduplicado, en la sesión y el resumen.
 - [x] Respuesta: el frontend envía la respuesta del alumno junto con la actividad actual y el historial.
 - [x] Reintento: existe acción para repetir inicio o reenvío tras un error.
 - [x] Pistas: se muestra la pista incluida en el ejercicio actual.
@@ -105,7 +106,8 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Conectar `learnerUpdate.errorsToReview` con el resumen: los patrones se acumulan sin duplicados, se limitan en longitud/cantidad y se guardan en el historial de sesiones.
 - [x] Añadir pruebas unitarias para acumulación, deduplicación, límites y persistencia de patrones IA.
 - [ ] Verificar que exportación y resumen incluyan de forma consistente todos los datos IA con una sesión real.
-- [ ] Añadir o completar pruebas del cliente frontend y del flujo integral de sesión IA.
+- [x] Añadir pruebas del cliente frontend para health check, envío de turnos, errores HTTP y respuestas no JSON.
+- [ ] Añadir pruebas del flujo integral de sesión IA y de la interacción DOM.
 
 ### Backend y seguridad revisados parcialmente
 
@@ -185,7 +187,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Próxima acción concreta
 
-Continuar la etapa 4: revisar diagnóstico, pistas, exportación y casos extremos; añadir pruebas de integración del cliente y del flujo IA. Los cambios recientes de patrones de repaso están en GitHub, pero aún no tienen una ejecución CI asociada confirmada.
+Continuar la etapa 4: probar el flujo integral de sesión IA en navegador, revisar diagnóstico, exportación y casos extremos; después corregir el orden de rate limit y validaciones del endpoint. Los cambios recientes aún requieren CI confirmado en el último commit.
 
 ## Criterio para declarar el proyecto listo para prueba humana
 
