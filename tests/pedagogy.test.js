@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createSession, evaluateAnswer, recordAnswer, getDueReviews, buildSummary } from "../src/core/pedagogy.js";
+import { createSession, evaluateAnswer, recordAnswer, getDueReviews, buildSummary, applyLearnerUpdate } from "../src/core/pedagogy.js";
 
 const exercise = {
   id: "test-1",
@@ -54,4 +54,17 @@ test("summary reports accuracy, vocabulary and skill focus", () => {
   assert.equal(summary.accuracy, 50);
   assert.equal(summary.vocabulary.length, 1);
   assert.deepEqual(summary.recommendedFocus, ["Preguntas útiles"]);
+});
+
+
+test("AI learner updates store an estimated level for subsequent turns", () => {
+  const session = createSession({ level: "diagnostic" });
+  assert.equal(applyLearnerUpdate(session, { estimatedLevel: "B1" }), "B1");
+  assert.equal(session.config.estimatedLevel, "B1");
+});
+
+test("empty AI level estimates do not erase a previous estimate", () => {
+  const session = createSession({ level: "diagnostic", estimatedLevel: "A2" });
+  assert.equal(applyLearnerUpdate(session, { estimatedLevel: null }), null);
+  assert.equal(session.config.estimatedLevel, "A2");
 });
