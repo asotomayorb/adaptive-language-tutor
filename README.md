@@ -29,7 +29,7 @@ Configuración mediante variables de entorno del servidor:
 | `AI_BASE_URL` | URL base para proveedores compatibles; obligatoria para `openai-compatible` |
 | `PORT` | Puerto HTTP (predeterminado: 3000) |
 
-No se selecciona un proveedor ni un modelo por defecto. Las credenciales deben configurarse en el entorno del servidor o en un archivo `.env` local ignorado por Git.
+OpenAI es el proveedor inicial sugerido y `.env.example` propone `gpt-6-luna` como punto de partida de menor costo para sesiones frecuentes. Esta elección es configurable, no vinculante: cambiar `AI_PROVIDER`, `AI_MODEL` y, cuando corresponda, `AI_BASE_URL` permite utilizar Anthropic, Gemini u otro servicio compatible sin cambiar la lógica pedagógica. La clave debe configurarse solo en el entorno del servidor o en un archivo `.env` local ignorado por Git.
 
 ## Ejecutar localmente
 
@@ -62,7 +62,7 @@ La respuesta normalizada contiene `message`, `exercise`, `evaluation`, `learnerU
 npm test
 ```
 
-GitHub Actions ejecuta `npm run check` y `npm test` al actualizar `main` o abrir un pull request. Las 26 pruebas actuales cubren el contrato de los adaptadores, el endpoint, la entrega de archivos estáticos y los módulos locales. Las pruebas de IA usan respuestas simuladas: no consumen API ni validan todavía la calidad real de cada modelo.
+GitHub Actions ejecuta `npm run check` y `npm test` al actualizar `main` o abrir un pull request. Las pruebas cubren el contrato estructurado del tutor, los adaptadores de proveedores, el endpoint, la entrega de archivos estáticos y los módulos locales. Las pruebas de IA usan respuestas simuladas: no consumen API ni validan todavía la calidad real de cada modelo.
 
 ## Funciones locales existentes
 
@@ -80,7 +80,7 @@ Estas funciones locales se mantienen como modo de respaldo cuando no hay un prov
 
 - No hay autenticación ni perfiles multiusuario.
 - El progreso se guarda localmente y no se sincroniza entre dispositivos.
-- La respuesta estructurada depende de que el modelo respete el contrato; las respuestas inválidas se rechazan.
+- OpenAI usa Structured Outputs con un esquema JSON estricto; los demás adaptadores mantienen sus formatos nativos y el backend valida el contrato antes de devolver la respuesta.
 - No se ha realizado una prueba humana de conversación con credenciales reales.
 - La configuración de despliegue del backend y la gestión de secretos dependerán del hosting elegido.
 
