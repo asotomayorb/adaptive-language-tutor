@@ -57,10 +57,10 @@ export function createAIProvider(env = process.env, fetchImpl = fetch) {
   return {
     provider: provider || null,
     model: model || null,
-    configured: configured && supported.includes(provider),
+    configured: configured && supported.includes(provider) && (provider !== "openai-compatible" || Boolean(env.AI_BASE_URL)),
 
     async generateTutorTurn(input) {
-      if (!configured || !supported.includes(provider)) {
+      if (!configured || !supported.includes(provider) || (provider === "openai-compatible" && !env.AI_BASE_URL)) {
         throw new Error("AI provider is not configured. Set AI_PROVIDER, AI_API_KEY and AI_MODEL.");
       }
       const messages = buildTutorMessages(input);
