@@ -82,6 +82,7 @@ export function getDueReviews(session) {
 export function buildSummary(session) {
   const accuracy = session.attempted ? Math.round((session.correct / session.attempted) * 100) : 0;
   return {
+    turns: session.turn,
     attempted: session.attempted,
     correct: session.correct,
     accuracy,
