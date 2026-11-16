@@ -55,7 +55,7 @@ test("AI review cards from separate sessions do not overwrite each other", () =>
   });
   const firstTime = Date.parse("2026-01-01T12:00:00.000Z");
   persistSession(progress, aiSession(), { attempted: 1, correct: 0, accuracy: 0 }, firstTime);
-  persistSession(progress, aiSession(), { attempted: 1, correct: 0, accuracy: 0 }, firstTime + 1000);
+  persistSession(progress, aiSession(), { attempted: 1, correct: 0, accuracy: 0 }, firstTime);
   assert.equal(progress.reviewCards.length, 2);
   assert.notEqual(progress.reviewCards[0].key, progress.reviewCards[1].key);
 });
