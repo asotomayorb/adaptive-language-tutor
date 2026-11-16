@@ -99,6 +99,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [ ] Revisar el botón de pista: actualmente muestra la pista de la actividad en pantalla; no hace una nueva consulta al tutor para pedir una pista adaptada.
 - [x] Corregir evaluación `not_applicable`: los turnos conversacionales sin evaluación objetiva ya no cuentan como errores, no rompen rachas y no reducen la precisión.
 - [x] Separar el total de turnos de las respuestas evaluables en el resumen y exportación.
+- [x] Evitar que una doble pulsación en «Ver resumen» persista dos veces la misma sesión.
 - [x] Añadir pruebas para estados `correct`, `partially_correct`, `incorrect` y `not_applicable`; CI correcto en Actions #130.
 - [ ] Verificar que el diagnóstico inicial sea coherente en el modo IA y que el nivel estimado se refleje correctamente.
 - [ ] Verificar que exportación y resumen incluyan de forma consistente los datos IA.
@@ -182,7 +183,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Próxima acción concreta
 
-Continuar la etapa 4: completar pruebas del flujo de sesión y repaso IA; revisar diagnóstico, pistas, exportación y casos extremos. GitHub Actions #130 validó `npm run check` y `npm test` en el commit `1eb507e7e2a805f5cba7945102887db131cdb129`.
+Continuar la etapa 4: completar pruebas del flujo de sesión y repaso IA; revisar diagnóstico, pistas, exportación y casos extremos. GitHub Actions #134 validó `npm run check` y `npm test` en el commit `1125d62aadd35070c9298ba08cdeafcb060270d1`.
 
 ## Criterio para declarar el proyecto listo para prueba humana
 
