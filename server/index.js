@@ -1,8 +1,44 @@
 import { createServer } from "node:http";
+import { readFile } from "node:fs/promises";
+import { resolve, sep, extname } from "node:path";
+import { fileURLToPath } from "node:url";
 import { createAIProvider } from "./provider.js";
 
 const MAX_BODY_BYTES = 32 * 1024;
+const ROOT = resolve(fileURLToPath(new URL("../", import.meta.url)));
 const provider = createAIProvider();
+const MIME_TYPES = {
+  ".html": "text/html; charset=utf-8",
+  ".js": "text/javascript; charset=utf-8",
+  ".css": "text/css; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+  ".svg": "image/svg+xml",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".ico": "image/x-icon"
+};
+
+async function serveStatic(pathname, response) {
+  let decoded;
+  try { decoded = decodeURIComponent(pathname); }
+  catch { return send(response, 400, { error: "Invalid URL path." }); }
+  const relative = decoded === "/" ? "index.html" : decoded.replace(/^\\/+/, "");
+  const filePath = resolve(ROOT, relative);
+  if (filePath !== ROOT && !filePath.startsWith(ROOT + sep)) {
+    return send(response, 404, { error: "Not found." });
+  }
+  try {
+    const content = await readFile(filePath);
+    response.writeHead(200, {
+      "content-type": MIME_TYPES[extname(filePath)] || "application/octet-stream",
+      "x-content-type-options": "nosniff",
+      "cache-control": "no-cache"
+    });
+    response.end(content);
+  } catch {
+    send(response, 404, { error: "Not found." });
+  }
+}
 
 function send(response, status, payload) {
   response.writeHead(status, {
@@ -61,6 +97,7 @@ export function createAppServer(aiProvider = provider) {
         return send(response, error.status || 502, { error: error.message || "Tutor request failed." });
       }
     }
+    if (request.method === "GET") return serveStatic(url.pathname, response);
     return send(response, 404, { error: "Not found." });
   });
 }
