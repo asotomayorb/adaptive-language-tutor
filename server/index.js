@@ -1,7 +1,7 @@
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { resolve, sep, extname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { createAIProvider } from "./provider.js";
 
 const MAX_BODY_BYTES = 32 * 1024;
@@ -102,7 +102,7 @@ export function createAppServer(aiProvider = provider) {
   });
 }
 
-if (process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   const port = Number(process.env.PORT || 3000);
   createAppServer().listen(port, () => {
     console.log(`Adaptive Language Tutor API listening on port ${port}`);
