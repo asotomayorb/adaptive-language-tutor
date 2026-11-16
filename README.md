@@ -95,3 +95,23 @@ Estas funciones locales se mantienen como modo de respaldo cuando no hay un prov
 5. Realizar pruebas humanas en móvil y escritorio.
 
 **Seguridad:** nunca incluir claves API en el frontend, en archivos versionados ni en registros del navegador.
+
+
+## Ejecutar en Replit
+
+La configuración de Replit está en `.replit` y utiliza `npm run dev`. El archivo `.env` es opcional: el backend carga ese archivo cuando existe, pero no lo exige. En Replit, configura las credenciales en **Secrets** (variables de entorno), sin crear ni subir un archivo con claves.
+
+Secrets necesarios para Gemini:
+- `AI_PROVIDER` = `gemini`
+- `AI_API_KEY` = clave privada de Google AI Studio
+- `AI_MODEL` = identificador de modelo disponible en tu cuenta
+
+Replit proporciona `PORT` automáticamente cuando corresponde; localmente el servidor usa el puerto 3000 si no se define otro. El servidor escucha en `0.0.0.0` para aceptar conexiones del entorno de ejecución.
+
+Después de pulsar Run, comprueba `/api/health`. Una respuesta con `status: "ok"` confirma que el servidor HTTP está activo. El campo `ai.configured` indica si el proveedor quedó configurado; no demuestra por sí solo que la clave tenga cuota o permisos válidos. La prueba real de Gemini se realiza enviando un turno al tutor.
+
+Comandos:
+- `npm run dev`: desarrollo con reinicio automático.
+- `npm start`: ejecución normal.
+- `npm test`: pruebas automatizadas.
+- `npm run check`: validación sintáctica de los módulos principales.
