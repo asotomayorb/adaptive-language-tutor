@@ -43,6 +43,38 @@ test("persisting a session records history, vocabulary and a review due tomorrow
   assert.equal(getDueCards(progress, now + 24 * 60 * 60 * 1000).length, 1);
 });
 
+test("AI review cards from separate sessions do not overwrite each other", () => {
+  const progress = loadProgress(null);
+  const aiSession = () => ({
+    config: { language: "Portugués brasileño", languageId: "pt-BR" },
+    vocabulary: [],
+    errors: [{
+      turn: 1, exerciseId: "ai-turn-1", prompt: "Completa la frase",
+      expected: "Eu gostaria de água", explanation: "Usa gostaria"
+    }]
+  });
+  const firstTime = Date.parse("2026-01-01T12:00:00.000Z");
+  persistSession(progress, aiSession(), { attempted: 1, correct: 0, accuracy: 0 }, firstTime);
+  persistSession(progress, aiSession(), { attempted: 1, correct: 0, accuracy: 0 }, firstTime + 1000);
+  assert.equal(progress.reviewCards.length, 2);
+  assert.notEqual(progress.reviewCards[0].key, progress.reviewCards[1].key);
+});
+
+test("AI errors without an expected answer are not made into ungradable review cards", () => {
+  const session = {
+    config: { language: "Portugués brasileño", languageId: "pt-BR" },
+    vocabulary: [],
+    errors: [{
+      turn: 1, exerciseId: "ai-turn-1", prompt: "Conversación libre",
+      expected: "", explanation: "Continúa conversando"
+    }]
+  };
+  const progress = persistSession(loadProgress(null), session, {
+    attempted: 1, correct: 0, accuracy: 0
+  }, Date.parse("2026-01-01T12:00:00.000Z"));
+  assert.equal(progress.reviewCards.length, 0);
+});
+
 test("successful spaced reviews advance 3, 7 and 14 day intervals; failure resets to one day", () => {
   const now = Date.parse("2026-01-01T12:00:00.000Z");
   const progress = persistSession(loadProgress(null), baseSession(), {
