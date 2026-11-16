@@ -58,3 +58,21 @@ test("tutor endpoint forwards validated context to the provider", async () => {
     assert.equal(received.learner.targetLanguage, "pt-BR");
   });
 });
+
+test("server serves the application shell and frontend modules", async () => {
+  await withServer({ configured: false }, async base => {
+    const page = await fetch(base + "/");
+    assert.equal(page.status, 200);
+    assert.match(await page.text(), /Adaptive Language Tutor/);
+    const moduleResponse = await fetch(base + "/src/core/tutor-client.js");
+    assert.equal(moduleResponse.status, 200);
+    assert.match(moduleResponse.headers.get("content-type"), /javascript/);
+  });
+});
+
+test("static server rejects path traversal", async () => {
+  await withServer({ configured: false }, async base => {
+    const response = await fetch(base + "/%2e%2e/package.json");
+    assert.equal(response.status, 404);
+  });
+});
