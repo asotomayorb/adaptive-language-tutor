@@ -1,58 +1,96 @@
 # Adaptive Language Tutor
 
-Aplicación web de aprendizaje de idiomas basada en práctica conversacional y adaptación pedagógica.
+Aplicación web de aprendizaje de idiomas cuyo tutor principal está diseñado para funcionar mediante una API de IA, con arquitectura independiente del proveedor.
+
+## Arquitectura objetivo
+
+- **Frontend** (`index.html`, `src/app.js`, `src/styles.css`): interfaz, configuración y presentación de la experiencia.
+- **Backend** (`server/`): valida solicitudes, conserva las credenciales fuera del navegador y comunica la aplicación con el proveedor seleccionado.
+- **Adaptador de IA** (`server/provider.js`): interfaz común para OpenAI, Anthropic, Gemini y servicios compatibles con la API de chat de OpenAI.
+- **Contrato pedagógico** (`server/prompts.js`): define el formato estructurado de las respuestas del tutor y las reglas de adaptación.
+- **Persistencia** (`src/core/storage.js`, actualmente local): conserva el progreso en el navegador; la sincronización remota será una etapa posterior.
+- **Catálogos** (`src/content/`): material lingüístico de referencia y respaldo, no el motor principal de generación de clases.
 
 ## Estado actual
 
-La aplicación ya separa tres responsabilidades:
-- **Motor pedagógico** (`src/core/pedagogy.js`): sesiones, evaluación de respuestas, rachas, adaptación y resumen.
-- **Catálogos lingüísticos** (`src/content/`): ejercicios, respuestas aceptadas, pistas, explicaciones y etiquetas por idioma.
-- **Interfaz** (`index.html`, `src/app.js`, `src/styles.css`): configuración, diagnóstico, práctica, repaso y exportación.
+La base del backend y los adaptadores de proveedores ya está creada. El endpoint `POST /api/tutor` acepta el contexto del alumno y devuelve una respuesta estructurada. El endpoint `GET /api/health` informa si existe un proveedor configurado.
 
-Idiomas con contenido inicial: portugués brasileño e inglés.
+**Importante:** el frontend todavía utiliza el flujo local de ejercicios y no está conectado al endpoint de IA. Por tanto, esta entrega establece la infraestructura de integración, pero todavía no convierte la experiencia visible en un tutor impulsado por IA.
 
-## Funciones implementadas
+## Proveedores
 
-- Sesiones de 8, 15 o 25 turnos.
-- Niveles iniciales desde cero, básico/intermedio o diagnóstico de cuatro preguntas.
-- Diagnóstico orientativo separado de los turnos de práctica.
-- Evaluación de respuestas que ignora mayúsculas, tildes y puntuación básica.
-- Dos errores consecutivos activan un modo de apoyo; tres aciertos consecutivos habilitan ejercicios de mayor dificultad cuando existen.
-- Registro de errores y vocabulario durante la sesión.
-- Persistencia local versionada de sesiones, precisión e historial de vocabulario.
-- Repetición espaciada de errores: primer repaso al día siguiente; tras aciertos, intervalos de 3, 7 y 14 días. Un fallo reinicia el ciclo a un día.
-- Panel de progreso por idioma y acceso a repasos pendientes.
-- Repasos programados sin consumir turnos de práctica.
-- Resumen y exportación JSON del progreso.
+Configuración mediante variables de entorno del servidor:
+
+| Variable | Función |
+|---|---|
+| `AI_PROVIDER` | `openai`, `anthropic`, `gemini` o `openai-compatible` |
+| `AI_API_KEY` | Credencial privada del proveedor |
+| `AI_MODEL` | Identificador del modelo elegido |
+| `AI_BASE_URL` | URL base para proveedores compatibles; obligatoria para `openai-compatible` |
+| `PORT` | Puerto HTTP (predeterminado: 3000) |
+
+No se selecciona un proveedor ni un modelo por defecto. Las credenciales deben configurarse en el entorno del servidor o en un archivo `.env` local ignorado por Git.
 
 ## Ejecutar localmente
 
-Abrir `index.html` en un navegador moderno. No se requiere compilación.
+Requiere Node.js 20 o superior.
+
+1. Copiar `.env.example` a `.env`.
+2. Completar proveedor, clave y modelo en `.env`.
+3. Ejecutar:
+
+```bash
+npm start
+```
+
+El backend queda disponible en `http://localhost:3000`. Comprobación: `GET /api/health`.
+
+## Contrato de tutoría
+
+El endpoint `POST /api/tutor` recibe un objeto JSON con:
+- `userMessage` (obligatorio).
+- `task` (opcional).
+- `learner` (idioma objetivo, dialecto, nivel, idioma nativo, metas y preferencias).
+- `session` (objetivos y estado de la sesión).
+- `history` (últimos intercambios relevantes).
+
+La respuesta normalizada contiene `message`, `exercise`, `evaluation`, `learnerUpdate` y `nextAction`. El contrato está definido en `server/prompts.js`.
 
 ## Pruebas
-
-Requiere Node.js 20 o superior:
 
 ```bash
 npm test
 ```
 
-GitHub Actions ejecuta las pruebas automáticamente al actualizar `main` o abrir un pull request.
+GitHub Actions ejecuta las pruebas al actualizar `main` o abrir un pull request. Las pruebas de adaptadores usan respuestas simuladas: no consumen API ni validan todavía la calidad real de cada modelo.
 
-## Limitaciones conocidas
+## Funciones locales existentes
 
-- Los catálogos incluyen ejercicios iniciales A1/A2 para cuatro temas, pero todavía no constituyen un curso completo ni han pasado una revisión pedagógica externa.
-- La evaluación libre compara respuestas normalizadas y variantes explícitas; todavía no interpreta semánticamente frases equivalentes.
-- El diagnóstico es orientativo, no una certificación de nivel.
-- El progreso se guarda en el almacenamiento local del navegador y dispositivo; no se sincroniza entre dispositivos ni navegadores. Si se borran los datos del sitio, se pierde el progreso local (se recomienda exportar una copia).
-- No existe conexión a IA ni backend en esta fase.
+- Sesiones de 8, 15 o 25 turnos.
+- Diagnóstico orientativo inicial.
+- Catálogos A1/A2 de portugués brasileño e inglés.
+- Evaluación local por coincidencia normalizada.
+- Registro de errores y vocabulario.
+- Repaso espaciado y progreso guardado en el navegador.
+- Resumen y exportación JSON.
+
+Estas funciones locales se mantendrán como respaldo y apoyo, pero la experiencia principal evolucionará hacia generación y evaluación dinámica mediante IA.
+
+## Limitaciones pendientes
+
+- El frontend aún no consume `/api/tutor`.
+- No hay autenticación ni perfiles multiusuario.
+- El progreso se guarda localmente y no se sincroniza entre dispositivos.
+- La respuesta estructurada depende de que el modelo respete el contrato; las respuestas inválidas se rechazan.
+- No se ha realizado una prueba humana de conversación con credenciales reales.
+- La configuración de despliegue del backend y la gestión de secretos dependerán del hosting elegido.
 
 ## Próximos hitos
 
-1. Revisar con docentes/nativos la naturalidad, variantes regionales y progresión de los ejercicios actuales.
-2. Completar perfiles y sincronización opcional entre dispositivos.
-4. Definir un contrato estructurado para tutor IA y evaluación semántica.
-5. Añadir backend seguro para integrar el proveedor de IA sin exponer credenciales.
-6. Completar pruebas de interfaz y pruebas humanas en móvil/escritorio.
+1. Conectar el flujo de sesión del frontend con `POST /api/tutor`, conservando el contexto de la conversación y el progreso.
+2. Añadir pruebas del endpoint, límites de entrada y errores de proveedor.
+3. Probar con un proveedor/modelo elegido por el usuario, midiendo calidad, latencia y costo.
+4. Añadir persistencia remota y perfiles cuando se defina el despliegue.
+5. Realizar pruebas humanas en móvil y escritorio.
 
-**Seguridad:** nunca guardar claves API en el frontend ni en el repositorio.
+**Seguridad:** nunca incluir claves API en el frontend, en archivos versionados ni en registros del navegador.
