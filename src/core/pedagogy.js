@@ -1,5 +1,12 @@
 const normalize = (value = "") => String(value).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase().replace(/[¿?¡!.,;:]/g, "").replace(/\s+/g, " ").trim();
 
+export function applyLearnerUpdate(session, learnerUpdate) {
+  const estimatedLevel = learnerUpdate?.estimatedLevel;
+  if (typeof estimatedLevel !== "string" || !estimatedLevel.trim()) return null;
+  session.config.estimatedLevel = estimatedLevel.trim().slice(0, 32);
+  return session.config.estimatedLevel;
+}
+
 export function createSession(config) {
   return {
     config: { ...config },
