@@ -56,7 +56,7 @@ El endpoint `POST /api/tutor` recibe un objeto JSON con:
 - `session` (objetivos y estado de la sesión).
 - `history` (últimos intercambios relevantes).
 
-La respuesta normalizada contiene `message`, `exercise`, `evaluation`, `learnerUpdate` y `nextAction`. El contrato está definido en `server/prompts.js`. Las llamadas a proveedores externos tienen un timeout de 30 segundos para evitar que una solicitud bloqueada deje la sesión esperando indefinidamente.
+La respuesta normalizada contiene `message`, `exercise`, `evaluation`, `learnerUpdate` y `nextAction`. El nivel estimado por el tutor se conserva en el contexto de la sesión y se muestra en el resumen cuando el modelo aporta una estimación. El contrato está definido en `server/prompts.js`. Las llamadas a proveedores externos tienen un timeout de 30 segundos para evitar que una solicitud bloqueada deje la sesión esperando indefinidamente.
 
 ## Pruebas
 
@@ -84,6 +84,7 @@ Estas funciones locales se mantienen como modo de respaldo cuando no hay un prov
 ## Limitaciones pendientes
 
 - No hay autenticación ni perfiles multiusuario.
+- El endpoint del tutor aplica un límite global en memoria de 60 solicitudes por cada 10 minutos y un máximo de 2 solicitudes simultáneas por instancia. El límite es compartido por todos los visitantes y se reinicia al reiniciar el servidor; no sustituye autenticación ni cuotas por usuario.
 - El progreso se guarda localmente y no se sincroniza entre dispositivos.
 - OpenAI usa Structured Outputs con un esquema JSON estricto; los demás adaptadores mantienen sus formatos nativos y el backend valida el contrato antes de devolver la respuesta.
 - No se ha realizado una prueba humana de conversación con credenciales reales.
@@ -92,7 +93,7 @@ Estas funciones locales se mantienen como modo de respaldo cuando no hay un prov
 ## Próximos hitos
 
 1. Configurar y probar un proveedor/modelo real elegido por el usuario, midiendo calidad, latencia y costo.
-2. Reforzar límites de uso, autenticación y protección contra abuso antes de exponer el backend públicamente.
+2. Incorporar autenticación y cuotas por usuario antes de exponer el backend públicamente; el límite global actual es solo una protección básica para pruebas.
 3. Refinar el prompt pedagógico con sesiones reales y evaluación humana.
 4. Añadir persistencia remota y perfiles cuando se defina el despliegue.
 5. Realizar pruebas humanas en móvil y escritorio.
