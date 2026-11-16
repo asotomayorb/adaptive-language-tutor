@@ -23,6 +23,7 @@ let aiMode = false;
 let aiHistory = [];
 let aiLastResult = null;
 let aiCurrentExercise = null;
+let sessionFinished = false;
 
 function refreshDashboard() {
   const languageId = catalogs[$("language").value]?.id;
@@ -108,6 +109,7 @@ $("setup-form").addEventListener("submit", event => {
   if (!catalog) return;
   const config = { language:catalog.label, languageId:catalog.id, duration:Number($("duration").value), level:$("level").value, topic:$("topic").value };
   session = createSession(config);
+  sessionFinished = false;
   reviewMode = false;
   $("setup-panel").classList.add("hidden");
   $("summary-panel").classList.add("hidden");
@@ -424,6 +426,8 @@ $("review-btn").addEventListener("click", () => {
 });
 
 function finishSession() {
+  if (!session || sessionFinished) return;
+  sessionFinished = true;
   $("lesson-panel").classList.add("hidden");
   $("summary-panel").classList.remove("hidden");
   $("session-status").textContent = "Sesión finalizada";
@@ -442,6 +446,7 @@ function finishSession() {
 
 $("new-session").addEventListener("click", () => {
   aiMode = false;
+  sessionFinished = false;
   $("summary-panel").classList.add("hidden");
   $("setup-panel").classList.remove("hidden");
   $("session-status").textContent = "Nueva sesión";
