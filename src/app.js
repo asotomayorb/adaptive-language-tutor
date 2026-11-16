@@ -82,7 +82,7 @@ function renderSpacedReview() {
   $("lesson-phase").textContent = "REPETICIÓN ESPACIADA";
   $("turn-count").textContent = "Tarjeta " + (reviewIndex + 1) + " / " + dueReviewCards.length;
   $("progress-bar").style.width = (reviewIndex / dueReviewCards.length * 100) + "%";
-  $("lesson-content").innerHTML = '<p class="eyebrow">REPASO PROGRAMADO</p><h3>' + (exercise?.prompt || card.prompt) + '</h3><p>Escribe la respuesta sin mirar la solución. Este repaso no consume turnos de práctica.</p>';
+  $("lesson-content").innerHTML = '<p class="eyebrow">REPASO PROGRAMADO</p><h3>' + escapeHTML(exercise?.prompt || card.prompt || "") + '</h3><p>Escribe la respuesta sin mirar la solución. Este repaso no consume turnos de práctica.</p>';
   $("answer-area").innerHTML = '<input id="spaced-answer" class="answer-input" placeholder="Escribe tu respuesta…"><button id="check-spaced" class="primary" type="button">Comprobar respuesta</button>';
   $("feedback").classList.add("hidden");
   $("check-spaced").addEventListener("click", () => {
@@ -457,8 +457,9 @@ function finishSession() {
   const aiLevelText = aiMode && session.config.estimatedLevel
     ? '<li>Nivel estimado por el tutor IA: ' + escapeHTML(session.config.estimatedLevel) + '.</li>'
     : "";
-  const focus = summary.recommendedFocus.length ? summary.recommendedFocus.join(", ") : "Mantener la práctica y ampliar vocabulario.";
-  $("summary-content").innerHTML = '<p class="intro">Completaste ' + summary.attempted + ' turnos de ' + session.config.language + '.</p><ul class="summary-list">' + diagnosticText + aiLevelText + '<li>Respuestas correctas: ' + summary.correct + '/' + summary.attempted + ' (' + summary.accuracy + '%).</li><li>Mejor racha: ' + summary.bestStreak + '.</li><li>Vocabulario aprendido: ' + (summary.vocabulary.map(item => item.term + " (" + item.meaning + ")").join(", ") || "ninguno") + '.</li><li>Errores para reforzar: ' + summary.errors.length + '.</li><li>Próximo foco recomendado: ' + focus + '.</li></ul>';
+  const focus = summary.recommendedFocus.length ? summary.recommendedFocus.map(escapeHTML).join(", ") : "Mantener la práctica y ampliar vocabulario.";
+  const vocabularyText = summary.vocabulary.map(item => escapeHTML(item.term) + " (" + escapeHTML(item.meaning) + ")").join(", ") || "ninguno";
+  $("summary-content").innerHTML = '<p class="intro">Completaste ' + summary.attempted + ' turnos de ' + escapeHTML(session.config.language) + '.</p><ul class="summary-list">' + diagnosticText + aiLevelText + '<li>Respuestas correctas: ' + summary.correct + '/' + summary.attempted + ' (' + summary.accuracy + '%).</li><li>Mejor racha: ' + summary.bestStreak + '.</li><li>Vocabulario aprendido: ' + vocabularyText + '.</li><li>Errores para reforzar: ' + summary.errors.length + '.</li><li>Próximo foco recomendado: ' + focus + '.</li></ul>';
 }
 
 $("new-session").addEventListener("click", () => {
