@@ -117,3 +117,20 @@ test("a response outside the tutor contract is rejected", async () => {
   );
   await assert.rejects(() => provider.generateTutorTurn({ userMessage: "Hi" }), /invalid exercise/i);
 });
+
+
+test("provider requests have a timeout and report stalled requests clearly", async () => {
+  const provider = createAIProvider(
+    { AI_PROVIDER: "openai", AI_API_KEY: "secret", AI_MODEL: "test-model" },
+    async (_url, options) => {
+      assert.ok(options.signal instanceof AbortSignal);
+      const error = new Error("request timed out");
+      error.name = "TimeoutError";
+      throw error;
+    }
+  );
+  await assert.rejects(
+    () => provider.generateTutorTurn({ userMessage: "Hi" }),
+    /timed out after 30 seconds/i
+  );
+});
