@@ -13,7 +13,7 @@ Este documento es el registro detallado del proyecto. El README principal mantie
 |---|---|---|
 | 1 | Base del repositorio y ejecución | Implementada; CI correcto en el último commit validado |
 | 2 | Tutor IA, proveedores y pedagogía | Implementada en código; sin prueba de API real |
-| 3 | Pruebas automatizadas y CI | Implementadas; GitHub Actions #114 correcto |
+| 3 | Pruebas automatizadas y CI | Implementadas; GitHub Actions #165 correcto en el commit `c250b490` |
 | 4 | Auditoría funcional y técnica | En curso |
 | 5 | Validación con proveedor IA real | Pendiente |
 | 6 | Prueba humana y ajustes de experiencia | Pendiente |
@@ -72,7 +72,8 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Pruebas de lógica pedagógica local.
 - [x] Pruebas de persistencia y repaso espaciado.
 - [x] Workflow `.github/workflows/tests.yml` para Node 20.
-- [x] GitHub Actions #114 completó con éxito `npm run check` y `npm test` en el commit `1b8915beacf2e4636ed83a9ef69b3ca51fb3462f`.
+- [x] GitHub Actions #165 completó con éxito `npm run check` y `npm test` en el commit `c250b490a3a386700244b251e178198845aaff4b`.
+- [x] La ejecución #165 incluye las pruebas de vocabulario IA, cliente frontend y límites del endpoint añadidas durante esta auditoría.
 - [x] La prueba de escape HTML y las pruebas nuevas de persistencia IA quedaron incluidas en esa ejecución.
 
 ## Etapa 4 — Auditoría funcional y técnica
@@ -118,6 +119,8 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Máximo de 2 solicitudes simultáneas por instancia.
 - [x] Rechazo de rutas estáticas fuera del directorio raíz cubierto por prueba.
 - [x] Reordenar el endpoint para validar JSON, mensaje y configuración antes de consumir cupo o concurrencia; añadir pruebas de regresión para solicitudes inválidas y proveedor no configurado.
+- [x] Confirmar CI para el cambio: Actions #165, `npm run check` y `npm test` correctos.
+- [ ] Pruebas de interacción DOM/navegador: el repositorio aún no tiene un framework de automatización de navegador configurado.
 - [ ] Evaluar límites por IP/usuario y protección contra abuso antes de exposición pública.
 - [ ] Revisar límites de historial y tamaño total de contexto enviado al proveedor.
 - [ ] Completar revisión de sanitización y presentación de contenido generado por IA en todos los puntos de la interfaz; el repaso y resumen ya fueron corregidos y tienen prueba unitaria del helper.
