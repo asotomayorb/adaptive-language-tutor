@@ -1,0 +1,16 @@
+export async function checkTutorHealth(fetchImpl = fetch) {
+  const response = await fetchImpl("/api/health", { headers: { accept: "application/json" } });
+  if (!response.ok) throw new Error("Tutor API is unavailable.");
+  return response.json();
+}
+
+export async function requestTutorTurn(input, fetchImpl = fetch) {
+  const response = await fetchImpl("/api/tutor", {
+    method: "POST",
+    headers: { "content-type": "application/json", accept: "application/json" },
+    body: JSON.stringify(input)
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(result.error || "The tutor could not respond.");
+  return result;
+}
