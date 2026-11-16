@@ -101,8 +101,10 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Separar el total de turnos de las respuestas evaluables en el resumen y exportación.
 - [x] Evitar que una doble pulsación en «Ver resumen» persista dos veces la misma sesión.
 - [x] Añadir pruebas para estados `correct`, `partially_correct`, `incorrect` y `not_applicable`; CI correcto en Actions #130.
-- [ ] Verificar que el diagnóstico inicial sea coherente en el modo IA y que el nivel estimado se refleje correctamente.
-- [ ] Verificar que exportación y resumen incluyan de forma consistente los datos IA.
+- [x] El nivel estimado del tutor IA se conserva entre turnos y se muestra en el resumen (pendiente validar con proveedor real).
+- [x] Conectar `learnerUpdate.errorsToReview` con el resumen: los patrones se acumulan sin duplicados, se limitan en longitud/cantidad y se guardan en el historial de sesiones.
+- [x] Añadir pruebas unitarias para acumulación, deduplicación, límites y persistencia de patrones IA.
+- [ ] Verificar que exportación y resumen incluyan de forma consistente todos los datos IA con una sesión real.
 - [ ] Añadir o completar pruebas del cliente frontend y del flujo integral de sesión IA.
 
 ### Backend y seguridad revisados parcialmente
@@ -183,7 +185,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Próxima acción concreta
 
-Continuar la etapa 4: completar pruebas del flujo de sesión y repaso IA; revisar diagnóstico, pistas, exportación y casos extremos. GitHub Actions #134 validó `npm run check` y `npm test` en el commit `1125d62aadd35070c9298ba08cdeafcb060270d1`.
+Continuar la etapa 4: completar pruebas del flujo de sesión y repaso IA; revisar diagnóstico, pistas, exportación y casos extremos. La integración de patrones de repaso IA está implementada; falta validar CI en el último commit y completar pruebas de navegador.
 
 ## Criterio para declarar el proyecto listo para prueba humana
 
