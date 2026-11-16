@@ -18,7 +18,7 @@ Aplicación web de aprendizaje de idiomas con un tutor conversacional de IA, arq
 - Prompt pedagógico con adaptación gradual, evaluación semántica, continuidad de sesión, pistas y cierre por duración.
 - Contexto conversacional reciente (hasta 12 intercambios) enviado al proveedor.
 - Modo local de respaldo con catálogos A1/A2 de portugués brasileño e inglés.
-- Progreso local, vocabulario, registro de errores, repaso espaciado y exportación JSON.
+- Progreso local, vocabulario, registro de errores y exportación JSON. El repaso espaciado con tarjetas está implementado en el modo local; los errores generados en sesiones IA todavía no se convierten en tarjetas de repaso.
 - Protección básica del endpoint IA: cuerpo limitado a 32 KB, mensaje limitado a 8.000 caracteres, timeout externo de 30 segundos, máximo global de 60 solicitudes cada 10 minutos y máximo de 2 solicitudes simultáneas por instancia.
 - Pruebas automatizadas para API/servidor, proveedores, prompt, pedagogía y almacenamiento.
 - Workflow de GitHub Actions definido en `.github/workflows/tests.yml`; ejecuta `npm run check` y `npm test` con Node 20.
@@ -40,6 +40,7 @@ Aplicación web de aprendizaje de idiomas con un tutor conversacional de IA, arq
 - [ ] Ejecutar o confirmar `npm run check` y `npm test` sobre el último commit de la rama.
 - [ ] Revisar el flujo completo del frontend IA: inicio, envío, reintento, pistas, progreso, finalización y resumen.
 - [ ] Revisar estados de error, solicitudes simultáneas y consistencia de los turnos.
+- [ ] Integrar los errores y `learnerUpdate.errorsToReview` del modo IA con el sistema de repaso; actualmente las sesiones IA registran errores para el resumen, pero no generan tarjetas espaciadas.
 - [ ] Revisar seguridad y límites del backend antes de cualquier despliegue público.
 - [ ] Resolver hallazgos y volver a ejecutar CI.
 
