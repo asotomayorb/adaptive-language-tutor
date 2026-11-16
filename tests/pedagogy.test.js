@@ -93,11 +93,11 @@ test("empty AI review updates do not erase earlier patterns", () => {
 test("AI review patterns ignore invalid values and cap their length and count", () => {
   const session = createSession({});
   applyLearnerUpdate(session, {
-    errorsToReview: [null, 4, "x".repeat(200), ...Array.from({ length: 10 }, (_, i) => "Patrón " + i)]
+    errorsToReview: [null, 4, ...Array.from({ length: 10 }, (_, i) => "Patrón " + i), "x".repeat(200)]
   });
   assert.equal(session.errorsToReview.length, 8);
-  assert.equal(session.errorsToReview[0].length, 160);
-  assert.equal(session.errorsToReview.at(-1), "Patrón 9");
+  assert.equal(session.errorsToReview.at(-1).length, 160);
+  assert.equal(session.errorsToReview[0], "Patrón 3");
 });
 
 
