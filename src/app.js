@@ -207,8 +207,10 @@ async function submitAITutorAnswer(answer) {
     showFeedback("Escribe una respuesta antes de continuar.", false);
     return;
   }
-  $("submit-ai-answer").disabled = true;
-  $("ai-answer").disabled = true;
+  const submitButton = $("submit-ai-answer");
+  const answerInput = $("ai-answer");
+  if (submitButton) submitButton.disabled = true;
+  if (answerInput) answerInput.disabled = true;
   try {
     const result = await requestTutorTurn({
       task: "evaluate_and_continue",
