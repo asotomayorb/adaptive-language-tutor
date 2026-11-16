@@ -6,7 +6,10 @@
   "scripts": {
     "start": "node --env-file=.env server/index.js",
     "dev": "node --env-file=.env --watch server/index.js",
-    "test": "node --test"
+    "test": "node --test",
+    "check": "node --check src/app.js && node --check src/core/tutor-client.js && node --check server/index.js && node --check server/provider.js"
   },
-  "engines": { "node": ">=20.6" }
+  "engines": {
+    "node": ">=20.6"
+  }
 }
