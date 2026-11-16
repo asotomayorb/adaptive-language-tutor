@@ -56,7 +56,7 @@ El endpoint `POST /api/tutor` recibe un objeto JSON con:
 - `session` (objetivos y estado de la sesión).
 - `history` (últimos intercambios relevantes).
 
-La respuesta normalizada contiene `message`, `exercise`, `evaluation`, `learnerUpdate` y `nextAction`. El contrato está definido en `server/prompts.js`.
+La respuesta normalizada contiene `message`, `exercise`, `evaluation`, `learnerUpdate` y `nextAction`. El contrato está definido en `server/prompts.js`. Las llamadas a proveedores externos tienen un timeout de 30 segundos para evitar que una solicitud bloqueada deje la sesión esperando indefinidamente.
 
 ## Pruebas
 
