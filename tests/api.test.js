@@ -30,6 +30,38 @@ test("tutor endpoint rejects missing user message", async () => {
   });
 });
 
+test("invalid tutor requests do not consume the provider rate limit", async () => {
+  await withServer({
+    configured: true,
+    provider: "test",
+    generateTutorTurn: async () => ({ message: "ok", exercise: null, evaluation: null, learnerUpdate: null, nextAction: "answer" })
+  }, async base => {
+    const invalid = await fetch(base + "/api/tutor", {
+      method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({})
+    });
+    assert.equal(invalid.status, 400);
+    for (let index = 0; index < 60; index += 1) {
+      const response = await fetch(base + "/api/tutor", {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ userMessage: "practice" })
+      });
+      assert.equal(response.status, 200);
+    }
+  });
+});
+
+test("unconfigured provider requests do not consume the rate limit", async () => {
+  await withServer({ configured: false, provider: "test" }, async base => {
+    for (let index = 0; index < 61; index += 1) {
+      const response = await fetch(base + "/api/tutor", {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ userMessage: "practice" })
+      });
+      assert.equal(response.status, 503);
+    }
+  });
+});
+
 test("tutor endpoint returns service unavailable without configured AI", async () => {
   await withServer({ configured: false, generateTutorTurn: async () => ({}) }, async base => {
     const response = await fetch(base + "/api/tutor", {
