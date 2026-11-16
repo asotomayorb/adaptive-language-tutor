@@ -29,7 +29,9 @@ Configuración mediante variables de entorno del servidor:
 | `AI_BASE_URL` | URL base para proveedores compatibles; obligatoria para `openai-compatible` |
 | `PORT` | Puerto HTTP (predeterminado: 3000) |
 
-OpenAI es el proveedor inicial sugerido y `.env.example` propone `gpt-6-luna` como punto de partida de menor costo para sesiones frecuentes. Esta elección es configurable, no vinculante: cambiar `AI_PROVIDER`, `AI_MODEL` y, cuando corresponda, `AI_BASE_URL` permite utilizar Anthropic, Gemini u otro servicio compatible sin cambiar la lógica pedagógica. La clave debe configurarse solo en el entorno del servidor o en un archivo `.env` local ignorado por Git.
+Para la validación inicial sin introducir un método de pago, `.env.example` propone Google Gemini (`gemini-3.8-flash`), sujeto a la disponibilidad y cuota gratuita de la cuenta. La API de Gemini ya está integrada mediante `generateContent`. OpenAI sigue disponible como proveedor alternativo (`gpt-6-luna` en la configuración anterior); cambiar `AI_PROVIDER`, `AI_MODEL` y, cuando corresponda, `AI_BASE_URL` permite cambiar de proveedor sin modificar la lógica pedagógica. La clave debe configurarse solo en el entorno del servidor o en un archivo `.env` local ignorado por Git.
+
+**Privacidad del nivel gratuito:** Google indica que el contenido enviado mediante el nivel gratuito puede utilizarse para mejorar sus productos. Para esta etapa, probar solo con ejemplos ficticios y no introducir datos personales ni información sensible. Consulta las condiciones y cuotas vigentes en la [documentación oficial de precios](https://ai.google.dev/gemini-api/docs/pricing).
 
 ## Ejecutar localmente
 
