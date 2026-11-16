@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createSession, evaluateAnswer, recordAnswer, getDueReviews, buildSummary, applyLearnerUpdate } from "../src/core/pedagogy.js";
+import { createSession, evaluateAnswer, recordAnswer, getDueReviews, buildSummary, applyLearnerUpdate, recordTutorEvaluation } from "../src/core/pedagogy.js";
 
 const exercise = {
   id: "test-1",
@@ -67,4 +67,56 @@ test("empty AI level estimates do not erase a previous estimate", () => {
   const session = createSession({ level: "diagnostic", estimatedLevel: "A2" });
   assert.equal(applyLearnerUpdate(session, { estimatedLevel: null }), null);
   assert.equal(session.config.estimatedLevel, "A2");
+});
+
+
+test("AI not_applicable turns do not count as errors or reduce accuracy", () => {
+  const session = createSession({ language: "Portugués brasileño" });
+  recordTutorEvaluation(session, {
+    exerciseId: "ai-turn-1", prompt: "Conversa livre", submitted: "Tudo bem",
+    status: "not_applicable"
+  });
+  const summary = buildSummary(session);
+  assert.equal(session.turn, 1);
+  assert.equal(session.answers.length, 1);
+  assert.equal(session.attempted, 0);
+  assert.equal(session.errors.length, 0);
+  assert.equal(session.consecutiveErrors, 0);
+  assert.equal(summary.accuracy, 0);
+});
+
+test("AI not_applicable turns preserve the current correct streak", () => {
+  const session = createSession({ language: "Portugués brasileño" });
+  recordTutorEvaluation(session, {
+    exerciseId: "ai-turn-1", prompt: "Pergunta", submitted: "Olá",
+    expected: "Olá", status: "correct"
+  });
+  recordTutorEvaluation(session, {
+    exerciseId: "ai-turn-2", prompt: "Conversa livre", submitted: "Tudo bem",
+    status: "not_applicable"
+  });
+  assert.equal(session.streak, 1);
+  assert.equal(session.consecutiveCorrect, 1);
+  assert.equal(session.attempted, 1);
+  assert.equal(session.correct, 1);
+});
+
+test("AI partially correct and incorrect evaluations are counted and stored for review", () => {
+  const session = createSession({ language: "Portugués brasileño" });
+  recordTutorEvaluation(session, {
+    exerciseId: "ai-turn-1", prompt: "Pergunta", submitted: "Eu querer água",
+    expected: "Eu quero água", status: "partially_correct", feedback: "Conjugación",
+    skill: "Gramática"
+  });
+  recordTutorEvaluation(session, {
+    exerciseId: "ai-turn-2", prompt: "Pergunta", submitted: "Não sei",
+    expected: "Eu quero água", status: "incorrect", feedback: "Inténtalo de nuevo",
+    skill: "Producción"
+  });
+  assert.equal(session.attempted, 2);
+  assert.equal(session.correct, 0);
+  assert.equal(session.errors.length, 2);
+  assert.equal(session.errors[0].evaluationStatus, "partially_correct");
+  assert.equal(session.errors[1].evaluationStatus, "incorrect");
+  assert.equal(buildSummary(session).accuracy, 0);
 });
