@@ -89,9 +89,13 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Finalización: permite pasar al resumen cuando el tutor finaliza o se alcanza la duración.
 - [x] Persistencia: `finishSession()` guarda el resumen, vocabulario y errores en almacenamiento local.
 - [x] Repaso IA: los errores registrados por el flujo IA reciben un identificador `ai-turn-N`; `persistSession()` los convierte en tarjetas de repaso genéricas y la vista puede usar el prompt y la respuesta esperada guardados.
-- [ ] Revisar con pruebas que las tarjetas IA se creen correctamente, se muestren y se califiquen; la integración existe en el código, pero falta validación de extremo a extremo.
+- [x] Corregir colisiones de tarjetas IA: los identificadores `ai-turn-N` se repiten entre sesiones; ahora las claves incluyen marca temporal de sesión y turno.
+- [x] Evitar crear tarjetas IA no calificables cuando la actividad no incluye una respuesta esperada.
+- [x] Añadir pruebas de persistencia para ambos casos; ejecución pendiente de confirmación en CI.
+- [ ] Validar de extremo a extremo que las tarjetas IA se muestren y se califiquen correctamente.
 - [ ] Determinar si `learnerUpdate.errorsToReview` debe convertirse en datos de repaso estructurados. Actualmente el frontend no consume ese campo; el registro de intentos incorrectos sí alimenta tarjetas.
-- [ ] Revisar la calidad de las tarjetas IA cuando `expectedAnswer` esté vacío o la actividad sea conversación libre.
+- [x] Las actividades IA sin `expectedAnswer` ya no generan tarjetas de repaso que no puedan calificarse.
+- [ ] Evaluar una alternativa pedagógica para repasar conversaciones libres sin respuesta única.
 - [ ] Revisar el botón de pista: actualmente muestra la pista de la actividad en pantalla; no hace una nueva consulta al tutor para pedir una pista adaptada.
 - [ ] Verificar que el diagnóstico inicial sea coherente en el modo IA y que el nivel estimado se refleje correctamente.
 - [ ] Verificar que exportación y resumen incluyan de forma consistente los datos IA.
@@ -112,7 +116,8 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [ ] Revisar privacidad, logs y errores del proveedor.
 - [ ] Definir si se requiere CORS; actualmente la arquitectura está planteada para frontend y API en el mismo origen.
 - [x] Corregir inserción de contenido generado por IA en el repaso y el resumen: los textos variables de tarjetas, vocabulario, idioma y foco recomendado ahora se escapan antes de insertarse como HTML.
-- [x] Añadir pruebas unitarias para el helper de escape HTML, incluyendo etiquetas, comillas y valores no string. La prueba automatizada existe; su ejecución en CI sobre el commit actual todavía debe confirmarse.
+- [x] Añadir pruebas unitarias para el helper de escape HTML, incluyendo etiquetas, comillas y valores no string. La prueba existe; su ejecución en CI todavía debe confirmarse.
+- [x] Añadir pruebas de regresión para tarjetas IA duplicadas entre sesiones y actividades sin respuesta esperada. La ejecución todavía debe confirmarse.
 - [ ] Ejecutar revisión completa de rutas, estados y casos extremos.
 
 ### Observaciones de arquitectura
@@ -174,7 +179,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Próxima acción concreta
 
-Continuar la etapa 4: confirmar en CI la prueba de escape HTML, completar pruebas del flujo de sesión y repaso, revisar el manejo de pistas y diagnóstico, y corregir hallazgos.
+Continuar la etapa 4: conseguir confirmación de CI sobre el HEAD actual; completar pruebas del flujo de sesión y repaso IA; revisar pistas, diagnóstico, exportación y casos extremos.
 
 ## Criterio para declarar el proyecto listo para prueba humana
 
