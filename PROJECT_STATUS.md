@@ -11,9 +11,9 @@ Este documento es el registro detallado del proyecto. El README principal mantie
 
 | Etapa | Área | Estado |
 |---|---|---|
-| 1 | Base del repositorio y ejecución | Implementada; CI previo correcto |
+| 1 | Base del repositorio y ejecución | Implementada; CI correcto en el último commit validado |
 | 2 | Tutor IA, proveedores y pedagogía | Implementada en código; sin prueba de API real |
-| 3 | Pruebas automatizadas y CI | Implementadas; volver a confirmar en el último commit |
+| 3 | Pruebas automatizadas y CI | Implementadas; GitHub Actions #114 correcto |
 | 4 | Auditoría funcional y técnica | En curso |
 | 5 | Validación con proveedor IA real | Pendiente |
 | 6 | Prueba humana y ajustes de experiencia | Pendiente |
@@ -37,7 +37,7 @@ Este documento es el registro detallado del proyecto. El README principal mantie
 - [x] Modo local disponible sin credenciales IA.
 - [x] Pull request #2 abierto; no hacer merge hasta completar validaciones.
 
-**Verificación pendiente:** confirmar nuevamente CI sobre el commit más reciente de la rama. El registro previo de Actions mostró éxito de `npm run check` y `npm test`, pero esa ejecución no demuestra que los commits posteriores estén validados.
+**Verificación:** GitHub Actions #114 completó correctamente `npm run check` y `npm test` sobre el commit `1b8915beacf2e4636ed83a9ef69b3ca51fb3462f` de esta rama.
 
 ## Etapa 2 — Tutor IA, proveedores y pedagogía
 
@@ -64,7 +64,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Etapa 3 — Pruebas automatizadas y CI
 
-**Estado: implementada; actualización de CI pendiente de confirmación.**
+**Estado: implementada; CI confirmado en el último commit validado.**
 
 - [x] Pruebas de API y servidor.
 - [x] Pruebas de adaptadores y validación de respuestas.
@@ -72,8 +72,8 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Pruebas de lógica pedagógica local.
 - [x] Pruebas de persistencia y repaso espaciado.
 - [x] Workflow `.github/workflows/tests.yml` para Node 20.
-- [x] Una ejecución anterior de GitHub Actions completó con éxito `npm run check` y `npm test`.
-- [ ] Confirmar ejecución exitosa sobre el HEAD actual de la rama, después de los cambios de documentación y de cualquier corrección posterior.
+- [x] GitHub Actions #114 completó con éxito `npm run check` y `npm test` en el commit `1b8915beacf2e4636ed83a9ef69b3ca51fb3462f`.
+- [x] La prueba de escape HTML y las pruebas nuevas de persistencia IA quedaron incluidas en esa ejecución.
 
 ## Etapa 4 — Auditoría funcional y técnica
 
@@ -117,7 +117,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [ ] Definir si se requiere CORS; actualmente la arquitectura está planteada para frontend y API en el mismo origen.
 - [x] Corregir inserción de contenido generado por IA en el repaso y el resumen: los textos variables de tarjetas, vocabulario, idioma y foco recomendado ahora se escapan antes de insertarse como HTML.
 - [x] Añadir pruebas unitarias para el helper de escape HTML, incluyendo etiquetas, comillas y valores no string. La prueba existe; su ejecución en CI todavía debe confirmarse.
-- [x] Añadir pruebas de regresión para tarjetas IA duplicadas entre sesiones y actividades sin respuesta esperada. La ejecución todavía debe confirmarse.
+- [x] Añadir pruebas de regresión para tarjetas IA duplicadas entre sesiones y actividades sin respuesta esperada. La ejecución quedó completada correctamente en GitHub Actions #114.
 - [ ] Ejecutar revisión completa de rutas, estados y casos extremos.
 
 ### Observaciones de arquitectura
@@ -179,7 +179,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Próxima acción concreta
 
-Continuar la etapa 4: conseguir confirmación de CI sobre el HEAD actual; completar pruebas del flujo de sesión y repaso IA; revisar pistas, diagnóstico, exportación y casos extremos.
+Continuar la etapa 4: completar pruebas del flujo de sesión y repaso IA; revisar pistas, diagnóstico, exportación y casos extremos. CI está confirmado en el commit `1b8915beacf2e4636ed83a9ef69b3ca51fb3462f`.
 
 ## Criterio para declarar el proyecto listo para prueba humana
 
