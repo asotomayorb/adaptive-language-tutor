@@ -117,7 +117,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Límite global en memoria: 60 solicitudes por 10 minutos.
 - [x] Máximo de 2 solicitudes simultáneas por instancia.
 - [x] Rechazo de rutas estáticas fuera del directorio raíz cubierto por prueba.
-- [ ] Revisar el orden de aplicación de límites y validaciones; actualmente las solicitudes al endpoint consumen cupo antes de validar cuerpo y configuración.
+- [x] Reordenar el endpoint para validar JSON, mensaje y configuración antes de consumir cupo o concurrencia; añadir pruebas de regresión para solicitudes inválidas y proveedor no configurado.
 - [ ] Evaluar límites por IP/usuario y protección contra abuso antes de exposición pública.
 - [ ] Revisar límites de historial y tamaño total de contexto enviado al proveedor.
 - [ ] Completar revisión de sanitización y presentación de contenido generado por IA en todos los puntos de la interfaz; el repaso y resumen ya fueron corregidos y tienen prueba unitaria del helper.
