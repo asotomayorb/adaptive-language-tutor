@@ -2,6 +2,7 @@ import { buildTutorMessages, TUTOR_RESPONSE_SCHEMA } from "./prompts.js";
 
 const DEFAULT_BASE_URL = "https://api.openai.com/v1";
 const MAX_OUTPUT_TOKENS = 1200;
+const PROVIDER_TIMEOUT_MS = 30_000;
 
 function required(value, name) {
   if (!value) throw new Error("Missing required configuration: " + name);
@@ -156,14 +157,22 @@ export function createAIProvider(env = process.env, fetchImpl = fetch) {
         extractText = data => data.choices?.[0]?.message?.content;
       }
 
-      const response = await fetchImpl(url, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(body)
-      });
-      if (!response.ok) throw await readProviderError(response);
-      const data = await response.json();
-      return validateTutorResult(extractJson(extractText(data)));
+      try {
+        const response = await fetchImpl(url, {
+          method: "POST",
+          headers,
+          body: JSON.stringify(body),
+          signal: AbortSignal.timeout(PROVIDER_TIMEOUT_MS)
+        });
+        if (!response.ok) throw await readProviderError(response);
+        const data = await response.json();
+        return validateTutorResult(extractJson(extractText(data)));
+      } catch (error) {
+        if (error?.name === "TimeoutError" || error?.name === "AbortError") {
+          throw new Error("AI provider request timed out after 30 seconds.");
+        }
+        throw error;
+      }
     }
   };
 }
