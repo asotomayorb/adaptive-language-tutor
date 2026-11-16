@@ -154,7 +154,13 @@ async function startAITutorSession(config) {
     const result = await requestTutorTurn({
       task: "start_lesson",
       learner: getAILearnerContext(config),
-      session: { duration: config.duration, turn: 0, topic: config.topic },
+      session: {
+        duration: config.duration,
+        turn: 0,
+        topic: config.topic,
+        diagnostic: config.level === "diagnostic",
+        performance: { streak: 0, consecutiveCorrect: 0, consecutiveErrors: 0 }
+      },
       history: [],
       userMessage: "Inicia mi sesión de aprendizaje. Preséntame una primera actividad adecuada a mi nivel y tema, y conversa conmigo en español mientras practico el idioma objetivo."
     });
@@ -212,17 +218,34 @@ async function submitAITutorAnswer(answer) {
   if (submitButton) submitButton.disabled = true;
   if (answerInput) answerInput.disabled = true;
   try {
+    const conversationHistory = [
+      ...aiHistory,
+      { role: "assistant", content: JSON.stringify(aiLastResult) }
+    ];
     const result = await requestTutorTurn({
       task: "evaluate_and_continue",
       learner: getAILearnerContext(),
-      session: { duration: session.config.duration, turn: session.turn + 1, topic: session.config.topic },
-      history: aiHistory,
+      session: {
+        duration: session.config.duration,
+        turn: session.turn + 1,
+        topic: session.config.topic,
+        diagnostic: session.config.level === "diagnostic",
+        currentExercise: aiCurrentExercise,
+        performance: {
+          streak: session.streak,
+          consecutiveCorrect: session.consecutiveCorrect,
+          consecutiveErrors: session.consecutiveErrors,
+          recentErrors: session.errors.slice(-5),
+          vocabulary: session.vocabulary.slice(-20)
+        }
+      },
+      history: conversationHistory,
       userMessage: cleanAnswer
     });
-    aiHistory.push(
-      { role: "assistant", content: JSON.stringify(aiLastResult) },
+    aiHistory = [
+      ...conversationHistory,
       { role: "user", content: cleanAnswer }
-    );
+    ];
     const evaluation = result.evaluation || {};
     const correct = evaluation.status === "correct";
     const attempt = {
