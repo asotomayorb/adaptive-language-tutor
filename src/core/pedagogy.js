@@ -2,9 +2,24 @@ const normalize = (value = "") => String(value).normalize("NFD").replace(/[\u030
 
 export function applyLearnerUpdate(session, learnerUpdate) {
   const estimatedLevel = learnerUpdate?.estimatedLevel;
-  if (typeof estimatedLevel !== "string" || !estimatedLevel.trim()) return null;
-  session.config.estimatedLevel = estimatedLevel.trim().slice(0, 32);
-  return session.config.estimatedLevel;
+  if (typeof estimatedLevel === "string" && estimatedLevel.trim()) {
+    session.config.estimatedLevel = estimatedLevel.trim().slice(0, 32);
+  }
+
+  const patterns = Array.isArray(learnerUpdate?.errorsToReview)
+    ? learnerUpdate.errorsToReview
+        .filter(item => typeof item === "string")
+        .map(item => item.trim().slice(0, 160))
+        .filter(Boolean)
+    : [];
+  session.errorsToReview ||= [];
+  for (const pattern of patterns) {
+    if (!session.errorsToReview.some(item => item.toLocaleLowerCase() === pattern.toLocaleLowerCase())) {
+      session.errorsToReview.push(pattern);
+    }
+  }
+  session.errorsToReview = session.errorsToReview.slice(-8);
+  return session.config.estimatedLevel || null;
 }
 
 export function createSession(config) {
@@ -18,6 +33,7 @@ export function createSession(config) {
     consecutiveCorrect: 0,
     consecutiveErrors: 0,
     errors: [],
+    errorsToReview: [],
     vocabulary: [],
     reviewQueue: [],
     answers: []
@@ -89,7 +105,8 @@ export function buildSummary(session) {
     bestStreak: session.bestStreak,
     errors: session.errors,
     vocabulary: session.vocabulary,
-    recommendedFocus: [...new Set(session.errors.map(error => error.skill).filter(Boolean))]
+    recommendedFocus: [...new Set(session.errors.map(error => error.skill).filter(Boolean))],
+    reviewPatterns: [...new Set((session.errorsToReview || []).filter(Boolean))]
   };
 }
 
