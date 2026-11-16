@@ -1,8 +1,12 @@
 {
   "name": "adaptive-language-tutor",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
-  "scripts": { "test": "node --test" },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "node --test"
+  },
   "engines": { "node": ">=20" }
 }
