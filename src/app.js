@@ -255,11 +255,6 @@ async function submitAITutorAnswer(answer) {
       feedback: evaluation.feedback || "",
       skill: evaluation.skill || "Producción"
     });
-    for (const word of (result.learnerUpdate?.vocabulary || [])) {
-      if (word.term && !session.vocabulary.some(item => item.term === word.term)) {
-        session.vocabulary.push({ term: word.term, meaning: word.meaning || "", language: session.config.language });
-      }
-    }
     $("streak").textContent = session.streak;
     $("word-count").textContent = session.vocabulary.length;
     $("error-count").textContent = session.errors.length;
