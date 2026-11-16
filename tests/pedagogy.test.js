@@ -69,6 +69,37 @@ test("empty AI level estimates do not erase a previous estimate", () => {
   assert.equal(session.config.estimatedLevel, "A2");
 });
 
+test("AI review patterns are retained, deduplicated and bounded", () => {
+  const session = createSession({ level: "diagnostic" });
+  applyLearnerUpdate(session, {
+    errorsToReview: ["Conjugación en primera persona", "  Uso de preposiciones  "]
+  });
+  applyLearnerUpdate(session, {
+    errorsToReview: ["conjugación en primera persona", "Orden de palabras"]
+  });
+  assert.deepEqual(session.errorsToReview, [
+    "Conjugación en primera persona", "Uso de preposiciones", "Orden de palabras"
+  ]);
+  assert.deepEqual(buildSummary(session).reviewPatterns, session.errorsToReview);
+});
+
+test("empty AI review updates do not erase earlier patterns", () => {
+  const session = createSession({ level: "diagnostic" });
+  applyLearnerUpdate(session, { errorsToReview: ["Concordancia"] });
+  applyLearnerUpdate(session, { errorsToReview: [] });
+  assert.deepEqual(session.errorsToReview, ["Concordancia"]);
+});
+
+test("AI review patterns ignore invalid values and cap their length and count", () => {
+  const session = createSession({});
+  applyLearnerUpdate(session, {
+    errorsToReview: [null, 4, "x".repeat(200), ...Array.from({ length: 10 }, (_, i) => "Patrón " + i)]
+  });
+  assert.equal(session.errorsToReview.length, 8);
+  assert.equal(session.errorsToReview[0].length, 160);
+  assert.equal(session.errorsToReview.at(-1), "Patrón 9");
+});
+
 
 test("AI not_applicable turns do not count as errors or reduce accuracy", () => {
   const session = createSession({ language: "Portugués brasileño" });
