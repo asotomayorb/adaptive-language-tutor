@@ -1,4 +1,5 @@
 import { createSession, recordAnswer, evaluateAnswer, buildSummary, getAdaptation } from "./core/pedagogy.js";
+import { loadProgress, saveProgress, persistSession, getDueCards, gradeReview, getProgressStats } from "./core/storage.js";
 import { ptBR } from "./content/pt-BR.js";
 import { english } from "./content/en.js";
 
@@ -11,6 +12,74 @@ let diagnostic = null;
 let currentExercise = null;
 let reviewExercise = null;
 let reviewMode = false;
+let progress = loadProgress();
+let dueReviewCards = [];
+let reviewIndex = 0;
+
+function refreshDashboard() {
+  const languageId = catalogs[$("language").value]?.id;
+  const stats = getProgressStats(progress, languageId);
+  const due = getDueCards(progress, Date.now(), languageId);
+  $("progress-dashboard").innerHTML =
+    '<p class="eyebrow">TU PROGRESO GUARDADO</p>' +
+    '<div class="progress-summary"><span><strong>' + stats.sessions + '</strong> sesiones</span>' +
+    '<span><strong>' + stats.vocabulary + '</strong> palabras</span>' +
+    '<span><strong>' + stats.averageAccuracy + '%</strong> precisión media</span></div>' +
+    '<p class="muted">' + due.length + ' repasos pendientes para este idioma.</p>' +
+    (due.length ? '<button id="start-spaced-review" class="secondary" type="button">Iniciar repaso (' + due.length + ') →</button>' : '');
+  const reviewButton = $("start-spaced-review");
+  if (reviewButton) reviewButton.addEventListener("click", startSpacedReview);
+}
+$("language").addEventListener("change", refreshDashboard);
+refreshDashboard();
+
+function startSpacedReview() {
+  catalog = catalogs[$("language").value];
+  dueReviewCards = getDueCards(progress, Date.now(), catalog.id);
+  reviewIndex = 0;
+  if (!dueReviewCards.length) { refreshDashboard(); return; }
+  $("setup-panel").classList.add("hidden");
+  $("summary-panel").classList.add("hidden");
+  $("lesson-panel").classList.remove("hidden");
+  $("session-status").textContent = "Repaso programado";
+  reviewMode = true;
+  $("stats").hidden = true;
+  $("hint-btn").hidden = true;
+  $("review-btn").hidden = true;
+  renderSpacedReview();
+}
+
+function renderSpacedReview() {
+  if (reviewIndex >= dueReviewCards.length) {
+    $("lesson-panel").classList.add("hidden");
+    $("setup-panel").classList.remove("hidden");
+    $("session-status").textContent = "Repaso completado";
+    refreshDashboard();
+    return;
+  }
+  const card = dueReviewCards[reviewIndex];
+  const exercise = catalog.exercises.find(item => item.id === card.exerciseId);
+  const expected = exercise?.target || card.expected;
+  $("lesson-phase").textContent = "REPETICIÓN ESPACIADA";
+  $("turn-count").textContent = "Tarjeta " + (reviewIndex + 1) + " / " + dueReviewCards.length;
+  $("progress-bar").style.width = (reviewIndex / dueReviewCards.length * 100) + "%";
+  $("lesson-content").innerHTML = '<p class="eyebrow">REPASO PROGRAMADO</p><h3>' + (exercise?.prompt || card.prompt) + '</h3><p>Escribe la respuesta sin mirar la solución. Este repaso no consume turnos de práctica.</p>';
+  $("answer-area").innerHTML = '<input id="spaced-answer" class="answer-input" placeholder="Escribe tu respuesta…"><button id="check-spaced" class="primary" type="button">Comprobar respuesta</button>';
+  $("feedback").classList.add("hidden");
+  $("check-spaced").addEventListener("click", () => {
+    const answer = $("spaced-answer").value;
+    const checkExercise = exercise || { target: expected, acceptedAnswers: [] };
+    const correct = evaluateAnswer(answer, checkExercise);
+    const result = gradeReview(progress, card.key, correct);
+    saveProgress(progress);
+    const interval = result?.nextIntervalDays || 1;
+    showFeedback(correct
+      ? "Correcto. Próximo repaso en " + interval + " días."
+      : "Respuesta de referencia: " + expected + ". " + (exercise?.explanation || card.explanation) + " La tarjeta volverá mañana.", correct);
+    $("answer-area").innerHTML = '<button id="next-spaced" class="secondary" type="button">Siguiente →</button>';
+    $("next-spaced").addEventListener("click", () => { reviewIndex += 1; renderSpacedReview(); });
+  });
+}
 
 $("setup-form").addEventListener("submit", event => {
   event.preventDefault();
@@ -170,6 +239,9 @@ function finishSession() {
   $("summary-panel").classList.remove("hidden");
   $("session-status").textContent = "Sesión finalizada";
   const summary = buildSummary(session);
+  persistSession(progress, session, summary);
+  saveProgress(progress);
+  refreshDashboard();
   const diagnosticText = session.config.diagnosticScore === undefined ? "" : '<li>Diagnóstico inicial: ' + session.config.diagnosticScore + '/4 · nivel estimado ' + levelLabel(session.config.level) + '.</li>';
   const focus = summary.recommendedFocus.length ? summary.recommendedFocus.join(", ") : "Mantener la práctica y ampliar vocabulario.";
   $("summary-content").innerHTML = '<p class="intro">Completaste ' + summary.attempted + ' turnos de ' + session.config.language + '.</p><ul class="summary-list">' + diagnosticText + '<li>Respuestas correctas: ' + summary.correct + '/' + summary.attempted + ' (' + summary.accuracy + '%).</li><li>Mejor racha: ' + summary.bestStreak + '.</li><li>Vocabulario aprendido: ' + (summary.vocabulary.map(item => item.term + " (" + item.meaning + ")").join(", ") || "ninguno") + '.</li><li>Errores para reforzar: ' + summary.errors.length + '.</li><li>Próximo foco recomendado: ' + focus + '.</li></ul>';
@@ -179,6 +251,7 @@ $("new-session").addEventListener("click", () => {
   $("summary-panel").classList.add("hidden");
   $("setup-panel").classList.remove("hidden");
   $("session-status").textContent = "Nueva sesión";
+  refreshDashboard();
 });
 $("export-btn").addEventListener("click", () => {
   const data = { exportedAt:new Date().toISOString(), summary:buildSummary(session), config:session.config, answers:session.answers };
