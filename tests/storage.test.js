@@ -13,7 +13,8 @@ function memoryStorage() {
 const baseSession = () => ({
   config: { language: "Portugués brasileño", languageId: "pt-BR", estimatedLevel: "B1" },
   vocabulary: [{ term: "obrigado", meaning: "gracias" }],
-  errors: [{ exerciseId: "greeting-1", prompt: "Saluda", expected: "Olá", explanation: "Saludo básico", skill: "Saludos" }]
+  errors: [{ exerciseId: "greeting-1", prompt: "Saluda", expected: "Olá", explanation: "Saludo básico", skill: "Saludos" }],
+  errorsToReview: ["Conjugación en primera persona"]
 });
 
 test("progress persists and loads with a versioned schema", () => {
@@ -37,6 +38,7 @@ test("persisting a session records history, vocabulary and a review due tomorrow
   }, now);
   assert.equal(progress.sessions.length, 1);
   assert.equal(progress.sessions[0].estimatedLevel, "B1");
+  assert.deepEqual(progress.sessions[0].reviewPatterns, ["Conjugación en primera persona"]);
   assert.equal(progress.vocabulary[0].term, "obrigado");
   assert.equal(progress.reviewCards.length, 1);
   assert.equal(getDueCards(progress, now).length, 0);
