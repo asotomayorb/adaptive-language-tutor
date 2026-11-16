@@ -36,12 +36,12 @@ function fakeFetch(expectedUrl, expectedHeaders, responseData, inspectOptions = 
 
 test("OpenAI adapter uses strict structured outputs and server-side credentials", async () => {
   const provider = createAIProvider(
-    { AI_PROVIDER: "openai", AI_API_KEY: "server-secret", AI_MODEL: "gpt-6-luna" },
+    { AI_PROVIDER: "openai", AI_API_KEY: "server-secret", AI_MODEL: "test-model" },
     fakeFetch("https://api.openai.com/v1/chat/completions", { authorization: "Bearer server-secret" }, {
       choices: [{ message: { content: tutorJson } }]
     }, options => {
       const body = JSON.parse(options.body);
-      assert.equal(body.model, "gpt-6-luna");
+      assert.equal(body.model, "test-model");
       assert.equal(body.max_completion_tokens, 1200);
       assert.equal(body.response_format.type, "json_schema");
       assert.equal(body.response_format.json_schema.strict, true);
