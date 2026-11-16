@@ -85,6 +85,25 @@ export function createAppServer(aiProvider = provider) {
       });
     }
     if (request.method === "POST" && url.pathname === "/api/tutor") {
+      let input;
+      try {
+        input = await readJson(request);
+        if (!input || typeof input !== "object" || Array.isArray(input)) {
+          return send(response, 400, { error: "A JSON object is required." });
+        }
+        if (typeof input.userMessage !== "string" || !input.userMessage.trim()) {
+          return send(response, 400, { error: "userMessage is required." });
+        }
+        if (input.userMessage.length > 8000) {
+          return send(response, 413, { error: "userMessage is too long." });
+        }
+      } catch (error) {
+        return send(response, error.status || 400, { error: error.message || "Invalid request." });
+      }
+      if (!aiProvider.configured) {
+        return send(response, 503, { error: "AI provider is not configured on the server." });
+      }
+
       const now = Date.now();
       while (tutorRequestTimes.length && now - tutorRequestTimes[0] >= TUTOR_RATE_WINDOW_MS) {
         tutorRequestTimes.shift();
@@ -96,22 +115,10 @@ export function createAppServer(aiProvider = provider) {
       if (activeTutorRequests >= MAX_CONCURRENT_TUTOR_REQUESTS) {
         return send(response, 503, { error: "Tutor is busy. Please retry shortly." }, { "retry-after": "2" });
       }
+
       tutorRequestTimes.push(now);
       activeTutorRequests += 1;
       try {
-        const input = await readJson(request);
-        if (!input || typeof input !== "object" || Array.isArray(input)) {
-          return send(response, 400, { error: "A JSON object is required." });
-        }
-        if (typeof input.userMessage !== "string" || !input.userMessage.trim()) {
-          return send(response, 400, { error: "userMessage is required." });
-        }
-        if (input.userMessage.length > 8000) {
-          return send(response, 413, { error: "userMessage is too long." });
-        }
-        if (!aiProvider.configured) {
-          return send(response, 503, { error: "AI provider is not configured on the server." });
-        }
         const result = await aiProvider.generateTutorTurn(input);
         return send(response, 200, result);
       } catch (error) {
