@@ -11,7 +11,6 @@ export const ptBR = {
     { id:"pt-greet-02", level:"A2", topic:"daily", skill:"Conversación", prompt:"¿Cómo respondes “Muito prazer” (mucho gusto)?", target:"O prazer é meu", acceptedAnswers:["Prazer é meu"], term:"O prazer é meu", meaning:"El gusto es mío", options:["O prazer é meu","Até amanhã","Com licença"], hint:"La respuesta expresa que el placer también es tuyo.", explanation:"O prazer é meu es una respuesta natural a Muito prazer." },
     { id:"pt-travel-02", level:"A2", topic:"travel", skill:"Transporte", prompt:"Traduce: “Quiero comprar un billete.”", target:"Quero comprar uma passagem", acceptedAnswers:["Eu quero comprar uma passagem"], term:"passagem", meaning:"billete / pasaje", options:["Quero comprar uma passagem","Quero fechar a conta","Onde fica a praia"], hint:"Quero significa quiero; passagem es pasaje.", explanation:"Quero comprar uma passagem es una forma habitual de expresar esta necesidad." }
   ,
-    [
       {
         "id": "pt-daily-02",
         "level": "A1",
@@ -194,6 +193,5 @@ export const ptBR = {
         "hint": "Frente se refiere a la parte delantera.",
         "explanation": "Siga em frente es una instrucción habitual para continuar recto."
       }
-    ]
   ]
 };
