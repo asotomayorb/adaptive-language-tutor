@@ -132,7 +132,7 @@ function getAILearnerContext(config = session.config) {
     nativeLanguage: "es",
     targetLanguage: config.languageId,
     targetLanguageLabel: config.language,
-    level: config.level,
+    level: config.estimatedLevel || config.level,
     topic: config.topic,
     sessionDuration: config.duration
   };
@@ -164,9 +164,17 @@ async function startAITutorSession(config) {
       history: [],
       userMessage: "Inicia mi sesión de aprendizaje. Preséntame una primera actividad adecuada a mi nivel y tema, y conversa conmigo en español mientras practico el idioma objetivo."
     });
+    applyAILearnerUpdate(result);
     renderAITutorTurn(result);
   } catch (error) {
     showAITutorError(error, null);
+  }
+}
+
+function applyAILearnerUpdate(result) {
+  const estimatedLevel = result.learnerUpdate?.estimatedLevel;
+  if (typeof estimatedLevel === "string" && estimatedLevel.trim()) {
+    session.config.estimatedLevel = estimatedLevel.trim().slice(0, 32);
   }
 }
 
@@ -246,6 +254,7 @@ async function submitAITutorAnswer(answer) {
       ...conversationHistory,
       { role: "user", content: cleanAnswer }
     ];
+    applyAILearnerUpdate(result);
     const evaluation = result.evaluation || {};
     const correct = evaluation.status === "correct";
     const attempt = {
@@ -452,8 +461,11 @@ function finishSession() {
   saveProgress(progress);
   refreshDashboard();
   const diagnosticText = session.config.diagnosticScore === undefined ? "" : '<li>Diagnóstico inicial: ' + session.config.diagnosticScore + '/4 · nivel estimado ' + levelLabel(session.config.level) + '.</li>';
+  const aiLevelText = aiMode && session.config.estimatedLevel
+    ? '<li>Nivel estimado por el tutor IA: ' + escapeHTML(session.config.estimatedLevel) + '.</li>'
+    : "";
   const focus = summary.recommendedFocus.length ? summary.recommendedFocus.join(", ") : "Mantener la práctica y ampliar vocabulario.";
-  $("summary-content").innerHTML = '<p class="intro">Completaste ' + summary.attempted + ' turnos de ' + session.config.language + '.</p><ul class="summary-list">' + diagnosticText + '<li>Respuestas correctas: ' + summary.correct + '/' + summary.attempted + ' (' + summary.accuracy + '%).</li><li>Mejor racha: ' + summary.bestStreak + '.</li><li>Vocabulario aprendido: ' + (summary.vocabulary.map(item => item.term + " (" + item.meaning + ")").join(", ") || "ninguno") + '.</li><li>Errores para reforzar: ' + summary.errors.length + '.</li><li>Próximo foco recomendado: ' + focus + '.</li></ul>';
+  $("summary-content").innerHTML = '<p class="intro">Completaste ' + summary.attempted + ' turnos de ' + session.config.language + '.</p><ul class="summary-list">' + diagnosticText + aiLevelText + '<li>Respuestas correctas: ' + summary.correct + '/' + summary.attempted + ' (' + summary.accuracy + '%).</li><li>Mejor racha: ' + summary.bestStreak + '.</li><li>Vocabulario aprendido: ' + (summary.vocabulary.map(item => item.term + " (" + item.meaning + ")").join(", ") || "ninguno") + '.</li><li>Errores para reforzar: ' + summary.errors.length + '.</li><li>Próximo foco recomendado: ' + focus + '.</li></ul>';
 }
 
 $("new-session").addEventListener("click", () => {
