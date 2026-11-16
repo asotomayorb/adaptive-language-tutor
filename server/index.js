@@ -22,7 +22,7 @@ async function serveStatic(pathname, response) {
   let decoded;
   try { decoded = decodeURIComponent(pathname); }
   catch { return send(response, 400, { error: "Invalid URL path." }); }
-  const relative = decoded === "/" ? "index.html" : decoded.replace(/^\\/+/, "");
+  const relative = decoded === "/" ? "index.html" : (decoded.startsWith("/") ? decoded.slice(1) : decoded);
   const filePath = resolve(ROOT, relative);
   if (filePath !== ROOT && !filePath.startsWith(ROOT + sep)) {
     return send(response, 404, { error: "Not found." });
