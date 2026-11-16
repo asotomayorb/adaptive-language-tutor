@@ -33,7 +33,7 @@ No se selecciona un proveedor ni un modelo por defecto. Las credenciales deben c
 
 ## Ejecutar localmente
 
-Requiere Node.js 20 o superior.
+Requiere Node.js 20.6 o superior.
 
 1. Copiar `.env.example` a `.env`.
 2. Completar proveedor, clave y modelo en `.env`.
