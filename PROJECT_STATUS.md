@@ -111,6 +111,8 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [ ] Revisar sanitización y presentación de contenido generado por IA en todos los puntos de la interfaz.
 - [ ] Revisar privacidad, logs y errores del proveedor.
 - [ ] Definir si se requiere CORS; actualmente la arquitectura está planteada para frontend y API en el mismo origen.
+- [x] Corregir inserción de contenido generado por IA en el repaso y el resumen: los textos variables de tarjetas, vocabulario, idioma y foco recomendado ahora se escapan antes de insertarse como HTML.
+- [ ] Añadir pruebas automatizadas específicas para impedir regresiones XSS en el repaso y el resumen.
 - [ ] Ejecutar revisión completa de rutas, estados y casos extremos.
 
 ### Observaciones de arquitectura
@@ -172,7 +174,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Próxima acción concreta
 
-Continuar la etapa 4: completar pruebas del flujo de sesión IA y del repaso generado por errores, revisar el manejo de pistas y el diagnóstico, y corregir hallazgos. Después ejecutar `npm run check` y `npm test` en CI sobre el commit actualizado.
+Continuar la etapa 4: añadir pruebas de regresión para el escape de contenido IA, completar pruebas del flujo de sesión y repaso, revisar el manejo de pistas y diagnóstico, y corregir hallazgos. Después confirmar CI sobre el commit actualizado.
 
 ## Criterio para declarar el proyecto listo para prueba humana
 
