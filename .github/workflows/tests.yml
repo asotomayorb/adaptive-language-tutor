@@ -2,7 +2,7 @@ name: Tests
 
 on:
   push:
-    branches: [main, feature/openai-tutor-pedagogy]
+    branches: [main, feature/ai-tutor-pedagogy]
   pull_request:
     branches: [main]
 
