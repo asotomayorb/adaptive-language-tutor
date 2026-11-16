@@ -69,6 +69,35 @@ test("empty AI level estimates do not erase a previous estimate", () => {
   assert.equal(session.config.estimatedLevel, "A2");
 });
 
+test("AI vocabulary from the initial learner update is retained in the session", () => {
+  const session = createSession({ language: "Portugués brasileño" });
+  applyLearnerUpdate(session, {
+    vocabulary: [
+      { term: "saudade", meaning: "nostalgia" },
+      { term: "obrigado", meaning: "gracias" }
+    ]
+  });
+  assert.deepEqual(session.vocabulary, [
+    { term: "saudade", meaning: "nostalgia", language: "Portugués brasileño" },
+    { term: "obrigado", meaning: "gracias", language: "Portugués brasileño" }
+  ]);
+  assert.deepEqual(buildSummary(session).vocabulary, session.vocabulary);
+});
+
+test("AI vocabulary updates deduplicate terms and ignore invalid entries", () => {
+  const session = createSession({ language: "Inglés" });
+  applyLearnerUpdate(session, {
+    vocabulary: [{ term: "Travel", meaning: "viajar" }, { term: " ", meaning: "vacío" }, null]
+  });
+  applyLearnerUpdate(session, {
+    vocabulary: [{ term: " travel ", meaning: "desplazarse" }, { term: "Journey", meaning: "viaje" }]
+  });
+  assert.deepEqual(session.vocabulary, [
+    { term: "Travel", meaning: "viajar", language: "Inglés" },
+    { term: "Journey", meaning: "viaje", language: "Inglés" }
+  ]);
+});
+
 test("AI review patterns are retained, deduplicated and bounded", () => {
   const session = createSession({ level: "diagnostic" });
   applyLearnerUpdate(session, {
