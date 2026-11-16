@@ -1,3 +1,4 @@
+import "./load-env.js";
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { resolve, sep, extname } from "node:path";
@@ -104,7 +105,8 @@ export function createAppServer(aiProvider = provider) {
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   const port = Number(process.env.PORT || 3000);
-  createAppServer().listen(port, () => {
-    console.log(`Adaptive Language Tutor API listening on port ${port}`);
+  const host = "0.0.0.0";
+  createAppServer().listen(port, host, () => {
+    console.log(`Adaptive Language Tutor listening on http://${host}:${port}`);
   });
 }
