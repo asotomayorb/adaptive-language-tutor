@@ -78,6 +78,7 @@ test("AI not_applicable turns do not count as errors or reduce accuracy", () => 
   });
   const summary = buildSummary(session);
   assert.equal(session.turn, 1);
+  assert.equal(summary.turns, 1);
   assert.equal(session.answers.length, 1);
   assert.equal(session.attempted, 0);
   assert.equal(session.errors.length, 0);
