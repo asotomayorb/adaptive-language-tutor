@@ -93,7 +93,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Evitar crear tarjetas IA no calificables cuando la actividad no incluye una respuesta esperada.
 - [x] Añadir pruebas de persistencia para ambos casos; ejecución pendiente de confirmación en CI.
 - [ ] Validar de extremo a extremo que las tarjetas IA se muestren y se califiquen correctamente.
-- [ ] Determinar si `learnerUpdate.errorsToReview` debe convertirse en datos de repaso estructurados. Actualmente el frontend no consume ese campo; el registro de intentos incorrectos sí alimenta tarjetas.
+- [x] Integrar `learnerUpdate.errorsToReview` en el resumen y en el historial de sesiones; no se convierten en tarjetas de respuesta única porque describen patrones, no respuestas calificables.
 - [x] Las actividades IA sin `expectedAnswer` ya no generan tarjetas de repaso que no puedan calificarse.
 - [ ] Evaluar una alternativa pedagógica para repasar conversaciones libres sin respuesta única.
 - [ ] Revisar el botón de pista: actualmente muestra la pista de la actividad en pantalla; no hace una nueva consulta al tutor para pedir una pista adaptada.
@@ -185,7 +185,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Próxima acción concreta
 
-Continuar la etapa 4: completar pruebas del flujo de sesión y repaso IA; revisar diagnóstico, pistas, exportación y casos extremos. La integración de patrones de repaso IA está implementada; falta validar CI en el último commit y completar pruebas de navegador.
+Continuar la etapa 4: revisar diagnóstico, pistas, exportación y casos extremos; añadir pruebas de integración del cliente y del flujo IA. Los cambios recientes de patrones de repaso están en GitHub, pero aún no tienen una ejecución CI asociada confirmada.
 
 ## Criterio para declarar el proyecto listo para prueba humana
 
