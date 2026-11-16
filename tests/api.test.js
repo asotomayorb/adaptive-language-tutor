@@ -76,3 +76,48 @@ test("static server rejects path traversal", async () => {
     assert.equal(response.status, 404);
   });
 });
+
+
+test("tutor endpoint rate-limits requests and provides a retry delay", async () => {
+  await withServer({
+    configured: true,
+    provider: "test",
+    generateTutorTurn: async () => ({ message: "ok", exercise: null, evaluation: null, learnerUpdate: null, nextAction: "answer" })
+  }, async base => {
+    const sendRequest = () => fetch(base + "/api/tutor", {
+      method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ userMessage: "practice" })
+    });
+    for (let index = 0; index < 60; index += 1) {
+      const response = await sendRequest();
+      assert.equal(response.status, 200);
+    }
+    const limited = await sendRequest();
+    assert.equal(limited.status, 429);
+    assert.ok(Number(limited.headers.get("retry-after")) > 0);
+  });
+});
+
+test("tutor endpoint bounds concurrent provider requests", async () => {
+  let release;
+  const providerResponse = new Promise(resolve => { release = resolve; });
+  await withServer({
+    configured: true,
+    provider: "test",
+    generateTutorTurn: async () => providerResponse
+  }, async base => {
+    const sendRequest = () => fetch(base + "/api/tutor", {
+      method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ userMessage: "practice" })
+    });
+    const first = sendRequest();
+    const second = sendRequest();
+    await new Promise(resolve => setTimeout(resolve, 20));
+    const third = await sendRequest();
+    assert.equal(third.status, 503);
+    assert.equal(third.headers.get("retry-after"), "2");
+    release({ message: "ok", exercise: null, evaluation: null, learnerUpdate: null, nextAction: "answer" });
+    assert.equal((await first).status, 200);
+    assert.equal((await second).status, 200);
+  });
+});
