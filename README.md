@@ -43,7 +43,7 @@ Requiere Node.js 20 o superior.
 npm start
 ```
 
-El backend queda disponible en `http://localhost:3000`. Comprobación: `GET /api/health`.
+La aplicación web y el backend quedan disponibles en `http://localhost:3000`. El frontend detecta automáticamente si hay un proveedor configurado: si lo hay, usa el tutor IA; si no, conserva el modo local. Comprobación del backend: `GET /api/health`.
 
 ## Contrato de tutoría
 
