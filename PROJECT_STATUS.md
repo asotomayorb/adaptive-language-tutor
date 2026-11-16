@@ -77,7 +77,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Etapa 4 — Auditoría funcional y técnica
 
-**Estado: en curso.**
+**Estado: en curso; evaluación neutral de turnos IA corregida y validada por CI.**
 
 ### Flujo de sesión IA revisado parcialmente
 
@@ -97,6 +97,9 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Las actividades IA sin `expectedAnswer` ya no generan tarjetas de repaso que no puedan calificarse.
 - [ ] Evaluar una alternativa pedagógica para repasar conversaciones libres sin respuesta única.
 - [ ] Revisar el botón de pista: actualmente muestra la pista de la actividad en pantalla; no hace una nueva consulta al tutor para pedir una pista adaptada.
+- [x] Corregir evaluación `not_applicable`: los turnos conversacionales sin evaluación objetiva ya no cuentan como errores, no rompen rachas y no reducen la precisión.
+- [x] Separar el total de turnos de las respuestas evaluables en el resumen y exportación.
+- [x] Añadir pruebas para estados `correct`, `partially_correct`, `incorrect` y `not_applicable`; CI correcto en Actions #130.
 - [ ] Verificar que el diagnóstico inicial sea coherente en el modo IA y que el nivel estimado se refleje correctamente.
 - [ ] Verificar que exportación y resumen incluyan de forma consistente los datos IA.
 - [ ] Añadir o completar pruebas del cliente frontend y del flujo integral de sesión IA.
@@ -179,7 +182,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Próxima acción concreta
 
-Continuar la etapa 4: completar pruebas del flujo de sesión y repaso IA; revisar pistas, diagnóstico, exportación y casos extremos. CI está confirmado en el commit `1b8915beacf2e4636ed83a9ef69b3ca51fb3462f`.
+Continuar la etapa 4: completar pruebas del flujo de sesión y repaso IA; revisar diagnóstico, pistas, exportación y casos extremos. GitHub Actions #130 validó `npm run check` y `npm test` en el commit `1eb507e7e2a805f5cba7945102887db131cdb129`.
 
 ## Criterio para declarar el proyecto listo para prueba humana
 
