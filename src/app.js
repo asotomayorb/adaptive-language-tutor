@@ -1,4 +1,4 @@
-import { createSession, recordAnswer, evaluateAnswer, buildSummary, getAdaptation } from "./core/pedagogy.js";
+import { createSession, recordAnswer, evaluateAnswer, buildSummary, getAdaptation, applyLearnerUpdate } from "./core/pedagogy.js";
 import { loadProgress, saveProgress, persistSession, getDueCards, gradeReview, getProgressStats } from "./core/storage.js";
 import { ptBR } from "./content/pt-BR.js";
 import { english } from "./content/en.js";
@@ -164,17 +164,10 @@ async function startAITutorSession(config) {
       history: [],
       userMessage: "Inicia mi sesión de aprendizaje. Preséntame una primera actividad adecuada a mi nivel y tema, y conversa conmigo en español mientras practico el idioma objetivo."
     });
-    applyAILearnerUpdate(result);
+    applyLearnerUpdate(session, result.learnerUpdate);
     renderAITutorTurn(result);
   } catch (error) {
     showAITutorError(error, null);
-  }
-}
-
-function applyAILearnerUpdate(result) {
-  const estimatedLevel = result.learnerUpdate?.estimatedLevel;
-  if (typeof estimatedLevel === "string" && estimatedLevel.trim()) {
-    session.config.estimatedLevel = estimatedLevel.trim().slice(0, 32);
   }
 }
 
@@ -254,7 +247,7 @@ async function submitAITutorAnswer(answer) {
       ...conversationHistory,
       { role: "user", content: cleanAnswer }
     ];
-    applyAILearnerUpdate(result);
+    applyLearnerUpdate(session, result.learnerUpdate);
     const evaluation = result.evaluation || {};
     const correct = evaluation.status === "correct";
     const attempt = {
