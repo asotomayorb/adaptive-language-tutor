@@ -19,7 +19,9 @@ export function applyLearnerUpdate(session, learnerUpdate) {
     }
   }
   session.errorsToReview = session.errorsToReview.slice(-8);
-  return session.config.estimatedLevel || null;
+  return typeof estimatedLevel === "string" && estimatedLevel.trim()
+    ? session.config.estimatedLevel
+    : null;
 }
 
 export function createSession(config) {
