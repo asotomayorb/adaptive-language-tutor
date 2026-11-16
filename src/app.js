@@ -3,6 +3,7 @@ import { loadProgress, saveProgress, persistSession, getDueCards, gradeReview, g
 import { ptBR } from "./content/pt-BR.js";
 import { english } from "./content/en.js";
 import { checkTutorHealth, requestTutorTurn } from "./core/tutor-client.js";
+import { escapeHTML } from "./core/html.js";
 
 const $ = id => document.getElementById(id);
 const catalogs = { "Portugués brasileño": ptBR, "Inglés": english };
@@ -120,12 +121,6 @@ $("setup-form").addEventListener("submit", event => {
     else { session.config.level = config.level; renderLesson(); }
   }
 });
-
-function escapeHTML(value = "") {
-  return String(value).replace(/[&<>"']/g, char => ({
-    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
-  })[char]);
-}
 
 function getAILearnerContext(config = session.config) {
   return {
