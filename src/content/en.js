@@ -11,7 +11,6 @@ export const english = {
     { id:"en-greet-02", level:"A2", topic:"daily", skill:"Conversation", prompt:"¿Cómo respondes “Nice to meet you”?", target:"Nice to meet you too", acceptedAnswers:["You too"], term:"Nice to meet you too", meaning:"Igualmente / Encantado también", options:["Nice to meet you too","See you yesterday","Excuse me"], hint:"Añade too para expresar también.", explanation:"Nice to meet you too es una respuesta natural." },
     { id:"en-travel-02", level:"A2", topic:"travel", skill:"Transport", prompt:"Traduce: “Quiero comprar un billete.”", target:"I want to buy a ticket", acceptedAnswers:["I'd like to buy a ticket"], term:"ticket", meaning:"billete / entrada", options:["I want to buy a ticket","I want to pay the bill","Where is the beach"], hint:"Ticket significa billete o entrada.", explanation:"I want to buy a ticket expresa que quieres comprar un billete." }
   ,
-    [
       {
         "id": "en-daily-02",
         "level": "A1",
@@ -203,6 +202,5 @@ export const english = {
         "hint": "Straight ahead significa todo recto.",
         "explanation": "Go straight ahead es una instrucción habitual para continuar recto."
       }
-    ]
   ]
 };
