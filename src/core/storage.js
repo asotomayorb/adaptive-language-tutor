@@ -54,7 +54,12 @@ export function persistSession(progress, session, summary, now = Date.now()) {
   }
   for (const error of session.errors) {
     if (!error.exerciseId) continue;
-    const key = languageId + ":" + error.exerciseId;
+    const isAiCard = String(error.exerciseId).startsWith("ai-turn-");
+    // AI exercises are generated dynamically; turn numbers repeat across sessions.
+    // Include the session timestamp and turn so one session cannot overwrite another.
+    if (isAiCard && !String(error.expected || "").trim()) continue;
+    const key = languageId + ":" + error.exerciseId +
+      (isAiCard ? ":session-" + now + "-turn-" + error.turn : "");
     const existing = progress.reviewCards.find(card => card.key === key);
     const card = {
       key, exerciseId: error.exerciseId, language: session.config.language,
