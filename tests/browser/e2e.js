@@ -30,6 +30,21 @@ try {
   const page = await context.newPage();
   const pageErrors = [];
   page.on("pageerror", error => pageErrors.push(error.message));
+  await page.addInitScript(() => {
+    window.__spoken = [];
+    const synth = {
+      getVoices: () => [
+        { name: "Brazilian Portuguese", lang: "pt-BR" },
+        { name: "English", lang: "en-US" }
+      ],
+      speak: utterance => window.__spoken.push({ text: utterance.text, lang: utterance.lang, voice: utterance.voice?.name }),
+      cancel: () => {}
+    };
+    Object.defineProperty(window, "speechSynthesis", { configurable: true, value: synth });
+    window.SpeechSynthesisUtterance = class {
+      constructor(text) { this.text = text; this.lang = ""; this.voice = null; }
+    };
+  });
 
   await page.goto(baseUrl, { waitUntil: "networkidle" });
   assert.match(await page.title(), /Adaptive Language Tutor/);
@@ -38,6 +53,14 @@ try {
   await page.locator("#level").selectOption("diagnostic");
   await page.locator("#duration").selectOption("8");
   await page.locator("#start-session").click();
+  await page.locator("#answer-area [data-speak]").first().waitFor();
+  const firstSpeech = await page.evaluate(() => window.__spoken[0]);
+  assert.equal(firstSpeech.lang, "pt-BR", "automatic speech should use the selected target locale");
+  assert.equal(firstSpeech.voice, "Brazilian Portuguese", "speech should select the matching installed voice");
+  await page.locator("#answer-area [data-speak]").first().click();
+  assert.ok(await page.evaluate(() => window.__spoken.length >= 2), "manual pronunciation should be available per phrase");
+  await page.locator("#audio-toggle").click();
+  assert.equal(await page.locator("#audio-toggle").getAttribute("aria-pressed"), "false", "global audio toggle should disable automatic speech");
 
   // Complete the four-question diagnostic, then verify guided practice.
   for (let question = 0; question < 4; question += 1) {
