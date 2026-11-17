@@ -61,6 +61,27 @@ test("automatic speech respects saved preference but manual playback remains ava
   assert.equal(controller.speak("Hello", "en", { automatic: true }).spoken, true);
 });
 
+test("speech sequences preserve the locale of each fragment", () => {
+  const mock = speechMock([
+    { name: "Brazilian Portuguese", lang: "pt-BR" },
+    { name: "English US", lang: "en-US" }
+  ]);
+  const controller = createSpeechController({
+    synthesis: mock.api,
+    Utterance: MockUtterance,
+    storage: { getItem: () => null, setItem: () => {} }
+  });
+  const result = controller.speakSequence([
+    { text: "Bom dia", language: "pt", locale: "pt-BR" },
+    { text: "Good morning", language: "en", locale: "en-US" }
+  ], { automatic: true });
+  assert.equal(result.count, 2);
+  assert.deepEqual(mock.spoken.map(item => [item.text, item.lang, item.voice.name]), [
+    ["Bom dia", "pt-BR", "Brazilian Portuguese"],
+    ["Good morning", "en-US", "English US"]
+  ]);
+});
+
 test("disabling audio cancels current speech and unsupported browsers degrade safely", () => {
   const mock = speechMock();
   const controller = createSpeechController({
