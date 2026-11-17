@@ -73,6 +73,10 @@ test("Gemini adapter uses its native generateContent format", async () => {
       const body = JSON.parse(options.body);
       assert.equal(body.generationConfig.responseMimeType, "application/json");
       assert.equal(body.generationConfig.maxOutputTokens, 1200);
+      assert.equal(body.generationConfig.responseSchema.type, "OBJECT");
+      assert.deepEqual(body.generationConfig.responseSchema.properties.exercise.required,
+        ["type", "prompt", "expectedAnswer", "acceptedAnswers", "hint"]);
+      assert.equal(body.generationConfig.responseSchema.properties.exercise.nullable, true);
     })
   );
   assert.equal((await provider.generateTutorTurn({ userMessage: "Hello" })).message, "Vamos a practicar.");
