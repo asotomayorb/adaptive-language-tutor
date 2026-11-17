@@ -4,7 +4,7 @@ Aplicación web de aprendizaje de idiomas con tutor conversacional de IA y modo 
 
 ## Estado actual
 
-**Etapa 4 de 8: auditoría funcional y técnica en GitHub.** El smoke test real completó 3 turnos con Gemini 3.5 Flash-Lite y 5 fragmentos de voz `pt-BR`. Tests y Browser E2E están aprobados en el último commit validado. El TTS multilingüe tiene cobertura automatizada simulada para portugués brasileño y francés, pero falta validar voces en dispositivos reales y completar la auditoría funcional y de seguridad. No está listo para prueba humana ni despliegue público.
+**Etapa 4 de 8: auditoría funcional y técnica en GitHub.** Gemini 3.5 Flash-Lite completó sesiones reales de 3 turnos tanto en portugués brasileño (`pt-BR`) como en francés (`fr-FR`), con 4 fragmentos de pronunciación por idioma. Tests y Browser E2E están aprobados tras corregir una regresión de servidor. Se restringió el acceso a archivos públicos y se añadieron cabeceras de seguridad. Falta validar voces en dispositivos reales, completar la auditoría funcional y cerrar aspectos de seguridad antes de la prueba humana; no está listo para despliegue público.
 
 **Próximo paso:** completar la cobertura de audio en todas las vistas, probar navegadores/dispositivos reales y cerrar los hallazgos de auditoría. El detalle de etapas, verificaciones y pendientes está en [PROJECT_STATUS.md](PROJECT_STATUS.md).
 
