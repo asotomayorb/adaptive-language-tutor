@@ -227,3 +227,33 @@ No basta con que el workflow pase. Se requiere:
 6. Instrucciones de prueba humana preparadas.
 
 El merge y la reactivación de Replit se mantienen posteriores a esas validaciones.
+
+
+## Auditoría adicional de backend y seguridad — 17-11-2026
+
+**Alcance:** revisión estática de `server/index.js`, `server/provider.js`, `src/app.js`, `src/core/speech.js` y `tests/api.test.js`, contrastada con los workflows aprobados del commit `9e3fd6f`.
+
+### Controles confirmados en el código
+- [x] Los archivos estáticos se limitan a `index.html` y recursos `.js`/`.css` dentro de `src/`; archivos de entorno, backend, scripts, dependencias y tests no se sirven.
+- [x] La resolución de rutas valida que el archivo permanezca dentro de `src/`; existen pruebas para traversal codificado y rutas privadas.
+- [x] Las respuestas incluyen `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` y `Permissions-Policy`.
+- [x] El endpoint IA limita el cuerpo a 32 KB, el mensaje a 8.000 caracteres, las solicitudes a 60 por 10 minutos y la concurrencia a 2 por instancia.
+- [x] Las solicitudes inválidas y el proveedor sin configurar no consumen la cuota.
+- [x] La clave del proveedor se utiliza en backend; el frontend consulta únicamente el estado de configuración y el endpoint de tutor.
+- [x] Los textos dinámicos de la interfaz revisados pasan por escape HTML antes de insertarse como marcado.
+
+### Riesgos y limitaciones que siguen abiertos
+- [ ] El rate limit es global en memoria: un visitante puede agotar la cuota compartida; además se reinicia al reiniciar la instancia y no coordina varias instancias.
+- [ ] No hay autenticación ni cuotas por usuario/IP. No exponer públicamente antes de incorporar controles adecuados al hosting elegido.
+- [ ] El progreso y las sesiones permanecen en `localStorage`; no hay sincronización ni recuperación entre dispositivos. En dispositivos compartidos, los datos permanecen accesibles al perfil local del navegador.
+- [ ] Revisar la política de retención y el nivel de detalle de logs del proveedor. El backend registra proveedor/modelo, duración y mensaje de error del proveedor; no registra deliberadamente el texto del alumno, pero los errores upstream deben revisarse antes de producción.
+- [ ] El backend devuelve al cliente el mensaje del error del proveedor. Definir una respuesta pública normalizada y conservar el detalle técnico únicamente en logs controlados.
+- [ ] No se ha realizado una prueba de penetración ni una auditoría de despliegue; esta revisión de código no equivale a una certificación de seguridad.
+
+### Estado de audio y flujo funcional
+- [x] El controlador TTS cancela la locución anterior, respeta el control global y permite reproducción manual por fragmento.
+- [x] Los fragmentos de voz IA se filtran por locale objetivo en backend; las pistas adicionales no incrementan el contador de turnos y conservan la actividad.
+- [ ] Sigue pendiente la validación auditiva en dispositivos reales y la cobertura de lectura automática de todas las explicaciones y pistas.
+- [ ] Evaluar el comportamiento de reintentos cuando el servidor procesa una petición pero la respuesta se pierde: actualmente no existe idempotencia por identificador de turno, por lo que un reenvío puede repetir una llamada al proveedor.
+
+**Conclusión de auditoría:** no se detectó en esta revisión una ruta que permita servir archivos privados mediante el servidor estático. Los principales bloqueos restantes son de preparación para producción (identidad, cuotas compartidas, privacidad y observabilidad) y validación real de audio/calidad pedagógica. Mantener el PR sin merge y no desplegar públicamente.
