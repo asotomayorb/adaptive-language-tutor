@@ -77,6 +77,8 @@ let aiMode = false;
 let aiHistory = [];
 let aiLastResult = null;
 let aiCurrentExercise = null;
+let aiHintLevel = 0;
+let aiHintPending = false;
 let sessionFinished = false;
 
 function refreshDashboard() {
@@ -260,6 +262,10 @@ function renderAITutorTurn(result) {
   speech.stop();
   aiLastResult = result;
   aiCurrentExercise = result.exercise || {};
+  aiHintLevel = 0;
+  aiHintPending = false;
+  $("hint-btn").disabled = false;
+  $("hint-btn").textContent = "Pista";
   $("lesson-phase").textContent = "TUTOR IA · CONVERSACIÓN";
   $("turn-count").textContent = "Turno " + Math.min(session.turn + 1, session.config.duration) + " / " + session.config.duration;
   $("progress-bar").style.width = (session.turn / session.config.duration * 100) + "%";
@@ -367,6 +373,62 @@ async function submitAITutorAnswer(answer) {
     renderAITutorTurn(result);
   } catch (error) {
     showAITutorError(error, cleanAnswer);
+  }
+}
+
+async function requestAdaptiveHint() {
+  if (aiHintPending || !session || !aiLastResult) return;
+  const activeSession = session;
+  const activeExercise = aiCurrentExercise;
+  const button = $("hint-btn");
+  aiHintPending = true;
+  button.disabled = true;
+  button.textContent = "Generando pista…";
+  const history = [
+    ...aiHistory,
+    { role: "assistant", content: JSON.stringify(aiLastResult) }
+  ];
+  try {
+    const result = await requestTutorTurn({
+      task: "request_hint",
+      learner: getAILearnerContext(),
+      session: {
+        duration: session.config.duration,
+        turn: session.turn,
+        topic: session.config.topic,
+        currentExercise: aiCurrentExercise,
+        performance: {
+          streak: session.streak,
+          consecutiveCorrect: session.consecutiveCorrect,
+          consecutiveErrors: session.consecutiveErrors,
+          recentErrors: session.errors.slice(-5),
+          vocabulary: session.vocabulary.slice(-20)
+        }
+      },
+      history,
+      userMessage: "Dame una pista adicional, más específica que la anterior, para resolver la actividad actual. No reveles la respuesta ni cambies de actividad."
+    });
+    if (session !== activeSession || aiCurrentExercise !== activeExercise || !aiMode) return;
+    const hint = result.exercise?.hint;
+    if (typeof hint !== "string" || !hint.trim()) {
+      throw new Error("El tutor no generó una pista adicional.");
+    }
+    aiHintLevel += 1;
+    showFeedback("Pista adicional: " + hint.trim(), true);
+    const segments = (result.speechSegments || []).filter(item =>
+      item && typeof item.text === "string" && item.text.trim() &&
+      item.locale === (session.config.languageLocale || session.config.languageId)
+    );
+    speech.speakSequence(segments, { automatic: true });
+    button.textContent = "Pedir otra pista";
+  } catch (error) {
+    if (session === activeSession && aiCurrentExercise === activeExercise) {
+      showFeedback("No se pudo obtener otra pista. Puedes intentarlo nuevamente. " + (error.message || ""), false);
+      button.textContent = "Reintentar pista";
+    }
+  } finally {
+    aiHintPending = false;
+    if (session === activeSession && aiCurrentExercise === activeExercise && aiMode) button.disabled = false;
   }
 }
 
@@ -527,7 +589,13 @@ function showFeedback(message, positive) {
 
 $("hint-btn").addEventListener("click", () => {
   if (aiMode) {
-    if (aiCurrentExercise?.hint) showFeedback("Pista: " + aiCurrentExercise.hint, true);
+    if (aiHintLevel === 0 && aiCurrentExercise?.hint) {
+      aiHintLevel = 1;
+      showFeedback("Pista: " + aiCurrentExercise.hint, true);
+      $("hint-btn").textContent = "Pedir otra pista";
+      return;
+    }
+    requestAdaptiveHint();
     return;
   }
   if (!currentExercise) return;
