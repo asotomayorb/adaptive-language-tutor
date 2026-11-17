@@ -274,3 +274,13 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [ ] Prueba humana de portugués brasileño e inglés, incluyendo naturalidad, pronunciación, progresión pedagógica y recuperación ante fallos del proveedor.
 
 **Decisión:** los dos defectos específicos de audio corregidos están cubiertos y CI está verde. Esto no cierra la etapa 6 ni habilita merge, despliegue público o sincronización con Replit. Continuar con auditoría de cobertura de voz por vista y preparar la validación manual controlada.
+
+## Cobertura de audio en la primera pista IA — 17-11-2026
+
+- [x] La primera pista IA ahora reproduce automáticamente los fragmentos del idioma objetivo que están presentes en los `speechSegments` del turno y que coinciden con el texto de la pista.
+- [x] Se conserva el filtro por locale; no se envía a TTS el texto auxiliar en español.
+- [x] Browser E2E comprueba la reproducción automática de un fragmento francés (`fr-FR`) al solicitar la primera pista.
+- [x] CI del commit de código `536c389bb3e78c3532a740fb9ed8fb95929800c9`: Tests run `44200969722` y Browser E2E run `44200969555` aprobados.
+- [x] `HUMAN_TEST_PLAN.md` ampliado para incluir primera pista IA, reactivación de audio en resumen y fallback de voz genérica por idioma.
+
+**Alcance:** esta corrección solo pronuncia los segmentos objetivos que el proveedor ya entrega y que aparecen en la pista. No sintetiza ni traduce automáticamente texto libre en español. La auditoría de todas las variantes de pistas/explicaciones y la validación auditiva real siguen pendientes.
