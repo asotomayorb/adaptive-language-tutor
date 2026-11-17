@@ -98,6 +98,16 @@ function contractError(message) {
   return error;
 }
 
+function enforceSessionDuration(result, input) {
+  const turn = Number(input?.session?.turn);
+  const duration = Number(input?.session?.duration);
+  if (input?.task === "evaluate_and_continue" && Number.isFinite(turn) && Number.isFinite(duration) &&
+      turn < duration && (result.nextAction === "finish" || result.exercise === null)) {
+    throw contractError("The tutor attempted to finish before the configured session duration.");
+  }
+  return result;
+}
+
 function validateTutorResult(result) {
   const statuses = ["correct", "partially_correct", "incorrect", "not_applicable"];
   const actions = ["answer", "continue", "review", "finish"];
@@ -243,7 +253,8 @@ export function createAIProvider(env = process.env, fetchImpl = fetch) {
         });
         if (!response.ok) throw await readProviderError(response);
         const data = await response.json();
-        return validateTutorResult(extractJson(extractText(data)));
+        const result = validateTutorResult(extractJson(extractText(data)));
+        return enforceSessionDuration(result, input);
       } catch (error) {
         console.error("[ai-provider] request failed", JSON.stringify({ provider, model, elapsedMs: Date.now() - requestStartedAt, errorName: error?.name || "Error", error: error?.message || String(error) }));
         if (error?.name === "TimeoutError" || error?.name === "AbortError") {
