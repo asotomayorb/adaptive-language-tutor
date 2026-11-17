@@ -230,7 +230,34 @@ try {
   assert.deepEqual(aiPageErrors, [], "AI-mode browser should not report uncaught page errors");
   await aiContext.close();
 
-  console.log("Browser E2E passed: local and mocked-AI flows, retries, hints, summary, persistence, export and restart.");
+  const mobileContext = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    isMobile: true,
+    hasTouch: true
+  });
+  await mobileContext.addInitScript(() => {
+    const synth = { getVoices: () => [{ name: "Portuguese", lang: "pt-BR" }], speak: () => {}, cancel: () => {} };
+    Object.defineProperty(window, "speechSynthesis", { configurable: true, value: synth });
+    window.SpeechSynthesisUtterance = class { constructor(text) { this.text = text; this.lang = ""; this.voice = null; } };
+  });
+  const mobilePage = await mobileContext.newPage();
+  const mobileErrors = [];
+  mobilePage.on("pageerror", error => mobileErrors.push(error.message));
+  await mobilePage.goto(baseUrl, { waitUntil: "networkidle" });
+  await mobilePage.waitForFunction(() => {
+    const button = document.querySelector("#start-session");
+    return button && !button.disabled;
+  }, null, { timeout: 10_000 });
+  const setupWidth = await mobilePage.evaluate(() => ({ viewport: innerWidth, document: document.documentElement.scrollWidth }));
+  assert.ok(setupWidth.document <= setupWidth.viewport, "mobile setup should not overflow horizontally");
+  await mobilePage.locator("#start-session").click();
+  await mobilePage.locator("#lesson-content h3").waitFor({ state: "visible" });
+  const lessonWidth = await mobilePage.evaluate(() => ({ viewport: innerWidth, document: document.documentElement.scrollWidth }));
+  assert.ok(lessonWidth.document <= lessonWidth.viewport, "mobile lesson should not overflow horizontally");
+  assert.equal(mobileErrors.length, 0, "mobile layout should not produce JavaScript errors");
+  await mobileContext.close();
+
+  console.log("Browser E2E passed: local and mocked-AI flows, retries, hints, summary, persistence, export, restart and 390px mobile layout.");
 } finally {
   if (browser) await browser.close();
   server.kill("SIGTERM");
