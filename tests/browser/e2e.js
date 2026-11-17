@@ -99,7 +99,7 @@ try {
   await aiPage.addInitScript(() => {
     window.__spoken = [];
     const synth = {
-      getVoices: () => [{ name: "Brazilian Portuguese", lang: "pt-BR" }],
+      getVoices: () => [{ name: "French", lang: "fr-FR" }],
       speak: utterance => window.__spoken.push({ text: utterance.text, lang: utterance.lang, voice: utterance.voice?.name }),
       cancel: () => {}
     };
@@ -127,10 +127,10 @@ try {
         contentType: "application/json",
         body: JSON.stringify({
           message: "Vamos praticar uma situação cotidiana.",
-          exercise: { type: "production", prompt: "Como você se chama?", expectedAnswer: "Eu me chamo Ana.", acceptedAnswers: ["Eu me chamo Ana."], hint: "Comece com: Eu me chamo..." },
+          exercise: { type: "production", prompt: "Comment tu t’appelles ?", expectedAnswer: "Je m’appelle Ana.", acceptedAnswers: ["Je m’appelle Ana."], hint: "Usa la expresión Je m’appelle..." },
           evaluation: null,
-          learnerUpdate: { estimatedLevel: "A1", vocabulary: [{ term: "chamar", meaning: "llamar" }], errorsToReview: [] },
-          speechSegments: [{ text: "Como você se chama?", language: "pt", locale: "pt-BR" }],
+          learnerUpdate: { estimatedLevel: "A1", vocabulary: [{ term: "s’appeler", meaning: "llamarse" }], errorsToReview: [] },
+          speechSegments: [{ text: "Comment tu t’appelles ?", language: "fr", locale: "fr-FR" }],
           nextAction: "answer"
         })
       });
@@ -143,22 +143,26 @@ try {
       status: 200,
       contentType: "application/json",
       body: JSON.stringify({
-        message: "Muito bem. Terminamos esta prática.",
+        message: "Très bien. Terminamos esta práctica.",
         exercise: null,
-        evaluation: { status: "partially_correct", feedback: "La idea se entiende, pero revisa la conjugación.", correction: "Eu me chamo Ana.", skill: "Producción" },
+        evaluation: { status: "partially_correct", feedback: "La idea se entiende, pero revisa la conjugación.", correction: "Je m’appelle Ana.", skill: "Producción" },
         learnerUpdate: { estimatedLevel: "A1", vocabulary: [], errorsToReview: [] },
-        speechSegments: [{ text: "Eu me chamo Ana.", language: "pt", locale: "pt-BR" }],
+        speechSegments: [{ text: "Je m’appelle Ana.", language: "fr", locale: "fr-FR" }],
         nextAction: "finish"
       })
     });
   });
 
   await aiPage.goto(baseUrl, { waitUntil: "networkidle" });
+  await aiPage.locator("#language").selectOption("other");
+  await aiPage.locator("#custom-language-name").fill("Francés");
+  await aiPage.locator("#custom-language-locale").fill("fr-FR");
   await aiPage.locator("#duration").selectOption("8");
   await aiPage.locator("#start-session").click();
   await aiPage.getByRole("button", { name: "Reintentar sesión" }).click();
-  await aiPage.locator("#lesson-content").getByText("Como você se chama?").waitFor();
-  assert.equal(await aiPage.evaluate(() => window.__spoken[0]?.lang), "pt-BR", "AI speech segments should use their explicit target locale");
+  await aiPage.locator("#lesson-content").getByText("Comment tu t’appelles ?").waitFor();
+  assert.equal(await aiPage.evaluate(() => window.__spoken[0]?.lang), "fr-FR", "custom AI language should use its explicit target locale");
+  assert.equal(await aiPage.evaluate(() => window.__spoken[0]?.voice), "French", "custom AI locale should select the matching system voice");
   await aiPage.locator("#lesson-content [data-speak]").first().click();
   assert.ok(await aiPage.evaluate(() => window.__spoken.length >= 2), "AI fragments should offer manual playback");
   await aiPage.locator("#hint-btn").click();
@@ -173,7 +177,7 @@ try {
   );
   assert.equal(aiStored.sessions?.length, 1, "mock AI session should persist once");
   assert.equal(aiStored.reviewCards?.length, 1, "an evaluated AI error with an expected answer should create one review card");
-  assert.equal(aiStored.reviewCards[0].expected, "Eu me chamo Ana.");
+  assert.equal(aiStored.reviewCards[0].expected, "Je m’appelle Ana.");
 
   // Make the AI review card due and verify that the real spaced-review UI grades it.
   await aiPage.evaluate(() => {
@@ -184,7 +188,7 @@ try {
   });
   await aiPage.reload({ waitUntil: "networkidle" });
   await aiPage.getByRole("button", { name: /Iniciar repaso/ }).click();
-  await aiPage.locator("#spaced-answer").fill("Eu me chamo Ana.");
+  await aiPage.locator("#spaced-answer").fill("Je m’appelle Ana.");
   await aiPage.locator("#check-spaced").click();
   await aiPage.getByRole("button", { name: "Siguiente →" }).click();
   const reviewed = await aiPage.evaluate(() => JSON.parse(localStorage.getItem("adaptive-language-tutor.progress")));
