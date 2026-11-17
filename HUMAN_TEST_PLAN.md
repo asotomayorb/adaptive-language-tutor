@@ -43,7 +43,9 @@ Realizar estas comprobaciones en un navegador de escritorio y en un teléfono re
 - [ ] El audio automático comienza tras una acción explícita del usuario.
 - [ ] El control global activa y desactiva la lectura; el estado se conserva al recargar.
 - [ ] Desactivar el audio cancela la locución en curso.
-- [ ] Reactivar el audio lee los fragmentos visibles del idioma objetivo.
+- [ ] Reactivar el audio lee los fragmentos visibles del idioma objetivo, también en el panel de resumen.
+- [ ] La primera pista IA pronuncia automáticamente los fragmentos del idioma objetivo incluidos en la pista; la pista adicional también los reproduce.
+- [ ] Si solo existe una voz genérica del idioma (por ejemplo, `pt` sin variante regional), comprobar que se utiliza como fallback antes de recurrir a la voz predeterminada.
 - [ ] Los fragmentos de portugués usan `pt-BR`; los de francés usan `fr-FR`.
 - [ ] Los botones individuales reproducen solo su fragmento y permiten repetirlo.
 - [ ] El vocabulario del resumen se lee en el idioma objetivo y puede repetirse manualmente.
