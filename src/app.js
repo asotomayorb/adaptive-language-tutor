@@ -361,6 +361,10 @@ function showAITutorError(error, previousAnswer) {
     ? '<button id="retry-ai" class="primary" type="button">Reintentar envío</button>'
     : '<button id="retry-ai" class="primary" type="button">Reintentar sesión</button>';
   $("retry-ai").addEventListener("click", () => {
+    const retryButton = $("retry-ai");
+    if (retryButton.disabled) return;
+    retryButton.disabled = true;
+    retryButton.textContent = "Reintentando…";
     if (previousAnswer) submitAITutorAnswer(previousAnswer);
     else startAITutorSession(session.config);
   });
