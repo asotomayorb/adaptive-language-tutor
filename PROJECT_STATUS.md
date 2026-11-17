@@ -1,6 +1,6 @@
 # Registro de estado del proyecto — Adaptive Language Tutor
 
-**Última actualización:** 16-11-2026  
+**Última actualización:** 17-11-2026  
 **Rama:** `feature/ai-tutor-pedagogy`  
 **Pull request:** [#2 – Improve adaptive tutor pedagogy and AI integration](https://github.com/asotomayorb/adaptive-language-tutor/pull/2)  
 **Estado global:** código funcional en desarrollo; pendiente de validación integral y de producto. No desplegar públicamente todavía.
@@ -79,7 +79,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Etapa 4 — Auditoría funcional y técnica
 
-**Estado: en curso; evaluación neutral de turnos IA corregida y validada por CI.**
+**Estado: en curso; se añadió una prueba de integración del ciclo IA. Pendiente su ejecución CI y la automatización real de navegador.**
 
 ### Flujo de sesión IA revisado parcialmente
 
@@ -109,7 +109,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Añadir pruebas unitarias para acumulación, deduplicación, límites y persistencia de patrones IA.
 - [ ] Verificar que exportación y resumen incluyan de forma consistente todos los datos IA con una sesión real.
 - [x] Añadir pruebas del cliente frontend para health check, envío de turnos, errores HTTP y respuestas no JSON.
-- [ ] Añadir pruebas del flujo integral de sesión IA y de la interacción DOM.
+- [x] Añadir prueba de integración del ciclo IA en `tests/ai-session-flow.test.js`: actualizaciones del alumno, deduplicación de vocabulario/patrones, turnos `not_applicable`, evaluación, resumen, persistencia y tarjeta de repaso. Ejecución CI pendiente.\n- [ ] Añadir pruebas de interacción DOM/navegador y del flujo completo de interfaz; la prueba de integración anterior cubre el núcleo, no sustituye E2E.
 
 ### Backend y seguridad revisados parcialmente
 
