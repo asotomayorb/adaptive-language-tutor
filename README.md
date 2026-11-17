@@ -28,7 +28,7 @@ Requiere Node.js 20.6 o superior. Copiar `.env.example` a `.env`, configurar `AI
 npm start
 ```
 
-La aplicación queda en `http://localhost:3000`. Desarrollo: `npm run dev`. Validación: `npm run check` y `npm test`.
+La aplicación queda en `http://localhost:3000`. Desarrollo: `npm run dev`. Validación: `npm run check` y `npm test`. Para una sesión real de diagnóstico del proveedor, inicia el servidor con las variables privadas configuradas y ejecuta `npm run test:provider-live` en otra terminal. El smoke test realiza una sesión corta de tres turnos y no imprime respuestas ni credenciales.
 
 Nunca subir claves API al repositorio. Para pruebas iniciales con proveedores externos, usar datos ficticios.
 
