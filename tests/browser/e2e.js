@@ -167,7 +167,7 @@ try {
           exercise: { type: "production", prompt: "Comment tu t’appelles ?", expectedAnswer: "Je m’appelle Ana.", acceptedAnswers: ["Je m’appelle Ana."], hint: "Piensa en el verbo que expresa tu nombre." },
           evaluation: null,
           learnerUpdate: null,
-          speechSegments: [],
+          speechSegments: [{ text: "s’appeler", language: "fr", locale: "fr-FR" }],
           nextAction: "answer"
         })
       });
@@ -210,6 +210,10 @@ try {
   await aiPage.locator("#feedback").getByText(/verbo que expresa tu nombre/).waitFor();
   assert.equal(await aiPage.locator("#turn-count").innerText(), turnBeforeExtraHint, "an additional hint must not advance the session");
   assert.equal(hintCalls, 1, "a second hint should call the AI tutor once");
+  const hintSpeaker = aiPage.locator("#feedback [data-speak]").first();
+  await hintSpeaker.waitFor();
+  await hintSpeaker.click();
+  assert.ok(await aiPage.evaluate(() => window.__spoken.some(item => item.text === "s’appeler" && item.lang === "fr-FR")), "additional hint fragments should support manual pronunciation");
   await aiPage.locator("#ai-answer").fill("Je m’appelle Ana.");
   await aiPage.locator("#submit-ai-answer").click();
   await aiPage.getByRole("button", { name: "Reintentar envío" }).click();
