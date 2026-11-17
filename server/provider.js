@@ -157,6 +157,7 @@ export function createAIProvider(env = process.env, fetchImpl = fetch) {
         extractText = data => data.choices?.[0]?.message?.content;
       }
 
+      const requestStartedAt = Date.now();
       try {
         const response = await fetchImpl(url, {
           method: "POST",
@@ -168,6 +169,7 @@ export function createAIProvider(env = process.env, fetchImpl = fetch) {
         const data = await response.json();
         return validateTutorResult(extractJson(extractText(data)));
       } catch (error) {
+        console.error("[ai-provider] request failed", JSON.stringify({ provider, model, elapsedMs: Date.now() - requestStartedAt, errorName: error?.name || "Error", error: error?.message || String(error) }));
         if (error?.name === "TimeoutError" || error?.name === "AbortError") {
           throw new Error("AI provider request timed out after 45 seconds.");
         }
