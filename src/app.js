@@ -30,6 +30,7 @@ document.getElementById("audio-toggle")?.addEventListener("click", () => {
   const enabled = speech.setEnabled(!speech.enabled);
   if (enabled) {
     const visibleSegments = [...document.querySelectorAll("#lesson-content [data-speak], #answer-area [data-speak], #feedback [data-speak], #summary-content [data-speak]")]
+      .filter(button => !button.closest(".hidden") && button.getClientRects().length > 0)
       .map(button => ({ text: button.dataset.speak, locale: button.dataset.locale }));
     speech.speakSequence(visibleSegments, { automatic: true });
   }
