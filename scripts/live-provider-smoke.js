@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 
 const baseUrl = (process.env.TUTOR_BASE_URL || "http://127.0.0.1:3000").replace(/\/+$/, "");
 const startedAt = Date.now();
+const targetLocale = process.env.TUTOR_SMOKE_LOCALE || "pt-BR";
+const targetLanguageLabel = process.env.TUTOR_SMOKE_LANGUAGE_LABEL || targetLocale;
+const targetLanguageCode = targetLocale.split("-")[0].toLowerCase();
 
 async function request(path, options) {
   const maxAttempts = 6;
@@ -35,7 +38,8 @@ function validateTurn(result, label) {
     assert.equal(typeof segment.text, "string", label + ": speech segment text must be valid");
     assert.equal(typeof segment.language, "string", label + ": speech segment language must be valid");
     assert.equal(typeof segment.locale, "string", label + ": speech segment locale must be valid");
-    assert.equal(segment.locale, "pt-BR", label + ": speech segment must use the requested Brazilian Portuguese locale");
+    assert.equal(segment.language.toLowerCase(), targetLanguageCode, label + ": speech segment must use the requested target language");
+    assert.equal(segment.locale, targetLocale, label + ": speech segment must use the requested target locale");
   }
 }
 
@@ -45,9 +49,9 @@ assert.equal(health.ai?.configured, true, "AI provider must be configured before
 
 const learner = {
   nativeLanguage: "es",
-  targetLanguage: "pt-BR",
-  targetLanguageLabel: "Portugués brasileño",
-  targetLanguageLocale: "pt-BR",
+  targetLanguage: targetLocale,
+  targetLanguageLabel,
+  targetLanguageLocale: targetLocale,
   level: "basic",
   topic: "daily",
   sessionDuration: 3
@@ -60,7 +64,7 @@ let result = await request("/api/tutor", {
   headers: { "content-type": "application/json" },
   body: JSON.stringify({
     task: "start_lesson", learner, session, history,
-    userMessage: "Inicia una breve sesión de práctica de portugués brasileño para situaciones cotidianas."
+    userMessage: "Inicia una breve sesión de práctica de " + targetLanguageLabel + " para situaciones cotidianas."
   })
 });
 validateTurn(result, "start_lesson");
@@ -71,7 +75,7 @@ let evaluationCount = 0;
 let speechSegmentCount = result.speechSegments.length;
 
 for (let turn = 1; turn <= session.duration; turn += 1) {
-  const answer = exercise.expectedAnswer || exercise.acceptedAnswers?.[0] || "Eu gostaria de praticar português.";
+  const answer = exercise.expectedAnswer || exercise.acceptedAnswers?.[0] || (targetLanguageCode === "fr" ? "Bonjour, je voudrais pratiquer." : targetLanguageCode === "pt" ? "Eu gostaria de praticar português." : "Hello, I would like to practice.");
   history.push({ role: "assistant", content: JSON.stringify(result) });
   const next = await request("/api/tutor", {
     method: "POST",
