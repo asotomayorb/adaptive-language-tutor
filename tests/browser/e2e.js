@@ -160,7 +160,7 @@ try {
   await aiPage.locator("#duration").selectOption("8");
   await aiPage.locator("#start-session").click();
   await aiPage.getByRole("button", { name: "Reintentar sesión" }).click();
-  await aiPage.locator("#lesson-content").getByText("Comment tu t’appelles ?").waitFor();
+  await aiPage.locator("#lesson-content").getByRole("heading", { name: "Comment tu t’appelles ?" }).waitFor();
   assert.equal(await aiPage.evaluate(() => window.__spoken[0]?.lang), "fr-FR", "custom AI language should use its explicit target locale");
   assert.equal(await aiPage.evaluate(() => window.__spoken[0]?.voice), "French", "custom AI locale should select the matching system voice");
   await aiPage.locator("#lesson-content [data-speak]").first().click();
