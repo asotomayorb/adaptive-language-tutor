@@ -210,7 +210,7 @@ try {
   await aiPage.evaluate(() => {
     const key = "adaptive-language-tutor.progress";
     const progress = JSON.parse(localStorage.getItem(key));
-    progress.reviewCards[0].dueAt = new Date(Date.now() - 1000).toISOString();
+    progress.reviewCards.forEach(card => { card.dueAt = new Date(Date.now() - 1000).toISOString(); });
     localStorage.setItem(key, JSON.stringify(progress));
   });
   await aiPage.reload({ waitUntil: "networkidle" });
