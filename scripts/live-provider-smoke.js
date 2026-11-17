@@ -4,12 +4,25 @@ const baseUrl = (process.env.TUTOR_BASE_URL || "http://127.0.0.1:3000").replace(
 const startedAt = Date.now();
 
 async function request(path, options) {
-  const response = await fetch(baseUrl + path, options);
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    throw new Error(path + " failed (" + response.status + "): " + (payload.error || "unexpected response"));
+  const maxAttempts = 4;
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    const response = await fetch(baseUrl + path, options);
+    const payload = await response.json().catch(() => ({}));
+    if (response.ok) return payload;
+
+    const message = payload.error || "unexpected response";
+    const transient = [429, 500, 502, 503, 504].includes(response.status);
+    if (!transient || attempt === maxAttempts) {
+      throw new Error(path + " failed (" + response.status + "): " + message);
+    }
+
+    const retryAfter = Number(response.headers.get("retry-after"));
+    const delayMs = Number.isFinite(retryAfter) && retryAfter > 0
+      ? Math.min(retryAfter * 1000, 15000)
+      : 1500 * (2 ** (attempt - 1));
+    console.warn(path + " returned " + response.status + "; retrying in " + delayMs + "ms (attempt " + (attempt + 1) + "/" + maxAttempts + ").");
+    await new Promise(resolve => setTimeout(resolve, delayMs));
   }
-  return payload;
 }
 
 function validateTurn(result, label) {
