@@ -40,9 +40,12 @@ test("persisting a session records history, vocabulary and a review due tomorrow
   assert.equal(progress.sessions[0].estimatedLevel, "B1");
   assert.deepEqual(progress.sessions[0].reviewPatterns, ["Conjugación en primera persona"]);
   assert.equal(progress.vocabulary[0].term, "obrigado");
-  assert.equal(progress.reviewCards.length, 1);
+  assert.equal(progress.reviewCards.length, 2, "graded error and qualitative pattern should both be scheduled");
+  const patternCard = progress.reviewCards.find(card => card.cardType === "pattern");
+  assert.equal(patternCard.pattern, "Conjugación en primera persona");
+  assert.equal(patternCard.expected, "", "pattern cards must not invent a single correct answer");
   assert.equal(getDueCards(progress, now).length, 0);
-  assert.equal(getDueCards(progress, now + 24 * 60 * 60 * 1000).length, 1);
+  assert.equal(getDueCards(progress, now + 24 * 60 * 60 * 1000).length, 2);
 });
 
 test("AI review cards from separate sessions do not overwrite each other", () => {
@@ -98,4 +101,23 @@ test("progress statistics can be filtered by language", () => {
   assert.equal(stats.sessions, 1);
   assert.equal(stats.vocabulary, 1);
   assert.equal(stats.averageAccuracy, 80);
+});
+
+
+test("pattern review cards are deduplicated across sessions without resetting their schedule", () => {
+  const progress = loadProgress(null);
+  const session = {
+    config: { language: "Francés", languageId: "fr-FR" },
+    vocabulary: [], errors: [],
+    errorsToReview: ["Acuerdo de género", "  Acuerdo de género  "]
+  };
+  const now = Date.parse("2026-01-01T12:00:00.000Z");
+  persistSession(progress, session, { attempted: 0, correct: 0, accuracy: 0 }, now);
+  assert.equal(progress.reviewCards.length, 1);
+  const card = progress.reviewCards[0];
+  gradeReview(progress, card.key, true, now);
+  const dueAt = card.dueAt;
+  persistSession(progress, session, { attempted: 0, correct: 0, accuracy: 0 }, now + 1000);
+  assert.equal(progress.reviewCards.length, 1);
+  assert.equal(progress.reviewCards[0].dueAt, dueAt);
 });
