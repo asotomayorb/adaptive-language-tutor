@@ -1,8 +1,9 @@
-import { createSession, recordAnswer, evaluateAnswer, buildSummary, getAdaptation } from "./core/pedagogy.js";
+import { createSession, recordAnswer, recordTutorEvaluation, evaluateAnswer, buildSummary, getAdaptation, applyLearnerUpdate } from "./core/pedagogy.js";
 import { loadProgress, saveProgress, persistSession, getDueCards, gradeReview, getProgressStats } from "./core/storage.js";
 import { ptBR } from "./content/pt-BR.js";
 import { english } from "./content/en.js";
 import { checkTutorHealth, requestTutorTurn } from "./core/tutor-client.js";
+import { escapeHTML } from "./core/html.js";
 
 const $ = id => document.getElementById(id);
 const catalogs = { "Portugués brasileño": ptBR, "Inglés": english };
@@ -22,6 +23,7 @@ let aiMode = false;
 let aiHistory = [];
 let aiLastResult = null;
 let aiCurrentExercise = null;
+let sessionFinished = false;
 
 function refreshDashboard() {
   const languageId = catalogs[$("language").value]?.id;
@@ -82,7 +84,7 @@ function renderSpacedReview() {
   $("lesson-phase").textContent = "REPETICIÓN ESPACIADA";
   $("turn-count").textContent = "Tarjeta " + (reviewIndex + 1) + " / " + dueReviewCards.length;
   $("progress-bar").style.width = (reviewIndex / dueReviewCards.length * 100) + "%";
-  $("lesson-content").innerHTML = '<p class="eyebrow">REPASO PROGRAMADO</p><h3>' + (exercise?.prompt || card.prompt) + '</h3><p>Escribe la respuesta sin mirar la solución. Este repaso no consume turnos de práctica.</p>';
+  $("lesson-content").innerHTML = '<p class="eyebrow">REPASO PROGRAMADO</p><h3>' + escapeHTML(exercise?.prompt || card.prompt || "") + '</h3><p>Escribe la respuesta sin mirar la solución. Este repaso no consume turnos de práctica.</p>';
   $("answer-area").innerHTML = '<input id="spaced-answer" class="answer-input" placeholder="Escribe tu respuesta…"><button id="check-spaced" class="primary" type="button">Comprobar respuesta</button>';
   $("feedback").classList.add("hidden");
   $("check-spaced").addEventListener("click", () => {
@@ -107,6 +109,7 @@ $("setup-form").addEventListener("submit", event => {
   if (!catalog) return;
   const config = { language:catalog.label, languageId:catalog.id, duration:Number($("duration").value), level:$("level").value, topic:$("topic").value };
   session = createSession(config);
+  sessionFinished = false;
   reviewMode = false;
   $("setup-panel").classList.add("hidden");
   $("summary-panel").classList.add("hidden");
@@ -121,18 +124,12 @@ $("setup-form").addEventListener("submit", event => {
   }
 });
 
-function escapeHTML(value = "") {
-  return String(value).replace(/[&<>"']/g, char => ({
-    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
-  })[char]);
-}
-
 function getAILearnerContext(config = session.config) {
   return {
     nativeLanguage: "es",
     targetLanguage: config.languageId,
     targetLanguageLabel: config.language,
-    level: config.level,
+    level: config.estimatedLevel || config.level,
     topic: config.topic,
     sessionDuration: config.duration
   };
@@ -154,10 +151,17 @@ async function startAITutorSession(config) {
     const result = await requestTutorTurn({
       task: "start_lesson",
       learner: getAILearnerContext(config),
-      session: { duration: config.duration, turn: 0, topic: config.topic },
+      session: {
+        duration: config.duration,
+        turn: 0,
+        topic: config.topic,
+        diagnostic: config.level === "diagnostic",
+        performance: { streak: 0, consecutiveCorrect: 0, consecutiveErrors: 0 }
+      },
       history: [],
       userMessage: "Inicia mi sesión de aprendizaje. Preséntame una primera actividad adecuada a mi nivel y tema, y conversa conmigo en español mientras practico el idioma objetivo."
     });
+    applyLearnerUpdate(session, result.learnerUpdate);
     renderAITutorTurn(result);
   } catch (error) {
     showAITutorError(error, null);
@@ -212,49 +216,45 @@ async function submitAITutorAnswer(answer) {
   if (submitButton) submitButton.disabled = true;
   if (answerInput) answerInput.disabled = true;
   try {
+    const conversationHistory = [
+      ...aiHistory,
+      { role: "assistant", content: JSON.stringify(aiLastResult) }
+    ];
     const result = await requestTutorTurn({
       task: "evaluate_and_continue",
       learner: getAILearnerContext(),
-      session: { duration: session.config.duration, turn: session.turn + 1, topic: session.config.topic },
-      history: aiHistory,
+      session: {
+        duration: session.config.duration,
+        turn: session.turn + 1,
+        topic: session.config.topic,
+        diagnostic: session.config.level === "diagnostic",
+        currentExercise: aiCurrentExercise,
+        performance: {
+          streak: session.streak,
+          consecutiveCorrect: session.consecutiveCorrect,
+          consecutiveErrors: session.consecutiveErrors,
+          recentErrors: session.errors.slice(-5),
+          vocabulary: session.vocabulary.slice(-20)
+        }
+      },
+      history: conversationHistory,
       userMessage: cleanAnswer
     });
-    aiHistory.push(
-      { role: "assistant", content: JSON.stringify(aiLastResult) },
+    aiHistory = [
+      ...conversationHistory,
       { role: "user", content: cleanAnswer }
-    );
+    ];
+    applyLearnerUpdate(session, result.learnerUpdate);
     const evaluation = result.evaluation || {};
-    const correct = evaluation.status === "correct";
-    const attempt = {
-      turn: session.turn + 1,
+    recordTutorEvaluation(session, {
       exerciseId: "ai-turn-" + (session.turn + 1),
       prompt: aiCurrentExercise.prompt || aiLastResult.message,
       submitted: cleanAnswer,
       expected: aiCurrentExercise.expectedAnswer || "",
-      correct
-    };
-    session.attempted += 1;
-    session.turn += 1;
-    session.answers.push(attempt);
-    if (correct) {
-      session.correct += 1;
-      session.streak += 1;
-      session.bestStreak = Math.max(session.bestStreak, session.streak);
-      session.consecutiveCorrect += 1;
-      session.consecutiveErrors = 0;
-    } else {
-      session.streak = 0;
-      session.consecutiveErrors += 1;
-      session.consecutiveCorrect = 0;
-      if (evaluation.status === "incorrect" || evaluation.status === "partially_correct") {
-        session.errors.push({ ...attempt, explanation: evaluation.feedback || "", skill: evaluation.skill || "Producción" });
-      }
-    }
-    for (const word of (result.learnerUpdate?.vocabulary || [])) {
-      if (word.term && !session.vocabulary.some(item => item.term === word.term)) {
-        session.vocabulary.push({ term: word.term, meaning: word.meaning || "", language: session.config.language });
-      }
-    }
+      status: evaluation.status || "not_applicable",
+      feedback: evaluation.feedback || "",
+      skill: evaluation.skill || "Producción"
+    });
     $("streak").textContent = session.streak;
     $("word-count").textContent = session.vocabulary.length;
     $("error-count").textContent = session.errors.length;
@@ -421,6 +421,8 @@ $("review-btn").addEventListener("click", () => {
 });
 
 function finishSession() {
+  if (!session || sessionFinished) return;
+  sessionFinished = true;
   $("lesson-panel").classList.add("hidden");
   $("summary-panel").classList.remove("hidden");
   $("session-status").textContent = "Sesión finalizada";
@@ -429,12 +431,18 @@ function finishSession() {
   saveProgress(progress);
   refreshDashboard();
   const diagnosticText = session.config.diagnosticScore === undefined ? "" : '<li>Diagnóstico inicial: ' + session.config.diagnosticScore + '/4 · nivel estimado ' + levelLabel(session.config.level) + '.</li>';
-  const focus = summary.recommendedFocus.length ? summary.recommendedFocus.join(", ") : "Mantener la práctica y ampliar vocabulario.";
-  $("summary-content").innerHTML = '<p class="intro">Completaste ' + summary.attempted + ' turnos de ' + session.config.language + '.</p><ul class="summary-list">' + diagnosticText + '<li>Respuestas correctas: ' + summary.correct + '/' + summary.attempted + ' (' + summary.accuracy + '%).</li><li>Mejor racha: ' + summary.bestStreak + '.</li><li>Vocabulario aprendido: ' + (summary.vocabulary.map(item => item.term + " (" + item.meaning + ")").join(", ") || "ninguno") + '.</li><li>Errores para reforzar: ' + summary.errors.length + '.</li><li>Próximo foco recomendado: ' + focus + '.</li></ul>';
+  const aiLevelText = aiMode && session.config.estimatedLevel
+    ? '<li>Nivel estimado por el tutor IA: ' + escapeHTML(session.config.estimatedLevel) + '.</li>'
+    : "";
+  const focusItems = [...summary.recommendedFocus, ...(summary.reviewPatterns || [])];
+  const focus = focusItems.length ? focusItems.map(escapeHTML).join("; ") : "Mantener la práctica y ampliar vocabulario.";
+  const vocabularyText = summary.vocabulary.map(item => escapeHTML(item.term) + " (" + escapeHTML(item.meaning) + ")").join(", ") || "ninguno";
+  $("summary-content").innerHTML = '<p class="intro">Completaste ' + summary.turns + ' turnos de ' + escapeHTML(session.config.language) + '.</p><ul class="summary-list">' + diagnosticText + aiLevelText + '<li>Respuestas evaluadas como correctas: ' + summary.correct + '/' + summary.attempted + ' (' + summary.accuracy + '%).</li><li>Mejor racha: ' + summary.bestStreak + '.</li><li>Vocabulario aprendido: ' + vocabularyText + '.</li><li>Errores evaluados para reforzar: ' + summary.errors.length + '.</li><li>Focos y patrones recomendados: ' + focus + '.</li></ul>';
 }
 
 $("new-session").addEventListener("click", () => {
   aiMode = false;
+  sessionFinished = false;
   $("summary-panel").classList.add("hidden");
   $("setup-panel").classList.remove("hidden");
   $("session-status").textContent = "Nueva sesión";

@@ -11,9 +11,10 @@ function memoryStorage() {
 }
 
 const baseSession = () => ({
-  config: { language: "Portugués brasileño", languageId: "pt-BR" },
+  config: { language: "Portugués brasileño", languageId: "pt-BR", estimatedLevel: "B1" },
   vocabulary: [{ term: "obrigado", meaning: "gracias" }],
-  errors: [{ exerciseId: "greeting-1", prompt: "Saluda", expected: "Olá", explanation: "Saludo básico", skill: "Saludos" }]
+  errors: [{ exerciseId: "greeting-1", prompt: "Saluda", expected: "Olá", explanation: "Saludo básico", skill: "Saludos" }],
+  errorsToReview: ["Conjugación en primera persona"]
 });
 
 test("progress persists and loads with a versioned schema", () => {
@@ -36,10 +37,44 @@ test("persisting a session records history, vocabulary and a review due tomorrow
     attempted: 1, correct: 0, accuracy: 0
   }, now);
   assert.equal(progress.sessions.length, 1);
+  assert.equal(progress.sessions[0].estimatedLevel, "B1");
+  assert.deepEqual(progress.sessions[0].reviewPatterns, ["Conjugación en primera persona"]);
   assert.equal(progress.vocabulary[0].term, "obrigado");
   assert.equal(progress.reviewCards.length, 1);
   assert.equal(getDueCards(progress, now).length, 0);
   assert.equal(getDueCards(progress, now + 24 * 60 * 60 * 1000).length, 1);
+});
+
+test("AI review cards from separate sessions do not overwrite each other", () => {
+  const progress = loadProgress(null);
+  const aiSession = () => ({
+    config: { language: "Portugués brasileño", languageId: "pt-BR" },
+    vocabulary: [],
+    errors: [{
+      turn: 1, exerciseId: "ai-turn-1", prompt: "Completa la frase",
+      expected: "Eu gostaria de água", explanation: "Usa gostaria"
+    }]
+  });
+  const firstTime = Date.parse("2026-01-01T12:00:00.000Z");
+  persistSession(progress, aiSession(), { attempted: 1, correct: 0, accuracy: 0 }, firstTime);
+  persistSession(progress, aiSession(), { attempted: 1, correct: 0, accuracy: 0 }, firstTime);
+  assert.equal(progress.reviewCards.length, 2);
+  assert.notEqual(progress.reviewCards[0].key, progress.reviewCards[1].key);
+});
+
+test("AI errors without an expected answer are not made into ungradable review cards", () => {
+  const session = {
+    config: { language: "Portugués brasileño", languageId: "pt-BR" },
+    vocabulary: [],
+    errors: [{
+      turn: 1, exerciseId: "ai-turn-1", prompt: "Conversación libre",
+      expected: "", explanation: "Continúa conversando"
+    }]
+  };
+  const progress = persistSession(loadProgress(null), session, {
+    attempted: 1, correct: 0, accuracy: 0
+  }, Date.parse("2026-01-01T12:00:00.000Z"));
+  assert.equal(progress.reviewCards.length, 0);
 });
 
 test("successful spaced reviews advance 3, 7 and 14 day intervals; failure resets to one day", () => {

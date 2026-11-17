@@ -1,95 +1,37 @@
 # Adaptive Language Tutor
 
-Aplicación web de aprendizaje de idiomas cuyo tutor principal está diseñado para funcionar mediante una API de IA, con arquitectura independiente del proveedor.
-
-## Arquitectura objetivo
-
-- **Frontend** (`index.html`, `src/app.js`, `src/styles.css`): interfaz, configuración y presentación de la experiencia.
-- **Backend** (`server/`): valida solicitudes, conserva las credenciales fuera del navegador y comunica la aplicación con el proveedor seleccionado.
-- **Adaptador de IA** (`server/provider.js`): interfaz común para OpenAI, Anthropic, Gemini y servicios compatibles con la API de chat de OpenAI.
-- **Contrato pedagógico** (`server/prompts.js`): define el formato estructurado de las respuestas del tutor y las reglas de adaptación.
-- **Persistencia** (`src/core/storage.js`, actualmente local): conserva el progreso en el navegador; la sincronización remota será una etapa posterior.
-- **Catálogos** (`src/content/`): material lingüístico de referencia y respaldo, no el motor principal de generación de clases.
+Aplicación web de aprendizaje de idiomas con tutor conversacional de IA y modo local de respaldo.
 
 ## Estado actual
 
-El frontend ya consulta `GET /api/health` al iniciar. Cuando detecta un proveedor configurado, deriva las sesiones al endpoint `POST /api/tutor`; cuando el backend no está disponible o no hay proveedor configurado, conserva el modo local como respaldo. En modo IA, las respuestas y actividades se generan y evalúan dinámicamente y el cliente envía el contexto de la sesión al backend.
+**Etapa 4 de 8: auditoría funcional y técnica en GitHub.** El código base, la integración IA y las pruebas automatizadas están implementados. Aún faltan la auditoría completa, una conversación con proveedor real y la prueba humana; no está listo para despliegue público.
 
-La integración está implementada, pero todavía no se ha probado con credenciales reales ni se ha evaluado la calidad pedagógica de un modelo en uso real.
+**Próximo paso:** completar la etapa 4, corregir los hallazgos y validar los cambios con CI. El detalle de todas las etapas, su estado, verificaciones y pendientes se mantiene en el documento anexo: [PROJECT_STATUS.md](PROJECT_STATUS.md).
 
-## Proveedores
+Rama de trabajo: `feature/ai-tutor-pedagogy` · [PR #2](https://github.com/asotomayorb/adaptive-language-tutor/pull/2).
 
-Configuración mediante variables de entorno del servidor:
+## Arquitectura
 
-| Variable | Función |
-|---|---|
-| `AI_PROVIDER` | `openai`, `anthropic`, `gemini` o `openai-compatible` |
-| `AI_API_KEY` | Credencial privada del proveedor |
-| `AI_MODEL` | Identificador del modelo elegido |
-| `AI_BASE_URL` | URL base para proveedores compatibles; obligatoria para `openai-compatible` |
-| `PORT` | Puerto HTTP (predeterminado: 3000) |
+- Frontend: `index.html`, `src/app.js`, `src/styles.css`.
+- Backend y API: `server/index.js`.
+- Adaptadores IA: `server/provider.js`.
+- Prompt y esquema: `server/prompts.js`.
+- Cliente IA: `src/core/tutor-client.js`.
+- Pedagogía, contenidos y progreso local: `src/core/`, `src/content/`.
+- Pruebas: `tests/`.
 
-No se selecciona un proveedor ni un modelo por defecto. Las credenciales deben configurarse en el entorno del servidor o en un archivo `.env` local ignorado por Git.
+## Ejecución local
 
-## Ejecutar localmente
-
-Requiere Node.js 20.6 o superior.
-
-1. Copiar `.env.example` a `.env`.
-2. Completar proveedor, clave y modelo en `.env`.
-3. Ejecutar:
+Requiere Node.js 20.6 o superior. Copiar `.env.example` a `.env`, configurar `AI_PROVIDER`, `AI_API_KEY` y `AI_MODEL` (y `AI_BASE_URL` si corresponde), y ejecutar:
 
 ```bash
 npm start
 ```
 
-La aplicación web y el backend quedan disponibles en `http://localhost:3000`. El frontend detecta automáticamente si hay un proveedor configurado: si lo hay, usa el tutor IA; si no, conserva el modo local. Comprobación del backend: `GET /api/health`.
+La aplicación queda en `http://localhost:3000`. Desarrollo: `npm run dev`. Validación: `npm run check` y `npm test`. Para una sesión real de diagnóstico del proveedor, inicia el servidor con las variables privadas configuradas y ejecuta `npm run test:provider-live` en otra terminal. El smoke test realiza una sesión corta de tres turnos y no imprime respuestas ni credenciales.
 
-## Contrato de tutoría
+Nunca subir claves API al repositorio. Para pruebas iniciales con proveedores externos, usar datos ficticios.
 
-El endpoint `POST /api/tutor` recibe un objeto JSON con:
-- `userMessage` (obligatorio).
-- `task` (opcional).
-- `learner` (idioma objetivo, dialecto, nivel, idioma nativo, metas y preferencias).
-- `session` (objetivos y estado de la sesión).
-- `history` (últimos intercambios relevantes).
+## Replit
 
-La respuesta normalizada contiene `message`, `exercise`, `evaluation`, `learnerUpdate` y `nextAction`. El contrato está definido en `server/prompts.js`.
-
-## Pruebas
-
-```bash
-npm test
-```
-
-GitHub Actions ejecuta `npm run check` y `npm test` al actualizar `main` o abrir un pull request. Las 26 pruebas actuales cubren el contrato de los adaptadores, el endpoint, la entrega de archivos estáticos y los módulos locales. Las pruebas de IA usan respuestas simuladas: no consumen API ni validan todavía la calidad real de cada modelo.
-
-## Funciones locales existentes
-
-- Sesiones de 8, 15 o 25 turnos.
-- Diagnóstico orientativo inicial.
-- Catálogos A1/A2 de portugués brasileño e inglés.
-- Evaluación local por coincidencia normalizada.
-- Registro de errores y vocabulario.
-- Repaso espaciado y progreso guardado en el navegador.
-- Resumen y exportación JSON.
-
-Estas funciones locales se mantienen como modo de respaldo cuando no hay un proveedor de IA configurado. Cuando la API está disponible, el flujo principal utiliza el tutor dinámico.
-
-## Limitaciones pendientes
-
-- No hay autenticación ni perfiles multiusuario.
-- El progreso se guarda localmente y no se sincroniza entre dispositivos.
-- La respuesta estructurada depende de que el modelo respete el contrato; las respuestas inválidas se rechazan.
-- No se ha realizado una prueba humana de conversación con credenciales reales.
-- La configuración de despliegue del backend y la gestión de secretos dependerán del hosting elegido.
-
-## Próximos hitos
-
-1. Configurar y probar un proveedor/modelo real elegido por el usuario, midiendo calidad, latencia y costo.
-2. Reforzar límites de uso, autenticación y protección contra abuso antes de exponer el backend públicamente.
-3. Refinar el prompt pedagógico con sesiones reales y evaluación humana.
-4. Añadir persistencia remota y perfiles cuando se defina el despliegue.
-5. Realizar pruebas humanas en móvil y escritorio.
-
-**Seguridad:** nunca incluir claves API en el frontend, en archivos versionados ni en registros del navegador.
+Replit queda aplazado hasta que las etapas de auditoría, proveedor real y prueba humana estén aprobadas. El desarrollo y las correcciones se realizan primero en GitHub.

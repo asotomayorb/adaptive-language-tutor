@@ -1,10 +1,11 @@
-import { buildTutorMessages } from "./prompts.js";
+import { buildTutorMessages, TUTOR_RESPONSE_SCHEMA } from "./prompts.js";
 
 const DEFAULT_BASE_URL = "https://api.openai.com/v1";
 const MAX_OUTPUT_TOKENS = 1200;
+const PROVIDER_TIMEOUT_MS = 45_000;
 
 function required(value, name) {
-  if (!value) throw new Error(`Missing required configuration: ${name}`);
+  if (!value) throw new Error("Missing required configuration: " + name);
   return value;
 }
 
@@ -12,7 +13,7 @@ function extractJson(text) {
   if (typeof text !== "string" || !text.trim()) {
     throw new Error("The AI provider returned an empty response.");
   }
-  const cleaned = text.trim().replace(/^\`\`\`(?:json)?\s*/i, "").replace(/\s*\`\`\`$/, "");
+  const cleaned = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
   try {
     return JSON.parse(cleaned);
   } catch {
@@ -25,16 +26,52 @@ function extractJson(text) {
   }
 }
 
+function isRecord(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
 function validateTutorResult(result) {
-  if (!result || typeof result !== "object" || Array.isArray(result) || typeof result.message !== "string") {
+  const statuses = ["correct", "partially_correct", "incorrect", "not_applicable"];
+  const actions = ["answer", "continue", "review", "finish"];
+  const exerciseTypes = ["translation", "comprehension", "grammar", "production", "conversation"];
+
+  if (!isRecord(result) || typeof result.message !== "string") {
     throw new Error("The AI provider response does not match the tutor contract.");
   }
+  if (result.exercise !== null && (!isRecord(result.exercise) ||
+      !exerciseTypes.includes(result.exercise.type) ||
+      !(typeof result.exercise.prompt === "string" || result.exercise.prompt === null) ||
+      !(typeof result.exercise.expectedAnswer === "string" || result.exercise.expectedAnswer === null) ||
+      !Array.isArray(result.exercise.acceptedAnswers) ||
+      !result.exercise.acceptedAnswers.every(item => typeof item === "string") ||
+      !(typeof result.exercise.hint === "string" || result.exercise.hint === null))) {
+    throw new Error("The AI provider returned an invalid exercise.");
+  }
+  if (result.evaluation !== null && (!isRecord(result.evaluation) ||
+      !statuses.includes(result.evaluation.status) ||
+      typeof result.evaluation.feedback !== "string" ||
+      !(typeof result.evaluation.correction === "string" || result.evaluation.correction === null) ||
+      typeof result.evaluation.skill !== "string")) {
+    throw new Error("The AI provider returned an invalid evaluation.");
+  }
+  if (result.learnerUpdate !== null && (!isRecord(result.learnerUpdate) ||
+      !(typeof result.learnerUpdate.estimatedLevel === "string" || result.learnerUpdate.estimatedLevel === null) ||
+      !Array.isArray(result.learnerUpdate.vocabulary) ||
+      !result.learnerUpdate.vocabulary.every(item => isRecord(item) && typeof item.term === "string" && typeof item.meaning === "string") ||
+      !Array.isArray(result.learnerUpdate.errorsToReview) ||
+      !result.learnerUpdate.errorsToReview.every(item => typeof item === "string"))) {
+    throw new Error("The AI provider returned an invalid learner update.");
+  }
+  if (!actions.includes(result.nextAction)) {
+    throw new Error("The AI provider returned an invalid next action.");
+  }
+
   return {
     message: result.message,
-    exercise: result.exercise && typeof result.exercise === "object" ? result.exercise : null,
-    evaluation: result.evaluation && typeof result.evaluation === "object" ? result.evaluation : null,
-    learnerUpdate: result.learnerUpdate && typeof result.learnerUpdate === "object" ? result.learnerUpdate : null,
-    nextAction: typeof result.nextAction === "string" ? result.nextAction : "continue"
+    exercise: result.exercise,
+    evaluation: result.evaluation,
+    learnerUpdate: result.learnerUpdate,
+    nextAction: result.nextAction
   };
 }
 
@@ -44,7 +81,7 @@ async function readProviderError(response) {
     const body = await response.json();
     detail = body.error?.message || body.message || "";
   } catch {}
-  return new Error(`AI provider request failed (${response.status})${detail ? `: ${detail}` : ""}`);
+  return new Error("AI provider request failed (" + response.status + ")" + (detail ? ": " + detail : ""));
 }
 
 export function createAIProvider(env = process.env, fetchImpl = fetch) {
@@ -83,33 +120,61 @@ export function createAIProvider(env = process.env, fetchImpl = fetch) {
         };
         extractText = data => data.content?.filter(part => part.type === "text").map(part => part.text).join("\n");
       } else if (provider === "gemini") {
-        url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+        url = "https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateContent";
         headers = { "content-type": "application/json", "x-goog-api-key": apiKey };
         body = {
           systemInstruction: { parts: [{ text: messages[0].content }] },
           contents: [{ role: "user", parts: [{ text: messages[1].content }] }],
-          generationConfig: { maxOutputTokens: MAX_OUTPUT_TOKENS, responseMimeType: "application/json" }
+          generationConfig: { maxOutputTokens: MAX_OUTPUT_TOKENS, responseMimeType: "application/json", thinkingConfig: { thinkingLevel: "low" } }
         };
         extractText = data => data.candidates?.[0]?.content?.parts?.map(part => part.text || "").join("\n");
       } else {
         const base = (provider === "openai-compatible" ? required(env.AI_BASE_URL, "AI_BASE_URL") : (env.AI_BASE_URL || DEFAULT_BASE_URL)).replace(/\/+$/, "");
-        url = `${base}/chat/completions`;
-        headers = { "content-type": "application/json", authorization: `Bearer ${apiKey}` };
-        body = {
-          model, messages, max_tokens: MAX_OUTPUT_TOKENS,
-          response_format: { type: "json_object" }
-        };
+        url = base + "/chat/completions";
+        headers = { "content-type": "application/json", authorization: "Bearer " + apiKey };
+        if (provider === "openai") {
+          body = {
+            model,
+            messages,
+            max_completion_tokens: MAX_OUTPUT_TOKENS,
+            response_format: {
+              type: "json_schema",
+              json_schema: {
+                name: "adaptive_language_tutor_turn",
+                strict: true,
+                schema: TUTOR_RESPONSE_SCHEMA
+              }
+            }
+          };
+        } else {
+          body = {
+            model,
+            messages,
+            max_tokens: MAX_OUTPUT_TOKENS,
+            response_format: { type: "json_object" }
+          };
+        }
         extractText = data => data.choices?.[0]?.message?.content;
       }
 
-      const response = await fetchImpl(url, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(body)
-      });
-      if (!response.ok) throw await readProviderError(response);
-      const data = await response.json();
-      return validateTutorResult(extractJson(extractText(data)));
+      const requestStartedAt = Date.now();
+      try {
+        const response = await fetchImpl(url, {
+          method: "POST",
+          headers,
+          body: JSON.stringify(body),
+          signal: AbortSignal.timeout(PROVIDER_TIMEOUT_MS)
+        });
+        if (!response.ok) throw await readProviderError(response);
+        const data = await response.json();
+        return validateTutorResult(extractJson(extractText(data)));
+      } catch (error) {
+        console.error("[ai-provider] request failed", JSON.stringify({ provider, model, elapsedMs: Date.now() - requestStartedAt, errorName: error?.name || "Error", error: error?.message || String(error) }));
+        if (error?.name === "TimeoutError" || error?.name === "AbortError") {
+          throw new Error("AI provider request timed out after 45 seconds.");
+        }
+        throw error;
+      }
     }
   };
 }

@@ -1,5 +1,43 @@
 const normalize = (value = "") => String(value).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase().replace(/[¿?¡!.,;:]/g, "").replace(/\s+/g, " ").trim();
 
+export function applyLearnerUpdate(session, learnerUpdate) {
+  const estimatedLevel = learnerUpdate?.estimatedLevel;
+  if (typeof estimatedLevel === "string" && estimatedLevel.trim()) {
+    session.config.estimatedLevel = estimatedLevel.trim().slice(0, 32);
+  }
+
+  const patterns = Array.isArray(learnerUpdate?.errorsToReview)
+    ? learnerUpdate.errorsToReview
+        .filter(item => typeof item === "string")
+        .map(item => item.trim().slice(0, 160))
+        .filter(Boolean)
+    : [];
+  session.errorsToReview ||= [];
+  for (const pattern of patterns) {
+    if (!session.errorsToReview.some(item => item.toLocaleLowerCase() === pattern.toLocaleLowerCase())) {
+      session.errorsToReview.push(pattern);
+    }
+  }
+  session.errorsToReview = session.errorsToReview.slice(-8);
+
+  session.vocabulary ||= [];
+  const vocabulary = Array.isArray(learnerUpdate?.vocabulary) ? learnerUpdate.vocabulary : [];
+  for (const item of vocabulary) {
+    if (typeof item?.term !== "string" || !item.term.trim()) continue;
+    const term = item.term.trim().slice(0, 100);
+    if (session.vocabulary.some(existing => existing.term?.toLocaleLowerCase() === term.toLocaleLowerCase())) continue;
+    session.vocabulary.push({
+      term,
+      meaning: typeof item.meaning === "string" ? item.meaning.trim().slice(0, 200) : "",
+      language: session.config.language
+    });
+  }
+
+  return typeof estimatedLevel === "string" && estimatedLevel.trim()
+    ? session.config.estimatedLevel
+    : null;
+}
+
 export function createSession(config) {
   return {
     config: { ...config },
@@ -11,6 +49,7 @@ export function createSession(config) {
     consecutiveCorrect: 0,
     consecutiveErrors: 0,
     errors: [],
+    errorsToReview: [],
     vocabulary: [],
     reviewQueue: [],
     answers: []
@@ -75,16 +114,63 @@ export function getDueReviews(session) {
 export function buildSummary(session) {
   const accuracy = session.attempted ? Math.round((session.correct / session.attempted) * 100) : 0;
   return {
+    turns: session.turn,
     attempted: session.attempted,
     correct: session.correct,
     accuracy,
     bestStreak: session.bestStreak,
     errors: session.errors,
     vocabulary: session.vocabulary,
-    recommendedFocus: [...new Set(session.errors.map(error => error.skill).filter(Boolean))]
+    recommendedFocus: [...new Set(session.errors.map(error => error.skill).filter(Boolean))],
+    reviewPatterns: [...new Set((session.errorsToReview || []).filter(Boolean))]
   };
 }
 
 export function normalizeForComparison(value) {
   return normalize(value);
+}
+
+
+export function recordTutorEvaluation(session, {
+  exerciseId, prompt, submitted, expected = "", status = "not_applicable",
+  feedback = "", skill = "Producción"
+}) {
+  const evaluated = ["correct", "partially_correct", "incorrect"].includes(status);
+  const correct = status === "correct";
+  const attempt = {
+    turn: session.turn + 1,
+    exerciseId,
+    prompt,
+    submitted: String(submitted || "").trim(),
+    expected: String(expected || ""),
+    correct,
+    evaluationStatus: evaluated ? status : "not_applicable"
+  };
+
+  session.turn += 1;
+  session.answers.push(attempt);
+
+  if (!evaluated) return { attempt, correct: false, evaluated: false };
+
+  session.attempted += 1;
+  if (correct) {
+    session.correct += 1;
+    session.streak += 1;
+    session.bestStreak = Math.max(session.bestStreak, session.streak);
+    session.consecutiveCorrect += 1;
+    session.consecutiveErrors = 0;
+  } else {
+    session.streak = 0;
+    session.consecutiveErrors += 1;
+    session.consecutiveCorrect = 0;
+    if (status === "incorrect" || status === "partially_correct") {
+      session.errors.push({
+        ...attempt,
+        explanation: feedback || "",
+        skill: skill || "Producción"
+      });
+    }
+  }
+
+  return { attempt, correct, evaluated: true };
 }

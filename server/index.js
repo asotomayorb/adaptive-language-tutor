@@ -1,3 +1,4 @@
+import "./load-env.js";
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { resolve, sep, extname } from "node:path";
@@ -5,6 +6,9 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { createAIProvider } from "./provider.js";
 
 const MAX_BODY_BYTES = 32 * 1024;
+const TUTOR_RATE_WINDOW_MS = 10 * 60 * 1000;
+const MAX_TUTOR_REQUESTS_PER_WINDOW = 60;
+const MAX_CONCURRENT_TUTOR_REQUESTS = 2;
 const ROOT = resolve(fileURLToPath(new URL("../", import.meta.url)));
 const provider = createAIProvider();
 const MIME_TYPES = {
@@ -40,11 +44,12 @@ async function serveStatic(pathname, response) {
   }
 }
 
-function send(response, status, payload) {
+function send(response, status, payload, extraHeaders = {}) {
   response.writeHead(status, {
     "content-type": "application/json; charset=utf-8",
     "cache-control": "no-store",
-    "x-content-type-options": "nosniff"
+    "x-content-type-options": "nosniff",
+    ...extraHeaders
   });
   response.end(JSON.stringify(payload));
 }
@@ -68,6 +73,9 @@ async function readJson(request) {
 }
 
 export function createAppServer(aiProvider = provider) {
+  const tutorRequestTimes = [];
+  let activeTutorRequests = 0;
+
   return createServer(async (request, response) => {
     const url = new URL(request.url, "http://localhost");
     if (request.method === "GET" && url.pathname === "/api/health") {
@@ -77,8 +85,9 @@ export function createAppServer(aiProvider = provider) {
       });
     }
     if (request.method === "POST" && url.pathname === "/api/tutor") {
+      let input;
       try {
-        const input = await readJson(request);
+        input = await readJson(request);
         if (!input || typeof input !== "object" || Array.isArray(input)) {
           return send(response, 400, { error: "A JSON object is required." });
         }
@@ -88,13 +97,34 @@ export function createAppServer(aiProvider = provider) {
         if (input.userMessage.length > 8000) {
           return send(response, 413, { error: "userMessage is too long." });
         }
-        if (!aiProvider.configured) {
-          return send(response, 503, { error: "AI provider is not configured on the server." });
-        }
+      } catch (error) {
+        return send(response, error.status || 400, { error: error.message || "Invalid request." });
+      }
+      if (!aiProvider.configured) {
+        return send(response, 503, { error: "AI provider is not configured on the server." });
+      }
+
+      const now = Date.now();
+      while (tutorRequestTimes.length && now - tutorRequestTimes[0] >= TUTOR_RATE_WINDOW_MS) {
+        tutorRequestTimes.shift();
+      }
+      if (tutorRequestTimes.length >= MAX_TUTOR_REQUESTS_PER_WINDOW) {
+        const retryAfter = Math.max(1, Math.ceil((TUTOR_RATE_WINDOW_MS - (now - tutorRequestTimes[0])) / 1000));
+        return send(response, 429, { error: "Tutor request limit reached. Please try again later." }, { "retry-after": String(retryAfter) });
+      }
+      if (activeTutorRequests >= MAX_CONCURRENT_TUTOR_REQUESTS) {
+        return send(response, 503, { error: "Tutor is busy. Please retry shortly." }, { "retry-after": "2" });
+      }
+
+      tutorRequestTimes.push(now);
+      activeTutorRequests += 1;
+      try {
         const result = await aiProvider.generateTutorTurn(input);
         return send(response, 200, result);
       } catch (error) {
         return send(response, error.status || 502, { error: error.message || "Tutor request failed." });
+      } finally {
+        activeTutorRequests -= 1;
       }
     }
     if (request.method === "GET") return serveStatic(url.pathname, response);
@@ -104,7 +134,8 @@ export function createAppServer(aiProvider = provider) {
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   const port = Number(process.env.PORT || 3000);
-  createAppServer().listen(port, () => {
-    console.log(`Adaptive Language Tutor API listening on port ${port}`);
+  const host = "0.0.0.0";
+  createAppServer().listen(port, host, () => {
+    console.log(`Adaptive Language Tutor listening on http://${host}:${port}`);
   });
 }

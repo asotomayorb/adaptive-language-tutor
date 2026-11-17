@@ -30,6 +30,38 @@ test("tutor endpoint rejects missing user message", async () => {
   });
 });
 
+test("invalid tutor requests do not consume the provider rate limit", async () => {
+  await withServer({
+    configured: true,
+    provider: "test",
+    generateTutorTurn: async () => ({ message: "ok", exercise: null, evaluation: null, learnerUpdate: null, nextAction: "answer" })
+  }, async base => {
+    const invalid = await fetch(base + "/api/tutor", {
+      method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({})
+    });
+    assert.equal(invalid.status, 400);
+    for (let index = 0; index < 60; index += 1) {
+      const response = await fetch(base + "/api/tutor", {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ userMessage: "practice" })
+      });
+      assert.equal(response.status, 200);
+    }
+  });
+});
+
+test("unconfigured provider requests do not consume the rate limit", async () => {
+  await withServer({ configured: false, provider: "test" }, async base => {
+    for (let index = 0; index < 61; index += 1) {
+      const response = await fetch(base + "/api/tutor", {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ userMessage: "practice" })
+      });
+      assert.equal(response.status, 503);
+    }
+  });
+});
+
 test("tutor endpoint returns service unavailable without configured AI", async () => {
   await withServer({ configured: false, generateTutorTurn: async () => ({}) }, async base => {
     const response = await fetch(base + "/api/tutor", {
@@ -74,5 +106,50 @@ test("static server rejects path traversal", async () => {
   await withServer({ configured: false }, async base => {
     const response = await fetch(base + "/%2e%2e%2fpackage.json");
     assert.equal(response.status, 404);
+  });
+});
+
+
+test("tutor endpoint rate-limits requests and provides a retry delay", async () => {
+  await withServer({
+    configured: true,
+    provider: "test",
+    generateTutorTurn: async () => ({ message: "ok", exercise: null, evaluation: null, learnerUpdate: null, nextAction: "answer" })
+  }, async base => {
+    const sendRequest = () => fetch(base + "/api/tutor", {
+      method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ userMessage: "practice" })
+    });
+    for (let index = 0; index < 60; index += 1) {
+      const response = await sendRequest();
+      assert.equal(response.status, 200);
+    }
+    const limited = await sendRequest();
+    assert.equal(limited.status, 429);
+    assert.ok(Number(limited.headers.get("retry-after")) > 0);
+  });
+});
+
+test("tutor endpoint bounds concurrent provider requests", async () => {
+  let release;
+  const providerResponse = new Promise(resolve => { release = resolve; });
+  await withServer({
+    configured: true,
+    provider: "test",
+    generateTutorTurn: async () => providerResponse
+  }, async base => {
+    const sendRequest = () => fetch(base + "/api/tutor", {
+      method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ userMessage: "practice" })
+    });
+    const first = sendRequest();
+    const second = sendRequest();
+    await new Promise(resolve => setTimeout(resolve, 20));
+    const third = await sendRequest();
+    assert.equal(third.status, 503);
+    assert.equal(third.headers.get("retry-after"), "2");
+    release({ message: "ok", exercise: null, evaluation: null, learnerUpdate: null, nextAction: "answer" });
+    assert.equal((await first).status, 200);
+    assert.equal((await second).status, 200);
   });
 });
