@@ -226,6 +226,11 @@ try {
   const spokenBeforeSummaryReplay = await aiPage.evaluate(() => window.__spoken.length);
   await summarySpeaker.click();
   assert.ok(await aiPage.evaluate(count => window.__spoken.length > count, spokenBeforeSummaryReplay), "summary vocabulary should support manual replay");
+  await aiPage.locator("#audio-toggle").click();
+  const spokenBeforeSummaryReenable = await aiPage.evaluate(() => window.__spoken.length);
+  await aiPage.locator("#audio-toggle").click();
+  assert.ok(await aiPage.evaluate(count => window.__spoken.length > count, spokenBeforeSummaryReenable), "re-enabling automatic speech on the summary should replay visible target vocabulary");
+  assert.equal(await aiPage.evaluate(() => window.__spoken.at(-1)?.lang), "fr-FR", "summary replay should preserve the selected target locale");
   const aiStored = await aiPage.evaluate(() =>
     JSON.parse(localStorage.getItem("adaptive-language-tutor.progress") || "{}")
   );
