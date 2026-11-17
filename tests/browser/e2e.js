@@ -166,7 +166,7 @@ try {
         message: "Très bien. Terminamos esta práctica.",
         exercise: null,
         evaluation: { status: "partially_correct", feedback: "La idea se entiende, pero revisa la conjugación.", correction: "Je m’appelle Ana.", skill: "Producción" },
-        learnerUpdate: { estimatedLevel: "A1", vocabulary: [], errorsToReview: [] },
+        learnerUpdate: { estimatedLevel: "A1", vocabulary: [], errorsToReview: ["Conjugación verbal en primera persona"] },
         speechSegments: [{ text: "Je m’appelle Ana.", language: "fr", locale: "fr-FR" }],
         nextAction: "finish"
       })
@@ -203,7 +203,7 @@ try {
     JSON.parse(localStorage.getItem("adaptive-language-tutor.progress") || "{}")
   );
   assert.equal(aiStored.sessions?.length, 1, "mock AI session should persist once");
-  assert.equal(aiStored.reviewCards?.length, 1, "an evaluated AI error with an expected answer should create one review card");
+  assert.equal(aiStored.reviewCards?.length, 2, "evaluated errors and qualitative learning patterns should both create review cards");
   assert.equal(aiStored.reviewCards[0].expected, "Je m’appelle Ana.");
 
   // Make the AI review card due and verify that the real spaced-review UI grades it.
@@ -221,8 +221,12 @@ try {
   await aiPage.locator("#spaced-answer").fill("Je m’appelle Ana.");
   await aiPage.locator("#check-spaced").click();
   await aiPage.getByRole("button", { name: "Siguiente →" }).click();
+  await aiPage.getByRole("button", { name: "Lo recordé" }).click();
+  await aiPage.getByRole("button", { name: "Siguiente →" }).click();
   const reviewed = await aiPage.evaluate(() => JSON.parse(localStorage.getItem("adaptive-language-tutor.progress")));
   assert.equal(reviewed.reviewCards[0].repetitions, 1, "a correct AI review should increment repetitions");
+  const patternCard = reviewed.reviewCards.find(card => card.cardType === "pattern");
+  assert.equal(patternCard.repetitions, 1, "self-assessed pattern review should increment repetitions");
   assert.ok(new Date(reviewed.reviewCards[0].dueAt).getTime() > Date.now(), "a correct AI review should schedule the next interval");
 
   assert.equal(startCalls, 2, "initial AI session request should be retried once");
