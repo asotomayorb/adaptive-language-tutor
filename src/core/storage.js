@@ -75,6 +75,26 @@ export function persistSession(progress, session, summary, now = Date.now()) {
       progress.reviewCards.push(card);
     }
   }
+  const patterns = [...new Set((session.errorsToReview || [])
+    .filter(item => typeof item === "string")
+    .map(item => item.trim())
+    .filter(Boolean))].slice(-8);
+  for (const pattern of patterns) {
+    const key = languageId + ":pattern:" + pattern.toLocaleLowerCase();
+    const existing = progress.reviewCards.find(card => card.key === key);
+    if (existing) {
+      existing.lastSeenAt = new Date(now).toISOString();
+      continue;
+    }
+    progress.reviewCards.push({
+      key, cardType: "pattern", language: session.config.language, languageId,
+      pattern, prompt: "Recuerda cómo aplicar este patrón en una frase propia.",
+      expected: "", explanation: "Piensa en un ejemplo nuevo que puedas usar en una conversación.",
+      skill: "Patrones de uso", intervalIndex: 0, repetitions: 0,
+      lastReviewedAt: null, lastSeenAt: new Date(now).toISOString(),
+      dueAt: new Date(now + 24 * 60 * 60 * 1000).toISOString()
+    });
+  }
   return progress;
 }
 
