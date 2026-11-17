@@ -79,7 +79,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Etapa 4 — Auditoría funcional y técnica
 
-**Estado: en curso; se añadió una prueba de integración del ciclo IA. Pendiente su ejecución CI y la automatización real de navegador.**
+**Estado: en curso; integración IA validada por CI y primera automatización real de navegador añadida. Pendiente confirmar el nuevo workflow E2E y ampliar cobertura al flujo IA con proveedor simulado/real.**
 
 ### Flujo de sesión IA revisado parcialmente
 
@@ -121,7 +121,8 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Rechazo de rutas estáticas fuera del directorio raíz cubierto por prueba.
 - [x] Reordenar el endpoint para validar JSON, mensaje y configuración antes de consumir cupo o concurrencia; añadir pruebas de regresión para solicitudes inválidas y proveedor no configurado.
 - [x] Confirmar CI para el cambio: Actions #165, `npm run check` y `npm test` correctos.
-- [ ] Pruebas de interacción DOM/navegador: el repositorio aún no tiene un framework de automatización de navegador configurado; elegir una solución compatible con CI antes de la prueba humana.
+- [x] Framework de automatización de navegador configurado con Playwright y Chromium en GitHub Actions; la primera prueba cubre el recorrido local de interfaz.
+- [ ] Completar E2E del flujo IA (mock) y después validar con proveedor real.
 - [ ] Evaluar límites por IP/usuario y protección contra abuso antes de exposición pública.
 - [ ] Revisar límites de historial y tamaño total de contexto enviado al proveedor.
 - [ ] Completar revisión de sanitización y presentación de contenido generado por IA en todos los puntos de la interfaz; el repaso y resumen ya fueron corregidos y tienen prueba unitaria del helper.
@@ -201,7 +202,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Próxima acción concreta
 
-Continuar la etapa 4: incorporar una estrategia de pruebas de navegador y validar inicio, diagnóstico, envío/reintento, pistas, finalización, persistencia y exportación. Después ejecutar una sesión con proveedor real (etapa 5). La lectura automática TTS y sus controles se implementarán en la etapa 6, antes de la prueba humana.
+Continuar la etapa 4: confirmar el workflow Playwright, ampliar cobertura E2E al flujo IA (mock) y validar inicio, diagnóstico, envío/reintento, pistas, finalización, persistencia y exportación. Después ejecutar una sesión con proveedor real (etapa 5). La lectura automática TTS y sus controles se implementarán en la etapa 6, antes de la prueba humana.
 
 ## Criterio para declarar el proyecto listo para prueba humana
 
