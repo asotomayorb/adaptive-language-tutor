@@ -166,7 +166,7 @@ try {
   await aiPage.locator("#lesson-content [data-speak]").first().click();
   assert.ok(await aiPage.evaluate(() => window.__spoken.length >= 2), "AI fragments should offer manual playback");
   await aiPage.locator("#hint-btn").click();
-  await aiPage.locator("#feedback").getByText(/Comece com/).waitFor();
+  await aiPage.locator("#feedback").getByText(/Je m’appelle/).waitFor();
   await aiPage.locator("#ai-answer").fill("Eu me chamo Ana.");
   await aiPage.locator("#submit-ai-answer").click();
   await aiPage.getByRole("button", { name: "Reintentar envío" }).click();
@@ -187,6 +187,9 @@ try {
     localStorage.setItem(key, JSON.stringify(progress));
   });
   await aiPage.reload({ waitUntil: "networkidle" });
+  await aiPage.locator("#language").selectOption("other");
+  await aiPage.locator("#custom-language-name").fill("Francés");
+  await aiPage.locator("#custom-language-locale").fill("fr-FR");
   await aiPage.getByRole("button", { name: /Iniciar repaso/ }).click();
   await aiPage.locator("#spaced-answer").fill("Je m’appelle Ana.");
   await aiPage.locator("#check-spaced").click();
