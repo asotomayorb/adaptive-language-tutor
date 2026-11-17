@@ -1,7 +1,7 @@
 import "./load-env.js";
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
-import { resolve, sep, extname } from "node:path";
+import { resolve, extname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { createAIProvider } from "./provider.js";
 
@@ -12,6 +12,12 @@ const MAX_CONCURRENT_TUTOR_REQUESTS = 2;
 const ROOT = resolve(fileURLToPath(new URL("../", import.meta.url)));
 const PUBLIC_SRC_ROOT = resolve(ROOT, "src");
 const PUBLIC_ASSET_EXTENSIONS = new Set([".js", ".css"]);
+const SECURITY_HEADERS = {
+  "x-content-type-options": "nosniff",
+  "x-frame-options": "DENY",
+  "referrer-policy": "strict-origin-when-cross-origin",
+  "permissions-policy": "camera=(), microphone=(), geolocation=()"
+};
 const provider = createAIProvider();
 const MIME_TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -43,8 +49,8 @@ async function serveStatic(pathname, response) {
     const content = await readFile(filePath);
     response.writeHead(200, {
       "content-type": MIME_TYPES[extname(filePath)] || "application/octet-stream",
-      "x-content-type-options": "nosniff",
-      "cache-control": "no-cache"
+      "cache-control": "no-cache",
+      ...SECURITY_HEADERS
     });
     response.end(content);
   } catch {
@@ -56,7 +62,7 @@ function send(response, status, payload, extraHeaders = {}) {
   response.writeHead(status, {
     "content-type": "application/json; charset=utf-8",
     "cache-control": "no-store",
-    "x-content-type-options": "nosniff",
+    ...SECURITY_HEADERS,
     ...extraHeaders
   });
   response.end(JSON.stringify(payload));
