@@ -45,3 +45,13 @@ jobs:
           AI_MODEL: gemini-3.8-flash
           TUTOR_BASE_URL: http://127.0.0.1:3000
         run: npm run test:provider-live
+
+      - name: Show application diagnostics
+        if: always()
+        run: |
+          echo "----- application log -----"
+          if [ -f /tmp/tutor.log ]; then
+            cat /tmp/tutor.log
+          else
+            echo "Application log was not created."
+          fi
