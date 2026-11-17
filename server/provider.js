@@ -48,9 +48,21 @@ const GEMINI_RESPONSE_SCHEMA = {
       },
       required: ["estimatedLevel", "vocabulary", "errorsToReview"]
     },
+    speechSegments: {
+      type: "ARRAY",
+      items: {
+        type: "OBJECT",
+        properties: {
+          text: { type: "STRING" },
+          language: { type: "STRING" },
+          locale: { type: "STRING" }
+        },
+        required: ["text", "language", "locale"]
+      }
+    },
     nextAction: { type: "STRING", enum: ["answer", "continue", "review", "finish"] }
   },
-  required: ["message", "exercise", "evaluation", "learnerUpdate", "nextAction"]
+  required: ["message", "exercise", "evaluation", "learnerUpdate", "speechSegments", "nextAction"]
 };
 
 
@@ -118,6 +130,11 @@ function validateTutorResult(result) {
       !result.learnerUpdate.errorsToReview.every(item => typeof item === "string"))) {
     throw contractError("The AI provider returned an invalid learner update.");
   }
+  if (result.speechSegments !== undefined && (!Array.isArray(result.speechSegments) ||
+      !result.speechSegments.every(item => isRecord(item) &&
+        typeof item.text === "string" && typeof item.language === "string" && typeof item.locale === "string"))) {
+    throw contractError("The AI provider returned invalid speech segments.");
+  }
   if (!actions.includes(result.nextAction)) {
     throw contractError("The AI provider returned an invalid next action.");
   }
@@ -127,6 +144,7 @@ function validateTutorResult(result) {
     exercise: result.exercise,
     evaluation: result.evaluation,
     learnerUpdate: result.learnerUpdate,
+    speechSegments: result.speechSegments || [],
     nextAction: result.nextAction
   };
 }
