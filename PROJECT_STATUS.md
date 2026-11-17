@@ -110,7 +110,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Verificar una sesión real completa en navegador con Gemini: 3 turnos en francés, 1 sesión persistida y exportación JSON descargada; run #44122518840.
 - [x] Añadir pruebas del cliente frontend para health check, envío de turnos, errores HTTP y respuestas no JSON. El health check inicial se aborta tras 5 s si el backend no responde, permitiendo continuar en modo local; probado en tests.
 - [x] Añadir prueba de integración del ciclo IA en `tests/ai-session-flow.test.js`: actualizaciones del alumno, deduplicación de vocabulario/patrones, turnos `not_applicable`, evaluación, resumen, persistencia y tarjeta de repaso. tests aprobados en run #44093520831.
-- [x] Pruebas de interacción DOM/navegador y del flujo completo de interfaz: modo local, modo IA simulado, reintentos, pistas, resumen, persistencia, exportación y repaso IA; E2E aprobado en run #44123808091.
+- [x] Pruebas de interacción DOM/navegador y del flujo completo de interfaz: modo local, modo IA simulado, reintentos, pistas, resumen, persistencia, exportación y repaso IA; E2E aprobado en run #44124688986 (incluye viewport móvil de 390 px).
 
 ### Backend y seguridad revisados parcialmente
 
@@ -171,7 +171,8 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] No leer automáticamente instrucciones ni explicaciones en español salvo que español sea el idioma objetivo: el audio IA consume solo `speechSegments` etiquetados con el locale objetivo y el backend rechaza cualquier segmento con locale distinto.
 - [x] El controlador gestiona API ausente, voz no instalada y errores de reproducción sin bloquear la práctica escrita; el fallback se comunica en la interfaz. Falta prueba en navegadores/dispositivos reales.
 - [ ] Validar la selección de voz, pronunciación y fallback en los idiomas objetivo habilitados, incluyendo portugués brasileño e inglés como casos iniciales, y comprobar que incorporar otro idioma no requiera modificar la lógica de audio. Probar en móvil y escritorio, con teclado y lectores de pantalla.
-- [ ] Prueba móvil y escritorio.
+- [x] E2E en Chromium con viewport móvil de 390 px y escritorio; setup y lección no presentan desbordamiento horizontal.
+- [ ] Prueba auditiva y de interacción en dispositivos móviles y de escritorio reales.
 - [ ] Portugués brasileño: naturalidad, corrección, vocabulario y situaciones reales.
 - [ ] Inglés: naturalidad, corrección y progresión.
 - [ ] Verificar adaptación desde principiante hasta niveles superiores.
