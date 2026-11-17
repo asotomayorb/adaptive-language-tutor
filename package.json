@@ -7,7 +7,7 @@
     "start": "node server/index.js",
     "dev": "node --watch server/index.js",
     "test": "node --test",
-    "check": "node --check src/app.js && node --check src/core/tutor-client.js && node --check server/index.js && node --check server/provider.js && node --check server/load-env.js && node --check scripts/live-provider-smoke.js",
+    "check": "node --check src/app.js && node --check src/core/speech.js && node --check src/core/tutor-client.js && node --check server/index.js && node --check server/provider.js && node --check server/load-env.js && node --check scripts/live-provider-smoke.js",
     "test:e2e": "node tests/browser/e2e.js",
     "test:provider-live": "node scripts/live-provider-smoke.js"
   },
