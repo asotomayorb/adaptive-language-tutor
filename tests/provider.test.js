@@ -118,6 +118,29 @@ test("invalid target-language speech segments are rejected", async () => {
   await assert.rejects(() => provider.generateTutorTurn({ userMessage: "Hi" }), /invalid speech segments/i);
 });
 
+test("provider rejects speech segments tagged with a different target locale", async () => {
+  const provider = createAIProvider(
+    { AI_PROVIDER: "openai", AI_API_KEY: "secret", AI_MODEL: "test-model" },
+    fakeFetch("https://api.openai.com/v1/chat/completions", {}, {
+      choices: [{ message: { content: JSON.stringify({
+        message: "Practiquemos.",
+        exercise: null,
+        evaluation: null,
+        learnerUpdate: null,
+        speechSegments: [{ text: "Bonjour", language: "fr", locale: "fr-FR" }],
+        nextAction: "answer"
+      }) } }]
+    })
+  );
+  await assert.rejects(
+    () => provider.generateTutorTurn({
+      task: "start_lesson",
+      learner: { targetLanguageLocale: "pt-BR" }
+    }),
+    error => error.status === 422 && /different from the selected target language/i.test(error.message)
+  );
+});
+
 test("provider rejects premature AI session completion", async () => {
   const earlyFinish = {
     message: "Terminamos.",
