@@ -52,7 +52,7 @@ Este documento es el registro detallado del proyecto. El README principal mantie
 - [x] Contexto de hasta 12 intercambios recientes.
 - [x] Actualización del nivel estimado y vocabulario del alumno.
 - [x] Esquema JSON y validación de la respuesta del proveedor.
-- [x] Timeout de proveedor de 30 segundos.
+- [x] Timeout de proveedor de 45 segundos (configurado en `server/provider.js`).
 
 **Pendiente:**
 - [ ] Confirmar el identificador de modelo y la disponibilidad/cuota del proveedor elegido.
@@ -94,8 +94,8 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Repaso IA: los errores registrados por el flujo IA reciben un identificador `ai-turn-N`; `persistSession()` los convierte en tarjetas de repaso genéricas y la vista puede usar el prompt y la respuesta esperada guardados.
 - [x] Corregir colisiones de tarjetas IA: los identificadores `ai-turn-N` se repiten entre sesiones; ahora las claves incluyen marca temporal de sesión y turno.
 - [x] Evitar crear tarjetas IA no calificables cuando la actividad no incluye una respuesta esperada.
-- [x] Añadir pruebas de persistencia para ambos casos; ejecución pendiente de confirmación en CI.
-- [x] Validar en navegador que un error IA con respuesta esperada se persista como tarjeta, aparezca al vencer y se califique; E2E aprobado en commit `815b986` (run #44088504661).
+- [x] Añadir pruebas de persistencia para ambos casos; tests aprobados en run #44093520831 y posteriores.
+- [x] Validar en navegador que un error IA con respuesta esperada se persista como tarjeta, aparezca al vencer y se califique; E2E aprobado en run #44093542317.
 - [x] Integrar `learnerUpdate.errorsToReview` en el resumen y en el historial de sesiones; no se convierten en tarjetas de respuesta única porque describen patrones, no respuestas calificables.
 - [x] Las actividades IA sin `expectedAnswer` ya no generan tarjetas de repaso que no puedan calificarse.
 - [ ] Evaluar una alternativa pedagógica para repasar conversaciones libres sin respuesta única.
@@ -104,10 +104,10 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Separar el total de turnos de las respuestas evaluables en el resumen y exportación.
 - [x] Evitar que una doble pulsación en «Ver resumen» persista dos veces la misma sesión.
 - [x] Añadir pruebas para estados `correct`, `partially_correct`, `incorrect` y `not_applicable`; CI correcto en Actions #130.
-- [x] El nivel estimado del tutor IA se conserva entre turnos y se muestra en el resumen (pendiente validar con proveedor real).
+- [x] El nivel estimado del tutor IA se conserva entre turnos y se muestra en el resumen; la sesión real smoke completó el ciclo, falta evaluación pedagógica de calidad.
 - [x] Conectar `learnerUpdate.errorsToReview` con el resumen: los patrones se acumulan sin duplicados, se limitan en longitud/cantidad y se guardan en el historial de sesiones.
 - [x] Añadir pruebas unitarias para acumulación, deduplicación, límites y persistencia de patrones IA.
-- [ ] Verificar que exportación y resumen incluyan de forma consistente todos los datos IA con una sesión real; el E2E actual cubre persistencia y resumen con API simulada, no una sesión real completa en navegador.
+- [ ] Verificar exportación y resumen con una sesión real completa en navegador; la sesión real de smoke valida el proveedor/API, mientras el E2E valida la interfaz con API simulada.
 - [x] Añadir pruebas del cliente frontend para health check, envío de turnos, errores HTTP y respuestas no JSON.
 - [x] Añadir prueba de integración del ciclo IA en `tests/ai-session-flow.test.js`: actualizaciones del alumno, deduplicación de vocabulario/patrones, turnos `not_applicable`, evaluación, resumen, persistencia y tarjeta de repaso. Ejecución CI pendiente.\n- [x] Añadir pruebas de interacción DOM/navegador y del flujo completo de interfaz: modo local, modo IA simulado, reintentos, pistas, resumen, persistencia, exportación y repaso IA; E2E aprobado en `815b986`.
 
@@ -115,7 +115,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 - [x] Límite de cuerpo: 32 KB.
 - [x] Límite de mensaje: 8.000 caracteres.
-- [x] Timeout de proveedor: 30 segundos.
+- [x] Timeout de proveedor: 45 segundos.
 - [x] Límite global en memoria: 60 solicitudes por 10 minutos.
 - [x] Máximo de 2 solicitudes simultáneas por instancia.
 - [x] Rechazo de rutas estáticas fuera del directorio raíz cubierto por prueba.
@@ -149,7 +149,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] La clave se utilizó como secreto de GitHub Actions; no se incorporó al repositorio ni a los logs.
 - [x] Smoke test: inicio, tres evaluaciones, continuidad y cierre completados. [ ] Ampliar casos reales: respuestas incorrectas, pistas, cuota, credencial inválida y timeout.
 - [ ] Probar errores de cuota, credencial inválida, timeout y respuesta JSON inválida.
-- [x] Latencia observada en la sesión smoke: 12,7 s total. [ ] Medir costos y latencias en varias sesiones/modelos antes de seleccionar proveedor de producción.
+- [x] Latencia observada en la última sesión smoke: 38,3 s total, con cuatro respuestas 503 recuperadas mediante reintentos. [ ] Medir costos y latencias en varias sesiones/modelos antes de seleccionar proveedor de producción.
 - [ ] Usar únicamente información ficticia durante pruebas iniciales.
 
 ## Etapa 6 — Prueba humana y experiencia de usuario
