@@ -101,7 +101,8 @@ checkTutorHealth().then(status => {
 });
 
 function startSpacedReview() {
-  catalog = catalogs[$("language").value];
+  catalog = getSelectedCatalog();
+  if (!catalog) { $("ai-status").textContent = "Indica el nombre del idioma y un locale válido (por ejemplo, fr-FR)."; return; }
   dueReviewCards = getDueCards(progress, Date.now(), catalog.id);
   reviewIndex = 0;
   if (!dueReviewCards.length) { refreshDashboard(); return; }
