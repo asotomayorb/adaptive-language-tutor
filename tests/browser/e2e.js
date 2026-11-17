@@ -65,6 +65,11 @@ try {
   assert.ok(await page.evaluate(() => window.__spoken.length >= 2), "manual pronunciation should be available per phrase");
   await page.locator("#audio-toggle").click();
   assert.equal(await page.locator("#audio-toggle").getAttribute("aria-pressed"), "false", "global audio toggle should disable automatic speech");
+  const speechCountBeforeReenable = await page.evaluate(() => window.__spoken.length);
+  await page.locator("#audio-toggle").click();
+  assert.equal(await page.locator("#audio-toggle").getAttribute("aria-pressed"), "true", "global audio toggle should re-enable automatic speech");
+  assert.ok(await page.evaluate(count => window.__spoken.length > count, speechCountBeforeReenable), "re-enabling audio should read the currently visible target fragments");
+  await page.locator("#audio-toggle").click();
   await page.locator("#hint-btn").click();
   await page.locator("#feedback").waitFor({ state: "visible" });
 
