@@ -3,7 +3,7 @@
 **Última actualización:** 17-11-2026  
 **Rama:** `feature/ai-tutor-pedagogy`  
 **Pull request:** [#2 – Improve adaptive tutor pedagogy and AI integration](https://github.com/asotomayorb/adaptive-language-tutor/pull/2)  
-**Estado global:** sesiones reales Gemini aprobadas en `pt-BR` y `fr-FR` (3 turnos y 4 fragmentos de voz por idioma); tests y Browser E2E aprobados en `e8fca68`. La comprobación inicial de salud ahora tiene timeout de 5 s para no bloquear el modo local. Se corrigió la exposición de archivos estáticos, se añadieron diez pruebas de rutas privadas y cabeceras de seguridad. Audio TTS está parcialmente implementado y probado con portugués y francés; el proveedor real completó ambas sesiones. Auditoría funcional, validación de voz en dispositivos reales y seguridad siguen pendientes. No declarar listo para prueba humana ni desplegar públicamente todavía.
+**Estado global:** sesiones reales Gemini aprobadas en `pt-BR` y `fr-FR` (3 turnos y 5 fragmentos de voz por idioma); una sesión real adicional de navegador en francés completó persistencia y exportación. Tests y Browser E2E aprobados en `6add5d7`. La comprobación inicial de salud ahora tiene timeout de 5 s para no bloquear el modo local. Se corrigió la exposición de archivos estáticos, se añadieron diez pruebas de rutas privadas y cabeceras de seguridad. Audio TTS está parcialmente implementado y probado con portugués y francés; el proveedor real completó ambas sesiones. Auditoría funcional, validación de voz en dispositivos reales y seguridad siguen pendientes. No declarar listo para prueba humana ni desplegar públicamente todavía.
 
 Este documento es el registro detallado del proyecto. El README principal mantiene únicamente la etapa actual y enlaza aquí para evitar duplicar información y mantener la documentación operativa breve.
 
@@ -13,7 +13,7 @@ Este documento es el registro detallado del proyecto. El README principal mantie
 |---|---|---|
 | 1 | Base del repositorio y ejecución | Implementada; CI correcto en el último commit validado |
 | 2 | Tutor IA, proveedores y pedagogía | Implementada; sesión real Gemini validada en 3 turnos |
-| 3 | Pruebas automatizadas y CI | Aprobadas en el último commit de código `e8fca68` |
+| 3 | Pruebas automatizadas y CI | Aprobadas en el último commit de código `6add5d7` |
 | 4 | Auditoría funcional y técnica | En curso; quedan comprobaciones funcionales y de seguridad |
 | 5 | Validación con proveedor IA real | Smoke test Gemini aprobado; evaluación de calidad/costos y fallos pendiente |
 | 6 | Prueba humana y ajustes de experiencia | Pendiente |
@@ -79,7 +79,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Etapa 4 — Auditoría funcional y técnica
 
-**Estado: en curso; tests y Browser E2E aprobados en `e8fca68`; sesión real Gemini aprobada en portugués brasileño y francés en run #44120040434. El E2E cubre modo local, IA simulada, reintentos, persistencia, exportación, repaso, pronunciación de vocabulario del resumen y configuración de idioma francés.**
+**Estado: en curso; tests y Browser E2E aprobados en `6add5d7`; smoke real de API en portugués y francés, y sesión real de navegador francés aprobados en run #44122518840. El E2E cubre modo local, IA simulada, reintentos, persistencia, exportación, repaso, pronunciación de vocabulario del resumen y bloqueo de reintentos duplicados.**
 
 ### Flujo de sesión IA revisado parcialmente
 
@@ -107,10 +107,10 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] El nivel estimado del tutor IA se conserva entre turnos y se muestra en el resumen; la sesión real smoke completó el ciclo, falta evaluación pedagógica de calidad.
 - [x] Conectar `learnerUpdate.errorsToReview` con el resumen: los patrones se acumulan sin duplicados, se limitan en longitud/cantidad y se guardan en el historial de sesiones.
 - [x] Añadir pruebas unitarias para acumulación, deduplicación, límites y persistencia de patrones IA.
-- [ ] Verificar exportación y resumen con una sesión real completa en navegador; la sesión real de smoke valida el proveedor/API, mientras el E2E valida la interfaz con API simulada.
+- [x] Verificar una sesión real completa en navegador con Gemini: 3 turnos en francés, 1 sesión persistida y exportación JSON descargada; run #44122518840.
 - [x] Añadir pruebas del cliente frontend para health check, envío de turnos, errores HTTP y respuestas no JSON. El health check inicial se aborta tras 5 s si el backend no responde, permitiendo continuar en modo local; probado en tests.
 - [x] Añadir prueba de integración del ciclo IA en `tests/ai-session-flow.test.js`: actualizaciones del alumno, deduplicación de vocabulario/patrones, turnos `not_applicable`, evaluación, resumen, persistencia y tarjeta de repaso. tests aprobados en run #44093520831.
-- [x] Pruebas de interacción DOM/navegador y del flujo completo de interfaz: modo local, modo IA simulado, reintentos, pistas, resumen, persistencia, exportación y repaso IA; E2E aprobado en run #44093542317.
+- [x] Pruebas de interacción DOM/navegador y del flujo completo de interfaz: modo local, modo IA simulado, reintentos, pistas, resumen, persistencia, exportación y repaso IA; E2E aprobado en run #44122553809.
 
 ### Backend y seguridad revisados parcialmente
 
@@ -150,9 +150,9 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Proveedor inicial de validación: Google Gemini, modelo `gemini-3.5-flash-lite` (configurable; no es dependencia permanente).
 - [x] Confirmar conectividad y compatibilidad del modelo mediante sesiones reales de tres turnos en portugués brasileño y francés.
 - [x] La clave se utilizó como secreto de GitHub Actions; no se incorporó al repositorio ni a los logs.
-- [x] Smoke test: inicio, tres evaluaciones, continuidad, fragmentos de voz y cierre completados en ambos idiomas. [ ] Ampliar casos reales: respuestas incorrectas, pistas, cuota, credencial inválida y timeout.
+- [x] Smoke test: inicio, tres evaluaciones, continuidad, fragmentos de voz y cierre completados en ambos idiomas. [x] Sesión real desde el navegador: tres turnos en francés, resumen, persistencia y exportación aprobados. [ ] Ampliar casos reales: respuestas incorrectas, pistas, cuota y credencial inválida.
 - [ ] Probar errores de cuota, credencial inválida, timeout y respuesta JSON inválida.
-- [x] Latencia observada: 79,8 s en pt-BR y 39,8 s en fr-FR; los 503 transitorios se recuperaron mediante reintentos. [ ] Medir costos y latencias en varias sesiones/modelos antes de seleccionar proveedor de producción.
+- [x] Latencia observada en el último smoke API: 96,7 s en pt-BR y 30,8 s en fr-FR. La sesión real de navegador también superó varios 503 y dos timeouts de intentos individuales gracias a reintentos manuales acotados. [ ] Medir costos y latencias en varias sesiones/modelos antes de seleccionar proveedor de producción.
 - [ ] Usar únicamente información ficticia durante pruebas iniciales.
 
 ## Etapa 6 — Prueba humana y experiencia de usuario
@@ -205,7 +205,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Próxima acción concreta
 
-CI y Browser E2E están aprobados en `e8fca68`; el smoke test real de Gemini está aprobado en `99fcfcc` para `pt-BR` y `fr-FR` (3 turnos y 4 segmentos de voz por idioma). Próximo trabajo: completar la cobertura de audio en pistas y explicaciones, validar voces en dispositivos reales y cerrar la auditoría funcional y de seguridad antes de preparar la prueba humana.
+CI y Browser E2E están aprobados en `6add5d7`; el smoke API y la sesión real de navegador están aprobados en run #44122518840. Próximo trabajo: completar cobertura de audio en pistas/explicaciones, validar voces en dispositivos reales y cerrar los pendientes funcionales y de seguridad antes de preparar la prueba humana.
 
 ## Criterio para declarar el proyecto listo para prueba humana
 
