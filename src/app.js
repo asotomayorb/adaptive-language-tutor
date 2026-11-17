@@ -38,10 +38,22 @@ function speakerButton(text, locale) {
   return '<button class="speak-button" type="button" data-speak="' + escapeHTML(text) + '" data-locale="' + escapeHTML(locale || "") + '" aria-label="Reproducir pronunciación" title="Escuchar">▶</button>';
 }
 function bindSpeakerButtons(root) {
-  root.querySelectorAll("[data-speak]").forEach(button => button.addEventListener("click", event => {
-    event.stopPropagation();
-    speech.speak(button.dataset.speak, button.dataset.locale || catalog?.locale);
-  }));
+  root.querySelectorAll("[data-speak]:not([data-speech-bound])").forEach(button => {
+    button.dataset.speechBound = "true";
+    button.addEventListener("click", event => {
+      event.stopPropagation();
+      speech.speak(button.dataset.speak, button.dataset.locale || catalog?.locale);
+    });
+  });
+}
+function appendSpeechButtons(root, segments) {
+  const locale = session?.config.languageLocale || session?.config.languageId;
+  const valid = (segments || []).filter(item =>
+    item && typeof item.text === "string" && item.text.trim() && item.locale === locale
+  );
+  if (!valid.length) return;
+  root.insertAdjacentHTML("beforeend", valid.map(item => " " + speakerButton(item.text, item.locale)).join(""));
+  bindSpeakerButtons(root);
 }
 function autoSpeak(text, locale = catalog?.locale) {
   if (text && speech.enabled) speech.speak(text, locale, { automatic: true });
@@ -419,6 +431,7 @@ async function requestAdaptiveHint() {
       item && typeof item.text === "string" && item.text.trim() &&
       item.locale === (session.config.languageLocale || session.config.languageId)
     );
+    appendSpeechButtons($("feedback"), segments);
     speech.speakSequence(segments, { automatic: true });
     button.textContent = "Pedir otra pista";
   } catch (error) {
@@ -592,6 +605,12 @@ $("hint-btn").addEventListener("click", () => {
     if (aiHintLevel === 0 && aiCurrentExercise?.hint) {
       aiHintLevel = 1;
       showFeedback("Pista: " + aiCurrentExercise.hint, true);
+      const hintSegments = (aiLastResult?.speechSegments || []).filter(item =>
+        item && typeof item.text === "string" && item.text.trim() &&
+        item.locale === (session.config.languageLocale || session.config.languageId) &&
+        aiCurrentExercise.hint.toLocaleLowerCase().includes(item.text.toLocaleLowerCase())
+      );
+      appendSpeechButtons($("feedback"), hintSegments);
       $("hint-btn").textContent = "Pedir otra pista";
       return;
     }
