@@ -96,6 +96,18 @@ try {
   const aiPage = await aiContext.newPage();
   const aiPageErrors = [];
   aiPage.on("pageerror", error => aiPageErrors.push(error.message));
+  await aiPage.addInitScript(() => {
+    window.__spoken = [];
+    const synth = {
+      getVoices: () => [{ name: "Brazilian Portuguese", lang: "pt-BR" }],
+      speak: utterance => window.__spoken.push({ text: utterance.text, lang: utterance.lang, voice: utterance.voice?.name }),
+      cancel: () => {}
+    };
+    Object.defineProperty(window, "speechSynthesis", { configurable: true, value: synth });
+    window.SpeechSynthesisUtterance = class {
+      constructor(text) { this.text = text; this.lang = ""; this.voice = null; }
+    };
+  });
   let startCalls = 0;
   let answerCalls = 0;
   await aiPage.route("**/api/health", route => route.fulfill({
@@ -118,6 +130,7 @@ try {
           exercise: { type: "production", prompt: "Como você se chama?", expectedAnswer: "Eu me chamo Ana.", acceptedAnswers: ["Eu me chamo Ana."], hint: "Comece com: Eu me chamo..." },
           evaluation: null,
           learnerUpdate: { estimatedLevel: "A1", vocabulary: [{ term: "chamar", meaning: "llamar" }], errorsToReview: [] },
+          speechSegments: [{ text: "Como você se chama?", language: "pt", locale: "pt-BR" }],
           nextAction: "answer"
         })
       });
@@ -134,6 +147,7 @@ try {
         exercise: null,
         evaluation: { status: "partially_correct", feedback: "La idea se entiende, pero revisa la conjugación.", correction: "Eu me chamo Ana.", skill: "Producción" },
         learnerUpdate: { estimatedLevel: "A1", vocabulary: [], errorsToReview: [] },
+        speechSegments: [{ text: "Eu me chamo Ana.", language: "pt", locale: "pt-BR" }],
         nextAction: "finish"
       })
     });
@@ -144,6 +158,9 @@ try {
   await aiPage.locator("#start-session").click();
   await aiPage.getByRole("button", { name: "Reintentar sesión" }).click();
   await aiPage.locator("#lesson-content").getByText("Como você se chama?").waitFor();
+  assert.equal(await aiPage.evaluate(() => window.__spoken[0]?.lang), "pt-BR", "AI speech segments should use their explicit target locale");
+  await aiPage.locator("#lesson-content [data-speak]").first().click();
+  assert.ok(await aiPage.evaluate(() => window.__spoken.length >= 2), "AI fragments should offer manual playback");
   await aiPage.locator("#hint-btn").click();
   await aiPage.locator("#feedback").getByText(/Comece com/).waitFor();
   await aiPage.locator("#ai-answer").fill("Eu me chamo Ana.");
