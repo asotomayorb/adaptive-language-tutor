@@ -150,7 +150,7 @@ try {
           exercise: { type: "production", prompt: "Comment tu t’appelles ?", expectedAnswer: "Je m’appelle Ana.", acceptedAnswers: ["Je m’appelle Ana."], hint: "Usa la expresión Je m’appelle..." },
           evaluation: null,
           learnerUpdate: { estimatedLevel: "A1", vocabulary: [{ term: "s’appeler", meaning: "llamarse" }], errorsToReview: [] },
-          speechSegments: [{ text: "Comment tu t’appelles ?", language: "fr", locale: "fr-FR" }],
+          speechSegments: [{ text: "Comment tu t’appelles ?", language: "fr", locale: "fr-FR" }, { text: "Je m’appelle", language: "fr", locale: "fr-FR" }],
           nextAction: "answer"
         })
       });
@@ -203,8 +203,10 @@ try {
   assert.equal(await aiPage.evaluate(() => window.__spoken[0]?.voice), "French", "custom AI locale should select the matching system voice");
   await aiPage.locator("#lesson-content [data-speak]").first().click();
   assert.ok(await aiPage.evaluate(() => window.__spoken.length >= 2), "AI fragments should offer manual playback");
+  const spokenBeforeFirstHint = await aiPage.evaluate(() => window.__spoken.length);
   await aiPage.locator("#hint-btn").click();
   await aiPage.locator("#feedback").getByText(/Je m’appelle/).waitFor();
+  assert.ok(await aiPage.evaluate(count => window.__spoken.length > count && window.__spoken.at(-1)?.text === "Je m’appelle" && window.__spoken.at(-1)?.lang === "fr-FR", spokenBeforeFirstHint), "the first AI hint should automatically pronounce its target-language fragment");
   const turnBeforeExtraHint = await aiPage.locator("#turn-count").innerText();
   await aiPage.locator("#hint-btn").click();
   await aiPage.locator("#feedback").getByText(/verbo que expresa tu nombre/).waitFor();
