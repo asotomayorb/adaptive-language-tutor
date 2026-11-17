@@ -35,6 +35,8 @@ try {
   assert.match(await page.title(), /Adaptive Language Tutor/);
   await page.locator("#ai-status").waitFor();
   await page.locator("#start-session").waitFor({ state: "visible" });
+  await page.locator("#level").selectOption("diagnostic");
+  await page.locator("#duration").selectOption("8");
   await page.locator("#start-session").click();
 
   // Complete the four-question diagnostic, then verify guided practice.
