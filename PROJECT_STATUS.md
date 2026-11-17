@@ -95,7 +95,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Corregir colisiones de tarjetas IA: los identificadores `ai-turn-N` se repiten entre sesiones; ahora las claves incluyen marca temporal de sesión y turno.
 - [x] Evitar crear tarjetas IA no calificables cuando la actividad no incluye una respuesta esperada.
 - [x] Añadir pruebas de persistencia para ambos casos; ejecución pendiente de confirmación en CI.
-- [ ] Validar de extremo a extremo que las tarjetas IA se muestren y se califiquen correctamente.
+- [x] Validar en navegador que un error IA con respuesta esperada se persista como tarjeta, aparezca al vencer y se califique; E2E aprobado en commit `815b986` (run #44088504661).
 - [x] Integrar `learnerUpdate.errorsToReview` en el resumen y en el historial de sesiones; no se convierten en tarjetas de respuesta única porque describen patrones, no respuestas calificables.
 - [x] Las actividades IA sin `expectedAnswer` ya no generan tarjetas de repaso que no puedan calificarse.
 - [ ] Evaluar una alternativa pedagógica para repasar conversaciones libres sin respuesta única.
@@ -107,9 +107,9 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] El nivel estimado del tutor IA se conserva entre turnos y se muestra en el resumen (pendiente validar con proveedor real).
 - [x] Conectar `learnerUpdate.errorsToReview` con el resumen: los patrones se acumulan sin duplicados, se limitan en longitud/cantidad y se guardan en el historial de sesiones.
 - [x] Añadir pruebas unitarias para acumulación, deduplicación, límites y persistencia de patrones IA.
-- [ ] Verificar que exportación y resumen incluyan de forma consistente todos los datos IA con una sesión real.
+- [ ] Verificar que exportación y resumen incluyan de forma consistente todos los datos IA con una sesión real; el E2E actual cubre persistencia y resumen con API simulada, no una sesión real completa en navegador.
 - [x] Añadir pruebas del cliente frontend para health check, envío de turnos, errores HTTP y respuestas no JSON.
-- [x] Añadir prueba de integración del ciclo IA en `tests/ai-session-flow.test.js`: actualizaciones del alumno, deduplicación de vocabulario/patrones, turnos `not_applicable`, evaluación, resumen, persistencia y tarjeta de repaso. Ejecución CI pendiente.\n- [ ] Añadir pruebas de interacción DOM/navegador y del flujo completo de interfaz; la prueba de integración anterior cubre el núcleo, no sustituye E2E.
+- [x] Añadir prueba de integración del ciclo IA en `tests/ai-session-flow.test.js`: actualizaciones del alumno, deduplicación de vocabulario/patrones, turnos `not_applicable`, evaluación, resumen, persistencia y tarjeta de repaso. Ejecución CI pendiente.\n- [x] Añadir pruebas de interacción DOM/navegador y del flujo completo de interfaz: modo local, modo IA simulado, reintentos, pistas, resumen, persistencia, exportación y repaso IA; E2E aprobado en `815b986`.
 
 ### Backend y seguridad revisados parcialmente
 
@@ -202,7 +202,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Próxima acción concreta
 
-CI y Browser E2E están aprobados en el commit más reciente (`944dc72`); el smoke test real de Gemini está aprobado en `c1bccf2` (3 turnos, 12,7 s). Próximo trabajo: cerrar los puntos pendientes de la auditoría funcional y revisar el flujo de repaso/persistencia en navegador; después implementar TTS multilingüe y preparar la prueba humana.
+CI y Browser E2E están aprobados en el commit más reciente (`815b986`); el E2E añade verificación del repaso IA persistido. El smoke test real de Gemini está aprobado en `c1bccf2` (3 turnos, 12,7 s). Próximo trabajo: cerrar los puntos pendientes de la auditoría funcional y revisar el flujo de repaso/persistencia en navegador; después implementar TTS multilingüe y preparar la prueba humana.
 
 ## Criterio para declarar el proyecto listo para prueba humana
 
