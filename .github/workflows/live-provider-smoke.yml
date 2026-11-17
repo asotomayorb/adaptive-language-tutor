@@ -8,6 +8,8 @@ on:
     paths:
       - "server/provider.js"
       - "scripts/live-provider-smoke.js"
+      - "scripts/live-browser-smoke.js"
+      - "package.json"
       - ".github/workflows/live-provider-smoke.yml"
 
 jobs:
@@ -27,6 +29,12 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Install Playwright
+        run: npm install --no-save playwright
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
 
       - name: Start application
         env:
@@ -65,6 +73,11 @@ jobs:
           TUTOR_SMOKE_LOCALE: fr-FR
           TUTOR_SMOKE_LANGUAGE_LABEL: francés
         run: npm run test:provider-live
+
+      - name: Run real-provider browser session
+        env:
+          TUTOR_BASE_URL: http://127.0.0.1:3000
+        run: npm run test:browser-live
 
       - name: Show application diagnostics
         if: always()
