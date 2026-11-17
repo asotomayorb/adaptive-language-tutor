@@ -34,6 +34,7 @@ export function createSpeechController({
     let voices = [];
     try { voices = synthesis.getVoices?.() || []; } catch {}
     const voice = findVoiceForLocale(voices, locale);
+    if (voice) onStatus({ enabled, supported });
     if (voice) utterance.voice = voice;
     else if (locale) onStatus({ enabled, supported, fallback: true, locale });
     utterance.onerror = () => onStatus({ enabled, supported, error: true, locale });
