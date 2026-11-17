@@ -155,15 +155,16 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 **Estado: pendiente.** La experiencia de audio debe incorporarse antes de la prueba humana.
 
-- [ ] Lectura automática en voz alta de cada fragmento que realmente esté en el idioma objetivo (p. ej., opciones, frases modelo, vocabulario y segmentos de práctica dentro de respuestas del tutor); no leer automáticamente instrucciones en español.
-- [ ] Marcar explícitamente los fragmentos pronunciables con metadatos de idioma (p. ej., bloques `text` + `language` o `targetLanguageSegments` en el contrato IA); no intentar adivinar el idioma por detección automática cuando el tutor mezcle español y el idioma objetivo.
-- [ ] Usar voces del navegador mediante SpeechSynthesis cuando estén disponibles, con locale correcto por idioma (`pt-BR` para portugués brasileño y `en`/locale inglés configurado); la aplicación no enviará texto a un endpoint TTS propio.
+- [ ] Lectura automática en voz alta de cada fragmento pronunciable que esté en el idioma objetivo: opciones, frases modelo, vocabulario, respuestas, correcciones, ejemplos, pistas y explicaciones. El requisito es multilingüe y no queda limitado a inglés y portugués: debe aplicarse a cualquier idioma objetivo que la aplicación configure y soporte.
+- [ ] Marcar explícitamente cada fragmento pronunciable con metadatos de idioma y variante/locale (p. ej., bloques `text` + `language` + `locale` o `targetLanguageSegments` en el contrato IA). No inferir el idioma por detección automática cuando el tutor mezcle español auxiliar y el idioma objetivo.
+- [ ] Resolver la voz a partir del idioma/locale de cada fragmento, no de una lista fija de dos idiomas. Usar voces disponibles del navegador mediante `SpeechSynthesis`; admitir idiomas y variantes adicionales sin cambios específicos en el flujo pedagógico. La aplicación no enviará texto a un endpoint TTS propio.
+- [ ] La cobertura efectiva depende de las voces que ofrezca el navegador/sistema operativo: consultar `getVoices()`, seleccionar la mejor coincidencia de idioma/locale y contemplar fallback informado cuando no exista voz compatible. No prometer disponibilidad universal de voces en todos los dispositivos.
 - [ ] Añadir un control global para activar/desactivar lectura automática, con iconos habituales de altavoz y altavoz silenciado, estado accesible y preferencia recordada.
-- [ ] Añadir un botón de reproducción/repetición con icono play junto a cada fragmento pronunciable; reproducir solo ese fragmento.
+- [ ] Añadir un botón de reproducción/repetición con icono play junto a cada fragmento pronunciable; reproducir solo ese fragmento usando su propio idioma/locale.
 - [ ] Al cambiar de turno, detener la locución anterior para evitar solapamientos; al desactivar audio, cancelar cualquier locución en curso.
-- [ ] No leer en voz alta instrucciones ni explicaciones en español; separar explícitamente el texto objetivo del texto auxiliar cuando el tutor mezcle idiomas.
-- [ ] Gestionar voces no disponibles, navegadores sin SpeechSynthesis, errores y restricciones de autoplay sin bloquear la práctica escrita; iniciar la lectura automática solo cuando el navegador lo permita y mantener siempre disponible la reproducción manual.
-- [ ] Validar pronunciación y selección de voz en móvil y escritorio para portugués brasileño e inglés, además de controles por teclado y lectores de pantalla.
+- [ ] No leer automáticamente instrucciones ni explicaciones en español salvo que español sea el idioma objetivo de esa actividad; separar explícitamente texto objetivo y texto auxiliar cuando el tutor mezcle idiomas.
+- [ ] Gestionar voces no disponibles, navegadores sin `SpeechSynthesis`, errores y restricciones de autoplay sin bloquear la práctica escrita; iniciar lectura automática cuando el navegador lo permita y mantener disponible la reproducción manual.
+- [ ] Validar la selección de voz, pronunciación y fallback en los idiomas objetivo habilitados, incluyendo portugués brasileño e inglés como casos iniciales, y comprobar que incorporar otro idioma no requiera modificar la lógica de audio. Probar en móvil y escritorio, con teclado y lectores de pantalla.
 - [ ] Prueba móvil y escritorio.
 - [ ] Portugués brasileño: naturalidad, corrección, vocabulario y situaciones reales.
 - [ ] Inglés: naturalidad, corrección y progresión.
