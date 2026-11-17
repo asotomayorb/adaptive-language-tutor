@@ -66,8 +66,8 @@ test("Anthropic adapter uses its native messages format", async () => {
 
 test("Gemini adapter uses its native generateContent format", async () => {
   const provider = createAIProvider(
-    { AI_PROVIDER: "gemini", AI_API_KEY: "secret", AI_MODEL: "gemini-3.8-flash" },
-    fakeFetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent", { "x-goog-api-key": "secret" }, {
+    { AI_PROVIDER: "gemini", AI_API_KEY: "secret", AI_MODEL: "gemini-3.5-flash-lite" },
+    fakeFetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent", { "x-goog-api-key": "secret" }, {
       candidates: [{ content: { parts: [{ text: tutorJson }] } }]
     }, options => {
       const body = JSON.parse(options.body);
