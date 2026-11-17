@@ -167,7 +167,7 @@ try {
   assert.ok(await aiPage.evaluate(() => window.__spoken.length >= 2), "AI fragments should offer manual playback");
   await aiPage.locator("#hint-btn").click();
   await aiPage.locator("#feedback").getByText(/Je m’appelle/).waitFor();
-  await aiPage.locator("#ai-answer").fill("Eu me chamo Ana.");
+  await aiPage.locator("#ai-answer").fill("Je m’appelle Ana.");
   await aiPage.locator("#submit-ai-answer").click();
   await aiPage.getByRole("button", { name: "Reintentar envío" }).click();
   await aiPage.getByRole("button", { name: "Ver resumen →" }).click();
