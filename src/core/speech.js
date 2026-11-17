@@ -17,7 +17,8 @@ export function createSpeechController({
   preferenceKey = DEFAULT_PREFERENCE_KEY
 } = {}) {
   const supported = Boolean(synthesis && typeof synthesis.speak === "function" && Utterance);
-  let enabled = storage?.getItem(preferenceKey) !== "false";
+  let enabled = true;
+  try { enabled = storage?.getItem(preferenceKey) !== "false"; } catch {}
 
   function setEnabled(value) {
     enabled = Boolean(value);
