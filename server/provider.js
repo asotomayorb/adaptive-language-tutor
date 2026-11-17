@@ -30,13 +30,19 @@ function isRecord(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
+function contractError(message) {
+  const error = new Error(message);
+  error.status = 422;
+  return error;
+}
+
 function validateTutorResult(result) {
   const statuses = ["correct", "partially_correct", "incorrect", "not_applicable"];
   const actions = ["answer", "continue", "review", "finish"];
   const exerciseTypes = ["translation", "comprehension", "grammar", "production", "conversation"];
 
   if (!isRecord(result) || typeof result.message !== "string") {
-    throw new Error("The AI provider response does not match the tutor contract.");
+    throw contractError("The AI provider response does not match the tutor contract.");
   }
   if (result.exercise !== null && (!isRecord(result.exercise) ||
       !exerciseTypes.includes(result.exercise.type) ||
@@ -45,14 +51,14 @@ function validateTutorResult(result) {
       !Array.isArray(result.exercise.acceptedAnswers) ||
       !result.exercise.acceptedAnswers.every(item => typeof item === "string") ||
       !(typeof result.exercise.hint === "string" || result.exercise.hint === null))) {
-    throw new Error("The AI provider returned an invalid exercise.");
+    throw contractError("The AI provider returned an invalid exercise (exercise fields: " + Object.keys(result.exercise || {}).join(", ") + ").");
   }
   if (result.evaluation !== null && (!isRecord(result.evaluation) ||
       !statuses.includes(result.evaluation.status) ||
       typeof result.evaluation.feedback !== "string" ||
       !(typeof result.evaluation.correction === "string" || result.evaluation.correction === null) ||
       typeof result.evaluation.skill !== "string")) {
-    throw new Error("The AI provider returned an invalid evaluation.");
+    throw contractError("The AI provider returned an invalid evaluation.");
   }
   if (result.learnerUpdate !== null && (!isRecord(result.learnerUpdate) ||
       !(typeof result.learnerUpdate.estimatedLevel === "string" || result.learnerUpdate.estimatedLevel === null) ||
@@ -60,10 +66,10 @@ function validateTutorResult(result) {
       !result.learnerUpdate.vocabulary.every(item => isRecord(item) && typeof item.term === "string" && typeof item.meaning === "string") ||
       !Array.isArray(result.learnerUpdate.errorsToReview) ||
       !result.learnerUpdate.errorsToReview.every(item => typeof item === "string"))) {
-    throw new Error("The AI provider returned an invalid learner update.");
+    throw contractError("The AI provider returned an invalid learner update.");
   }
   if (!actions.includes(result.nextAction)) {
-    throw new Error("The AI provider returned an invalid next action.");
+    throw contractError("The AI provider returned an invalid next action.");
   }
 
   return {
@@ -81,7 +87,9 @@ async function readProviderError(response) {
     const body = await response.json();
     detail = body.error?.message || body.message || "";
   } catch {}
-  return new Error("AI provider request failed (" + response.status + ")" + (detail ? ": " + detail : ""));
+  const error = new Error("AI provider request failed (" + response.status + ")" + (detail ? ": " + detail : ""));
+  error.status = response.status;
+  return error;
 }
 
 export function createAIProvider(env = process.env, fetchImpl = fetch) {
