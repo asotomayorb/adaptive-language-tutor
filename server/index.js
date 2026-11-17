@@ -10,6 +10,8 @@ const TUTOR_RATE_WINDOW_MS = 10 * 60 * 1000;
 const MAX_TUTOR_REQUESTS_PER_WINDOW = 60;
 const MAX_CONCURRENT_TUTOR_REQUESTS = 2;
 const ROOT = resolve(fileURLToPath(new URL("../", import.meta.url)));
+const PUBLIC_SRC_ROOT = resolve(ROOT, "src");
+const PUBLIC_ASSET_EXTENSIONS = new Set([".js", ".css"]);
 const provider = createAIProvider();
 const MIME_TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -26,9 +28,15 @@ async function serveStatic(pathname, response) {
   let decoded;
   try { decoded = decodeURIComponent(pathname); }
   catch { return send(response, 400, { error: "Invalid URL path." }); }
-  const relative = decoded === "/" ? "index.html" : (decoded.startsWith("/") ? decoded.slice(1) : decoded);
-  const filePath = resolve(ROOT, relative);
-  if (filePath !== ROOT && !filePath.startsWith(ROOT + sep)) {
+  let filePath;
+  if (decoded === "/" || decoded === "/index.html") {
+    filePath = resolve(ROOT, "index.html");
+  } else if (decoded.startsWith("/src/")) {
+    filePath = resolve(ROOT, decoded.slice(1));
+    if (!filePath.startsWith(PUBLIC_SRC_ROOT + sep) || !PUBLIC_ASSET_EXTENSIONS.has(extname(filePath))) {
+      return send(response, 404, { error: "Not found." });
+    }
+  } else {
     return send(response, 404, { error: "Not found." });
   }
   try {
