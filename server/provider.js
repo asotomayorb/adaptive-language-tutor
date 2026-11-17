@@ -4,6 +4,56 @@ const DEFAULT_BASE_URL = "https://api.openai.com/v1";
 const MAX_OUTPUT_TOKENS = 1200;
 const PROVIDER_TIMEOUT_MS = 45_000;
 
+const GEMINI_RESPONSE_SCHEMA = {
+  type: "OBJECT",
+  properties: {
+    message: { type: "STRING" },
+    exercise: {
+      type: "OBJECT", nullable: true,
+      properties: {
+        type: { type: "STRING", enum: ["translation", "comprehension", "grammar", "production", "conversation"] },
+        prompt: { type: "STRING", nullable: true },
+        expectedAnswer: { type: "STRING", nullable: true },
+        acceptedAnswers: { type: "ARRAY", items: { type: "STRING" } },
+        hint: { type: "STRING", nullable: true }
+      },
+      required: ["type", "prompt", "expectedAnswer", "acceptedAnswers", "hint"]
+    },
+    evaluation: {
+      type: "OBJECT", nullable: true,
+      properties: {
+        status: { type: "STRING", enum: ["correct", "partially_correct", "incorrect", "not_applicable"] },
+        feedback: { type: "STRING" },
+        correction: { type: "STRING", nullable: true },
+        skill: { type: "STRING" }
+      },
+      required: ["status", "feedback", "correction", "skill"]
+    },
+    learnerUpdate: {
+      type: "OBJECT", nullable: true,
+      properties: {
+        estimatedLevel: { type: "STRING", nullable: true },
+        vocabulary: {
+          type: "ARRAY",
+          items: {
+            type: "OBJECT",
+            properties: {
+              term: { type: "STRING" },
+              meaning: { type: "STRING" }
+            },
+            required: ["term", "meaning"]
+          }
+        },
+        errorsToReview: { type: "ARRAY", items: { type: "STRING" } }
+      },
+      required: ["estimatedLevel", "vocabulary", "errorsToReview"]
+    },
+    nextAction: { type: "STRING", enum: ["answer", "continue", "review", "finish"] }
+  },
+  required: ["message", "exercise", "evaluation", "learnerUpdate", "nextAction"]
+};
+
+
 function required(value, name) {
   if (!value) throw new Error("Missing required configuration: " + name);
   return value;
@@ -133,7 +183,7 @@ export function createAIProvider(env = process.env, fetchImpl = fetch) {
         body = {
           systemInstruction: { parts: [{ text: messages[0].content }] },
           contents: [{ role: "user", parts: [{ text: messages[1].content }] }],
-          generationConfig: { maxOutputTokens: MAX_OUTPUT_TOKENS, responseMimeType: "application/json", thinkingConfig: { thinkingLevel: "low" } }
+          generationConfig: { maxOutputTokens: MAX_OUTPUT_TOKENS, responseMimeType: "application/json", responseSchema: GEMINI_RESPONSE_SCHEMA, thinkingConfig: { thinkingLevel: "low" } }
         };
         extractText = data => data.candidates?.[0]?.content?.parts?.map(part => part.text || "").join("\n");
       } else {
