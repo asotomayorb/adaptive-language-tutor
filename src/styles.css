@@ -6,3 +6,18 @@
 .progress-summary span{font-size:.88rem;color:var(--muted,#667085)}
 .progress-summary strong{display:block;font-size:1.25rem;color:var(--text,#172b4d)}
 .progress-dashboard .muted{font-size:.9rem;color:var(--muted,#667085);margin:8px 0 12px}
+
+.header-actions{display:flex;align-items:center;gap:12px}
+.audio-toggle,.speak-button{display:inline-grid;place-items:center;border:1px solid #dce3ec;border-radius:9px;background:#fff;color:#29425f;cursor:pointer}
+.audio-toggle{width:38px;height:36px;font-size:16px}
+.audio-status{min-height:0;margin:0;text-align:right;color:#8b5b2b;font-size:11px}
+.audio-status:empty{display:none}
+.answer-option-row{display:flex;align-items:stretch;gap:7px}
+.answer-option-row .answer-option{flex:1}
+.speak-button{width:36px;min-width:36px;font-size:13px}
+.speak-button:hover,.audio-toggle:hover{border-color:#7193b8;background:#f7faff}
+.ai-vocabulary{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:16px}
+.ai-vocabulary>.muted{width:100%;font-size:11px}
+.vocabulary-item{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px}
+.vocabulary-item .speak-button{width:28px;min-width:28px;height:27px}
+@media(max-width:620px){.header-actions{gap:7px}.status{max-width:105px;text-align:right}}
