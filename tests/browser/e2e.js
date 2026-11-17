@@ -233,6 +233,19 @@ try {
   await aiPage.locator("#audio-toggle").click();
   assert.ok(await aiPage.evaluate(count => window.__spoken.length > count, spokenBeforeSummaryReenable), "re-enabling automatic speech on the summary should replay visible target vocabulary");
   assert.equal(await aiPage.evaluate(() => window.__spoken.at(-1)?.lang), "fr-FR", "summary replay should preserve the selected target locale");
+
+  // Hidden panels must not be replayed when automatic speech is re-enabled.
+  await aiPage.evaluate(() => {
+    document.querySelector("#summary-panel").classList.add("hidden");
+    document.querySelector("#lesson-panel").classList.remove("hidden");
+    document.querySelector("#lesson-content").innerHTML = '<button data-speak="visible lesson phrase" data-locale="fr-FR">play</button>';
+  });
+  await aiPage.locator("#audio-toggle").click();
+  const spokenBeforeVisibleReplay = await aiPage.evaluate(() => window.__spoken.length);
+  await aiPage.locator("#audio-toggle").click();
+  const replayedAfterPanelSwitch = await aiPage.evaluate(count => window.__spoken.slice(count).map(item => item.text), spokenBeforeVisibleReplay);
+  assert.deepEqual(replayedAfterPanelSwitch, ["visible lesson phrase"], "audio re-enable should ignore speech buttons inside hidden panels");
+
   const aiStored = await aiPage.evaluate(() =>
     JSON.parse(localStorage.getItem("adaptive-language-tutor.progress") || "{}")
   );
