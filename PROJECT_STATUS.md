@@ -3,7 +3,7 @@
 **Última actualización:** 17-11-2026  
 **Rama:** `feature/ai-tutor-pedagogy`  
 **Pull request:** [#2 – Improve adaptive tutor pedagogy and AI integration](https://github.com/asotomayorb/adaptive-language-tutor/pull/2)  
-**Estado global:** sesiones reales Gemini aprobadas en `pt-BR` y `fr-FR` (3 turnos y 5 fragmentos de voz por idioma); una sesión real adicional de navegador en francés completó persistencia y exportación. Tests y Browser E2E aprobados en `7576158`. La comprobación inicial de salud ahora tiene timeout de 5 s para no bloquear el modo local. Se corrigió la exposición de archivos estáticos, se añadieron diez pruebas de rutas privadas y cabeceras de seguridad. Audio TTS está parcialmente implementado y probado con portugués y francés; el proveedor real completó ambas sesiones. Auditoría funcional, validación de voz en dispositivos reales y seguridad siguen pendientes. No declarar listo para prueba humana ni desplegar públicamente todavía.
+**Estado global:** sesiones reales Gemini aprobadas en `pt-BR` y `fr-FR` (3 turnos y 5 fragmentos de voz por idioma); una sesión real adicional de navegador en francés completó persistencia y exportación. Tests unitarios (70) y Browser E2E aprobados en el commit `2bae81f` (runs [#44126872598](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44126872598) y [#44126872696](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44126872696)). Se añadió repaso espaciado de patrones lingüísticos mediante autoevaluación, incluyendo conversaciones libres sin respuesta única. La comprobación inicial de salud tiene timeout de 5 s; se corrigió la exposición de archivos estáticos y se añadieron pruebas de rutas privadas y cabeceras de seguridad. Audio TTS está parcialmente implementado y probado en Chromium; la validación auditiva en dispositivos reales y la revisión de seguridad siguen pendientes. No declarar listo para prueba humana amplia ni desplegar públicamente todavía.
 
 Este documento es el registro detallado del proyecto. El README principal mantiene únicamente la etapa actual y enlaza aquí para evitar duplicar información y mantener la documentación operativa breve.
 
@@ -13,7 +13,7 @@ Este documento es el registro detallado del proyecto. El README principal mantie
 |---|---|---|
 | 1 | Base del repositorio y ejecución | Implementada; CI correcto en el último commit validado |
 | 2 | Tutor IA, proveedores y pedagogía | Implementada; sesión real Gemini validada en 3 turnos |
-| 3 | Pruebas automatizadas y CI | Aprobadas en el último commit de código `7576158` |
+| 3 | Pruebas automatizadas y CI | Aprobadas: 70 tests y Browser E2E en `2bae81f` |
 | 4 | Auditoría funcional y técnica | En curso; quedan comprobaciones funcionales y de seguridad |
 | 5 | Validación con proveedor IA real | Smoke test Gemini aprobado; evaluación de calidad/costos y fallos pendiente |
 | 6 | Prueba humana y ajustes de experiencia | Pendiente |
@@ -94,11 +94,14 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Repaso IA: los errores registrados por el flujo IA reciben un identificador `ai-turn-N`; `persistSession()` los convierte en tarjetas de repaso genéricas y la vista puede usar el prompt y la respuesta esperada guardados.
 - [x] Corregir colisiones de tarjetas IA: los identificadores `ai-turn-N` se repiten entre sesiones; ahora las claves incluyen marca temporal de sesión y turno.
 - [x] Evitar crear tarjetas IA no calificables cuando la actividad no incluye una respuesta esperada.
+- [x] Convertir `learnerUpdate.errorsToReview` en tarjetas de repaso cualitativas, también para conversaciones libres sin respuesta única.
+- [x] Permitir autoevaluar cada patrón como «Lo recordé» o «Necesito practicarlo»; los intervalos se actualizan con el mismo sistema espaciado sin inventar una respuesta correcta.
+- [x] Deduplicar patrones por idioma y contenido, preservando el intervalo ya conseguido cuando vuelven a aparecer.
 - [x] Añadir pruebas de persistencia para ambos casos; tests aprobados en run #44093520831 y posteriores.
 - [x] Validar en navegador que un error IA con respuesta esperada se persista como tarjeta, aparezca al vencer y se califique; E2E aprobado en run #44121394333.
 - [x] Integrar `learnerUpdate.errorsToReview` en el resumen y en el historial de sesiones; no se convierten en tarjetas de respuesta única porque describen patrones, no respuestas calificables.
 - [x] Las actividades IA sin `expectedAnswer` ya no generan tarjetas de repaso que no puedan calificarse.
-- [ ] Evaluar una alternativa pedagógica para repasar conversaciones libres sin respuesta única.
+- [x] Implementar repaso cualitativo de patrones para conversaciones libres sin respuesta única; tests unitarios y E2E aprobados en runs #44126872598 y #44126872696.
 - [ ] Revisar el botón de pista: actualmente muestra la pista de la actividad en pantalla; no hace una nueva consulta al tutor para pedir una pista adaptada.
 - [x] Corregir evaluación `not_applicable`: los turnos conversacionales sin evaluación objetiva ya no cuentan como errores, no rompen rachas y no reducen la precisión.
 - [x] Separar el total de turnos de las respuestas evaluables en el resumen y exportación.
@@ -110,7 +113,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Verificar una sesión real completa en navegador con Gemini: 3 turnos en francés, 1 sesión persistida y exportación JSON descargada; run #44122518840.
 - [x] Añadir pruebas del cliente frontend para health check, envío de turnos, errores HTTP y respuestas no JSON. El health check inicial se aborta tras 5 s si el backend no responde, permitiendo continuar en modo local; probado en tests.
 - [x] Añadir prueba de integración del ciclo IA en `tests/ai-session-flow.test.js`: actualizaciones del alumno, deduplicación de vocabulario/patrones, turnos `not_applicable`, evaluación, resumen, persistencia y tarjeta de repaso. tests aprobados en run #44093520831.
-- [x] Pruebas de interacción DOM/navegador y del flujo completo de interfaz: modo local, modo IA simulado, reintentos, pistas, resumen, persistencia, exportación y repaso IA; E2E aprobado en run #44124688986 (incluye viewport móvil de 390 px).
+- [x] Pruebas de interacción DOM/navegador y del flujo completo de interfaz: modo local, modo IA simulado, reintentos, pistas, resumen, persistencia, exportación, repaso IA y autoevaluación de patrones; E2E aprobado en run #44126872696 (incluye viewport móvil de 390 px).
 
 ### Backend y seguridad revisados parcialmente
 
@@ -209,7 +212,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Próxima acción concreta
 
-CI y Browser E2E están aprobados en `7576158`; el smoke API y la sesión real de navegador están aprobados en run #44122518840. Próximo trabajo: completar cobertura de audio en pistas/explicaciones, validar voces en dispositivos reales y cerrar los pendientes funcionales y de seguridad antes de preparar la prueba humana.
+70 tests y Browser E2E están aprobados en `2bae81f`; el smoke API y la sesión real de navegador están aprobados en run #44122518840. El repaso cualitativo de patrones ya está implementado y validado. Próximo trabajo: completar cobertura de audio en pistas/explicaciones, validar voces en dispositivos reales y cerrar los pendientes funcionales y de seguridad antes de preparar la prueba humana.
 
 ## Criterio para declarar el proyecto listo para prueba humana
 
