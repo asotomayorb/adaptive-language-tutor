@@ -23,6 +23,18 @@ test("health check reports an unavailable backend", async () => {
   );
 });
 
+test("health check aborts a stalled backend so startup can fall back to local lessons", async () => {
+  let signal;
+  await assert.rejects(
+    checkTutorHealth((_url, options) => new Promise((_resolve, reject) => {
+      signal = options.signal;
+      signal.addEventListener("abort", () => reject(new DOMException("Aborted", "AbortError")), { once: true });
+    }), 5),
+    error => error.name === "AbortError"
+  );
+  assert.equal(signal.aborted, true);
+});
+
 test("tutor client posts the complete turn and parses the response", async () => {
   const input = {
     task: "evaluate_and_continue",
