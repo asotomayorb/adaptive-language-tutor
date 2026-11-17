@@ -155,13 +155,14 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 **Estado: pendiente.** La experiencia de audio debe incorporarse antes de la prueba humana.
 
-- [ ] Lectura automática en voz alta de cada fragmento de contenido que la aplicación presente en el idioma objetivo (incluye mensajes del tutor, enunciados, opciones y feedback que contenga texto de práctica).
-- [ ] Usar voces del navegador mediante SpeechSynthesis cuando estén disponibles, con locale correcto por idioma (`pt-BR` para portugués brasileño y `en`/locale inglés configurado); no enviar el texto a un servicio externo de TTS por defecto.
+- [ ] Lectura automática en voz alta de cada fragmento que realmente esté en el idioma objetivo (p. ej., opciones, frases modelo, vocabulario y segmentos de práctica dentro de respuestas del tutor); no leer automáticamente instrucciones en español.
+- [ ] Marcar explícitamente los fragmentos pronunciables con metadatos de idioma (p. ej., bloques `text` + `language` o `targetLanguageSegments` en el contrato IA); no intentar adivinar el idioma por detección automática cuando el tutor mezcle español y el idioma objetivo.
+- [ ] Usar voces del navegador mediante SpeechSynthesis cuando estén disponibles, con locale correcto por idioma (`pt-BR` para portugués brasileño y `en`/locale inglés configurado); la aplicación no enviará texto a un endpoint TTS propio.
 - [ ] Añadir un control global para activar/desactivar lectura automática, con iconos habituales de altavoz y altavoz silenciado, estado accesible y preferencia recordada.
 - [ ] Añadir un botón de reproducción/repetición con icono play junto a cada fragmento pronunciable; reproducir solo ese fragmento.
 - [ ] Al cambiar de turno, detener la locución anterior para evitar solapamientos; al desactivar audio, cancelar cualquier locución en curso.
 - [ ] No leer en voz alta instrucciones ni explicaciones en español; separar explícitamente el texto objetivo del texto auxiliar cuando el tutor mezcle idiomas.
-- [ ] Gestionar voces no disponibles, navegadores sin SpeechSynthesis, errores y restricciones de autoplay sin bloquear la práctica escrita; ofrecer reproducción manual como alternativa.
+- [ ] Gestionar voces no disponibles, navegadores sin SpeechSynthesis, errores y restricciones de autoplay sin bloquear la práctica escrita; iniciar la lectura automática solo cuando el navegador lo permita y mantener siempre disponible la reproducción manual.
 - [ ] Validar pronunciación y selección de voz en móvil y escritorio para portugués brasileño e inglés, además de controles por teclado y lectores de pantalla.
 - [ ] Prueba móvil y escritorio.
 - [ ] Portugués brasileño: naturalidad, corrección, vocabulario y situaciones reales.
