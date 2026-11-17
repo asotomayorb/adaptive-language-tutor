@@ -3,7 +3,7 @@
 **Última actualización:** 17-11-2026  
 **Rama:** `feature/ai-tutor-pedagogy`  
 **Pull request:** [#2 – Improve adaptive tutor pedagogy and AI integration](https://github.com/asotomayorb/adaptive-language-tutor/pull/2)  
-**Estado global:** sesiones reales Gemini aprobadas en `pt-BR` y `fr-FR` (3 turnos y 5 fragmentos de voz por idioma); una sesión real adicional de navegador en francés completó persistencia y exportación. Tests unitarios (71) y Browser E2E aprobados en el commit `f6897bc` (runs [#44127358523](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44127358523) y [#44127358503](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44127358503)). Se añadió repaso espaciado de patrones lingüísticos mediante autoevaluación, incluyendo conversaciones libres sin respuesta única, y pistas adicionales generadas bajo demanda sin consumir turnos. La comprobación inicial de salud tiene timeout de 5 s; se corrigió la exposición de archivos estáticos y se añadieron pruebas de rutas privadas y cabeceras de seguridad. Audio TTS está parcialmente implementado y probado en Chromium; la validación auditiva en dispositivos reales y la revisión de seguridad siguen pendientes. No declarar listo para prueba humana amplia ni desplegar públicamente todavía.
+**Estado global:** sesiones reales Gemini aprobadas en `pt-BR` y `fr-FR` (3 turnos y 5 fragmentos de voz por idioma); una sesión real adicional de navegador en francés completó persistencia y exportación. Tests unitarios (71) y Browser E2E aprobados en el commit `2425e81` (runs [#44127681116](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44127681116) y [#44127681802](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44127681802)). Se añadió repaso espaciado de patrones lingüísticos mediante autoevaluación, incluyendo conversaciones libres sin respuesta única, y pistas adicionales generadas bajo demanda sin consumir turnos, con reproducción manual de sus fragmentos en el idioma objetivo. La comprobación inicial de salud tiene timeout de 5 s; se corrigió la exposición de archivos estáticos y se añadieron pruebas de rutas privadas y cabeceras de seguridad. Audio TTS está parcialmente implementado y probado en Chromium; la validación auditiva en dispositivos reales y la revisión de seguridad siguen pendientes. No declarar listo para prueba humana amplia ni desplegar públicamente todavía.
 
 Este documento es el registro detallado del proyecto. El README principal mantiene únicamente la etapa actual y enlaza aquí para evitar duplicar información y mantener la documentación operativa breve.
 
@@ -13,7 +13,7 @@ Este documento es el registro detallado del proyecto. El README principal mantie
 |---|---|---|
 | 1 | Base del repositorio y ejecución | Implementada; CI correcto en el último commit validado |
 | 2 | Tutor IA, proveedores y pedagogía | Implementada; sesión real Gemini validada en 3 turnos |
-| 3 | Pruebas automatizadas y CI | Aprobadas: 71 tests y Browser E2E en `f6897bc` |
+| 3 | Pruebas automatizadas y CI | Aprobadas: 71 tests y Browser E2E en `2425e81` |
 | 4 | Auditoría funcional y técnica | En curso; quedan comprobaciones funcionales y de seguridad |
 | 5 | Validación con proveedor IA real | Smoke test Gemini aprobado; evaluación de calidad/costos y fallos pendiente |
 | 6 | Prueba humana y ajustes de experiencia | Pendiente |
@@ -88,7 +88,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Respuesta: el frontend envía la respuesta del alumno junto con la actividad actual y el historial.
 - [x] Reintento: existe acción para repetir inicio o reenvío tras un error.
 - [x] Pistas: se muestra la pista incluida en el ejercicio actual.
-- [x] Pistas progresivas IA: tras la pista inicial, el alumno puede pedir otra más específica al tutor; la tarea `request_hint` conserva la actividad, no evalúa ni incrementa el turno y respeta el locale objetivo. Tests y Browser E2E aprobados en runs #44127358523 y #44127358503.
+- [x] Pistas progresivas IA: tras la pista inicial, el alumno puede pedir otra más específica al tutor; la tarea `request_hint` conserva la actividad, no evalúa ni incrementa el turno y respeta el locale objetivo. Sus fragmentos del idioma objetivo admiten reproducción automática y manual. Tests y Browser E2E aprobados en runs #44127681116 y #44127681802.
 - [x] Progreso: registra turnos, aciertos, rachas, vocabulario y errores.
 - [x] Finalización: permite pasar al resumen cuando el tutor finaliza o se alcanza la duración.
 - [x] Persistencia: `finishSession()` guarda el resumen, vocabulario y errores en almacenamiento local.
@@ -214,7 +214,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Próxima acción concreta
 
-71 tests y Browser E2E están aprobados en `f6897bc`; el smoke API y la sesión real de navegador están aprobados en run #44122518840. El repaso cualitativo de patrones y las pistas progresivas IA ya están implementados y validados en navegador. Próximo trabajo: completar cobertura de audio en pistas/explicaciones, validar voces en dispositivos reales y cerrar los pendientes funcionales y de seguridad antes de preparar la prueba humana.
+71 tests y Browser E2E están aprobados en `2425e81`; el smoke API y la sesión real de navegador están aprobados en run #44122518840. El repaso cualitativo de patrones y las pistas progresivas IA con reproducción manual ya están implementados y validados en navegador. Próximo trabajo: completar cobertura de audio en las explicaciones donde haya fragmentos del idioma objetivo, validar voces en dispositivos reales y cerrar los pendientes funcionales y de seguridad antes de preparar la prueba humana.
 
 ## Criterio para declarar el proyecto listo para prueba humana
 
