@@ -299,7 +299,7 @@ function renderAITutorTurn(result) {
   bindSpeakerButtons($("lesson-content"));
   speech.speakSequence(speechSegments, { automatic: true });
   $("feedback").classList.add("hidden");
-  $("hint-btn").hidden = !aiCurrentExercise.hint;
+  $("hint-btn").hidden = false;
   $("review-btn").hidden = true;
 
   if (result.nextAction === "finish" || session.turn >= session.config.duration) {
