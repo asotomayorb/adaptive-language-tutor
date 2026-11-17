@@ -111,6 +111,7 @@ checkTutorHealth().then(status => {
 });
 
 function startSpacedReview() {
+  speech.stop();
   catalog = getSelectedCatalog();
   if (!catalog) { $("ai-status").textContent = "Indica el nombre del idioma y un locale válido (por ejemplo, fr-FR)."; return; }
   dueReviewCards = getDueCards(progress, Date.now(), catalog.id);
@@ -559,6 +560,7 @@ function finishSession() {
 }
 
 $("new-session").addEventListener("click", () => {
+  speech.stop();
   aiMode = false;
   sessionFinished = false;
   $("summary-panel").classList.add("hidden");
