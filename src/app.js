@@ -40,6 +40,21 @@ function autoSpeak(text, locale = catalog?.locale) {
   if (text && speech.enabled) speech.speak(text, locale, { automatic: true });
 }
 const topicLabels = { daily:"vida cotidiana", travel:"viajes", food:"comida y restaurantes", work:"trabajo y estudios", random:"tema sorpresa" };
+function getSelectedCatalog() {
+  const selected = $("language").value;
+  if (selected !== "other") return catalogs[selected] || null;
+  const label = $("custom-language-name").value.trim();
+  const locale = $("custom-language-locale").value.trim();
+  if (!label || !/^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/i.test(locale)) return null;
+  return { id: locale, label, locale, exercises: [] };
+}
+function updateCustomLanguageFields() {
+  const custom = $("language").value === "other";
+  $("custom-language-name-field").classList.toggle("hidden", !custom);
+  $("custom-language-locale-field").classList.toggle("hidden", !custom);
+  $("custom-language-name").required = custom;
+  $("custom-language-locale").required = custom;
+}
 let session = null;
 let catalog = null;
 let diagnostic = null;
@@ -58,7 +73,7 @@ let aiCurrentExercise = null;
 let sessionFinished = false;
 
 function refreshDashboard() {
-  const languageId = catalogs[$("language").value]?.id;
+  const languageId = getSelectedCatalog()?.id;
   const stats = getProgressStats(progress, languageId);
   const due = getDueCards(progress, Date.now(), languageId);
   $("progress-dashboard").innerHTML =
@@ -140,8 +155,15 @@ function renderSpacedReview() {
 $("setup-form").addEventListener("submit", event => {
   event.preventDefault();
   if (!aiReady) return;
-  catalog = catalogs[$("language").value];
-  if (!catalog) return;
+  catalog = getSelectedCatalog();
+  if (!catalog) {
+    $("ai-status").textContent = "Indica el nombre del idioma y un locale válido (por ejemplo, fr-FR).";
+    return;
+  }
+  if (!catalog.exercises.length && !aiConfigured) {
+    $("ai-status").textContent = "Los idiomas personalizados requieren que el tutor IA esté disponible.";
+    return;
+  }
   const config = { language:catalog.label, languageId:catalog.id, duration:Number($("duration").value), level:$("level").value, topic:$("topic").value };
   session = createSession(config);
   sessionFinished = false;
