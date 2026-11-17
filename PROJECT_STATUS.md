@@ -257,3 +257,20 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [ ] Evaluar el comportamiento de reintentos cuando el servidor procesa una petición pero la respuesta se pierde: actualmente no existe idempotencia por identificador de turno, por lo que un reenvío puede repetir una llamada al proveedor.
 
 **Conclusión de auditoría:** no se detectó en esta revisión una ruta que permita servir archivos privados mediante el servidor estático. Los principales bloqueos restantes son de preparación para producción (identidad, cuotas compartidas, privacidad y observabilidad) y validación real de audio/calidad pedagógica. Mantener el PR sin merge y no desplegar públicamente.
+
+## Validación funcional de audio — 17-11-2026
+
+**Último commit validado:** `3877a33217121e9c8d44f08e8896fb3bbaa64b1f`.
+
+- [x] La resolución de voz TTS prioriza locale exacto, luego voz genérica del idioma (por ejemplo, `pt`) y finalmente una variante regional del mismo idioma. Se agregó cobertura unitaria para el fallback genérico.
+- [x] La reactivación de audio automático incluye también los fragmentos visibles del panel de resumen. Antes de este ajuste, el selector de reanudación omitía `#summary-content`.
+- [x] E2E comprueba que al desactivar y reactivar el audio en el resumen se reanuda la lectura del vocabulario y se conserva el locale objetivo (`fr-FR`).
+- [x] CI del último commit: Tests run `44200273995` aprobado; Browser E2E run `44200273975` aprobado.
+- [x] La cobertura automatizada anterior también pasó en los commits intermedios de estos cambios.
+
+### Pendientes que no quedan resueltos por CI
+- [ ] Validación auditiva en hardware y navegadores reales; los tests simulan SpeechSynthesis y no prueban la calidad acústica de las voces del sistema.
+- [ ] Completar una matriz de todas las vistas con fragmentos objetivo (pistas, feedback, explicaciones y resumen) y confirmar qué contenido debe leerse automáticamente, sin pronunciar texto auxiliar en español.
+- [ ] Prueba humana de portugués brasileño e inglés, incluyendo naturalidad, pronunciación, progresión pedagógica y recuperación ante fallos del proveedor.
+
+**Decisión:** los dos defectos específicos de audio corregidos están cubiertos y CI está verde. Esto no cierra la etapa 6 ni habilita merge, despliegue público o sincronización con Replit. Continuar con auditoría de cobertura de voz por vista y preparar la validación manual controlada.
