@@ -4,9 +4,9 @@ Aplicación web de aprendizaje de idiomas con tutor conversacional de IA y modo 
 
 ## Estado actual
 
-**Etapa 4 de 8: auditoría funcional y técnica en GitHub.** CI y Browser E2E están aprobados; el tutor completó una sesión real de tres turnos con Gemini 3.5 Flash-Lite. Aún faltan auditoría funcional, audio TTS multilingüe y prueba humana; no está listo para despliegue público.
+**Etapa 4 de 8: auditoría funcional y técnica en GitHub.** El smoke test real completó 3 turnos con Gemini 3.5 Flash-Lite y 5 fragmentos de voz `pt-BR`. Tests y Browser E2E están aprobados en el último commit validado. El TTS multilingüe tiene cobertura automatizada simulada para portugués brasileño y francés, pero falta validar voces en dispositivos reales y completar la auditoría funcional y de seguridad. No está listo para prueba humana ni despliegue público.
 
-**Próximo paso:** completar la etapa 4, corregir los hallazgos y validar los cambios con CI. El detalle de todas las etapas, su estado, verificaciones y pendientes se mantiene en el documento anexo: [PROJECT_STATUS.md](PROJECT_STATUS.md).
+**Próximo paso:** completar la cobertura de audio en todas las vistas, probar navegadores/dispositivos reales y cerrar los hallazgos de auditoría. El detalle de etapas, verificaciones y pendientes está en [PROJECT_STATUS.md](PROJECT_STATUS.md).
 
 Rama de trabajo: `feature/ai-tutor-pedagogy` · [PR #2](https://github.com/asotomayorb/adaptive-language-tutor/pull/2).
 
