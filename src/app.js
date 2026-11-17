@@ -143,9 +143,27 @@ function renderSpacedReview() {
   $("lesson-phase").textContent = "REPETICIÓN ESPACIADA";
   $("turn-count").textContent = "Tarjeta " + (reviewIndex + 1) + " / " + dueReviewCards.length;
   $("progress-bar").style.width = (reviewIndex / dueReviewCards.length * 100) + "%";
+  $("feedback").classList.add("hidden");
+
+  if (card.cardType === "pattern") {
+    $("lesson-content").innerHTML = '<p class="eyebrow">REPASO DE PATRÓN</p><h3>' + escapeHTML(card.pattern) + '</h3><p>Intenta recordar una frase propia que aplique este patrón. Este repaso no consume turnos de práctica.</p>';
+    $("answer-area").innerHTML = '<p class="muted">¿Pudiste recordar y aplicar el patrón?</p><button id="pattern-recalled" class="primary" type="button">Lo recordé</button><button id="pattern-practice" class="secondary" type="button">Necesito practicarlo</button>';
+    const gradePattern = recalled => {
+      const result = gradeReview(progress, card.key, recalled);
+      saveProgress(progress);
+      showFeedback(recalled
+        ? "Registrado. Próximo repaso en " + (result?.nextIntervalDays || 1) + " días."
+        : "Registrado. Volverá a aparecer mañana; intenta crear una frase nueva con este patrón.", recalled);
+      $("answer-area").innerHTML = '<button id="next-spaced" class="secondary" type="button">Siguiente →</button>';
+      $("next-spaced").addEventListener("click", () => { reviewIndex += 1; renderSpacedReview(); });
+    };
+    $("pattern-recalled").addEventListener("click", () => gradePattern(true));
+    $("pattern-practice").addEventListener("click", () => gradePattern(false));
+    return;
+  }
+
   $("lesson-content").innerHTML = '<p class="eyebrow">REPASO PROGRAMADO</p><h3>' + escapeHTML(exercise?.prompt || card.prompt || "") + '</h3><p>Escribe la respuesta sin mirar la solución. Este repaso no consume turnos de práctica.</p>';
   $("answer-area").innerHTML = '<input id="spaced-answer" class="answer-input" placeholder="Escribe tu respuesta…"><button id="check-spaced" class="primary" type="button">Comprobar respuesta</button>';
-  $("feedback").classList.add("hidden");
   $("check-spaced").addEventListener("click", () => {
     const answer = $("spaced-answer").value;
     const checkExercise = exercise || { target: expected, acceptedAnswers: [] };
