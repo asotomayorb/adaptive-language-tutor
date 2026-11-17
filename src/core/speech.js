@@ -5,6 +5,7 @@ export function findVoiceForLocale(voices, locale) {
   const wanted = String(locale).toLowerCase();
   const language = wanted.split("-")[0];
   return voices.find(voice => String(voice.lang || "").toLowerCase() === wanted)
+    || voices.find(voice => String(voice.lang || "").toLowerCase() === language)
     || voices.find(voice => String(voice.lang || "").toLowerCase().startsWith(language + "-"))
     || null;
 }
