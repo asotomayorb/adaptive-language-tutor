@@ -22,6 +22,7 @@ const tutorJson = JSON.stringify({
     vocabulary: [],
     errorsToReview: []
   },
+  speechSegments: [{ text: "Bom dia", language: "pt", locale: "pt-BR" }],
   nextAction: "answer"
 });
 
@@ -77,9 +78,44 @@ test("Gemini adapter uses its native generateContent format", async () => {
       assert.deepEqual(body.generationConfig.responseSchema.properties.exercise.required,
         ["type", "prompt", "expectedAnswer", "acceptedAnswers", "hint"]);
       assert.equal(body.generationConfig.responseSchema.properties.exercise.nullable, true);
+      assert.deepEqual(body.generationConfig.responseSchema.required,
+        ["message", "exercise", "evaluation", "learnerUpdate", "speechSegments", "nextAction"]);
+      assert.equal(body.generationConfig.responseSchema.properties.speechSegments.type, "ARRAY");
     })
   );
   assert.equal((await provider.generateTutorTurn({ userMessage: "Hello" })).message, "Vamos a practicar.");
+});
+
+test("provider preserves validated target-language speech segments", async () => {
+  const provider = createAIProvider(
+    { AI_PROVIDER: "openai", AI_API_KEY: "secret", AI_MODEL: "test-model" },
+    fakeFetch("https://api.openai.com/v1/chat/completions", {}, {
+      choices: [{ message: { content: JSON.stringify({
+        message: "Practiquemos.",
+        exercise: null,
+        evaluation: null,
+        learnerUpdate: null,
+        speechSegments: [{ text: "Bom dia", language: "pt", locale: "pt-BR" }],
+        nextAction: "answer"
+      }) } }]
+    })
+  );
+  const result = await provider.generateTutorTurn({ userMessage: "Olá" });
+  assert.deepEqual(result.speechSegments, [{ text: "Bom dia", language: "pt", locale: "pt-BR" }]);
+});
+
+test("invalid target-language speech segments are rejected", async () => {
+  const provider = createAIProvider(
+    { AI_PROVIDER: "openai", AI_API_KEY: "secret", AI_MODEL: "test-model" },
+    fakeFetch("https://api.openai.com/v1/chat/completions", {}, {
+      choices: [{ message: { content: JSON.stringify({
+        message: "Hi", exercise: null, evaluation: null, learnerUpdate: null,
+        speechSegments: [{ text: "Bonjour", locale: "fr-FR" }],
+        nextAction: "answer"
+      }) } }]
+    })
+  );
+  await assert.rejects(() => provider.generateTutorTurn({ userMessage: "Hi" }), /invalid speech segments/i);
 });
 
 test("OpenAI-compatible providers retain the portable JSON mode", async () => {
