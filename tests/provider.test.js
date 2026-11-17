@@ -118,6 +118,46 @@ test("invalid target-language speech segments are rejected", async () => {
   await assert.rejects(() => provider.generateTutorTurn({ userMessage: "Hi" }), /invalid speech segments/i);
 });
 
+test("provider rejects premature AI session completion", async () => {
+  const earlyFinish = {
+    message: "Terminamos.",
+    exercise: null,
+    evaluation: { status: "correct", feedback: "Bien.", correction: null, skill: "Producción" },
+    learnerUpdate: null,
+    speechSegments: [],
+    nextAction: "finish"
+  };
+  const provider = createAIProvider(
+    { AI_PROVIDER: "openai", AI_API_KEY: "secret", AI_MODEL: "test-model" },
+    fakeFetch("https://api.openai.com/v1/chat/completions", {}, {
+      choices: [{ message: { content: JSON.stringify(earlyFinish) } }]
+    })
+  );
+  await assert.rejects(
+    () => provider.generateTutorTurn({ task: "evaluate_and_continue", session: { turn: 1, duration: 3 } }),
+    error => error.status === 422 && /before the configured session duration/i.test(error.message)
+  );
+});
+
+test("provider allows session completion at the configured duration", async () => {
+  const finish = {
+    message: "Terminamos.",
+    exercise: null,
+    evaluation: { status: "correct", feedback: "Bien.", correction: null, skill: "Producción" },
+    learnerUpdate: null,
+    speechSegments: [],
+    nextAction: "finish"
+  };
+  const provider = createAIProvider(
+    { AI_PROVIDER: "openai", AI_API_KEY: "secret", AI_MODEL: "test-model" },
+    fakeFetch("https://api.openai.com/v1/chat/completions", {}, {
+      choices: [{ message: { content: JSON.stringify(finish) } }]
+    })
+  );
+  const result = await provider.generateTutorTurn({ task: "evaluate_and_continue", session: { turn: 3, duration: 3 } });
+  assert.equal(result.nextAction, "finish");
+});
+
 test("OpenAI-compatible providers retain the portable JSON mode", async () => {
   const provider = createAIProvider(
     { AI_PROVIDER: "openai-compatible", AI_API_KEY: "secret", AI_MODEL: "test-model", AI_BASE_URL: "https://example.test/v1" },
