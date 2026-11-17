@@ -63,6 +63,7 @@ export function createSpeechController({
     get enabled() { return enabled; },
     setEnabled,
     speak,
+    speakSequence,
     stop,
     findVoice: locale => findVoiceForLocale(synthesis?.getVoices?.() || [], locale)
   };
