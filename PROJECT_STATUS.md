@@ -121,7 +121,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Rechazo de rutas estáticas fuera del directorio raíz cubierto por prueba.
 - [x] Reordenar el endpoint para validar JSON, mensaje y configuración antes de consumir cupo o concurrencia; añadir pruebas de regresión para solicitudes inválidas y proveedor no configurado.
 - [x] Confirmar CI para el cambio: Actions #165, `npm run check` y `npm test` correctos.
-- [x] Framework de automatización de navegador configurado con Playwright y Chromium en GitHub Actions; la primera prueba cubre el recorrido local de interfaz.
+- [x] Framework de automatización de navegador configurado con Playwright y Chromium en GitHub Actions; cobertura local y de interfaz IA con API simulada añadida.
 - [ ] Completar E2E del flujo IA (mock) y después validar con proveedor real.
 - [ ] Evaluar límites por IP/usuario y protección contra abuso antes de exposición pública.
 - [ ] Revisar límites de historial y tamaño total de contexto enviado al proveedor.
