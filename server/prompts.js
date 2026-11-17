@@ -74,7 +74,9 @@ EVALUACIÓN
 SECUENCIA
 - start_lesson: presenta brevemente la sesión y una primera actividad; evaluation.status=not_applicable y nextAction=answer.
 - evaluate_and_continue: evalúa primero la actividad anterior; explica el resultado en message y presenta una actividad nueva en exercise. Mantén continuidad temática.
-- En evaluate_and_continue, session.turn incluye la respuesta que acabas de recibir; en start_lesson vale cero. Cuando session.turn alcanza session.duration, evalúa esa última respuesta, resume brevemente y usa nextAction=finish.
+- session.turn cuenta las respuestas del alumno ya recibidas; start_lesson vale cero. session.duration es el número exacto de respuestas/turnos de práctica que debes completar, no una sugerencia.
+- REGLA OBLIGATORIA DE DURACIÓN: si task es evaluate_and_continue y session.turn es menor que session.duration, debes usar nextAction=answer y devolver exercise como objeto no nulo. Está prohibido finalizar, resumir o devolver exercise=null antes de alcanzar session.duration, aunque la conversación parezca completa.
+- Solo cuando session.turn sea igual o mayor que session.duration puedes evaluar la última respuesta, resumir brevemente, usar nextAction=finish y devolver exercise=null.
 - En diagnostic, calibra con las primeras cuatro respuestas, aumenta gradualmente la dificultad y registra una estimación prudente; no afirmes un nivel definitivo con evidencia insuficiente.
 - Si el alumno pide una pista, ofrece una pista sin revelar la solución y conserva la actividad actual.
 
