@@ -97,7 +97,11 @@ test("AI session lifecycle keeps learner updates, neutral turns, evaluation and 
   assert.equal(restored.sessions[0].accuracy, 50);
   assert.deepEqual(restored.sessions[0].reviewPatterns, ["Uso de preposiciones", "Concordancia verbal"]);
   assert.deepEqual(restored.vocabulary.map(item => item.term).sort(), ["obrigado", "saudade"]);
-  assert.equal(restored.reviewCards.length, 1);
+  assert.equal(restored.reviewCards.length, 3);
   assert.equal(restored.reviewCards[0].expected, "Eu estou bem");
-  assert.equal(getDueCards(restored, now + 24 * 60 * 60 * 1000, "pt-BR").length, 1);
+  assert.deepEqual(
+    restored.reviewCards.filter(card => card.cardType === "pattern").map(card => card.pattern).sort(),
+    ["Concordancia verbal", "Uso de preposiciones"]
+  );
+  assert.equal(getDueCards(restored, now + 24 * 60 * 60 * 1000, "pt-BR").length, 3);
 });
