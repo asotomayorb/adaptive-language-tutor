@@ -2,6 +2,13 @@ name: Live AI Provider Smoke Test
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - feature/ai-tutor-pedagogy
+    paths:
+      - "server/provider.js"
+      - "scripts/live-provider-smoke.js"
+      - ".github/workflows/live-provider-smoke.yml"
 
 jobs:
   live-provider:
