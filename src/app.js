@@ -611,6 +611,7 @@ $("hint-btn").addEventListener("click", () => {
         aiCurrentExercise.hint.toLocaleLowerCase().includes(item.text.toLocaleLowerCase())
       );
       appendSpeechButtons($("feedback"), hintSegments);
+      speech.speakSequence(hintSegments, { automatic: true });
       $("hint-btn").textContent = "Pedir otra pista";
       return;
     }
