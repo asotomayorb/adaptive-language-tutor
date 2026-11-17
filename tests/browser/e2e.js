@@ -127,6 +127,7 @@ try {
   });
   let startCalls = 0;
   let answerCalls = 0;
+  let hintCalls = 0;
   await aiPage.route("**/api/health", route => route.fulfill({
     status: 200,
     contentType: "application/json",
@@ -150,6 +151,23 @@ try {
           evaluation: null,
           learnerUpdate: { estimatedLevel: "A1", vocabulary: [{ term: "s’appeler", meaning: "llamarse" }], errorsToReview: [] },
           speechSegments: [{ text: "Comment tu t’appelles ?", language: "fr", locale: "fr-FR" }],
+          nextAction: "answer"
+        })
+      });
+    }
+    if (input.task === "request_hint") {
+      hintCalls += 1;
+      assert.equal(input.session.turn, 0, "asking for a hint must not consume a practice turn");
+      assert.equal(input.session.currentExercise.prompt, "Comment tu t’appelles ?", "hint request must preserve the active exercise");
+      return route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          message: "Pista adicional.",
+          exercise: { type: "production", prompt: "Comment tu t’appelles ?", expectedAnswer: "Je m’appelle Ana.", acceptedAnswers: ["Je m’appelle Ana."], hint: "Piensa en el verbo que expresa tu nombre." },
+          evaluation: null,
+          learnerUpdate: null,
+          speechSegments: [],
           nextAction: "answer"
         })
       });
@@ -187,6 +205,11 @@ try {
   assert.ok(await aiPage.evaluate(() => window.__spoken.length >= 2), "AI fragments should offer manual playback");
   await aiPage.locator("#hint-btn").click();
   await aiPage.locator("#feedback").getByText(/Je m’appelle/).waitFor();
+  const turnBeforeExtraHint = await aiPage.locator("#turn-count").innerText();
+  await aiPage.locator("#hint-btn").click();
+  await aiPage.locator("#feedback").getByText(/verbo que expresa tu nombre/).waitFor();
+  assert.equal(await aiPage.locator("#turn-count").innerText(), turnBeforeExtraHint, "an additional hint must not advance the session");
+  assert.equal(hintCalls, 1, "a second hint should call the AI tutor once");
   await aiPage.locator("#ai-answer").fill("Je m’appelle Ana.");
   await aiPage.locator("#submit-ai-answer").click();
   await aiPage.getByRole("button", { name: "Reintentar envío" }).click();
