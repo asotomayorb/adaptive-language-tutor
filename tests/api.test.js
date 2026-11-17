@@ -102,6 +102,26 @@ test("server serves the application shell and frontend modules", async () => {
   });
 });
 
+test("static server does not expose environment, backend, package or test files", async () => {
+  await withServer({ configured: false }, async base => {
+    for (const path of [
+      "/.env",
+      "/.env.example",
+      "/package.json",
+      "/package-lock.json",
+      "/server/index.js",
+      "/server/provider.js",
+      "/scripts/live-provider-smoke.js",
+      "/tests/api.test.js",
+      "/src/../.env",
+      "/src/../server/provider.js"
+    ]) {
+      const response = await fetch(base + path);
+      assert.equal(response.status, 404, path + " must not be publicly served");
+    }
+  });
+});
+
 test("static server rejects path traversal", async () => {
   await withServer({ configured: false }, async base => {
     const response = await fetch(base + "/%2e%2e%2fpackage.json");
