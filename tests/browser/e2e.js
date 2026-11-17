@@ -118,6 +118,8 @@ try {
   await aiPage.route("**/api/tutor", async route => {
     const input = route.request().postDataJSON();
     if (input.task === "start_lesson") {
+      assert.equal(input.learner.targetLanguageLabel, "Francés");
+      assert.equal(input.learner.targetLanguageLocale, "fr-FR", "AI requests should carry the selected locale explicitly");
       startCalls += 1;
       if (startCalls === 1) {
         return route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ error: "Mock temporary failure" }) });
