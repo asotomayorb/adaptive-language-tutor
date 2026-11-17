@@ -1,27 +1,31 @@
 import assert from "node:assert/strict";
 import { chromium } from "playwright";
+import { setTimeout as delay } from "node:timers/promises";
 
 const baseUrl = (process.env.TUTOR_BASE_URL || "http://127.0.0.1:3000").replace(/\/+$/, "");
 const browser = await chromium.launch({ headless: true });
 let page;
 
 async function waitForTutorState(page) {
-  for (let attempt = 0; attempt < 4; attempt += 1) {
+  for (let attempt = 0; attempt < 6; attempt += 1) {
     await page.waitForFunction(() => {
       const answer = document.querySelector("#ai-answer");
+      const retry = document.querySelector("#retry-ai");
       return Boolean((answer && !answer.disabled) ||
         document.querySelector("#finish-ai-session") ||
-        document.querySelector("#retry-ai"));
+        (retry && !retry.disabled));
     }, null, { timeout: 90_000 });
     const retry = page.locator("#retry-ai");
-    if (await retry.count()) {
-      console.warn("Live browser smoke: retrying a transient tutor request.");
+    if (await retry.count() && await retry.isEnabled()) {
+      const delayMs = Math.min(1500 * (2 ** attempt), 10_000);
+      console.warn("Live browser smoke: retrying a transient tutor request in " + delayMs + "ms.");
+      await delay(delayMs);
       await retry.click();
       continue;
     }
     return;
   }
-  throw new Error("The live tutor did not recover after four attempts.");
+  throw new Error("The live tutor did not recover after six attempts.");
 }
 
 try {
