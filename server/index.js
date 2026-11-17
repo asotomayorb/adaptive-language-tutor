@@ -1,7 +1,7 @@
 import "./load-env.js";
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
-import { resolve, extname } from "node:path";
+import { resolve, sep, extname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { createAIProvider } from "./provider.js";
 
