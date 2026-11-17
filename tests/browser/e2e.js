@@ -69,7 +69,76 @@ try {
   await page.locator("#setup-panel").waitFor({ state: "visible" });
   assert.deepEqual(pageErrors, [], "browser should not report uncaught page errors");
 
-  console.log("Browser E2E passed: setup, diagnostic, hint, 8-turn practice, summary, persistence, export and restart.");
+  // Exercise the AI-mode interface with deterministic API responses, including both retry paths.
+  const aiContext = await browser.newContext();
+  const aiPage = await aiContext.newPage();
+  const aiPageErrors = [];
+  aiPage.on("pageerror", error => aiPageErrors.push(error.message));
+  let startCalls = 0;
+  let answerCalls = 0;
+  await aiPage.route("**/api/health", route => route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify({ status: "ok", ai: { configured: true, provider: "e2e-mock" } })
+  }));
+  await aiPage.route("**/api/tutor", async route => {
+    const input = route.request().postDataJSON();
+    if (input.task === "start_lesson") {
+      startCalls += 1;
+      if (startCalls === 1) {
+        return route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ error: "Mock temporary failure" }) });
+      }
+      return route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          message: "Vamos praticar uma situação cotidiana.",
+          exercise: { type: "production", prompt: "Como você se chama?", expectedAnswer: "Eu me chamo Ana.", acceptedAnswers: ["Eu me chamo Ana."], hint: "Comece com: Eu me chamo..." },
+          evaluation: null,
+          learnerUpdate: { estimatedLevel: "A1", vocabulary: [{ term: "chamar", meaning: "llamar" }], errorsToReview: [] },
+          nextAction: "answer"
+        })
+      });
+    }
+    answerCalls += 1;
+    if (answerCalls === 1) {
+      return route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ error: "Mock temporary failure" }) });
+    }
+    return route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        message: "Muito bem. Terminamos esta prática.",
+        exercise: null,
+        evaluation: { status: "correct", feedback: "Resposta correta.", correction: null, skill: "Producción" },
+        learnerUpdate: { estimatedLevel: "A1", vocabulary: [], errorsToReview: [] },
+        nextAction: "finish"
+      })
+    });
+  });
+
+  await aiPage.goto(baseUrl, { waitUntil: "networkidle" });
+  await aiPage.locator("#duration").selectOption("8");
+  await aiPage.locator("#start-session").click();
+  await aiPage.getByRole("button", { name: "Reintentar sesión" }).click();
+  await aiPage.locator("#lesson-content").getByText("Como você se chama?").waitFor();
+  await aiPage.locator("#hint-btn").click();
+  await aiPage.locator("#feedback").getByText(/Comece com/).waitFor();
+  await aiPage.locator("#ai-answer").fill("Eu me chamo Ana.");
+  await aiPage.locator("#submit-ai-answer").click();
+  await aiPage.getByRole("button", { name: "Reintentar envío" }).click();
+  await aiPage.getByRole("button", { name: "Ver resumen →" }).click();
+  await aiPage.locator("#summary-panel").waitFor({ state: "visible" });
+  const aiStored = await aiPage.evaluate(() =>
+    JSON.parse(localStorage.getItem("adaptive-language-tutor.progress") || "{}")
+  );
+  assert.equal(aiStored.sessions?.length, 1, "mock AI session should persist once");
+  assert.equal(startCalls, 2, "initial AI session request should be retried once");
+  assert.equal(answerCalls, 2, "AI answer request should be retried once");
+  assert.deepEqual(aiPageErrors, [], "AI-mode browser should not report uncaught page errors");
+  await aiContext.close();
+
+  console.log("Browser E2E passed: local and mocked-AI flows, retries, hints, summary, persistence, export and restart.");
 } finally {
   if (browser) await browser.close();
   server.kill("SIGTERM");
