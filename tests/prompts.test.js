@@ -12,7 +12,7 @@ test("tutor prompt defines adaptive, communicative teaching rules", () => {
 test("OpenAI response schema is strict and contains the complete tutor contract", () => {
   assert.equal(TUTOR_RESPONSE_SCHEMA.type, "object");
   assert.equal(TUTOR_RESPONSE_SCHEMA.additionalProperties, false);
-  assert.deepEqual(TUTOR_RESPONSE_SCHEMA.required, ["message", "exercise", "evaluation", "learnerUpdate", "nextAction"]);
+  assert.deepEqual(TUTOR_RESPONSE_SCHEMA.required, ["message", "exercise", "evaluation", "learnerUpdate", "speechSegments", "nextAction"]);
   assert.equal(TUTOR_RESPONSE_SCHEMA.properties.nextAction.enum.includes("finish"), true);
 });
 
