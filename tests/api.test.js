@@ -17,6 +17,9 @@ test("health endpoint does not reveal provider details when unconfigured", async
   await withServer({ configured: false, provider: "openai" }, async base => {
     const response = await fetch(base + "/api/health");
     assert.equal(response.status, 200);
+    assert.equal(response.headers.get("x-frame-options"), "DENY");
+    assert.equal(response.headers.get("referrer-policy"), "strict-origin-when-cross-origin");
+    assert.equal(response.headers.get("permissions-policy"), "camera=(), microphone=(), geolocation=()");
     assert.deepEqual(await response.json(), { status: "ok", ai: { configured: false, provider: null } });
   });
 });
@@ -95,6 +98,8 @@ test("server serves the application shell and frontend modules", async () => {
   await withServer({ configured: false }, async base => {
     const page = await fetch(base + "/");
     assert.equal(page.status, 200);
+    assert.equal(page.headers.get("x-frame-options"), "DENY");
+    assert.equal(page.headers.get("x-content-type-options"), "nosniff");
     assert.match(await page.text(), /Adaptive Language Tutor/);
     const moduleResponse = await fetch(base + "/src/core/tutor-client.js");
     assert.equal(moduleResponse.status, 200);
