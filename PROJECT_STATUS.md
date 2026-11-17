@@ -56,7 +56,7 @@ Este documento es el registro detallado del proyecto. El README principal mantie
 
 **Pendiente:**
 - [ ] Confirmar el identificador de modelo y la disponibilidad/cuota del proveedor elegido.
-- [ ] Ejecutar una conversación real completa, sin compartir la clave API.
+- [ ] Ejecutar `npm run test:provider-live` con el servidor iniciado y credenciales configuradas en el entorno privado. El script recorre inicio, tres evaluaciones y cierre; no requiere compartir la clave en el chat ni guardarla en GitHub.
 - [ ] Evaluar calidad de respuestas, naturalidad, adaptación, continuidad y consumo.
 - [ ] Confirmar manejo de errores y límites reales del proveedor.
 
@@ -79,7 +79,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Etapa 4 — Auditoría funcional y técnica
 
-**Estado: en curso; integración IA validada por CI y primera automatización real de navegador añadida. Pendiente confirmar el nuevo workflow E2E y ampliar cobertura al flujo IA con proveedor simulado/real.**
+**Estado: en curso; CI general y Playwright E2E aprobados en el commit `7b3738b`. La cobertura incluye modo local y modo IA con API simulada, incluidos los reintentos. Se añadió un smoke test manual para validar una sesión corta con proveedor real; aún no se ha ejecutado con credenciales reales.**
 
 ### Flujo de sesión IA revisado parcialmente
 
@@ -121,8 +121,8 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Rechazo de rutas estáticas fuera del directorio raíz cubierto por prueba.
 - [x] Reordenar el endpoint para validar JSON, mensaje y configuración antes de consumir cupo o concurrencia; añadir pruebas de regresión para solicitudes inválidas y proveedor no configurado.
 - [x] Confirmar CI para el cambio: Actions #165, `npm run check` y `npm test` correctos.
-- [x] Framework de automatización de navegador configurado con Playwright y Chromium en GitHub Actions; cobertura local y de interfaz IA con API simulada añadida.
-- [ ] Completar E2E del flujo IA (mock) y después validar con proveedor real.
+- [x] Framework Playwright/Chromium en GitHub Actions; recorridos local e IA simulada aprobados.
+- [ ] Validar el flujo con proveedor real mediante `npm run test:provider-live`.
 - [ ] Evaluar límites por IP/usuario y protección contra abuso antes de exposición pública.
 - [ ] Revisar límites de historial y tamaño total de contexto enviado al proveedor.
 - [ ] Completar revisión de sanitización y presentación de contenido generado por IA en todos los puntos de la interfaz; el repaso y resumen ya fueron corregidos y tienen prueba unitaria del helper.
@@ -142,7 +142,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Etapa 5 — Validación con proveedor IA real
 
-**Estado: pendiente.**
+**Estado: preparada; pendiente ejecutar el smoke test con credenciales reales.**
 
 - [ ] Seleccionar el proveedor inicial según disponibilidad, cuota, precio, calidad y condiciones de datos.
 - [ ] Confirmar modelo y API vigente en la cuenta del proveedor.
@@ -202,7 +202,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Próxima acción concreta
 
-Continuar la etapa 4: confirmar el workflow Playwright, ampliar cobertura E2E al flujo IA (mock) y validar inicio, diagnóstico, envío/reintento, pistas, finalización, persistencia y exportación. Después ejecutar una sesión con proveedor real (etapa 5). La lectura automática TTS y sus controles se implementarán en la etapa 6, antes de la prueba humana.
+CI y E2E local/IA simulada ya están aprobados. Próxima acción: ejecutar el smoke test manual con proveedor real usando `npm run test:provider-live`; revisar resultados y corregir cualquier incompatibilidad. La TTS multilingüe se implementará en etapa 6 antes de la prueba humana. La lectura automática TTS y sus controles se implementarán en la etapa 6, antes de la prueba humana.
 
 ## Criterio para declarar el proyecto listo para prueba humana
 
