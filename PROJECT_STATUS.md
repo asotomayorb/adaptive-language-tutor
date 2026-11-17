@@ -159,7 +159,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Etapa 6 — Prueba humana y experiencia de usuario
 
-**Estado: pendiente.** La experiencia de audio debe incorporarse antes de la prueba humana.
+**Estado: preparación parcial.** El plan de prueba humana está preparado en `HUMAN_TEST_PLAN.md`; aún no iniciar la prueba amplia porque falta validar la voz en dispositivos reales y completar la cobertura de pistas/explicaciones.
 
 - [ ] Completar lectura automática de todos los fragmentos objetivo en cada pantalla. Ya existe lectura automática de `speechSegments` IA, opciones y respuestas modelo en ejercicios locales, respuestas de repaso y vocabulario del resumen; falta cobertura integral de pistas, explicaciones y todas las vistas.
 - [x] El contrato IA usa `speechSegments` con `text`, `language` y `locale`; el prompt separa el idioma objetivo del texto auxiliar en español. El backend rechaza segmentos cuyo locale no coincida con el seleccionado.
@@ -168,7 +168,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Control global de audio con estado accesible, iconos 🔊/🔇 y preferencia persistida en `localStorage`; E2E valida desactivación y reactivación.
 - [x] Botón de reproducción manual por fragmento, con locale propio; E2E verifica reproducción en portugués y francés. El vocabulario del resumen también ofrece reproducción manual y lectura automática; E2E verifica el caso francés.
 - [x] La reproducción cancela la locución anterior; el cambio de turno, la desactivación global y la salida a una nueva sesión/repaso detienen la locución.
-- [ ] No leer automáticamente instrucciones ni explicaciones en español salvo que español sea el idioma objetivo de esa actividad; separar explícitamente texto objetivo y texto auxiliar cuando el tutor mezcle idiomas.
+- [x] No leer automáticamente instrucciones ni explicaciones en español salvo que español sea el idioma objetivo: el audio IA consume solo `speechSegments` etiquetados con el locale objetivo y el backend rechaza cualquier segmento con locale distinto.
 - [x] El controlador gestiona API ausente, voz no instalada y errores de reproducción sin bloquear la práctica escrita; el fallback se comunica en la interfaz. Falta prueba en navegadores/dispositivos reales.
 - [ ] Validar la selección de voz, pronunciación y fallback en los idiomas objetivo habilitados, incluyendo portugués brasileño e inglés como casos iniciales, y comprobar que incorporar otro idioma no requiera modificar la lógica de audio. Probar en móvil y escritorio, con teclado y lectores de pantalla.
 - [ ] Prueba móvil y escritorio.
@@ -177,6 +177,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [ ] Verificar adaptación desde principiante hasta niveles superiores.
 - [ ] Evaluar que no repita mecánicamente el mismo tipo de ejercicio.
 - [ ] Comprobar pistas, feedback, repaso, progreso, exportación y resumen.
+- [x] Preparar un plan reproducible de prueba humana en `HUMAN_TEST_PLAN.md`, con escenarios locales, IA real, audio, persistencia, exportación y seguridad.
 - [ ] Corregir problemas observados y repetir la prueba.
 
 ## Etapa 7 — Seguridad y preparación de producción
