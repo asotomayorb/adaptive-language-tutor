@@ -4,7 +4,7 @@ const baseUrl = (process.env.TUTOR_BASE_URL || "http://127.0.0.1:3000").replace(
 const startedAt = Date.now();
 
 async function request(path, options) {
-  const maxAttempts = 4;
+  const maxAttempts = 6;
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     const response = await fetch(baseUrl + path, options);
     const payload = await response.json().catch(() => ({}));
@@ -19,7 +19,7 @@ async function request(path, options) {
     const retryAfter = Number(response.headers.get("retry-after"));
     const delayMs = Number.isFinite(retryAfter) && retryAfter > 0
       ? Math.min(retryAfter * 1000, 15000)
-      : 1500 * (2 ** (attempt - 1));
+      : Math.min(1500 * (2 ** (attempt - 1)), 15000);
     console.warn(path + " returned " + response.status + "; retrying in " + delayMs + "ms (attempt " + (attempt + 1) + "/" + maxAttempts + ").");
     await new Promise(resolve => setTimeout(resolve, delayMs));
   }
