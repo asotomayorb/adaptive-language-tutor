@@ -131,6 +131,6 @@ test("provider requests have a timeout and report stalled requests clearly", asy
   );
   await assert.rejects(
     () => provider.generateTutorTurn({ userMessage: "Hi" }),
-    /timed out after 30 seconds/i
+    /timed out after 45 seconds/i
   );
 });
