@@ -202,7 +202,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Próxima acción concreta
 
-CI y E2E local/IA simulada ya están aprobados. Próxima acción: ejecutar el smoke test manual con proveedor real usando `npm run test:provider-live`; revisar resultados y corregir cualquier incompatibilidad. La TTS multilingüe se implementará en etapa 6 antes de la prueba humana. La lectura automática TTS y sus controles se implementarán en la etapa 6, antes de la prueba humana.
+CI y Browser E2E están aprobados en el commit más reciente (`944dc72`); el smoke test real de Gemini está aprobado en `c1bccf2` (3 turnos, 12,7 s). Próximo trabajo: cerrar los puntos pendientes de la auditoría funcional y revisar el flujo de repaso/persistencia en navegador; después implementar TTS multilingüe y preparar la prueba humana.
 
 ## Criterio para declarar el proyecto listo para prueba humana
 
