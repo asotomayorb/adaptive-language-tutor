@@ -3,7 +3,7 @@
 **Última actualización:** 17-11-2026  
 **Rama:** `feature/ai-tutor-pedagogy`  
 **Pull request:** [#2 – Improve adaptive tutor pedagogy and AI integration](https://github.com/asotomayorb/adaptive-language-tutor/pull/2)  
-**Estado global:** código funcional en desarrollo; pendiente de validación integral y de producto. No desplegar públicamente todavía.
+**Estado global:** integración IA validada con proveedor real y CI/E2E aprobados; auditoría funcional y experiencia de audio aún incompletas. No desplegar públicamente todavía.
 
 Este documento es el registro detallado del proyecto. El README principal mantiene únicamente la etapa actual y enlaza aquí para evitar duplicar información y mantener la documentación operativa breve.
 
@@ -12,15 +12,15 @@ Este documento es el registro detallado del proyecto. El README principal mantie
 | Etapa | Área | Estado |
 |---|---|---|
 | 1 | Base del repositorio y ejecución | Implementada; CI correcto en el último commit validado |
-| 2 | Tutor IA, proveedores y pedagogía | Implementada en código; sin prueba de API real |
+| 2 | Tutor IA, proveedores y pedagogía | Implementada; sesión real Gemini validada en 3 turnos |
 | 3 | Pruebas automatizadas y CI | Implementadas; GitHub Actions #166 correcto en el commit `94e1830` |
-| 4 | Auditoría funcional y técnica | En curso |
-| 5 | Validación con proveedor IA real | Pendiente |
+| 4 | Auditoría funcional y técnica | En curso; quedan comprobaciones funcionales y de seguridad |
+| 5 | Validación con proveedor IA real | Smoke test Gemini aprobado; evaluación de calidad/costos y fallos pendiente |
 | 6 | Prueba humana y ajustes de experiencia | Pendiente |
 | 7 | Seguridad y preparación de producción | Pendiente |
 | 8 | Reintegración y comprobación de Replit | Aplazada hasta el final |
 
-**Etapa actual: 4.** No avanzar a la validación humana como si la auditoría estuviera cerrada. Resolver los hallazgos funcionales prioritarios y volver a ejecutar las pruebas.
+**Etapa actual: 4.** El smoke test real ya pasó, pero no avanzar aún a prueba humana: completar auditoría funcional, audio multilingüe y validaciones de producto.
 
 ---
 
@@ -41,7 +41,7 @@ Este documento es el registro detallado del proyecto. El README principal mantie
 
 ## Etapa 2 — Tutor IA, proveedores y pedagogía
 
-**Estado: implementada en código; validación real pendiente.**
+**Estado: implementada; smoke test real aprobado en Gemini 3.5 Flash-Lite.**
 
 - [x] Cliente frontend para consultar salud y solicitar turnos al backend.
 - [x] Adaptadores para OpenAI, Anthropic, Gemini y proveedores compatibles con Chat Completions.
@@ -56,7 +56,7 @@ Este documento es el registro detallado del proyecto. El README principal mantie
 
 **Pendiente:**
 - [ ] Confirmar el identificador de modelo y la disponibilidad/cuota del proveedor elegido.
-- [ ] Ejecutar `npm run test:provider-live` con el servidor iniciado y credenciales configuradas en el entorno privado. El script recorre inicio, tres evaluaciones y cierre; no requiere compartir la clave en el chat ni guardarla en GitHub.
+- [x] Ejecutar smoke test real desde GitHub Actions con Gemini 3.5 Flash-Lite. La sesión completó inicio, tres evaluaciones y cierre en 12,7 s (run #44087892274; commit `c1bccf2`).
 - [ ] Evaluar calidad de respuestas, naturalidad, adaptación, continuidad y consumo.
 - [ ] Confirmar manejo de errores y límites reales del proveedor.
 
@@ -142,14 +142,14 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Etapa 5 — Validación con proveedor IA real
 
-**Estado: preparada; pendiente ejecutar el smoke test con credenciales reales.**
+**Estado: smoke test real aprobado; validación ampliada pendiente.**
 
-- [ ] Seleccionar el proveedor inicial según disponibilidad, cuota, precio, calidad y condiciones de datos.
-- [ ] Confirmar modelo y API vigente en la cuenta del proveedor.
-- [ ] Guardar la clave en variables privadas del entorno de ejecución.
-- [ ] Probar inicio, varios turnos, respuestas correctas/incorrectas, pistas, continuidad y cierre.
+- [x] Proveedor inicial de validación: Google Gemini, modelo `gemini-3.5-flash-lite` (configurable; no es dependencia permanente).
+- [x] Confirmar conectividad y compatibilidad del modelo mediante una sesión real de tres turnos.
+- [x] La clave se utilizó como secreto de GitHub Actions; no se incorporó al repositorio ni a los logs.
+- [x] Smoke test: inicio, tres evaluaciones, continuidad y cierre completados. [ ] Ampliar casos reales: respuestas incorrectas, pistas, cuota, credencial inválida y timeout.
 - [ ] Probar errores de cuota, credencial inválida, timeout y respuesta JSON inválida.
-- [ ] Registrar latencia y costo aproximado por sesión.
+- [x] Latencia observada en la sesión smoke: 12,7 s total. [ ] Medir costos y latencias en varias sesiones/modelos antes de seleccionar proveedor de producción.
 - [ ] Usar únicamente información ficticia durante pruebas iniciales.
 
 ## Etapa 6 — Prueba humana y experiencia de usuario
@@ -209,7 +209,7 @@ CI y E2E local/IA simulada ya están aprobados. Próxima acción: ejecutar el sm
 No basta con que el workflow pase. Se requiere:
 1. Auditoría funcional cerrada sin defectos bloqueantes.
 2. CI correcto en el último commit de código.
-3. Una sesión real con el proveedor configurado.
+3. Una sesión real con el proveedor configurado. (Cumplido para Gemini 3.5 Flash-Lite mediante smoke test de tres turnos.)
 4. Confirmación de persistencia, repaso, cierre y recuperación ante errores.
 5. Lectura automática del idioma objetivo, control global de audio y reproducción manual validados.
 6. Instrucciones de prueba humana preparadas.
