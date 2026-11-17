@@ -3,7 +3,7 @@
 **Última actualización:** 17-11-2026  
 **Rama:** `feature/ai-tutor-pedagogy`  
 **Pull request:** [#2 – Improve adaptive tutor pedagogy and AI integration](https://github.com/asotomayorb/adaptive-language-tutor/pull/2)  
-**Estado global:** integración IA validada con proveedor real y CI/E2E aprobados; auditoría funcional y experiencia de audio aún incompletas. No desplegar públicamente todavía.
+**Estado global:** sesión real Gemini aprobada (3 turnos, 5 fragmentos `pt-BR`); tests y Browser E2E aprobados en el último commit. Audio TTS está parcialmente implementado y probado con portugués y francés simulados. Auditoría funcional, validación de voz en dispositivos reales y seguridad siguen pendientes. No declarar listo para prueba humana ni desplegar públicamente todavía.
 
 Este documento es el registro detallado del proyecto. El README principal mantiene únicamente la etapa actual y enlaza aquí para evitar duplicar información y mantener la documentación operativa breve.
 
@@ -13,14 +13,14 @@ Este documento es el registro detallado del proyecto. El README principal mantie
 |---|---|---|
 | 1 | Base del repositorio y ejecución | Implementada; CI correcto en el último commit validado |
 | 2 | Tutor IA, proveedores y pedagogía | Implementada; sesión real Gemini validada en 3 turnos |
-| 3 | Pruebas automatizadas y CI | Implementadas; GitHub Actions #166 correcto en el commit `94e1830` |
+| 3 | Pruebas automatizadas y CI | Aprobadas en el último commit `64b593d` |
 | 4 | Auditoría funcional y técnica | En curso; quedan comprobaciones funcionales y de seguridad |
 | 5 | Validación con proveedor IA real | Smoke test Gemini aprobado; evaluación de calidad/costos y fallos pendiente |
 | 6 | Prueba humana y ajustes de experiencia | Pendiente |
 | 7 | Seguridad y preparación de producción | Pendiente |
 | 8 | Reintegración y comprobación de Replit | Aplazada hasta el final |
 
-**Etapa actual: 4.** El smoke test real ya pasó, pero no avanzar aún a prueba humana: completar auditoría funcional, audio multilingüe y validaciones de producto.
+**Etapa actual: 4.** La sesión real, CI y E2E están aprobados. Continuar con auditoría de flujo, cobertura real de audio y seguridad; todavía no avanzar a prueba humana.
 
 ---
 
@@ -56,7 +56,7 @@ Este documento es el registro detallado del proyecto. El README principal mantie
 
 **Pendiente:**
 - [ ] Confirmar el identificador de modelo y la disponibilidad/cuota del proveedor elegido.
-- [x] Ejecutar smoke test real desde GitHub Actions con Gemini 3.5 Flash-Lite. La sesión completó inicio, tres evaluaciones y cierre en 12,7 s (run #44087892274; commit `c1bccf2`).
+- [x] Ejecutar smoke test real desde GitHub Actions con Gemini 3.5 Flash-Lite. Run [#44093520976](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44093520976), commit `4bb9a5e`: 3 turnos, 5 fragmentos de voz `pt-BR`, 38,3 s. Superó cuatro respuestas HTTP 503 mediante reintentos acotados; el resultado final fue aprobado.
 - [ ] Evaluar calidad de respuestas, naturalidad, adaptación, continuidad y consumo.
 - [ ] Confirmar manejo de errores y límites reales del proveedor.
 
@@ -64,7 +64,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Etapa 3 — Pruebas automatizadas y CI
 
-**Estado: implementada; CI #166 confirmó `npm run check` y `npm test` en el commit `94e1830`.**
+**Estado: implementada; tests y Browser E2E aprobados en el commit actual `64b593d`.**
 
 - [x] Pruebas de API y servidor.
 - [x] Pruebas de adaptadores y validación de respuestas.
@@ -79,7 +79,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Etapa 4 — Auditoría funcional y técnica
 
-**Estado: en curso; CI general y Playwright E2E aprobados en el commit `7b3738b`. La cobertura incluye modo local y modo IA con API simulada, incluidos los reintentos. Se añadió un smoke test manual para validar una sesión corta con proveedor real; aún no se ha ejecutado con credenciales reales.**
+**Estado: en curso; tests y Browser E2E aprobados en `64b593d`; sesión real Gemini aprobada en `4bb9a5e`. El E2E cubre modo local, IA simulada, reintentos, persistencia, exportación, repaso y configuración de idioma francés.**
 
 ### Flujo de sesión IA revisado parcialmente
 
@@ -122,7 +122,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Reordenar el endpoint para validar JSON, mensaje y configuración antes de consumir cupo o concurrencia; añadir pruebas de regresión para solicitudes inválidas y proveedor no configurado.
 - [x] Confirmar CI para el cambio: Actions #165, `npm run check` y `npm test` correctos.
 - [x] Framework Playwright/Chromium en GitHub Actions; recorridos local e IA simulada aprobados.
-- [ ] Validar el flujo con proveedor real mediante `npm run test:provider-live`.
+- [x] Validar el flujo con proveedor real mediante `npm run test:provider-live`: 3 turnos y cierre confirmados en run #44093520976.
 - [ ] Evaluar límites por IP/usuario y protección contra abuso antes de exposición pública.
 - [ ] Revisar límites de historial y tamaño total de contexto enviado al proveedor.
 - [ ] Completar revisión de sanitización y presentación de contenido generado por IA en todos los puntos de la interfaz; el repaso y resumen ya fueron corregidos y tienen prueba unitaria del helper.
@@ -156,15 +156,15 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 **Estado: pendiente.** La experiencia de audio debe incorporarse antes de la prueba humana.
 
-- [ ] Lectura automática en voz alta de cada fragmento pronunciable que esté en el idioma objetivo: opciones, frases modelo, vocabulario, respuestas, correcciones, ejemplos, pistas y explicaciones. El requisito es multilingüe y no queda limitado a inglés y portugués: debe aplicarse a cualquier idioma objetivo que la aplicación configure y soporte.
-- [ ] Marcar explícitamente cada fragmento pronunciable con metadatos de idioma y variante/locale (p. ej., bloques `text` + `language` + `locale` o `targetLanguageSegments` en el contrato IA). No inferir el idioma por detección automática cuando el tutor mezcle español auxiliar y el idioma objetivo.
-- [ ] Resolver la voz a partir del idioma/locale de cada fragmento, no de una lista fija de dos idiomas. Usar voces disponibles del navegador mediante `SpeechSynthesis`; admitir idiomas y variantes adicionales sin cambios específicos en el flujo pedagógico. La aplicación no enviará texto a un endpoint TTS propio.
+- [ ] Completar lectura automática de todos los fragmentos objetivo en cada pantalla (incluidos vocabulario y contenido de repaso/resumen). Ya existe lectura automática de fragmentos `speechSegments` IA, opciones y respuestas modelo en ejercicios locales; falta cobertura integral de todas las vistas.
+- [x] El contrato IA usa `speechSegments` con `text`, `language` y `locale`; el prompt separa el idioma objetivo del texto auxiliar en español. El backend rechaza segmentos cuyo locale no coincida con el seleccionado.
+- [x] La selección de voz consulta dinámicamente `SpeechSynthesis.getVoices()` y prioriza coincidencia exacta de locale, con fallback por idioma. E2E simula voces `pt-BR` y `fr-FR`; falta validación auditiva en dispositivos reales.
 - [ ] La cobertura efectiva depende de las voces que ofrezca el navegador/sistema operativo: consultar `getVoices()`, seleccionar la mejor coincidencia de idioma/locale y contemplar fallback informado cuando no exista voz compatible. No prometer disponibilidad universal de voces en todos los dispositivos.
-- [ ] Añadir un control global para activar/desactivar lectura automática, con iconos habituales de altavoz y altavoz silenciado, estado accesible y preferencia recordada.
-- [ ] Añadir un botón de reproducción/repetición con icono play junto a cada fragmento pronunciable; reproducir solo ese fragmento usando su propio idioma/locale.
-- [ ] Al cambiar de turno, detener la locución anterior para evitar solapamientos; al desactivar audio, cancelar cualquier locución en curso.
+- [x] Control global de audio con estado accesible, iconos 🔊/🔇 y preferencia persistida en `localStorage`; E2E valida desactivación y reactivación.
+- [x] Botón de reproducción manual por fragmento, con locale propio; E2E verifica reproducción en portugués y francés.
+- [x] La reproducción cancela la locución anterior; el cambio de turno y la desactivación global llaman a `speech.stop()`/`cancel()`.
 - [ ] No leer automáticamente instrucciones ni explicaciones en español salvo que español sea el idioma objetivo de esa actividad; separar explícitamente texto objetivo y texto auxiliar cuando el tutor mezcle idiomas.
-- [ ] Gestionar voces no disponibles, navegadores sin `SpeechSynthesis`, errores y restricciones de autoplay sin bloquear la práctica escrita; iniciar lectura automática cuando el navegador lo permita y mantener disponible la reproducción manual.
+- [x] El controlador gestiona API ausente, voz no instalada y errores de reproducción sin bloquear la práctica escrita; el fallback se comunica en la interfaz. Falta prueba en navegadores/dispositivos reales.
 - [ ] Validar la selección de voz, pronunciación y fallback en los idiomas objetivo habilitados, incluyendo portugués brasileño e inglés como casos iniciales, y comprobar que incorporar otro idioma no requiera modificar la lógica de audio. Probar en móvil y escritorio, con teclado y lectores de pantalla.
 - [ ] Prueba móvil y escritorio.
 - [ ] Portugués brasileño: naturalidad, corrección, vocabulario y situaciones reales.
@@ -202,7 +202,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Próxima acción concreta
 
-CI y Browser E2E están aprobados en el commit más reciente (`815b986`); el E2E añade verificación del repaso IA persistido. El smoke test real de Gemini está aprobado en `c1bccf2` (3 turnos, 12,7 s). Próximo trabajo: cerrar los puntos pendientes de la auditoría funcional y revisar el flujo de repaso/persistencia en navegador; después implementar TTS multilingüe y preparar la prueba humana.
+CI y Browser E2E están aprobados en `64b593d`; el smoke test real de Gemini está aprobado en `4bb9a5e` (3 turnos, 5 segmentos `pt-BR`, 38,3 s). Próximo trabajo: cerrar cobertura de audio en todas las vistas, ejecutar pruebas reales en navegador/dispositivo, completar auditoría funcional y seguridad; después preparar la prueba humana.
 
 ## Criterio para declarar el proyecto listo para prueba humana
 
