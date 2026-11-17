@@ -26,7 +26,14 @@ function updateAudioStatus(status) {
         : status.error ? "La voz seleccionada no pudo reproducir este fragmento." : "";
   }
 }
-document.getElementById("audio-toggle")?.addEventListener("click", () => speech.setEnabled(!speech.enabled));
+document.getElementById("audio-toggle")?.addEventListener("click", () => {
+  const enabled = speech.setEnabled(!speech.enabled);
+  if (enabled) {
+    const visibleSegments = [...document.querySelectorAll("#lesson-content [data-speak], #answer-area [data-speak], #feedback [data-speak]")]
+      .map(button => ({ text: button.dataset.speak, locale: button.dataset.locale }));
+    speech.speakSequence(visibleSegments, { automatic: true });
+  }
+});
 function speakerButton(text, locale) {
   return '<button class="speak-button" type="button" data-speak="' + escapeHTML(text) + '" data-locale="' + escapeHTML(locale || "") + '" aria-label="Reproducir pronunciación" title="Escuchar">▶</button>';
 }
