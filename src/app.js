@@ -168,7 +168,7 @@ $("setup-form").addEventListener("submit", event => {
     $("ai-status").textContent = "Los idiomas personalizados requieren que el tutor IA esté disponible.";
     return;
   }
-  const config = { language:catalog.label, languageId:catalog.id, duration:Number($("duration").value), level:$("level").value, topic:$("topic").value };
+  const config = { language:catalog.label, languageId:catalog.id, languageLocale:catalog.locale || catalog.id, duration:Number($("duration").value), level:$("level").value, topic:$("topic").value };
   session = createSession(config);
   sessionFinished = false;
   reviewMode = false;
@@ -190,6 +190,7 @@ function getAILearnerContext(config = session.config) {
     nativeLanguage: "es",
     targetLanguage: config.languageId,
     targetLanguageLabel: config.language,
+    targetLanguageLocale: config.languageLocale || catalog?.locale || config.languageId,
     level: config.estimatedLevel || config.level,
     topic: config.topic,
     sessionDuration: config.duration
