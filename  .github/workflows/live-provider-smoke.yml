@@ -1,0 +1,48 @@
+
+name: Live AI Provider Smoke Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  live-provider:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start application
+        env:
+          AI_PROVIDER: gemini
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
+          AI_MODEL: gemini-3.8-flash
+          PORT: 3000
+        run: |
+          npm start > /tmp/tutor.log 2>&1 &
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:3000/api/health; then
+              exit 0
+            fi
+            sleep 2
+          done
+          cat /tmp/tutor.log
+          exit 1
+
+      - name: Run real provider test
+        env:
+          AI_PROVIDER: gemini
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
+          AI_MODEL: gemini-3.8-flash
+          TUTOR_BASE_URL: http://127.0.0.1:3000
+        run: npm run test:provider-live
