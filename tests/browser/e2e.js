@@ -29,7 +29,19 @@ try {
   const context = await browser.newContext({ acceptDownloads: true });
   const page = await context.newPage();
   const pageErrors = [];
-  page.on("pageerror", error => pageErrors.push(error.message));
+  page.on("pageerror", error => {
+    pageErrors.push(error.message);
+    console.error("[browser pageerror]", error.stack || error.message);
+  });
+  page.on("console", message => {
+    if (message.type() === "error") console.error("[browser console]", message.text());
+  });
+  page.on("requestfailed", request => {
+    console.error("[browser request failed]", request.url(), request.failure()?.errorText || "unknown");
+  });
+  page.on("response", response => {
+    if (response.status() >= 400) console.error("[browser HTTP error]", response.status(), response.url());
+  });
   await page.addInitScript(() => {
     window.__spoken = [];
     const synth = {
