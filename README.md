@@ -4,7 +4,7 @@ Aplicación web de aprendizaje de idiomas con tutor conversacional de IA y modo 
 
 ## Estado actual
 
-**Etapa 4 de 8: auditoría funcional y técnica en GitHub.** Gemini 3.5 Flash-Lite completó sesiones reales de 3 turnos tanto en portugués brasileño (`pt-BR`) como en francés (`fr-FR`), con 4 fragmentos de pronunciación por idioma. Tests y Browser E2E están aprobados tras corregir una regresión de servidor. Se restringió el acceso a archivos públicos y se añadieron cabeceras de seguridad. Falta validar voces en dispositivos reales, completar la auditoría funcional y cerrar aspectos de seguridad antes de la prueba humana; no está listo para despliegue público.
+**Etapa 4 de 8: auditoría funcional y técnica en GitHub.** Gemini 3.5 Flash-Lite completó sesiones reales de 3 turnos en portugués brasileño (`pt-BR`) y francés (`fr-FR`), con 5 fragmentos de voz por idioma. Una sesión real adicional desde Chromium completó 3 turnos en francés, guardó el progreso y exportó el JSON. Tests y Browser E2E están aprobados. Se restringió el acceso a archivos públicos, se añadieron cabeceras de seguridad y se corrigieron los reintentos duplicados. Falta validar voces en dispositivos reales, completar la auditoría funcional y cerrar aspectos de seguridad antes de la prueba humana; no está listo para despliegue público.
 
 **Próximo paso:** completar la cobertura de audio en todas las vistas, probar navegadores/dispositivos reales y cerrar los hallazgos de auditoría. El detalle de etapas, verificaciones y pendientes está en [PROJECT_STATUS.md](PROJECT_STATUS.md).
 
