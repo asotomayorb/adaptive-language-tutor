@@ -150,10 +150,12 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Proveedor inicial de validación: Google Gemini, modelo `gemini-3.5-flash-lite` (configurable; no es dependencia permanente).
 - [x] Confirmar conectividad y compatibilidad del modelo mediante sesiones reales de tres turnos en portugués brasileño y francés.
 - [x] La clave se utilizó como secreto de GitHub Actions; no se incorporó al repositorio ni a los logs.
-- [x] Smoke test: inicio, tres evaluaciones, continuidad, fragmentos de voz y cierre completados en ambos idiomas. [x] Sesión real desde el navegador: tres turnos en francés, resumen, persistencia y exportación aprobados. [ ] Ampliar casos reales: respuestas incorrectas, pistas, cuota y credencial inválida.
-- [ ] Probar errores de cuota, credencial inválida, timeout y respuesta JSON inválida.
+- [x] Smoke test: inicio, tres evaluaciones, continuidad, fragmentos de voz y cierre completados en ambos idiomas.
+- [x] Sesión real desde el navegador: tres turnos en francés, resumen, persistencia y exportación aprobados.
+- [ ] Ampliar casos reales: respuestas incorrectas, pistas, cuota y credencial inválida.
+- [x] Probar recuperación ante timeouts y respuestas 503 transitorias; [ ] probar cuota agotada, credencial inválida y respuesta JSON inválida con el proveedor real.
 - [x] Latencia observada en el último smoke API: 96,7 s en pt-BR y 30,8 s en fr-FR. La sesión real de navegador también superó varios 503 y dos timeouts de intentos individuales gracias a reintentos manuales acotados. [ ] Medir costos y latencias en varias sesiones/modelos antes de seleccionar proveedor de producción.
-- [ ] Usar únicamente información ficticia durante pruebas iniciales.
+- [x] Usar únicamente información ficticia durante pruebas iniciales.
 
 ## Etapa 6 — Prueba humana y experiencia de usuario
 
