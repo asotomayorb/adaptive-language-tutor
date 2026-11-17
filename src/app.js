@@ -397,7 +397,7 @@ function renderLesson() {
   $("error-count").textContent = session.errors.length;
   $("lesson-content").innerHTML = '<p class="eyebrow">TEMA: ' + topicLabels[session.config.topic].toUpperCase() + ' · NIVEL ' + levelLabel(session.config.level).toUpperCase() + '</p><h3>' + currentExercise.prompt + '</h3><p>' + (adaptation.message || "Elige una respuesta o escribe la tuya.") + '</p>';
   speech.stop();
-  const options = currentExercise.options.map((option,index) => '<button class="answer-option" data-choice="' + index + '">' + escapeHTML(option) + speakerButton(option, catalog.locale) + '</button>').join("");
+  const options = currentExercise.options.map((option,index) => '<div class="answer-option-row"><button class="answer-option" data-choice="' + index + '">' + escapeHTML(option) + '</button>' + speakerButton(option, catalog.locale) + '</div>').join("");
   $("answer-area").innerHTML = options + '<input id="free-answer" class="answer-input" placeholder="También puedes escribir tu respuesta…"><button id="submit-free" class="secondary" type="button">Comprobar respuesta escrita</button>';
   $("answer-area").querySelectorAll("[data-choice]").forEach(button => button.addEventListener("click", event => {
     if (event.target.closest("[data-speak]")) return;
