@@ -224,8 +224,18 @@ function renderAITutorTurn(result) {
         '<span class="vocabulary-item">' + escapeHTML(item.term) + speakerButton(item.term, session.config.languageId) + '</span>'
       ).join("") + '</div>'
     : "";
-  $("lesson-content").innerHTML = message + feedback + prompt + vocabularyMarkup;
+  const speechSegments = (result.speechSegments || []).filter(item =>
+    item && typeof item.text === "string" && item.text.trim() &&
+    typeof item.locale === "string" && item.locale.trim()
+  );
+  const speechMarkup = speechSegments.length
+    ? '<div class="ai-speech-segments"><span class="muted">Pronunciación</span>' + speechSegments.map(item =>
+        '<span class="vocabulary-item">' + escapeHTML(item.text) + speakerButton(item.text, item.locale) + '</span>'
+      ).join("") + '</div>'
+    : "";
+  $("lesson-content").innerHTML = message + feedback + prompt + speechMarkup + vocabularyMarkup;
   bindSpeakerButtons($("lesson-content"));
+  speech.speakSequence(speechSegments, { automatic: true });
   $("feedback").classList.add("hidden");
   $("hint-btn").hidden = !aiCurrentExercise.hint;
   $("review-btn").hidden = true;
