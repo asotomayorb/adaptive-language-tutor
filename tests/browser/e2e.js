@@ -191,6 +191,12 @@ try {
   await aiPage.getByRole("button", { name: "Reintentar envío" }).click();
   await aiPage.getByRole("button", { name: "Ver resumen →" }).click();
   await aiPage.locator("#summary-panel").waitFor({ state: "visible" });
+  const summarySpeaker = aiPage.locator("#summary-content [data-speak]").first();
+  await summarySpeaker.waitFor();
+  assert.ok(await aiPage.evaluate(() => window.__spoken.some(item => item.text === "s’appeler" && item.lang === "fr-FR")), "summary vocabulary should be read automatically in the selected target locale");
+  const spokenBeforeSummaryReplay = await aiPage.evaluate(() => window.__spoken.length);
+  await summarySpeaker.click();
+  assert.ok(await aiPage.evaluate(count => window.__spoken.length > count, spokenBeforeSummaryReplay), "summary vocabulary should support manual replay");
   const aiStored = await aiPage.evaluate(() =>
     JSON.parse(localStorage.getItem("adaptive-language-tutor.progress") || "{}")
   );
