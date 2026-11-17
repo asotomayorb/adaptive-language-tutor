@@ -129,6 +129,9 @@ function renderSpacedReview() {
     showFeedback(correct
       ? "Correcto. Próximo repaso en " + interval + " días."
       : "Respuesta de referencia: " + expected + ". " + (exercise?.explanation || card.explanation) + " La tarjeta volverá mañana.", correct);
+    $("feedback").insertAdjacentHTML("beforeend", " " + speakerButton(expected, catalog.locale));
+    bindSpeakerButtons($("feedback"));
+    autoSpeak(expected, catalog.locale);
     $("answer-area").innerHTML = '<button id="next-spaced" class="secondary" type="button">Siguiente →</button>';
     $("next-spaced").addEventListener("click", () => { reviewIndex += 1; renderSpacedReview(); });
   });
@@ -366,13 +369,22 @@ function renderDiagnosticQuestion() {
   $("progress-bar").style.width = (diagnostic.index / 4 * 100) + "%";
   $("stats").hidden = true;
   $("lesson-content").innerHTML = '<h3>' + exercise.prompt + '</h3><p>Responde según lo que ya sabes. Estas preguntas no cuentan en los turnos de práctica.</p>';
-  $("answer-area").innerHTML = exercise.options.map((option,index) => '<button class="answer-option" data-diagnostic="' + index + '">' + option + '</button>').join("");
-  $("answer-area").querySelectorAll("[data-diagnostic]").forEach(button => button.addEventListener("click", () => {
+  speech.stop();
+  $("answer-area").innerHTML = exercise.options.map((option,index) =>
+    '<div class="answer-option-row"><button class="answer-option" data-diagnostic="' + index + '">' + escapeHTML(option) + '</button>' + speakerButton(option, catalog.locale) + '</div>'
+  ).join("");
+  $("answer-area").querySelectorAll("[data-diagnostic]").forEach(button => button.addEventListener("click", event => {
+    if (event.target.closest("[data-speak]")) return;
     if (Number(button.dataset.diagnostic) === exercise.options.indexOf(exercise.target)) diagnostic.score += 1;
     diagnostic.index += 1;
     if (diagnostic.index < 4) renderDiagnosticQuestion();
     else finishDiagnostic();
   }));
+  $("answer-area").querySelectorAll("[data-speak]").forEach(button => button.addEventListener("click", event => {
+    event.stopPropagation();
+    speech.speak(button.dataset.speak, catalog.locale);
+  }));
+  autoSpeak(exercise.options.join(". "), catalog.locale);
   $("hint-btn").hidden = true;
   $("review-btn").hidden = true;
   $("feedback").classList.add("hidden");
@@ -433,6 +445,9 @@ function submitAnswer(answer) {
   } else {
     showFeedback("Respuesta de referencia: " + currentExercise.target + ". " + currentExercise.explanation, false);
   }
+  $("feedback").insertAdjacentHTML("beforeend", " " + speakerButton(currentExercise.target, catalog.locale));
+  bindSpeakerButtons($("feedback"));
+  autoSpeak(currentExercise.target, catalog.locale);
   updateStats();
   const next = document.createElement("button");
   next.className = "primary";
@@ -470,12 +485,14 @@ $("review-btn").addEventListener("click", () => {
   reviewMode = true;
   $("lesson-phase").textContent = "REPASO";
   speech.stop();
-  $("lesson-content").innerHTML = '<h3>Intenta reconstruir esta frase:</h3><p>' + escapeHTML(reviewExercise.prompt) + '</p><p>La respuesta se comprobará sin consumir un turno de la sesión.</p><p class="target-phrase">' + escapeHTML(reviewExercise.target) + speakerButton(reviewExercise.target, catalog.locale) + '</p>';
-  bindSpeakerButtons($("lesson-content"));
+  $("lesson-content").innerHTML = '<h3>Intenta reconstruir esta frase:</h3><p>' + escapeHTML(reviewExercise.prompt) + '</p><p>La respuesta se comprobará sin consumir un turno de la sesión.</p>';
   $("answer-area").innerHTML = '<input id="review-answer" class="answer-input" placeholder="Escribe tu respuesta…"><button class="primary" id="check-review" type="button">Comprobar repaso</button>';
   $("check-review").addEventListener("click", () => {
     const ok = evaluateAnswer($("review-answer").value, reviewExercise);
     showFeedback(ok ? "Correcto. " + reviewExercise.explanation : "Respuesta de referencia: " + reviewExercise.target + ". " + reviewExercise.explanation, ok);
+    $("feedback").insertAdjacentHTML("beforeend", " " + speakerButton(reviewExercise.target, catalog.locale));
+    bindSpeakerButtons($("feedback"));
+    autoSpeak(reviewExercise.target, catalog.locale);
     $("answer-area").innerHTML = '<button class="secondary" id="back-to-practice" type="button">Volver a la práctica</button>';
     $("back-to-practice").addEventListener("click", renderLesson);
   });
