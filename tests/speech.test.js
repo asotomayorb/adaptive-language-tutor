@@ -28,6 +28,7 @@ test("voice resolution prefers exact locale and falls back to language match", (
   ];
   assert.equal(findVoiceForLocale(voices, "pt-BR").name, "Portuguese Brazil");
   assert.equal(findVoiceForLocale(voices, "en-AU").name, "English US");
+  assert.equal(findVoiceForLocale([{ name: "Portuguese generic", lang: "pt" }], "pt-BR").name, "Portuguese generic");
   assert.equal(findVoiceForLocale(voices, "fr-FR"), null);
 });
 
