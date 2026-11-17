@@ -4,9 +4,41 @@ import { ptBR } from "./content/pt-BR.js";
 import { english } from "./content/en.js";
 import { checkTutorHealth, requestTutorTurn } from "./core/tutor-client.js";
 import { escapeHTML } from "./core/html.js";
+import { createSpeechController } from "./core/speech.js";
 
 const $ = id => document.getElementById(id);
 const catalogs = { "Portugués brasileño": ptBR, "Inglés": english };
+const speech = createSpeechController({ onStatus: updateAudioStatus });
+function updateAudioStatus(status) {
+  const toggle = document.getElementById("audio-toggle");
+  const label = document.getElementById("audio-status");
+  if (toggle) {
+    toggle.textContent = status.enabled ? "🔊" : "🔇";
+    toggle.setAttribute("aria-pressed", String(status.enabled));
+    toggle.setAttribute("aria-label", status.enabled ? "Desactivar lectura automática" : "Activar lectura automática");
+    toggle.title = status.enabled ? "Lectura automática activada" : "Lectura automática desactivada";
+  }
+  if (label) {
+    label.textContent = !status.supported
+      ? "Este navegador no ofrece lectura de voz; puedes continuar practicando por escrito."
+      : status.fallback
+        ? "No hay una voz instalada para " + status.locale + "; se usará la voz predeterminada del dispositivo."
+        : status.error ? "La voz seleccionada no pudo reproducir este fragmento." : "";
+  }
+}
+document.getElementById("audio-toggle")?.addEventListener("click", () => speech.setEnabled(!speech.enabled));
+function speakerButton(text, locale) {
+  return '<button class="speak-button" type="button" data-speak="' + escapeHTML(text) + '" data-locale="' + escapeHTML(locale || "") + '" aria-label="Reproducir pronunciación" title="Escuchar">▶</button>';
+}
+function bindSpeakerButtons(root) {
+  root.querySelectorAll("[data-speak]").forEach(button => button.addEventListener("click", event => {
+    event.stopPropagation();
+    speech.speak(button.dataset.speak, button.dataset.locale || catalog?.locale);
+  }));
+}
+function autoSpeak(text, locale = catalog?.locale) {
+  if (text && speech.enabled) speech.speak(text, locale, { automatic: true });
+}
 const topicLabels = { daily:"vida cotidiana", travel:"viajes", food:"comida y restaurantes", work:"trabajo y estudios", random:"tema sorpresa" };
 let session = null;
 let catalog = null;
@@ -169,6 +201,7 @@ async function startAITutorSession(config) {
 }
 
 function renderAITutorTurn(result) {
+  speech.stop();
   aiLastResult = result;
   aiCurrentExercise = result.exercise || {};
   $("lesson-phase").textContent = "TUTOR IA · CONVERSACIÓN";
@@ -185,7 +218,14 @@ function renderAITutorTurn(result) {
   const feedback = result.evaluation?.feedback
     ? '<p class="ai-feedback">' + escapeHTML(result.evaluation.feedback) + '</p>'
     : "";
-  $("lesson-content").innerHTML = message + feedback + prompt;
+  const vocabulary = (result.learnerUpdate?.vocabulary || []).filter(item => item?.term);
+  const vocabularyMarkup = vocabulary.length
+    ? '<div class="ai-vocabulary"><span class="muted">Vocabulario</span>' + vocabulary.map(item =>
+        '<span class="vocabulary-item">' + escapeHTML(item.term) + speakerButton(item.term, session.config.languageId) + '</span>'
+      ).join("") + '</div>'
+    : "";
+  $("lesson-content").innerHTML = message + feedback + prompt + vocabularyMarkup;
+  bindSpeakerButtons($("lesson-content"));
   $("feedback").classList.add("hidden");
   $("hint-btn").hidden = !aiCurrentExercise.hint;
   $("review-btn").hidden = true;
@@ -356,9 +396,18 @@ function renderLesson() {
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
   $("lesson-content").innerHTML = '<p class="eyebrow">TEMA: ' + topicLabels[session.config.topic].toUpperCase() + ' · NIVEL ' + levelLabel(session.config.level).toUpperCase() + '</p><h3>' + currentExercise.prompt + '</h3><p>' + (adaptation.message || "Elige una respuesta o escribe la tuya.") + '</p>';
-  const options = currentExercise.options.map((option,index) => '<button class="answer-option" data-choice="' + index + '">' + option + '</button>').join("");
+  speech.stop();
+  const options = currentExercise.options.map((option,index) => '<button class="answer-option" data-choice="' + index + '">' + escapeHTML(option) + speakerButton(option, catalog.locale) + '</button>').join("");
   $("answer-area").innerHTML = options + '<input id="free-answer" class="answer-input" placeholder="También puedes escribir tu respuesta…"><button id="submit-free" class="secondary" type="button">Comprobar respuesta escrita</button>';
-  $("answer-area").querySelectorAll("[data-choice]").forEach(button => button.addEventListener("click", () => submitAnswer(currentExercise.options[Number(button.dataset.choice)])));
+  $("answer-area").querySelectorAll("[data-choice]").forEach(button => button.addEventListener("click", event => {
+    if (event.target.closest("[data-speak]")) return;
+    submitAnswer(currentExercise.options[Number(button.dataset.choice)]);
+  }));
+  $("answer-area").querySelectorAll("[data-speak]").forEach(button => button.addEventListener("click", event => {
+    event.stopPropagation();
+    speech.speak(button.dataset.speak, catalog.locale);
+  }));
+  autoSpeak(currentExercise.options.join(". "), catalog.locale);
   $("submit-free").addEventListener("click", () => submitAnswer($("free-answer").value));
   $("feedback").classList.add("hidden");
   $("hint-btn").disabled = false;
@@ -410,7 +459,9 @@ $("review-btn").addEventListener("click", () => {
   if (!reviewExercise) return;
   reviewMode = true;
   $("lesson-phase").textContent = "REPASO";
-  $("lesson-content").innerHTML = '<h3>Intenta reconstruir esta frase:</h3><p>' + reviewExercise.prompt + '</p><p>La respuesta se comprobará sin consumir un turno de la sesión.</p>';
+  speech.stop();
+  $("lesson-content").innerHTML = '<h3>Intenta reconstruir esta frase:</h3><p>' + escapeHTML(reviewExercise.prompt) + '</p><p>La respuesta se comprobará sin consumir un turno de la sesión.</p><p class="target-phrase">' + escapeHTML(reviewExercise.target) + speakerButton(reviewExercise.target, catalog.locale) + '</p>';
+  bindSpeakerButtons($("lesson-content"));
   $("answer-area").innerHTML = '<input id="review-answer" class="answer-input" placeholder="Escribe tu respuesta…"><button class="primary" id="check-review" type="button">Comprobar repaso</button>';
   $("check-review").addEventListener("click", () => {
     const ok = evaluateAnswer($("review-answer").value, reviewExercise);
@@ -423,6 +474,7 @@ $("review-btn").addEventListener("click", () => {
 function finishSession() {
   if (!session || sessionFinished) return;
   sessionFinished = true;
+  speech.stop();
   $("lesson-panel").classList.add("hidden");
   $("summary-panel").classList.remove("hidden");
   $("session-status").textContent = "Sesión finalizada";
