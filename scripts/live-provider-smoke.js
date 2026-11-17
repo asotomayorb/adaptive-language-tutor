@@ -30,6 +30,13 @@ function validateTurn(result, label) {
   assert.ok(["answer", "continue", "review", "finish"].includes(result.nextAction), label + ": nextAction must be valid");
   assert.ok(result.exercise === null || typeof result.exercise.prompt === "string", label + ": exercise must be valid");
   assert.ok(result.evaluation === null || ["correct", "partially_correct", "incorrect", "not_applicable"].includes(result.evaluation.status), label + ": evaluation must be valid");
+  assert.ok(Array.isArray(result.speechSegments), label + ": speechSegments must be an array");
+  for (const segment of result.speechSegments) {
+    assert.equal(typeof segment.text, "string", label + ": speech segment text must be valid");
+    assert.equal(typeof segment.language, "string", label + ": speech segment language must be valid");
+    assert.equal(typeof segment.locale, "string", label + ": speech segment locale must be valid");
+    assert.equal(segment.locale, "pt-BR", label + ": speech segment must use the requested Brazilian Portuguese locale");
+  }
 }
 
 const health = await request("/api/health");
@@ -37,11 +44,13 @@ assert.equal(health.status, "ok", "application health endpoint should be availab
 assert.equal(health.ai?.configured, true, "AI provider must be configured before live smoke testing");
 
 const learner = {
-  nativeLanguage: "Spanish",
-  targetLanguage: "Portugués brasileño",
-  targetLanguageId: "pt-BR",
+  nativeLanguage: "es",
+  targetLanguage: "pt-BR",
+  targetLanguageLabel: "Portugués brasileño",
+  targetLanguageLocale: "pt-BR",
   level: "basic",
-  preferences: "Práctica cotidiana; explicaciones breves en español"
+  topic: "daily",
+  sessionDuration: 3
 };
 const session = { duration: 3, turn: 0, topic: "daily", diagnostic: false,
   performance: { streak: 0, consecutiveCorrect: 0, consecutiveErrors: 0 } };
@@ -55,9 +64,11 @@ let result = await request("/api/tutor", {
   })
 });
 validateTurn(result, "start_lesson");
+assert.ok(result.speechSegments.length > 0, "start_lesson should provide at least one pronounceable target-language segment");
 assert.ok(result.exercise, "start_lesson should provide an exercise");
 let exercise = result.exercise;
 let evaluationCount = 0;
+let speechSegmentCount = result.speechSegments.length;
 
 for (let turn = 1; turn <= session.duration; turn += 1) {
   const answer = exercise.expectedAnswer || exercise.acceptedAnswers?.[0] || "Eu gostaria de praticar português.";
@@ -79,6 +90,7 @@ for (let turn = 1; turn <= session.duration; turn += 1) {
     })
   });
   validateTurn(next, "evaluate_and_continue turn " + turn);
+  speechSegmentCount += next.speechSegments.length;
   assert.ok(next.evaluation, "turn " + turn + " should evaluate the previous answer");
   evaluationCount += 1;
   history.push({ role: "user", content: answer });
@@ -93,5 +105,7 @@ console.log(JSON.stringify({
   status: "passed",
   provider: health.ai.provider,
   turns: evaluationCount,
+  speechSegments: speechSegmentCount,
+  targetLocale: learner.targetLanguageLocale,
   elapsedMs: Date.now() - startedAt
 }, null, 2));
