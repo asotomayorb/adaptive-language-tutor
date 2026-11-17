@@ -35,3 +35,10 @@ test("buildTutorMessages preserves learner, active exercise and recent conversat
   assert.equal(payload.history[0].content, "3");
   assert.equal(payload.userMessage, "Onde fica a estação?");
 });
+
+
+test("tutor prompt defines a non-advancing progressive hint request", () => {
+  assert.match(TUTOR_SYSTEM_PROMPT, /request_hint/i);
+  assert.match(TUTOR_SYSTEM_PROMPT, /no cambies de actividad/i);
+  assert.match(TUTOR_SYSTEM_PROMPT, /no avances el turno/i);
+});
