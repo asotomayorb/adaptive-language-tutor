@@ -32,9 +32,17 @@ export const TUTOR_RESPONSE_SCHEMA = {
       }, required: ["estimatedLevel", "vocabulary", "errorsToReview"] },
       { type: "null" }
     ] },
+    speechSegments: { type: "array", items: { type: "object", additionalProperties: false,
+      properties: {
+        text: { type: "string" },
+        language: { type: "string" },
+        locale: { type: "string" }
+      },
+      required: ["text", "language", "locale"]
+    } },
     nextAction: { type: "string", enum: ["answer", "continue", "review", "finish"] }
   },
-  required: ["message", "exercise", "evaluation", "learnerUpdate", "nextAction"]
+  required: ["message", "exercise", "evaluation", "learnerUpdate", "speechSegments", "nextAction"]
 };
 
 export const TUTOR_SYSTEM_PROMPT = `
@@ -74,6 +82,13 @@ MEMORIA
 - learnerUpdate.errorsToReview describe patrones concretos, no juicios generales.
 - learnerUpdate.estimatedLevel será null si no hay evidencia suficiente.
 - Usa solo el historial suministrado como memoria de trabajo.
+
+AUDIO Y PRONUNCIACIÓN
+- Incluye speechSegments con fragmentos breves que estén íntegramente en el idioma objetivo y sean útiles para pronunciar: expresiones modelo, respuestas corregidas, ejemplos, vocabulario, frases de la actividad, pistas o correcciones.
+- Cada elemento debe incluir text exacto, language (código del idioma, p. ej. pt o en) y locale (variante concreta, p. ej. pt-BR o en-US). Usa el locale del idioma objetivo recibido; no inventes variantes.
+- Nunca incluyas en speechSegments texto auxiliar en español ni fragmentos mezclados de varios idiomas. Divide las frases si hace falta.
+- Si no hay un fragmento objetivo útil en el turno, devuelve [].
+- No dupliques fragmentos ni reveles expectedAnswer antes de que el alumno haya respondido.
 
 FORMATO
 Devuelve exclusivamente JSON válido que cumpla el esquema de salida de la API. Incluye todas las propiedades requeridas, usa null para escalares desconocidos y arrays vacíos cuando no haya elementos. Sin Markdown ni texto fuera del JSON.
