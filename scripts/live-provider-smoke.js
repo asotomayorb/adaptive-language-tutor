@@ -96,7 +96,10 @@ for (let turn = 1; turn <= session.duration; turn += 1) {
   history.push({ role: "user", content: answer });
   result = next;
   exercise = next.exercise;
-  if (turn < session.duration) assert.ok(exercise, "intermediate turns should provide a follow-up exercise");
+  if (turn < session.duration) {
+    assert.equal(result.nextAction, "answer", "turn " + turn + " must continue before the configured duration");
+    assert.ok(exercise, "turn " + turn + " must provide a follow-up exercise before session completion");
+  }
 }
 assert.equal(result.nextAction, "finish", "the tutor should finish at the configured session duration");
 assert.equal(result.exercise, null, "finished session should not leave a new exercise open");
