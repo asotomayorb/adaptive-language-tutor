@@ -3,7 +3,7 @@
 **Última actualización:** 17-11-2026  
 **Rama:** `feature/ai-tutor-pedagogy`  
 **Pull request:** [#2 – Improve adaptive tutor pedagogy and AI integration](https://github.com/asotomayorb/adaptive-language-tutor/pull/2)  
-**Estado global:** sesiones reales Gemini aprobadas en `pt-BR` y `fr-FR` (3 turnos y 5 fragmentos de voz por idioma); una sesión real adicional de navegador en francés completó persistencia y exportación. Tests y Browser E2E aprobados en `6add5d7`. La comprobación inicial de salud ahora tiene timeout de 5 s para no bloquear el modo local. Se corrigió la exposición de archivos estáticos, se añadieron diez pruebas de rutas privadas y cabeceras de seguridad. Audio TTS está parcialmente implementado y probado con portugués y francés; el proveedor real completó ambas sesiones. Auditoría funcional, validación de voz en dispositivos reales y seguridad siguen pendientes. No declarar listo para prueba humana ni desplegar públicamente todavía.
+**Estado global:** sesiones reales Gemini aprobadas en `pt-BR` y `fr-FR` (3 turnos y 5 fragmentos de voz por idioma); una sesión real adicional de navegador en francés completó persistencia y exportación. Tests y Browser E2E aprobados en `7576158`. La comprobación inicial de salud ahora tiene timeout de 5 s para no bloquear el modo local. Se corrigió la exposición de archivos estáticos, se añadieron diez pruebas de rutas privadas y cabeceras de seguridad. Audio TTS está parcialmente implementado y probado con portugués y francés; el proveedor real completó ambas sesiones. Auditoría funcional, validación de voz en dispositivos reales y seguridad siguen pendientes. No declarar listo para prueba humana ni desplegar públicamente todavía.
 
 Este documento es el registro detallado del proyecto. El README principal mantiene únicamente la etapa actual y enlaza aquí para evitar duplicar información y mantener la documentación operativa breve.
 
@@ -13,7 +13,7 @@ Este documento es el registro detallado del proyecto. El README principal mantie
 |---|---|---|
 | 1 | Base del repositorio y ejecución | Implementada; CI correcto en el último commit validado |
 | 2 | Tutor IA, proveedores y pedagogía | Implementada; sesión real Gemini validada en 3 turnos |
-| 3 | Pruebas automatizadas y CI | Aprobadas en el último commit de código `6add5d7` |
+| 3 | Pruebas automatizadas y CI | Aprobadas en el último commit de código `7576158` |
 | 4 | Auditoría funcional y técnica | En curso; quedan comprobaciones funcionales y de seguridad |
 | 5 | Validación con proveedor IA real | Smoke test Gemini aprobado; evaluación de calidad/costos y fallos pendiente |
 | 6 | Prueba humana y ajustes de experiencia | Pendiente |
@@ -79,7 +79,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Etapa 4 — Auditoría funcional y técnica
 
-**Estado: en curso; tests y Browser E2E aprobados en `6add5d7`; smoke real de API en portugués y francés, y sesión real de navegador francés aprobados en run #44122518840. El E2E cubre modo local, IA simulada, reintentos, persistencia, exportación, repaso, pronunciación de vocabulario del resumen y bloqueo de reintentos duplicados.**
+**Estado: en curso; tests y Browser E2E aprobados en `7576158`; smoke real de API en portugués y francés, y sesión real de navegador francés aprobados en run #44122518840. El E2E cubre modo local, IA simulada, reintentos, persistencia, exportación, repaso, pronunciación de vocabulario del resumen y bloqueo de reintentos duplicados.**
 
 ### Flujo de sesión IA revisado parcialmente
 
@@ -110,7 +110,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Verificar una sesión real completa en navegador con Gemini: 3 turnos en francés, 1 sesión persistida y exportación JSON descargada; run #44122518840.
 - [x] Añadir pruebas del cliente frontend para health check, envío de turnos, errores HTTP y respuestas no JSON. El health check inicial se aborta tras 5 s si el backend no responde, permitiendo continuar en modo local; probado en tests.
 - [x] Añadir prueba de integración del ciclo IA en `tests/ai-session-flow.test.js`: actualizaciones del alumno, deduplicación de vocabulario/patrones, turnos `not_applicable`, evaluación, resumen, persistencia y tarjeta de repaso. tests aprobados en run #44093520831.
-- [x] Pruebas de interacción DOM/navegador y del flujo completo de interfaz: modo local, modo IA simulado, reintentos, pistas, resumen, persistencia, exportación y repaso IA; E2E aprobado en run #44122553809.
+- [x] Pruebas de interacción DOM/navegador y del flujo completo de interfaz: modo local, modo IA simulado, reintentos, pistas, resumen, persistencia, exportación y repaso IA; E2E aprobado en run #44123808091.
 
 ### Backend y seguridad revisados parcialmente
 
@@ -126,11 +126,11 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Validar el flujo con proveedor real mediante `npm run test:provider-live`: 3 turnos y cierre confirmados en run #44093520976.
 - [ ] Evaluar límites por IP/usuario y protección contra abuso antes de exposición pública.
 - [ ] Revisar límites de historial y tamaño total de contexto enviado al proveedor.
-- [ ] Completar revisión de sanitización y presentación de contenido generado por IA en todos los puntos de la interfaz; el repaso y resumen ya fueron corregidos y tienen prueba unitaria del helper.
+- [x] Completar revisión de sanitización de contenido dinámico en la interfaz: todas las inserciones `innerHTML` usan valores constantes o pasan por `escapeHTML`; incluye prompts de catálogo, respuestas IA, tarjetas de repaso, vocabulario y resumen.
 - [ ] Revisar privacidad, logs y errores del proveedor.
 - [ ] Definir si se requiere CORS; actualmente la arquitectura está planteada para frontend y API en el mismo origen.
 - [x] Corregir inserción de contenido generado por IA en el repaso y el resumen: los textos variables de tarjetas, vocabulario, idioma y foco recomendado ahora se escapan antes de insertarse como HTML.
-- [x] Añadir pruebas unitarias para el helper de escape HTML, incluyendo etiquetas, comillas y valores no string. La prueba existe; su ejecución en CI todavía debe confirmarse.
+- [x] Añadir pruebas unitarias para el helper de escape HTML, incluyendo etiquetas, comillas y valores no string; tests aprobados en run #44123809979.
 - [x] Añadir pruebas de regresión para tarjetas IA duplicadas entre sesiones y actividades sin respuesta esperada. La ejecución quedó completada correctamente en GitHub Actions #114.
 - [x] Restringir el servidor estático a `index.html` y archivos `.js`/`.css` de `src/`; bloquear archivos de entorno, backend, dependencias, scripts y tests. Diez rutas privadas y variantes de traversal cubiertas; tests y Browser E2E aprobados en run #44119446984 y #44119447002.
 - [x] Añadir cabeceras `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` y `Permissions-Policy` a respuestas de API y archivos estáticos; verificadas por pruebas.
@@ -207,7 +207,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Próxima acción concreta
 
-CI y Browser E2E están aprobados en `6add5d7`; el smoke API y la sesión real de navegador están aprobados en run #44122518840. Próximo trabajo: completar cobertura de audio en pistas/explicaciones, validar voces en dispositivos reales y cerrar los pendientes funcionales y de seguridad antes de preparar la prueba humana.
+CI y Browser E2E están aprobados en `7576158`; el smoke API y la sesión real de navegador están aprobados en run #44122518840. Próximo trabajo: completar cobertura de audio en pistas/explicaciones, validar voces en dispositivos reales y cerrar los pendientes funcionales y de seguridad antes de preparar la prueba humana.
 
 ## Criterio para declarar el proyecto listo para prueba humana
 
