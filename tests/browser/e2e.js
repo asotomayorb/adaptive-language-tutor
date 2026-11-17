@@ -110,7 +110,7 @@ try {
       body: JSON.stringify({
         message: "Muito bem. Terminamos esta prática.",
         exercise: null,
-        evaluation: { status: "correct", feedback: "Resposta correta.", correction: null, skill: "Producción" },
+        evaluation: { status: "partially_correct", feedback: "La idea se entiende, pero revisa la conjugación.", correction: "Eu me chamo Ana.", skill: "Producción" },
         learnerUpdate: { estimatedLevel: "A1", vocabulary: [], errorsToReview: [] },
         nextAction: "finish"
       })
@@ -133,6 +133,25 @@ try {
     JSON.parse(localStorage.getItem("adaptive-language-tutor.progress") || "{}")
   );
   assert.equal(aiStored.sessions?.length, 1, "mock AI session should persist once");
+  assert.equal(aiStored.reviewCards?.length, 1, "an evaluated AI error with an expected answer should create one review card");
+  assert.equal(aiStored.reviewCards[0].expected, "Eu me chamo Ana.");
+
+  // Make the AI review card due and verify that the real spaced-review UI grades it.
+  await aiPage.evaluate(() => {
+    const key = "adaptive-language-tutor.progress";
+    const progress = JSON.parse(localStorage.getItem(key));
+    progress.reviewCards[0].dueAt = new Date(Date.now() - 1000).toISOString();
+    localStorage.setItem(key, JSON.stringify(progress));
+  });
+  await aiPage.reload({ waitUntil: "networkidle" });
+  await aiPage.getByRole("button", { name: /Iniciar repaso/ }).click();
+  await aiPage.locator("#spaced-answer").fill("Eu me chamo Ana.");
+  await aiPage.locator("#check-spaced").click();
+  await aiPage.getByRole("button", { name: "Siguiente →" }).click();
+  const reviewed = await aiPage.evaluate(() => JSON.parse(localStorage.getItem("adaptive-language-tutor.progress")));
+  assert.equal(reviewed.reviewCards[0].repetitions, 1, "a correct AI review should increment repetitions");
+  assert.ok(new Date(reviewed.reviewCards[0].dueAt).getTime() > Date.now(), "a correct AI review should schedule the next interval");
+
   assert.equal(startCalls, 2, "initial AI session request should be retried once");
   assert.equal(answerCalls, 2, "AI answer request should be retried once");
   assert.deepEqual(aiPageErrors, [], "AI-mode browser should not report uncaught page errors");
