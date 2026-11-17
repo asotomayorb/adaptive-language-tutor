@@ -13,7 +13,7 @@ Este documento es el registro detallado del proyecto. El README principal mantie
 |---|---|---|
 | 1 | Base del repositorio y ejecución | Implementada; CI correcto en el último commit validado |
 | 2 | Tutor IA, proveedores y pedagogía | Implementada en código; sin prueba de API real |
-| 3 | Pruebas automatizadas y CI | Implementadas; GitHub Actions #165 correcto en el commit `c250b490` |
+| 3 | Pruebas automatizadas y CI | Implementadas; GitHub Actions #166 correcto en el commit `94e1830` |
 | 4 | Auditoría funcional y técnica | En curso |
 | 5 | Validación con proveedor IA real | Pendiente |
 | 6 | Prueba humana y ajustes de experiencia | Pendiente |
@@ -64,7 +64,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Etapa 3 — Pruebas automatizadas y CI
 
-**Estado: implementada; CI confirmado en el último commit validado.**
+**Estado: implementada; CI #166 confirmó `npm run check` y `npm test` en el commit `94e1830`.**
 
 - [x] Pruebas de API y servidor.
 - [x] Pruebas de adaptadores y validación de respuestas.
@@ -72,7 +72,8 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Pruebas de lógica pedagógica local.
 - [x] Pruebas de persistencia y repaso espaciado.
 - [x] Workflow `.github/workflows/tests.yml` para Node 20.
-- [x] GitHub Actions #165 completó con éxito `npm run check` y `npm test` en el commit `c250b490a3a386700244b251e178198845aaff4b`.
+- [x] GitHub Actions #166 completó con éxito `npm run check` y `npm test` en el commit `94e183016ec14c45d31510a71791549db96c0d5b`.
+- [x] Actions #165 también validó previamente las correcciones de vocabulario IA, cliente frontend y límites del endpoint.
 - [x] La ejecución #165 incluye las pruebas de vocabulario IA, cliente frontend y límites del endpoint añadidas durante esta auditoría.
 - [x] La prueba de escape HTML y las pruebas nuevas de persistencia IA quedaron incluidas en esa ejecución.
 
@@ -120,7 +121,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Rechazo de rutas estáticas fuera del directorio raíz cubierto por prueba.
 - [x] Reordenar el endpoint para validar JSON, mensaje y configuración antes de consumir cupo o concurrencia; añadir pruebas de regresión para solicitudes inválidas y proveedor no configurado.
 - [x] Confirmar CI para el cambio: Actions #165, `npm run check` y `npm test` correctos.
-- [ ] Pruebas de interacción DOM/navegador: el repositorio aún no tiene un framework de automatización de navegador configurado.
+- [ ] Pruebas de interacción DOM/navegador: el repositorio aún no tiene un framework de automatización de navegador configurado; elegir una solución compatible con CI antes de la prueba humana.
 - [ ] Evaluar límites por IP/usuario y protección contra abuso antes de exposición pública.
 - [ ] Revisar límites de historial y tamaño total de contexto enviado al proveedor.
 - [ ] Completar revisión de sanitización y presentación de contenido generado por IA en todos los puntos de la interfaz; el repaso y resumen ya fueron corregidos y tienen prueba unitaria del helper.
@@ -152,8 +153,16 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Etapa 6 — Prueba humana y experiencia de usuario
 
-**Estado: pendiente.**
+**Estado: pendiente.** La experiencia de audio debe incorporarse antes de la prueba humana.
 
+- [ ] Lectura automática en voz alta de cada fragmento de contenido que la aplicación presente en el idioma objetivo (incluye mensajes del tutor, enunciados, opciones y feedback que contenga texto de práctica).
+- [ ] Usar voces del navegador mediante SpeechSynthesis cuando estén disponibles, con locale correcto por idioma (`pt-BR` para portugués brasileño y `en`/locale inglés configurado); no enviar el texto a un servicio externo de TTS por defecto.
+- [ ] Añadir un control global para activar/desactivar lectura automática, con iconos habituales de altavoz y altavoz silenciado, estado accesible y preferencia recordada.
+- [ ] Añadir un botón de reproducción/repetición con icono play junto a cada fragmento pronunciable; reproducir solo ese fragmento.
+- [ ] Al cambiar de turno, detener la locución anterior para evitar solapamientos; al desactivar audio, cancelar cualquier locución en curso.
+- [ ] No leer en voz alta instrucciones ni explicaciones en español; separar explícitamente el texto objetivo del texto auxiliar cuando el tutor mezcle idiomas.
+- [ ] Gestionar voces no disponibles, navegadores sin SpeechSynthesis, errores y restricciones de autoplay sin bloquear la práctica escrita; ofrecer reproducción manual como alternativa.
+- [ ] Validar pronunciación y selección de voz en móvil y escritorio para portugués brasileño e inglés, además de controles por teclado y lectores de pantalla.
 - [ ] Prueba móvil y escritorio.
 - [ ] Portugués brasileño: naturalidad, corrección, vocabulario y situaciones reales.
 - [ ] Inglés: naturalidad, corrección y progresión.
@@ -190,15 +199,16 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Próxima acción concreta
 
-Continuar la etapa 4: probar el flujo integral de sesión IA en navegador, revisar diagnóstico, exportación y casos extremos; después corregir el orden de rate limit y validaciones del endpoint. Los cambios recientes aún requieren CI confirmado en el último commit.
+Continuar la etapa 4: incorporar una estrategia de pruebas de navegador y validar inicio, diagnóstico, envío/reintento, pistas, finalización, persistencia y exportación. Después ejecutar una sesión con proveedor real (etapa 5). La lectura automática TTS y sus controles se implementarán en la etapa 6, antes de la prueba humana.
 
 ## Criterio para declarar el proyecto listo para prueba humana
 
 No basta con que el workflow pase. Se requiere:
 1. Auditoría funcional cerrada sin defectos bloqueantes.
-2. CI correcto en el último commit.
+2. CI correcto en el último commit de código.
 3. Una sesión real con el proveedor configurado.
 4. Confirmación de persistencia, repaso, cierre y recuperación ante errores.
-5. Instrucciones de prueba humana preparadas.
+5. Lectura automática del idioma objetivo, control global de audio y reproducción manual validados.
+6. Instrucciones de prueba humana preparadas.
 
 El merge y la reactivación de Replit se mantienen posteriores a esas validaciones.
