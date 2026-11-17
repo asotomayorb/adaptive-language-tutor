@@ -4,7 +4,7 @@ Aplicación web de aprendizaje de idiomas con tutor conversacional de IA y modo 
 
 ## Estado actual
 
-**Etapa 4 de 8: auditoría funcional y técnica en GitHub.** El código base, la integración IA y las pruebas automatizadas están implementados. Aún faltan la auditoría completa, una conversación con proveedor real y la prueba humana; no está listo para despliegue público.
+**Etapa 4 de 8: auditoría funcional y técnica en GitHub.** CI y Browser E2E están aprobados; el tutor completó una sesión real de tres turnos con Gemini 3.5 Flash-Lite. Aún faltan auditoría funcional, audio TTS multilingüe y prueba humana; no está listo para despliegue público.
 
 **Próximo paso:** completar la etapa 4, corregir los hallazgos y validar los cambios con CI. El detalle de todas las etapas, su estado, verificaciones y pendientes se mantiene en el documento anexo: [PROJECT_STATUS.md](PROJECT_STATUS.md).
 
