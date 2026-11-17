@@ -105,6 +105,10 @@ function enforceSessionDuration(result, input) {
       turn < duration && (result.nextAction === "finish" || result.exercise === null)) {
     throw contractError("The tutor attempted to finish before the configured session duration.");
   }
+  const expectedLocale = input?.learner?.targetLanguageLocale;
+  if (expectedLocale && result.speechSegments.some(segment => segment.locale !== expectedLocale)) {
+    throw contractError("The tutor returned a speech segment with a locale different from the selected target language.");
+  }
   return result;
 }
 
