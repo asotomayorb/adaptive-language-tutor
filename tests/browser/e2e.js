@@ -49,11 +49,8 @@ try {
   // Complete the configured eight-turn local session.
   for (let turn = 0; turn < 8; turn += 1) {
     await page.locator("#answer-area [data-choice]").first().click();
-    if (turn < 7) {
-      await page.getByRole("button", { name: "Continuar →" }).click();
-    }
+    await page.getByRole("button", { name: "Continuar →" }).click();
   }
-  await page.getByRole("button", { name: "Ver resumen →" }).click();
   await page.locator("#summary-panel").waitFor({ state: "visible" });
 
   const stored = await page.evaluate(() =>
