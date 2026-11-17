@@ -3,7 +3,7 @@
 **Última actualización:** 17-11-2026  
 **Rama:** `feature/ai-tutor-pedagogy`  
 **Pull request:** [#2 – Improve adaptive tutor pedagogy and AI integration](https://github.com/asotomayorb/adaptive-language-tutor/pull/2)  
-**Estado global:** sesión real Gemini aprobada (3 turnos, 5 fragmentos `pt-BR`); tests y Browser E2E aprobados en `4052402`. Se corrigió la exposición de archivos estáticos y se añadieron diez pruebas de rutas privadas. Audio TTS está parcialmente implementado y probado con portugués y francés simulados. Auditoría funcional, validación de voz en dispositivos reales y seguridad siguen pendientes. No declarar listo para prueba humana ni desplegar públicamente todavía.
+**Estado global:** sesión real Gemini aprobada (3 turnos, 5 fragmentos `pt-BR`); tests y Browser E2E aprobados en `9444bf3`. Se corrigió la exposición de archivos estáticos, se añadieron diez pruebas de rutas privadas y cabeceras de seguridad. Audio TTS está parcialmente implementado y probado con portugués y francés; el proveedor real completó ambas sesiones. Auditoría funcional, validación de voz en dispositivos reales y seguridad siguen pendientes. No declarar listo para prueba humana ni desplegar públicamente todavía.
 
 Este documento es el registro detallado del proyecto. El README principal mantiene únicamente la etapa actual y enlaza aquí para evitar duplicar información y mantener la documentación operativa breve.
 
@@ -13,7 +13,7 @@ Este documento es el registro detallado del proyecto. El README principal mantie
 |---|---|---|
 | 1 | Base del repositorio y ejecución | Implementada; CI correcto en el último commit validado |
 | 2 | Tutor IA, proveedores y pedagogía | Implementada; sesión real Gemini validada en 3 turnos |
-| 3 | Pruebas automatizadas y CI | Aprobadas en el último commit `64b593d` |
+| 3 | Pruebas automatizadas y CI | Aprobadas en el último commit de código `9444bf3` |
 | 4 | Auditoría funcional y técnica | En curso; quedan comprobaciones funcionales y de seguridad |
 | 5 | Validación con proveedor IA real | Smoke test Gemini aprobado; evaluación de calidad/costos y fallos pendiente |
 | 6 | Prueba humana y ajustes de experiencia | Pendiente |
@@ -56,7 +56,7 @@ Este documento es el registro detallado del proyecto. El README principal mantie
 
 **Pendiente:**
 - [ ] Confirmar el identificador de modelo y la disponibilidad/cuota del proveedor elegido.
-- [x] Ejecutar smoke test real desde GitHub Actions con Gemini 3.5 Flash-Lite. Run [#44093520976](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44093520976), commit `4bb9a5e`: 3 turnos, 5 fragmentos de voz `pt-BR`, 38,3 s. Superó cuatro respuestas HTTP 503 mediante reintentos acotados; el resultado final fue aprobado.
+- [x] Ejecutar smoke test real desde GitHub Actions con Gemini 3.5 Flash-Lite. Run [#44120040434](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44120040434), commit `99fcfcc`: portugués brasileño (`pt-BR`) y francés (`fr-FR`), 3 turnos por idioma y 4 fragmentos de voz por sesión. Duración: 79,8 s para pt-BR y 39,8 s para fr-FR; ambos aprobados tras reintentos ante respuestas HTTP 503.
 - [ ] Evaluar calidad de respuestas, naturalidad, adaptación, continuidad y consumo.
 - [ ] Confirmar manejo de errores y límites reales del proveedor.
 
@@ -64,7 +64,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Etapa 3 — Pruebas automatizadas y CI
 
-**Estado: implementada; tests y Browser E2E aprobados en `4052402`.**
+**Estado: implementada; tests y Browser E2E aprobados en `9444bf3`.**
 
 - [x] Pruebas de API y servidor.
 - [x] Pruebas de adaptadores y validación de respuestas.
@@ -79,7 +79,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Etapa 4 — Auditoría funcional y técnica
 
-**Estado: en curso; tests y Browser E2E aprobados en `4052402`; sesión real Gemini aprobada en `4bb9a5e`. El E2E cubre modo local, IA simulada, reintentos, persistencia, exportación, repaso y configuración de idioma francés.**
+**Estado: en curso; tests y Browser E2E aprobados en `9444bf3`; sesión real Gemini aprobada en portugués brasileño y francés en run #44120040434. El E2E cubre modo local, IA simulada, reintentos, persistencia, exportación, repaso y configuración de idioma francés.**
 
 ### Flujo de sesión IA revisado parcialmente
 
@@ -131,7 +131,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 - [x] Corregir inserción de contenido generado por IA en el repaso y el resumen: los textos variables de tarjetas, vocabulario, idioma y foco recomendado ahora se escapan antes de insertarse como HTML.
 - [x] Añadir pruebas unitarias para el helper de escape HTML, incluyendo etiquetas, comillas y valores no string. La prueba existe; su ejecución en CI todavía debe confirmarse.
 - [x] Añadir pruebas de regresión para tarjetas IA duplicadas entre sesiones y actividades sin respuesta esperada. La ejecución quedó completada correctamente en GitHub Actions #114.
-- [x] Restringir el servidor estático a `index.html` y archivos `.js`/`.css` de `src/`; bloquear archivos de entorno, backend, dependencias, scripts y tests. Diez rutas privadas y variantes de traversal cubiertas; tests y Browser E2E aprobados en run #44119446984 y #44119447002.
+- [x] Restringir el servidor estático a `index.html` y archivos `.js`/`.css` de `src/`; bloquear archivos de entorno, backend, dependencias, scripts y tests. Diez rutas privadas y variantes de traversal cubiertas; tests y Browser E2E aprobados en run #44119446984 y #44119447002.\n- [x] Añadir cabeceras `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` y `Permissions-Policy` a respuestas de API y archivos estáticos; verificadas por pruebas.
 - [ ] Ejecutar revisión completa de rutas, estados y casos extremos.
 
 ### Observaciones de arquitectura
@@ -146,11 +146,11 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 **Estado: smoke test real aprobado; validación ampliada pendiente.**
 
 - [x] Proveedor inicial de validación: Google Gemini, modelo `gemini-3.5-flash-lite` (configurable; no es dependencia permanente).
-- [x] Confirmar conectividad y compatibilidad del modelo mediante una sesión real de tres turnos.
+- [x] Confirmar conectividad y compatibilidad del modelo mediante sesiones reales de tres turnos en portugués brasileño y francés.
 - [x] La clave se utilizó como secreto de GitHub Actions; no se incorporó al repositorio ni a los logs.
-- [x] Smoke test: inicio, tres evaluaciones, continuidad y cierre completados. [ ] Ampliar casos reales: respuestas incorrectas, pistas, cuota, credencial inválida y timeout.
+- [x] Smoke test: inicio, tres evaluaciones, continuidad, fragmentos de voz y cierre completados en ambos idiomas. [ ] Ampliar casos reales: respuestas incorrectas, pistas, cuota, credencial inválida y timeout.
 - [ ] Probar errores de cuota, credencial inválida, timeout y respuesta JSON inválida.
-- [x] Latencia observada en la última sesión smoke: 38,3 s total, con cuatro respuestas 503 recuperadas mediante reintentos. [ ] Medir costos y latencias en varias sesiones/modelos antes de seleccionar proveedor de producción.
+- [x] Latencia observada: 79,8 s en pt-BR y 39,8 s en fr-FR; los 503 transitorios se recuperaron mediante reintentos. [ ] Medir costos y latencias en varias sesiones/modelos antes de seleccionar proveedor de producción.
 - [ ] Usar únicamente información ficticia durante pruebas iniciales.
 
 ## Etapa 6 — Prueba humana y experiencia de usuario
@@ -203,7 +203,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 ## Próxima acción concreta
 
-CI y Browser E2E están aprobados en `4052402`; el smoke test real de Gemini está aprobado en `4bb9a5e` (3 turnos, 5 segmentos `pt-BR`, 38,3 s). Próximo trabajo: cerrar cobertura de audio en todas las vistas, ejecutar pruebas reales en navegador/dispositivo, completar auditoría funcional y seguridad; después preparar la prueba humana.
+CI y Browser E2E están aprobados en `9444bf3`; el smoke test real de Gemini está aprobado en `99fcfcc` para `pt-BR` y `fr-FR` (3 turnos y 4 segmentos de voz por idioma). Próximo trabajo: cerrar cobertura de audio en todas las vistas, ejecutar pruebas reales en navegador/dispositivo, completar auditoría funcional y seguridad; después preparar la prueba humana.
 
 ## Criterio para declarar el proyecto listo para prueba humana
 
