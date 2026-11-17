@@ -158,6 +158,7 @@ try {
     if (answerCalls === 1) {
       return route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ error: "Mock temporary failure" }) });
     }
+    await new Promise(resolve => setTimeout(resolve, 250));
     return route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -189,6 +190,7 @@ try {
   await aiPage.locator("#ai-answer").fill("Je m’appelle Ana.");
   await aiPage.locator("#submit-ai-answer").click();
   await aiPage.getByRole("button", { name: "Reintentar envío" }).click();
+  assert.equal(await aiPage.locator("#retry-ai").isDisabled(), true, "retry control should disable immediately to prevent duplicate requests");
   await aiPage.getByRole("button", { name: "Ver resumen →" }).click();
   await aiPage.locator("#summary-panel").waitFor({ state: "visible" });
   const summarySpeaker = aiPage.locator("#summary-content [data-speak]").first();
