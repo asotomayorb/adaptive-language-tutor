@@ -398,3 +398,28 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [ ] Ejecutar pruebas unitarias, Browser E2E y validación en dispositivo móvil real.
 
 **Importante:** este registro confirma que la especificación y los casos de prueba quedaron documentados. No significa que los cambios de interfaz y lógica ya estén implementados. La revisión del código de la rama muestra que la interfaz actual todavía contiene Inicio/Configuración, navegación con etiquetas, métricas en Inicio y ejercicios integrados en la misma vista; esos elementos siguen pendientes de sustituir conforme al README.
+
+
+## Rediseño de navegación y sesiones — implementación inicial 18-11-2026
+
+### Cambios realizados en código
+- [x] `index.html`: cuatro secciones Ruta, Ejercicios, Teoría y Estadísticas; barra inferior icon-only; selector de idioma y audio en cabecera.
+- [x] `src/styles.css`: estilo móvil, icono activo destacado, controles de cabecera, sesión a pantalla completa y diálogo de confirmación.
+- [x] `src/app.js`: selección Global/Repaso, preparación de sesión, pantalla completa, cierre con descarte, ocultación de métricas y controles secundarios.
+- [x] `src/app.js`: se eliminó el flujo de diagnóstico inicial; el nivel elegido se utiliza desde la primera actividad.
+- [x] `src/app.js`: la sesión de repaso trabaja sobre un borrador temporal y solo persiste al completar los repasos.
+- [x] `src/core/tutor-client.js`: timeout de 30 segundos y cancelación de solicitudes al abandonar la sesión.
+- [x] `src/app.js`: al fallar IA, el usuario puede reintentar o continuar con el motor local.
+- [x] `README.md`: se añadieron los detalles de implementación y pendientes.
+ 
+### Pendiente de verificación
+- [ ] Ejecutar `npm run check`.
+- [ ] Ejecutar `npm test`.
+- [ ] Ejecutar `npm run test:e2e`.
+- [ ] Verificar en preview Render después de desplegar este commit.
+- [ ] Prueba manual en Android real.
+- [ ] Diseñar e implementar el contenido real y progresión del modo historia Ruta.
+- [ ] Incorporar explicaciones didácticas reales en Teoría.
+- [ ] Revisar duración efectiva de sesiones y equivalencia provisional de dos turnos por minuto.
+
+**Estado:** primera implementación de la estructura móvil realizada en la rama. Todavía no está certificada por pruebas automatizadas ni prueba humana. No fusionar a main ni considerar lista para producción hasta cerrar las verificaciones anteriores.
