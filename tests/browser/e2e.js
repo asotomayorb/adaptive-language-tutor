@@ -158,7 +158,7 @@ try {
   await page.locator("#answer-area [data-choice]").last().click();
   await page.locator("#answer-area #continue-answer").click();
   await page.locator("#answer-area [data-choice]").first().click();
-  await page.locator("#feedback #continue-answer").waitFor({ state: "visible" });
+  await page.locator("#answer-area #continue-answer").waitFor({ state: "visible" });
   await page.locator("#session-close").click();
   const draft = await page.evaluate(() => JSON.parse(localStorage.getItem("adaptive-language-tutor.route-progress:pt-BR") || "null"));
   assert.equal(draft.session.turn, 2, "Route must save confirmed answers immediately");
