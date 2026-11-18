@@ -349,6 +349,6 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 
 - [x] El backend rechaza respuestas estructuradas del proveedor superiores a 16 KiB antes de devolverlas al navegador.
 - [x] Prueba de regresión cubre una respuesta JSON sobredimensionada.
-- [ ] Confirmar CI del commit de prueba y del HEAD documental.
+- [x] CI del commit de prueba `b713d04`: Tests run `44271230670` y Browser E2E run `44271230710`, aprobados. El HEAD documental `90297c8` tiene Tests run `44271256424` aprobado; Browser E2E run `44271256523` sigue en ejecución.
 
 **Motivo:** limitar el tamaño de contenido generado por el proveedor evita respuestas anormalmente grandes que puedan degradar la interfaz y ampliar innecesariamente el historial enviado en turnos posteriores.
