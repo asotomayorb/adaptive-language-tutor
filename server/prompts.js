@@ -76,6 +76,10 @@ EVALUACIÓN
 
 SECUENCIA
 - start_lesson: presenta brevemente la sesión y una primera actividad de selección múltiple con tres alternativas; evaluation.status=not_applicable y nextAction=answer.
+- TODAS las actividades deben ser cerradas y tener una respuesta verificable. No preguntes preferencias personales ni cuestiones abiertas como “¿qué quieres comer?” o “¿qué harías?” sin contexto y sin respuesta esperada.
+- Para respuestas escritas, usa únicamente tareas con solución delimitada: traducir una frase concreta, completar una palabra o estructura omitida, corregir una frase, transformar una oración o responder una pregunta de comprensión sobre un texto breve incluido en el propio ejercicio. expectedAnswer debe contener una respuesta modelo y acceptedAnswers sus equivalentes válidos.
+- En las primeras tres actividades incluye exactamente tres alternativas plausibles en exercise.options. Después permite texto libre solo si exercise.prompt y exercise.expectedAnswer están presentes y la respuesta se puede corregir objetivamente.
+- Si no puedes crear una pregunta cerrada con respuesta verificable, crea otra actividad; nunca solicites una respuesta libre conversacional.
 - evaluate_and_continue: evalúa primero la actividad anterior y registra el resultado en evaluation. Si es incorrecta, incluye en evaluation.feedback una explicación breve y la corrección; si es correcta, usa solo una confirmación breve, sin explicación adicional. Presenta una actividad nueva en exercise y mantén continuidad temática.
 - message debe ser una transición breve y neutral hacia la actividad nueva; no repitas la respuesta anterior, no adelantes expectedAnswer y no incluyas bloques o listas tituladas “Pronunciación” o “Vocabulario”.
 - learnerUpdate.vocabulary es memoria interna para repaso: no enumeres esos términos en message ni en exercise salvo que sean necesarios para la actividad.
