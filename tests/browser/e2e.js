@@ -69,7 +69,8 @@ try {
   await page.goto(baseUrl, { waitUntil: "networkidle" });
   assert.equal(await page.locator("#welcome-screen").isVisible(), true, "fresh users should see welcome");
   await page.locator("#welcome-start").click();
-  assert.equal(await page.locator("#welcome-screen").isVisible(), false, "welcome should disappear immediately");
+  assert.equal(await page.locator("#welcome-screen").isVisible(), true, "welcome must remain until the user presses Start");
+  assert.equal(await page.locator("#language-picker").isVisible(), true, "Start should open language selection for a new user");
   await page.locator('[data-language="Portugués brasileño"]').click();
   await page.locator("#screen-route").waitFor({ state: "visible" });
   assert.equal(await page.locator("#selected-language-flag").innerText(), "🇧🇷");
@@ -97,9 +98,17 @@ try {
   assert.equal(await page.locator("#theory-detail").isVisible(), true);
   assert.equal(await page.locator("#theory-title").innerText(), "Pronombres personales");
   assert.match(await page.locator("#theory-description").innerText(), /eu, você/i);
+  assert.ok(await page.locator("#theory-description .theory-pronoun-table tbody tr").count() >= 5, "pronouns should be shown in a bilingual table");
+  assert.ok(await page.locator("#theory-description [data-speak]").count() >= 5, "each pronoun should have pronunciation audio");
   await page.locator("#theory-next").click();
   assert.equal(await page.locator("#theory-title").innerText(), "Artículos");
+  await page.locator("#theory-next").click();
+  assert.match(await page.locator("#theory-description").innerText(), /Eu sou|SER|ESTAR/i, "verb theory should include applied conjugation");
   await page.locator("#theory-close").click();
+  // Switching away and back resets Theory to its category start.
+  await page.locator('[data-screen="exercises"]').click();
+  await page.locator('[data-screen="theory"]').click();
+  assert.equal(await page.locator("#theory-grid").isVisible(), true, "Theory navigation should return to categories");
 
   // Local exercise: first three questions are alternatives, then answers are written.
   await page.locator('[data-screen="exercises"]').click();
@@ -109,16 +118,25 @@ try {
   await page.locator("#start-session").click();
   for (let turn = 0; turn < 3; turn += 1) {
     assert.equal(await page.locator("#answer-area [data-choice]").count(), 3, "first three questions should have three choices");
+    const questionBefore = await page.locator("#lesson-content h3").innerText();
     await page.locator("#answer-area [data-choice]").first().click();
-    assert.equal(await page.locator("#lesson-content .feedback-note").isVisible(), true, "feedback should move to the following question");
-    assert.ok(await page.locator("#lesson-content .model-answer [data-speak]").count() === 1, "model answer should have its own pronunciation control");
+    assert.equal(await page.locator("#feedback .answer-status.incorrect").isVisible(), true, "incorrect feedback should appear at the end of the current question");
+    assert.equal(await page.locator("#lesson-content h3").innerText(), questionBefore, "the current question must remain until Continue");
+    assert.equal(await page.locator("#answer-area .answer-incorrect").count(), 1, "the selected wrong answer should be red");
+    assert.equal(await page.locator("#answer-area .answer-correct").count(), 1, "the correct alternative should be green");
+    assert.equal(await page.locator("#answer-area #continue-answer").isVisible(), true, "learner must explicitly continue");
+    assert.equal(await page.locator("#feedback .answer-explanation").isVisible(), true, "only incorrect answers should show explanatory feedback");
+    await page.locator("#answer-area #continue-answer").click();
   }
   assert.equal(await page.locator("#answer-area #free-answer").isVisible(), true, "fourth question should require written input");
   for (let turn = 3; turn < 5; turn += 1) {
     await page.locator("#free-answer").fill("Bom dia");
     await page.locator("#submit-free").click();
-    if (turn < 4) assert.equal(await page.locator("#answer-area #free-answer").isVisible(), true);
+    assert.equal(await page.locator("#answer-area #continue-answer").isVisible(), true, "written answers also require Continue");
+    if (turn === 4) break;
+    await page.locator("#answer-area #continue-answer").click();
   }
+  await page.locator("#answer-area #continue-answer").click();
   await page.locator("#summary-panel").waitFor({ state: "visible" });
   const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("adaptive-language-tutor.progress") || "{}"));
   assert.equal(saved.sessions?.length, 1, "completed exercise session should be saved");
@@ -138,7 +156,9 @@ try {
   await page.locator('[data-screen="route"]').click();
   await page.locator("#route-start").click();
   await page.locator("#answer-area [data-choice]").first().click();
+  await page.locator("#answer-area #continue-answer").click();
   await page.locator("#answer-area [data-choice]").first().click();
+  await page.locator("#feedback #continue-answer").waitFor({ state: "visible" });
   await page.locator("#session-close").click();
   const draft = await page.evaluate(() => JSON.parse(localStorage.getItem("adaptive-language-tutor.route-progress:pt-BR") || "null"));
   assert.equal(draft.session.turn, 2, "Route must save confirmed answers immediately");
@@ -179,7 +199,8 @@ try {
   await aiPage.locator("#route-start").click();
   await aiPage.locator("#answer-area [data-ai-choice]").first().waitFor();
   await aiPage.locator("#answer-area [data-ai-choice]").first().click();
-  await aiPage.locator("#lesson-content .feedback-note").waitFor({ state: "visible" });
+  await aiPage.locator("#feedback .answer-status.correct").waitFor({ state: "visible" });
+  assert.equal(await aiPage.locator("#answer-area #continue-answer").isVisible(), true, "AI evaluation must wait for Continue");
   await aiPage.locator("#session-close").click();
   assert.equal(await aiPage.locator("#route-resume").isVisible(), true, "AI-backed Route must save partial progress too");
   await aiPage.locator('[data-screen="exercises"]').click();
