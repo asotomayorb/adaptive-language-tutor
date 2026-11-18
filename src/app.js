@@ -483,11 +483,7 @@ function renderAITutorTurn(result) {
     item && typeof item.text === "string" && item.text.trim() &&
     typeof item.locale === "string" && item.locale.trim()
   );
-  const speechMarkup = speechSegments.length
-    ? '<div class="ai-speech-segments">' + speechSegments.map(item =>
-        '<span class="vocabulary-item">' + escapeHTML(item.text) + speakerButton(item.text, item.locale) + '</span>'
-      ).join("") + '</div>'
-    : "";
+  const speechMarkup = "";
   const promptAudio = aiCurrentExercise.prompt
     ? speakerButton(aiCurrentExercise.prompt, session.config.languageLocale || session.config.languageId)
     : "";
