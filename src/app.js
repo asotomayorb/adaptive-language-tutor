@@ -103,6 +103,8 @@ let session = null;
 let catalog = null;
 let diagnostic = null;
 let currentExercise = null;
+let pendingFeedback = null;
+let aiPendingFeedback = null;
 let reviewExercise = null;
 let reviewMode = false;
 let progress = loadProgress();
@@ -357,8 +359,11 @@ function renderAITutorTurn(result) {
   const prompt = aiCurrentExercise.prompt
     ? '<h3>' + escapeHTML(aiCurrentExercise.prompt) + '</h3>'
     : '<p class="muted">Responde libremente para continuar la conversación.</p>';
-  const feedback = result.evaluation?.feedback
-    ? '<p class="ai-feedback">' + escapeHTML(result.evaluation.feedback) + '</p>'
+  const previous = aiPendingFeedback;
+  aiPendingFeedback = null;
+  const feedback = previous
+    ? '<div class="feedback-note"><span>Respuesta anterior</span><p>' + escapeHTML(previous.text) + '</p>' +
+      (previous.expected ? '<p class="model-answer">Respuesta modelo: ' + escapeHTML(previous.expected) + ' ' + speakerButton(previous.expected, session.config.languageLocale || session.config.languageId) + '</p>' : '') + '</div>'
     : "";
   const vocabulary = (result.learnerUpdate?.vocabulary || []).filter(item => item?.term);
   const vocabularyMarkup = vocabulary.length
@@ -388,13 +393,22 @@ function renderAITutorTurn(result) {
     return;
   }
 
-  $("answer-area").innerHTML =
-    '<input id="ai-answer" class="answer-input" placeholder="Escribe tu respuesta…" autocomplete="off">' +
-    '<button id="submit-ai-answer" class="primary" type="button">Enviar respuesta →</button>';
-  $("submit-ai-answer").addEventListener("click", () => submitAITutorAnswer($("ai-answer").value));
-  $("ai-answer").addEventListener("keydown", event => {
-    if (event.key === "Enter") submitAITutorAnswer($("ai-answer").value);
-  });
+  if (session.turn < 3) {
+    const options = Array.isArray(aiCurrentExercise.options) ? aiCurrentExercise.options : [];
+    $("answer-area").innerHTML = options.length >= 2
+      ? options.map((option,index) => '<button class="answer-option ai-answer-option" type="button" data-ai-choice="' + index + '">' + escapeHTML(option) + '</button>').join("")
+      : '<p class="muted">El tutor está preparando las alternativas. Reintenta para continuar.</p><button id="retry-ai-options" class="secondary" type="button">Reintentar</button>';
+    $("answer-area").querySelectorAll("[data-ai-choice]").forEach(button => button.addEventListener("click", () => submitAITutorAnswer(options[Number(button.dataset.aiChoice)])));
+    $("retry-ai-options")?.addEventListener("click", () => startAITutorSession(session.config));
+  } else {
+    $("answer-area").innerHTML =
+      '<input id="ai-answer" class="answer-input" placeholder="Escribe tu respuesta…" autocomplete="off">' +
+      '<button id="submit-ai-answer" class="primary" type="button">Enviar respuesta →</button>';
+    $("submit-ai-answer").addEventListener("click", () => submitAITutorAnswer($("ai-answer").value));
+    $("ai-answer").addEventListener("keydown", event => {
+      if (event.key === "Enter") submitAITutorAnswer($("ai-answer").value);
+    });
+  }
 }
 
 async function submitAITutorAnswer(answer) {
@@ -410,6 +424,7 @@ async function submitAITutorAnswer(answer) {
   if (submitButton) submitButton.disabled = true;
   if (answerInput) answerInput.disabled = true;
   try {
+    const evaluatedExercise = aiCurrentExercise;
     const conversationHistory = [
       ...aiHistory,
       { role: "assistant", content: JSON.stringify(aiLastResult) }
@@ -432,7 +447,9 @@ async function submitAITutorAnswer(answer) {
         }
       },
       history: conversationHistory,
-      userMessage: cleanAnswer
+      userMessage: cleanAnswer + (session.turn + 1 < 3
+        ? " La próxima actividad debe ser una pregunta de selección múltiple con tres alternativas plausibles en exercise.options."
+        : " Desde ahora la próxima actividad debe requerir que escriba la respuesta, sin alternativas.")
     }, undefined, { signal: sessionAbortController?.signal });
     if (session !== activeSession || sessionAbortController?.signal.aborted) return;
     aiHistory = [
@@ -443,13 +460,17 @@ async function submitAITutorAnswer(answer) {
     const evaluation = result.evaluation || {};
     recordTutorEvaluation(session, {
       exerciseId: "ai-turn-" + (session.turn + 1),
-      prompt: aiCurrentExercise.prompt || aiLastResult.message,
+      prompt: evaluatedExercise.prompt || aiLastResult.message,
       submitted: cleanAnswer,
-      expected: aiCurrentExercise.expectedAnswer || "",
+      expected: evaluatedExercise.expectedAnswer || "",
       status: evaluation.status || "not_applicable",
       feedback: evaluation.feedback || "",
       skill: evaluation.skill || "Producción"
     });
+    aiPendingFeedback = {
+      text: evaluation.feedback || (evaluation.status === "correct" ? "Correcto." : "Respuesta revisada."),
+      expected: evaluatedExercise.expectedAnswer || ""
+    };
     $("streak").textContent = session.streak;
     $("word-count").textContent = session.vocabulary.length;
     $("error-count").textContent = session.errors.length;
@@ -586,20 +607,24 @@ function renderLesson() {
   $("streak").textContent = session.streak;
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
-  $("lesson-content").innerHTML = '<p class="eyebrow">TEMA: ' + escapeHTML(topicLabels[session.config.topic].toUpperCase()) + ' · NIVEL ' + escapeHTML(levelLabel(session.config.level).toUpperCase()) + '</p><h3>' + escapeHTML(currentExercise.prompt) + '</h3><p>' + escapeHTML(adaptation.message || "Elige una respuesta o escribe la tuya.") + '</p>';
+  const previous = pendingFeedback;
+  pendingFeedback = null;
+  const feedbackMarkup = previous
+    ? '<div class="feedback-note"><span>Respuesta anterior</span><p>' + escapeHTML(previous.text) + '</p><p class="model-answer">Respuesta modelo: ' + escapeHTML(previous.expected) + ' ' + speakerButton(previous.expected, catalog.locale) + '</p></div>'
+    : "";
+  $("lesson-content").innerHTML = feedbackMarkup + '<p class="eyebrow">TEMA: ' + escapeHTML(topicLabels[session.config.topic].toUpperCase()) + ' · NIVEL ' + escapeHTML(levelLabel(session.config.level).toUpperCase()) + '</p><h3>' + escapeHTML(currentExercise.prompt) + '</h3>';
   speech.stop();
-  const options = currentExercise.options.map((option,index) => '<div class="answer-option-row"><button class="answer-option" data-choice="' + index + '">' + escapeHTML(option) + '</button>' + speakerButton(option, catalog.locale) + '</div>').join("");
-  $("answer-area").innerHTML = options + '<input id="free-answer" class="answer-input" placeholder="También puedes escribir tu respuesta…"><button id="submit-free" class="secondary" type="button">Comprobar respuesta escrita</button>';
-  $("answer-area").querySelectorAll("[data-choice]").forEach(button => button.addEventListener("click", event => {
-    if (event.target.closest("[data-speak]")) return;
-    submitAnswer(currentExercise.options[Number(button.dataset.choice)]);
-  }));
-  $("answer-area").querySelectorAll("[data-speak]").forEach(button => button.addEventListener("click", event => {
-    event.stopPropagation();
-    speech.speak(button.dataset.speak, catalog.locale);
-  }));
-  autoSpeak(currentExercise.options.join(". "), catalog.locale);
-  $("submit-free").addEventListener("click", () => submitAnswer($("free-answer").value));
+  if (session.turn < 3) {
+    const options = currentExercise.options || [];
+    $("answer-area").innerHTML = options.map((option,index) => '<div class="answer-option-row"><button class="answer-option" data-choice="' + index + '">' + escapeHTML(option) + '</button>' + speakerButton(option, catalog.locale) + '</div>').join("");
+    $("answer-area").querySelectorAll("[data-choice]").forEach(button => button.addEventListener("click", () => submitAnswer(options[Number(button.dataset.choice)])));
+    bindSpeakerButtons($("answer-area"));
+    autoSpeak(options.join(". "), catalog.locale);
+  } else {
+    $("answer-area").innerHTML = '<input id="free-answer" class="answer-input" placeholder="Escribe tu respuesta…" autocomplete="off"><button id="submit-free" class="primary" type="button">Enviar respuesta →</button>';
+    $("submit-free").addEventListener("click", () => submitAnswer($("free-answer").value));
+    $("free-answer").addEventListener("keydown", event => { if (event.key === "Enter") submitAnswer($("free-answer").value); });
+  }
   $("feedback").classList.add("hidden");
   $("hint-btn").disabled = false;
   $("hint-btn").hidden = false;
@@ -608,20 +633,16 @@ function renderLesson() {
 
 function submitAnswer(answer) {
   const result = recordAnswer(session, currentExercise, answer);
-  $("answer-area").querySelectorAll("button").forEach(button => button.disabled = true);
-  if (result.correct) {
-    showFeedback("Correcto. " + currentExercise.explanation, true);
-  } else {
-    showFeedback("Respuesta de referencia: " + currentExercise.target + ". " + currentExercise.explanation, false);
-  }
-  appendCatalogSpeech($("feedback"), currentExercise, "explanationSpeechSegments", true);
+  pendingFeedback = {
+    text: result.correct ? "Correcto. " + currentExercise.explanation : "No era correcto. " + currentExercise.explanation,
+    expected: currentExercise.target
+  };
   updateStats();
-  const next = document.createElement("button");
-  next.className = "primary";
-  next.type = "button";
-  next.textContent = "Continuar →";
-  next.addEventListener("click", renderLesson);
-  $("answer-area").append(next);
+  if (session.turn >= session.config.duration) {
+    finishSession();
+    return;
+  }
+  renderLesson();
 }
 
 function updateStats() {
@@ -686,6 +707,8 @@ function finishSession() {
   $("summary-panel").classList.remove("hidden");
   $("session-status").textContent = "Sesión finalizada";
   const summary = buildSummary(session);
+  const finalFeedback = pendingFeedback;
+  pendingFeedback = null;
   persistSession(progress, session, summary);
   saveProgress(progress);
   refreshDashboard();
@@ -699,7 +722,7 @@ function finishSession() {
   const vocabularyText = summary.vocabulary.map(item =>
     escapeHTML(item.term) + speakerButton(item.term, summaryLocale) + " (" + escapeHTML(item.meaning) + ")"
   ).join(", ") || "ninguno";
-  $("summary-content").innerHTML = '<p class="intro">Completaste ' + summary.turns + ' turnos de ' + escapeHTML(session.config.language) + '.</p><ul class="summary-list">' + diagnosticText + aiLevelText + '<li>Respuestas evaluadas como correctas: ' + summary.correct + '/' + summary.attempted + ' (' + summary.accuracy + '%).</li><li>Mejor racha: ' + summary.bestStreak + '.</li><li>Vocabulario aprendido: ' + vocabularyText + '.</li><li>Errores evaluados para reforzar: ' + summary.errors.length + '.</li><li>Focos y patrones recomendados: ' + focus + '.</li></ul>';
+  $("summary-content").innerHTML = (finalFeedback ? '<div class="feedback-note"><span>Última respuesta</span><p>' + escapeHTML(finalFeedback.text) + '</p><p class="model-answer">Respuesta modelo: ' + escapeHTML(finalFeedback.expected) + ' ' + speakerButton(finalFeedback.expected, summaryLocale) + '</p></div>' : '') + '<p class="intro">Completaste ' + summary.turns + ' preguntas de ' + escapeHTML(session.config.language) + '.</p><ul class="summary-list">' + diagnosticText + aiLevelText + '<li>Respuestas evaluadas como correctas: ' + summary.correct + '/' + summary.attempted + ' (' + summary.accuracy + '%).</li><li>Mejor racha: ' + summary.bestStreak + '.</li><li>Vocabulario aprendido: ' + vocabularyText + '.</li><li>Errores evaluados para reforzar: ' + summary.errors.length + '.</li><li>Focos y patrones recomendados: ' + focus + '.</li></ul>';
   bindSpeakerButtons($("summary-content"));
   speech.speakSequence(summary.vocabulary.map(item => ({ text: item.term, locale: summaryLocale })), { automatic: true });
 }
