@@ -143,7 +143,7 @@ export const english = {
           "working"
         ],
         "hint": "Con I se usa la forma base del verbo.",
-        hintSpeechSegments:["I","work"], explanationSpeechSegments:["I work","Works"], "explanation": "I work significa yo trabajo. Works se usa con he, she o it."
+        hintSpeechSegments:["I"], explanationSpeechSegments:["I work","Works"], "explanation": "I work significa yo trabajo. Works se usa con he, she o it."
       },
       {
         "id": "en-work-03",
