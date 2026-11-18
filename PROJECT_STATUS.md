@@ -284,3 +284,17 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] `HUMAN_TEST_PLAN.md` ampliado para incluir primera pista IA, reactivación de audio en resumen y fallback de voz genérica por idioma.
 
 **Alcance:** esta corrección solo pronuncia los segmentos objetivos que el proveedor ya entrega y que aparecen en la pista. No sintetiza ni traduce automáticamente texto libre en español. La auditoría de todas las variantes de pistas/explicaciones y la validación auditiva real siguen pendientes.
+
+
+## Reanudación de audio: solo fragmentos visibles — 17-11-2026
+
+**Commits:** corrección `6b2b2acd8434f35366ea3e7f5f1941cd65aba717`; prueba E2E `794d853a7665d719306999389fe0b784b439e715`.
+
+- [x] Al reactivar la lectura automática, el selector excluye controles de pronunciación que estén dentro de paneles ocultos y elementos sin caja visible en el documento.
+- [x] La prueba Browser E2E cambia del resumen al panel de lección y verifica que se reproduce únicamente el fragmento visible, no vocabulario del panel oculto.
+- [x] Tests para `6b2b2ac`: run `44202286168` aprobado.
+- [x] Browser E2E para `6b2b2ac`: run `44202286184` aprobado.
+- [x] Tests para `794d853`: run `44202291522` aprobado.
+- [x] Browser E2E para `794d853`: run `44202291477` aprobado.
+
+**Conclusión:** la reanudación automática respeta la vista visible y no debe leer fragmentos de paneles ocultos. La prueba usa SpeechSynthesis simulado; no sustituye la validación auditiva en Android y escritorio. Se mantiene pendiente la auditoría de cobertura de explicaciones/pistas y la prueba humana real.
