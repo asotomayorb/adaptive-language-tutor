@@ -481,3 +481,24 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] Preview Render desplegado en estado `live` para el commit `e227eea` (deploy `dep-dbv2si8u01pc73clh3u0`).
 - [ ] Validar el flujo visual y auditivo en Android real.
 
+
+
+## Correcciones solicitadas — 18-11-2026 (siguiente iteración)
+
+**Rama:** `feature/mobile-bottom-navigation`.
+
+- [x] Ruta ahora tiene un único banner: tras el primer inicio cambia a **Continuar recorrido** y guarda el estado inicial antes de la primera respuesta. La ruta no se reinicia al volver a pulsar el banner.
+- [x] Se retiró el mensaje gris de transición del tutor por encima de cada consigna.
+- [x] Se ajustó la pronunciación de preguntas mixtas: extrae el segmento de la consigna, conserva el locale objetivo y transforma guiones bajos simples/múltiples en pausa.
+- [x] El tutor no debe reproducir segmentos de voz en el idioma de origen como si fueran el idioma objetivo.
+- [x] El botón de envío de respuesta escrita se elimina tras el envío correcto; el feedback permanece y el avance depende de Continuar.
+- [x] El prompt IA exige actividades cerradas y verificables; no admite preguntas abiertas de preferencias sin respuesta modelo.
+- [x] Los errores concretos quedan disponibles inmediatamente en Repaso al persistir la sesión; los patrones cualitativos conservan el primer intervalo de un día.
+- [x] Teoría de italiano ampliada con artículos, *passato prossimo*, *futuro semplice*, ejemplos traducidos, vocabulario y expresiones aplicadas.
+- [ ] CI completo pendiente de ejecución/confirmación sobre el último commit.
+- [ ] Prueba visual y auditiva en Android pendiente.
+- [ ] Completar y revisar el contenido aplicado de teoría para el resto de los idiomas; no asumir que la cobertura es homogénea.
+
+### Diseño futuro (no implementado)
+- Modo de comprensión lectora con textos originales o de dominio público/licencia abierta verificada, atribución y preguntas cerradas basadas en el texto.
+- Clip cultural de 1–2 segundos asociado a cada bandera, usando exclusivamente grabaciones cuya licencia concreta esté verificada como dominio público o compatible.
