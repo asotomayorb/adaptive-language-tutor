@@ -194,7 +194,6 @@ function startSpacedReview() {
   if (!dueReviewCards.length) { reviewProgressDraft = null; refreshDashboard(); return; }
   sessionFinished = false;
   showSessionView("review");
-  $("setup-panel").classList.add("hidden");
   $("summary-panel").classList.add("hidden");
   $("lesson-panel").classList.remove("hidden");
   $("session-status").textContent = "Repaso programado";
@@ -285,7 +284,6 @@ $("setup-form").addEventListener("submit", event => {
   session = createSession(config);
   sessionFinished = false;
   reviewMode = false;
-  $("setup-panel").classList.add("hidden");
   $("summary-panel").classList.add("hidden");
   $("lesson-panel").classList.remove("hidden");
   $("session-status").textContent = aiConfigured ? "Tutor IA en sesión" : "Sesión local";
@@ -753,7 +751,6 @@ function closeSessionAndReturn() {
   reviewMode = false;
   $("lesson-panel").classList.remove("hidden");
   $("summary-panel").classList.add("hidden");
-  $("setup-panel").classList.add("hidden");
   $("session-view").classList.add("hidden");
   $("app-shell").classList.remove("session-active");
   $("exercise-choice-panel").classList.remove("hidden");
