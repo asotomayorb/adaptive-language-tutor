@@ -449,3 +449,19 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] Render build y deploy completados correctamente para el commit de código `6eb031fb9b1051ad993df1e9ea8dbf4cd96f9472` (deploy `dep-dbuugt8u01pc73e2o700`).
 - [x] El servidor arrancó y anunció el servicio disponible.
 - [ ] Tests de proyecto y prueba visual/funcional Android aún pendientes; el build de Render no los reemplaza.
+
+
+## Revisión pedagógica y de contenido — 18-11-2026
+
+**Rama:** feature/mobile-bottom-navigation.
+
+- [x] Ruta con evaluación de 10 preguntas, umbral de dominio 8/10 y actividad integradora.
+- [x] Guardado independiente de progreso parcial en Ruta; se puede salir y reanudar.
+- [x] Ejercicios: 3 primeras preguntas con alternativas y luego escritura, independientemente del nivel.
+- [x] Feedback neutral diferido a la pregunta siguiente; respuesta modelo con control de pronunciación.
+- [x] Teoría con listado de temas y diapositivas a pantalla completa con navegación anterior/siguiente.
+- [x] Mosaico de 23 idiomas estándar; no se pide locale al usuario. Locale queda como dato interno para voz/tutor.
+- [x] Explicación emergente de variantes ortográficas inglesas (p. ej. color/colour).
+- [x] Bienvenida desaparece al pulsar Iniciar y no se repite tras guardar idioma.
+- [ ] La Ruta implementada usa contenido local de portugués brasileño e inglés. Los demás idiomas aparecen en el catálogo y pueden practicar mediante IA, pero aún no tienen una Ruta local completa.
+- [ ] Ejecutar tests unitarios, check, Browser E2E y validar en Android real.
