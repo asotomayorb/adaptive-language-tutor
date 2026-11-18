@@ -330,3 +330,15 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] CI del commit de prueba `7e6860f`: Tests run `44209349422` y Browser E2E run `44209349457` (este último aún en ejecución al registrar); el HEAD documental `48ac3e1` pasó Tests `44209375902` y Browser E2E `44209375927`.
 
 **Alcance:** limita el detalle almacenado en logs de errores del proveedor. Aún debe definirse retención, acceso y monitorización de logs en el hosting de producción.
+
+## Cancelación inmediata de audio durante acciones IA — 18-11-2026
+
+**Commits:** código `356d2db6278b0a498dcbd232aed211ff112130e7`; prueba E2E `24503f8ff378dd0c9bbcf72842d6f68b50432c72`; plan humano `262fd24ce436c2c469fae14f629fda928513e903`.
+
+- [x] Al solicitar una pista, la locución previa se cancela inmediatamente.
+- [x] Al enviar una respuesta, la locución previa se cancela antes de esperar la respuesta de la API.
+- [x] Si falla una solicitud IA, se detiene la voz de la actividad anterior.
+- [x] Browser E2E comprueba cancelación al solicitar una pista adicional y al enviar respuesta.
+- [ ] Confirmar Tests y Browser E2E en el HEAD final.
+
+**Motivo:** antes, la voz de la actividad anterior podía continuar durante la espera de una pista o evaluación; ahora la cancelación sucede en la interacción del usuario, no al renderizar la respuesta siguiente.
