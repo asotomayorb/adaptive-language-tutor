@@ -487,7 +487,13 @@ function renderAITutorTurn(result) {
   const prompt = aiCurrentExercise.prompt
     ? '<h3>' + renderVariantTerms(aiCurrentExercise.prompt) + '</h3>'
     : '<h3>El tutor está preparando una actividad cerrada.</h3>';
-  const questionSpeech = getExerciseSpeech(aiCurrentExercise);
+  const targetLocale = session.config.languageLocale || session.config.languageId;
+  const targetSpeech = (result.speechSegments || []).filter(item =>
+    item && typeof item.text === "string" && item.text.trim() && item.locale === targetLocale
+  );
+  const questionSpeech = targetSpeech.length
+    ? { text: targetSpeech.map(item => item.text.trim()).join(" "), locale: targetLocale }
+    : getExerciseSpeech(aiCurrentExercise);
   const promptAudio = aiCurrentExercise.prompt
     ? speakerButton(questionSpeech.text, questionSpeech.locale)
     : "";
