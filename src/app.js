@@ -1469,6 +1469,57 @@ function renderVerbLesson(languageName) {
   }).join("");
   return '<p class="theory-slide-text">' + escapeHTML(lesson.lead) + '</p><table class="theory-pronoun-table"><tbody>' + rows + '</tbody></table><section class="theory-example"><span>Ejemplos aplicados</span><p>' + escapeHTML(lesson.example) + '</p><p class="theory-slide-text">' + escapeHTML(lesson.rule) + '</p></section>';
 }
+function renderItalianAppliedTopic(category, index, locale) {
+  const rows = (items) => items.map(([term, meaning, note = ""]) =>
+    '<tr><td><strong class="theory-target-word">' + escapeHTML(term) + '</strong> ' + speakerButton(term, locale) + '</td><td>' + escapeHTML(meaning) + '</td>' + (note ? '<td>' + escapeHTML(note) + '</td>' : '') + '</tr>'
+  ).join("");
+  if (category === "Gramática" && index === 1) {
+    return '<p class="theory-slide-text">En italiano el artículo concuerda con el sustantivo en género y número. La forma masculina depende del sonido inicial; la forma femenina se contrae ante vocal.</p>' +
+      '<h3>Artículos definidos</h3><table class="theory-pronoun-table"><thead><tr><th>Forma y ejemplo</th><th>Significado</th><th>Cuándo se usa</th></tr></thead><tbody>' +
+      rows([["il libro","el libro","Masculino singular; consonante común"],["lo studente","el estudiante","Masculino singular; s + consonante, z, gn, ps"],["l’amico","el amigo","Masculino singular ante vocal"],["la casa","la casa","Femenino singular ante consonante"],["l’amica","la amiga","Femenino singular ante vocal"],["i libri","los libros","Plural de il"],["gli studenti / gli amici","los estudiantes / los amigos","Plural de lo y l’ masculino"],["le case","las casas","Plural femenino"]]) +
+      '</tbody></table><h3>Artículos indefinidos</h3><table class="theory-pronoun-table"><thead><tr><th>Forma y ejemplo</th><th>Significado</th></tr></thead><tbody>' +
+      rows([["un libro","un libro"],["uno studente","un estudiante"],["un amico","un amigo (sin apóstrofo)"],["una casa","una casa"],["un’amica","una amiga (con apóstrofo)"]]) +
+      '</tbody></table><p class="theory-slide-text"><strong>Regla práctica:</strong> no escribas *il studente ni *la amica. Compara siempre el artículo con la primera letra/sonido del sustantivo y memoriza el sustantivo junto con su artículo.</p>';
+  }
+  if (category === "Gramática" && index === 4) {
+    const people = ["io","tu","lui / lei","noi","voi","loro"];
+    const forms = [["ho parlato","sono andato/a"],["hai parlato","sei andato/a"],["ha parlato","è andato/a"],["abbiamo parlato","siamo andati/e"],["avete parlato","siete andati/e"],["hanno parlato","sono andati/e"]];
+    return '<p class="theory-slide-text">El pasado más usado en conversación es el <strong>passato prossimo</strong>: auxiliar en presente (avere o essere) + participio pasado. Se usa para acciones terminadas: ayer, la semana pasada, esta mañana.</p>' +
+      '<h3>Conjugación aplicada</h3><table class="theory-pronoun-table"><thead><tr><th>Persona</th><th>parlare · hablar</th><th>andare · ir</th></tr></thead><tbody>' +
+      people.map((person,i)=>'<tr><td>'+person+'</td><td><strong class="theory-target-word">'+forms[i][0]+'</strong> '+speakerButton(forms[i][0],locale)+'</td><td><strong class="theory-target-word">'+forms[i][1]+'</strong> '+speakerButton(forms[i][1],locale)+'</td></tr>').join("") +
+      '</tbody></table><section class="theory-example"><span>Ejemplos reales</span><p class="theory-target-word">Ieri ho parlato con Maria. ' + speakerButton("Ieri ho parlato con Maria.",locale) + '</p><p>Ayer hablé con María.</p><p class="theory-target-word">Domenica siamo andati a Roma. ' + speakerButton("Domenica siamo andati a Roma.",locale) + '</p><p>El domingo fuimos a Roma.</p></section><p class="theory-slide-text"><strong>Auxiliar:</strong> avere se usa con la mayoría de los verbos transitivos (ho mangiato); essere con muchos verbos de movimiento/cambio de estado y verbos reflexivos (sono arrivato, mi sono svegliato). Con essere, el participio concuerda en género y número: andato/a/i/e. Hay verbos cuyo auxiliar debe aprenderse con el verbo.</p>';
+  }
+  if (category === "Gramática" && index === 5) {
+    const people = ["io","tu","lui / lei","noi","voi","loro"];
+    const forms = [["parlerò","sarò"],["parlerai","sarai"],["parlerà","sarà"],["parleremo","saremo"],["parlerete","sarete"],["parleranno","saranno"]];
+    return '<p class="theory-slide-text">El <strong>futuro semplice</strong> expresa predicciones, promesas e intenciones futuras. Las terminaciones son las mismas para los verbos en -are, -ere e -ire, aunque la raíz puede cambiar.</p><table class="theory-pronoun-table"><thead><tr><th>Persona</th><th>parlare · hablar</th><th>essere · ser/estar</th></tr></thead><tbody>' +
+      people.map((person,i)=>'<tr><td>'+person+'</td><td><strong class="theory-target-word">'+forms[i][0]+'</strong> '+speakerButton(forms[i][0],locale)+'</td><td><strong class="theory-target-word">'+forms[i][1]+'</strong> '+speakerButton(forms[i][1],locale)+'</td></tr>').join("") +
+      '</tbody></table><section class="theory-example"><span>Ejemplos</span><p class="theory-target-word">Domani parlerò con il professore. ' + speakerButton("Domani parlerò con il professore.",locale) + '</p><p>Mañana hablaré con el profesor.</p><p class="theory-target-word">L’anno prossimo saremo in Italia. ' + speakerButton("L’anno prossimo saremo in Italia.",locale) + '</p><p>El próximo año estaremos en Italia.</p></section><p class="theory-slide-text"><strong>Formación:</strong> los verbos en -are cambian la a por e (parlare → parler-); se añaden -ò, -ai, -à, -emo, -ete, -anno. Essere y avere son irregulares: sarò y avrò. En conversación, el presente con una expresión temporal también puede indicar futuro.</p>';
+  }
+  const vocabulary = {
+    "Vocabulario": [
+      [["ciao","hola / chao","Informal"],["buongiorno","buenos días / buenas tardes","Formal o neutral"],["buonasera","buenas tardes / noches","Desde la tarde"],["arrivederci","hasta luego","Formal"],["a presto","hasta pronto","Neutral"]],
+      [["la madre","la madre"],["il padre","el padre"],["il fratello","el hermano"],["la sorella","la hermana"],["i genitori","los padres"],["il figlio / la figlia","el hijo / la hija"]],
+      [["oggi","hoy"],["domani","mañana"],["ieri","ayer"],["lunedì","lunes"],["la settimana","la semana"],["alle otto","a las ocho"]],
+      [["il conto","la cuenta"],["un tavolo per due","una mesa para dos"],["l’acqua naturale","agua sin gas"],["il menù","el menú"],["vorrei…","quisiera…"],["senza…","sin…"]],
+      [["il biglietto","el billete / pasaje"],["la stazione","la estación"],["il binario","el andén / vía"],["a destra","a la derecha"],["a sinistra","a la izquierda"],["quanto costa?","¿cuánto cuesta?"]]
+    ],
+    "Expresiones": [
+      [["Mi chiamo…","Me llamo…"],["Piacere!","¡Mucho gusto!"],["Sono cileno/a.","Soy chileno/a."],["Vengo dal Cile.","Vengo de Chile."]],
+      [["Mi può aiutare?","¿Me puede ayudar? (formal)"],["Può ripetere, per favore?","¿Puede repetir, por favor?"],["Non ho capito.","No entendí."],["Parla più lentamente, per favore.","Hable más despacio, por favor."]],
+      [["Vorrei un caffè, per favore.","Quisiera un café, por favor."],["Posso vedere il menù?","¿Puedo ver el menú?"],["Il conto, per favore.","La cuenta, por favor."],["È possibile pagare con carta?","¿Se puede pagar con tarjeta?"]],
+      [["Dov’è la stazione?","¿Dónde está la estación?"],["A che ora parte il treno?","¿A qué hora sale el tren?"],["Quanto costa?","¿Cuánto cuesta?"],["Può indicarmelo sulla mappa?","¿Puede indicármelo en el mapa?"]],
+      [["Come va?","¿Cómo estás?"],["Tutto bene, grazie.","Todo bien, gracias."],["Che cosa fai oggi?","¿Qué haces hoy?"],["Ci vediamo domani.","Nos vemos mañana."]]
+    ]
+  };
+  if (category === "Vocabulario" || category === "Expresiones") {
+    const items = vocabulary[category]?.[index];
+    if (!items) return null;
+    const heading = category === "Vocabulario" ? "Palabras para usar en contexto" : "Frases listas para una situación real";
+    return '<p class="theory-slide-text">' + heading + '. Escucha cada expresión y fíjate en su traducción y registro.</p><table class="theory-pronoun-table"><thead><tr><th>Italiano</th><th>Español / uso</th></tr></thead><tbody>' + rows(items) + '</tbody></table>';
+  }
+  return null;
+}
 let activeTheoryTopics = [];
 let activeTheoryIndex = 0;
 let activeTheoryCategory = "";
@@ -1488,7 +1539,12 @@ function openTheoryTopic(index) {
   const languageName = $("language").value === "other" ? $("custom-language-name").value.trim() : $("language").value;
   const locale = getSelectedCatalog()?.locale || "und";
   let detailMarkup = '<p class="theory-slide-text">' + escapeHTML(body) + '</p>';
-  if (activeTheoryCategory === "Gramática" && activeTheoryIndex === 0) {
+  const italianApplied = languageName === "Italiano"
+    ? renderItalianAppliedTopic(activeTheoryCategory, activeTheoryIndex, locale)
+    : null;
+  if (italianApplied) {
+    detailMarkup = italianApplied;
+  } else if (activeTheoryCategory === "Gramática" && activeTheoryIndex === 0) {
     detailMarkup = '<p class="theory-slide-text">Los pronombres indican quién participa en la oración. Estas son las formas personales más habituales:</p>' + renderPronounTable(sample, languageName, locale);
   } else if (activeTheoryCategory === "Gramática" && activeTheoryIndex === 1 && sample?.articles) {
     detailMarkup += '<section class="theory-example"><span>Artículos de este idioma</span><p class="theory-target-word">' + escapeHTML(sample.articles) + '</p><p class="theory-slide-text">Observa género, número y si el artículo es definido o indefinido. Algunos idiomas expresan estas diferencias mediante sufijos o no usan artículos.</p></section>';
