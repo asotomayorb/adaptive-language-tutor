@@ -145,6 +145,7 @@ function startSpacedReview() {
 }
 
 function renderSpacedReview() {
+  speech.stop();
   if (reviewIndex >= dueReviewCards.length) {
     $("lesson-panel").classList.add("hidden");
     $("setup-panel").classList.remove("hidden");
