@@ -970,6 +970,7 @@ function continueAfterAnswer() {
     if (routeMode && session.turn === 10 && !routeIntegration) {
       if (session.correct < 8) { renderRouteAssessmentFailed(); return; }
       routeIntegration = true;
+      if (pending.result?.exercise) pending.result.nextAction = "answer";
     }
     if (pending.result?.nextAction === "finish" || (!routeMode && session.turn >= session.config.duration)) {
       finishSession();
