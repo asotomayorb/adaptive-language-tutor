@@ -70,6 +70,6 @@ test("tutor client surfaces provider errors returned by the API", async () => {
 test("tutor client uses a safe fallback for non-JSON error responses", async () => {
   await assert.rejects(
     requestTutorTurn({ userMessage: "practice" }, async () => new Response("gateway error", { status: 502 })),
-    /The tutor could not respond/
+    /El tutor no pudo responder/
   );
 });
