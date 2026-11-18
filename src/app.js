@@ -56,6 +56,18 @@ function appendSpeechButtons(root, segments) {
   root.insertAdjacentHTML("beforeend", valid.map(item => " " + speakerButton(item.text, item.locale)).join(""));
   bindSpeakerButtons(root);
 }
+
+function appendCatalogSpeech(root, exercise, field, includeTarget = false) {
+  const locale = session?.config.languageLocale || catalog?.locale;
+  const phrases = [
+    ...(Array.isArray(exercise?.[field]) ? exercise[field] : []),
+    ...(includeTarget && typeof exercise?.target === "string" ? [exercise.target] : [])
+  ];
+  const unique = [...new Set(phrases.filter(text => typeof text === "string" && text.trim()))];
+  const segments = unique.map(text => ({ text, locale }));
+  appendSpeechButtons(root, segments);
+  speech.speakSequence(segments, { automatic: true });
+}
 function autoSpeak(text, locale = catalog?.locale) {
   if (text && speech.enabled) speech.speak(text, locale, { automatic: true });
 }
@@ -190,9 +202,7 @@ function renderSpacedReview() {
     showFeedback(correct
       ? "Correcto. Próximo repaso en " + interval + " días."
       : "Respuesta de referencia: " + expected + ". " + (exercise?.explanation || card.explanation) + " La tarjeta volverá mañana.", correct);
-    $("feedback").insertAdjacentHTML("beforeend", " " + speakerButton(expected, catalog.locale));
-    bindSpeakerButtons($("feedback"));
-    autoSpeak(expected, catalog.locale);
+    appendCatalogSpeech($("feedback"), exercise || { target: expected }, "explanationSpeechSegments", true);
     $("answer-area").innerHTML = '<button id="next-spaced" class="secondary" type="button">Siguiente →</button>';
     $("next-spaced").addEventListener("click", () => { reviewIndex += 1; renderSpacedReview(); });
   });
@@ -581,9 +591,7 @@ function submitAnswer(answer) {
   } else {
     showFeedback("Respuesta de referencia: " + currentExercise.target + ". " + currentExercise.explanation, false);
   }
-  $("feedback").insertAdjacentHTML("beforeend", " " + speakerButton(currentExercise.target, catalog.locale));
-  bindSpeakerButtons($("feedback"));
-  autoSpeak(currentExercise.target, catalog.locale);
+  appendCatalogSpeech($("feedback"), currentExercise, "explanationSpeechSegments", true);
   updateStats();
   const next = document.createElement("button");
   next.className = "primary";
@@ -625,6 +633,7 @@ $("hint-btn").addEventListener("click", () => {
   }
   if (!currentExercise) return;
   showFeedback("Pista: " + currentExercise.hint, true);
+  appendCatalogSpeech($("feedback"), currentExercise, "hintSpeechSegments");
 });
 
 $("review-btn").addEventListener("click", () => {
@@ -640,9 +649,7 @@ $("review-btn").addEventListener("click", () => {
   $("check-review").addEventListener("click", () => {
     const ok = evaluateAnswer($("review-answer").value, reviewExercise);
     showFeedback(ok ? "Correcto. " + reviewExercise.explanation : "Respuesta de referencia: " + reviewExercise.target + ". " + reviewExercise.explanation, ok);
-    $("feedback").insertAdjacentHTML("beforeend", " " + speakerButton(reviewExercise.target, catalog.locale));
-    bindSpeakerButtons($("feedback"));
-    autoSpeak(reviewExercise.target, catalog.locale);
+    appendCatalogSpeech($("feedback"), reviewExercise, "explanationSpeechSegments", true);
     $("answer-area").innerHTML = '<button class="secondary" id="back-to-practice" type="button">Volver a la práctica</button>';
     $("back-to-practice").addEventListener("click", renderLesson);
   });
