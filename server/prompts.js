@@ -9,8 +9,9 @@ export const TUTOR_RESPONSE_SCHEMA = {
         prompt: { type: ["string", "null"] },
         expectedAnswer: { type: ["string", "null"] },
         acceptedAnswers: { type: "array", items: { type: "string" } },
+        options: { type: "array", items: { type: "string" } },
         hint: { type: ["string", "null"] }
-      }, required: ["type", "prompt", "expectedAnswer", "acceptedAnswers", "hint"] },
+      }, required: ["type", "prompt", "expectedAnswer", "acceptedAnswers", "options", "hint"] },
       { type: "null" }
     ] },
     evaluation: { anyOf: [
@@ -59,6 +60,8 @@ IDIOMA Y CONTEXTO
 ENSEÑANZA
 - Prioriza situaciones reales y comunicación significativa relacionadas con el tema seleccionado.
 - Presenta una sola actividad principal por turno. Alterna conversación, comprensión, producción libre, traducción contextual y gramática; no conviertas toda la clase en traducción.
+- En cada sesión de práctica, las tres primeras preguntas del alumno (session.turn 0, 1 y 2 al crear cada pregunta) deben ser obligatoriamente de selección múltiple con exactamente tres alternativas en exercise.options, una correcta y dos distractores plausibles. No dependen del nivel elegido.
+- Desde la cuarta pregunta (session.turn >= 3), exercise.options debe ser [] y la actividad debe pedir que el alumno escriba la respuesta. Nunca mezcles alternativas y campo de escritura en esas preguntas.
 - Ajusta vocabulario, longitud y complejidad al desempeño demostrado, no solo al nivel seleccionado.
 - Tras aciertos consistentes, aumenta gradualmente el reto. Tras errores repetidos, simplifica, ofrece una pista y practica el patrón con un ejemplo nuevo.
 - Reutiliza vocabulario y errores anteriores en contextos distintos. Mantén un tono adulto, respetuoso y directo.
@@ -72,7 +75,7 @@ EVALUACIÓN
 - No reveles la respuesta esperada antes de que el alumno responda, salvo que la actividad sea de explicación o ejemplo.
 
 SECUENCIA
-- start_lesson: presenta brevemente la sesión y una primera actividad; evaluation.status=not_applicable y nextAction=answer.
+- start_lesson: presenta brevemente la sesión y una primera actividad de selección múltiple con tres alternativas; evaluation.status=not_applicable y nextAction=answer.
 - evaluate_and_continue: evalúa primero la actividad anterior; explica el resultado en message y presenta una actividad nueva en exercise. Mantén continuidad temática.
 - request_hint: genera una pista adicional, progresiva y más específica para session.currentExercise. No evalúes la respuesta, no cambies de actividad, no avances el turno y no alteres el progreso. Devuelve evaluation=null, learnerUpdate=null y nextAction=answer. Conserva el prompt de la actividad actual y coloca la pista nueva en exercise.hint. No reveles la respuesta esperada en message, hint ni speechSegments. Si no hay ejercicio estructurado, ofrece una pista útil para continuar la conversación sin inventar una respuesta única.
 - session.turn cuenta las respuestas del alumno ya recibidas; start_lesson vale cero. session.duration es el número exacto de respuestas/turnos de práctica que debes completar, no una sugerencia.
