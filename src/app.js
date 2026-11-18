@@ -10,14 +10,15 @@ const $ = id => document.getElementById(id);
 const catalogs = { "Portugués brasileño": ptBR, "Inglés": english };
 const speech = createSpeechController({ onStatus: updateAudioStatus });
 function updateAudioStatus(status) {
-  const toggle = document.getElementById("audio-toggle");
+  const toggles = [document.getElementById("audio-toggle"), document.getElementById("session-audio-toggle")].filter(Boolean);
   const label = document.getElementById("audio-status");
-  if (toggle) {
+  toggles.forEach(toggle => {
     toggle.textContent = status.enabled ? "🔊" : "🔇";
     toggle.setAttribute("aria-pressed", String(status.enabled));
-    toggle.setAttribute("aria-label", status.enabled ? "Desactivar lectura automática" : "Activar lectura automática");
-    toggle.title = status.enabled ? "Lectura automática activada" : "Lectura automática desactivada";
-  }
+    toggle.setAttribute("aria-label", status.enabled ? "Desactivar audio" : "Activar audio");
+    toggle.title = status.enabled ? "Audio activado" : "Audio desactivado";
+    toggle.classList.toggle("audio-off", !status.enabled);
+  });
   if (label) {
     label.textContent = !status.supported
       ? "Este navegador no ofrece lectura de voz; puedes continuar practicando por escrito."
@@ -26,7 +27,7 @@ function updateAudioStatus(status) {
         : status.error ? "La voz seleccionada no pudo reproducir este fragmento." : "";
   }
 }
-document.getElementById("audio-toggle")?.addEventListener("click", () => {
+function toggleAudio() {
   const enabled = speech.setEnabled(!speech.enabled);
   if (enabled) {
     const visibleSegments = [...document.querySelectorAll("#lesson-content [data-speak], #answer-area [data-speak], #feedback [data-speak], #summary-content [data-speak]")]
@@ -34,7 +35,9 @@ document.getElementById("audio-toggle")?.addEventListener("click", () => {
       .map(button => ({ text: button.dataset.speak, locale: button.dataset.locale }));
     speech.speakSequence(visibleSegments, { automatic: true });
   }
-});
+}
+document.getElementById("audio-toggle")?.addEventListener("click", toggleAudio);
+document.getElementById("session-audio-toggle")?.addEventListener("click", toggleAudio);
 function speakerButton(text, locale) {
   return '<button class="speak-button" type="button" data-speak="' + escapeHTML(text) + '" data-locale="' + escapeHTML(locale || "") + '" aria-label="Reproducir pronunciación" title="Escuchar">▶</button>';
 }
@@ -105,20 +108,15 @@ let aiCurrentExercise = null;
 let aiHintLevel = 0;
 let aiHintPending = false;
 let sessionFinished = false;
+let selectedExerciseMode = "global";
+let sessionAbortController = null;
 
 function refreshDashboard() {
   const languageId = getSelectedCatalog()?.id;
   const stats = getProgressStats(progress, languageId);
   const due = getDueCards(progress, Date.now(), languageId).filter(card => card.cardType !== "pattern");
-  $("progress-dashboard").innerHTML =
-    '<p class="eyebrow">TU PROGRESO GUARDADO</p>' +
-    '<div class="progress-summary"><span><strong>' + stats.sessions + '</strong> sesiones</span>' +
-    '<span><strong>' + stats.vocabulary + '</strong> palabras</span>' +
-    '<span><strong>' + stats.averageAccuracy + '%</strong> precisión media</span></div>' +
-    '<p class="muted">' + due.length + ' repasos pendientes para este idioma.</p>' +
-    (due.length ? '<button id="start-spaced-review" class="secondary" type="button">Iniciar repaso (' + due.length + ') →</button>' : '');
-  const reviewButton = $("start-spaced-review");
-  if (reviewButton) reviewButton.addEventListener("click", startSpacedReview);
+  const progressDashboard = $("progress-dashboard");
+  if (progressDashboard) progressDashboard.replaceChildren();
   const reviewCount = $("review-count");
   if (reviewCount) reviewCount.textContent = String(due.length);
   const reviewDashboard = $("review-dashboard");
@@ -134,9 +132,6 @@ function refreshDashboard() {
 }
 $("language").addEventListener("change", () => {
   updateCustomLanguageFields();
-  $("selected-language-label").textContent = $("language").value === "other"
-    ? "Idioma personalizado"
-    : $("language").value === "Inglés" ? "🇺🇸 Inglés" : "🇧🇷 Portugués brasileño";
   refreshDashboard();
 });
 $("custom-language-name").addEventListener("input", refreshDashboard);
@@ -159,10 +154,10 @@ refreshDashboard();
 checkTutorHealth().then(status => {
   aiConfigured = Boolean(status.ai?.configured);
   $("ai-status").textContent = aiConfigured
-    ? "Tutor IA disponible · " + (status.ai.provider || "proveedor configurado")
-    : "API IA sin configurar · se mantiene el modo local";
+    ? "Tutor IA disponible"
+    : "Tutor IA no disponible; se utilizarán ejercicios locales";
 }).catch(() => {
-  $("ai-status").textContent = "Backend IA no disponible · se mantiene el modo local";
+  $("ai-status").textContent = "Tutor IA no disponible; se utilizarán ejercicios locales";
 }).finally(() => {
   aiReady = true;
   $("start-session").disabled = false;
@@ -175,8 +170,7 @@ function startSpacedReview() {
   dueReviewCards = getDueCards(progress, Date.now(), catalog.id).filter(card => card.cardType !== "pattern");
   reviewIndex = 0;
   if (!dueReviewCards.length) { refreshDashboard(); return; }
-  showScreen("exercises");
-  setExerciseTab("global");
+  showSessionView("review");
   $("setup-panel").classList.add("hidden");
   $("summary-panel").classList.add("hidden");
   $("lesson-panel").classList.remove("hidden");
@@ -193,10 +187,8 @@ function renderSpacedReview() {
   speech.stop();
   if (reviewIndex >= dueReviewCards.length) {
     $("lesson-panel").classList.add("hidden");
-    $("setup-panel").classList.remove("hidden");
-    setExerciseTab("review");
-    $("session-status").textContent = "Repaso completado";
-    refreshDashboard();
+    $("summary-panel").classList.remove("hidden");
+    $("summary-content").textContent = "Has terminado los repasos disponibles.";
     return;
   }
   const card = dueReviewCards[reviewIndex];
@@ -244,8 +236,6 @@ function renderSpacedReview() {
 
 $("setup-form").addEventListener("submit", event => {
   event.preventDefault();
-  showScreen("exercises");
-  setExerciseTab("global");
   if (!aiReady) return;
   catalog = getSelectedCatalog();
   if (!catalog) {
@@ -256,8 +246,15 @@ $("setup-form").addEventListener("submit", event => {
     $("ai-status").textContent = "Los idiomas personalizados requieren que el tutor IA esté disponible.";
     return;
   }
-  const config = { language:catalog.label, languageId:catalog.id, languageLocale:catalog.locale || catalog.id, duration:Number($("duration").value), level:$("level").value, topic:$("topic").value };
+  if (selectedExerciseMode === "review") {
+    startSpacedReview();
+    return;
+  }
+  const durationMinutes = Number($("duration").value);
+  const config = { language:catalog.label, languageId:catalog.id, languageLocale:catalog.locale || catalog.id, duration:durationMinutes * 2, durationMinutes, level:$("level").value, topic:$("topic").value };
   persistSettings();
+  sessionAbortController?.abort();
+  sessionAbortController = new AbortController();
   session = createSession(config);
   sessionFinished = false;
   reviewMode = false;
@@ -265,12 +262,13 @@ $("setup-form").addEventListener("submit", event => {
   $("summary-panel").classList.add("hidden");
   $("lesson-panel").classList.remove("hidden");
   $("session-status").textContent = aiConfigured ? "Tutor IA en sesión" : "Sesión local";
+  showSessionView(selectedExerciseMode);
   if (aiConfigured) {
     startAITutorSession(config);
   } else {
     aiMode = false;
-    if (config.level === "diagnostic") startDiagnostic();
-    else { session.config.level = config.level; renderLesson(); }
+    session.config.level = config.level;
+    renderLesson();
   }
 });
 
@@ -287,6 +285,7 @@ function getAILearnerContext(config = session.config) {
 }
 
 async function startAITutorSession(config) {
+  const activeSession = session;
   aiMode = true;
   aiHistory = [];
   aiLastResult = null;
@@ -306,12 +305,13 @@ async function startAITutorSession(config) {
         duration: config.duration,
         turn: 0,
         topic: config.topic,
-        diagnostic: config.level === "diagnostic",
+        diagnostic: false,
         performance: { streak: 0, consecutiveCorrect: 0, consecutiveErrors: 0 }
       },
       history: [],
-      userMessage: "Inicia mi sesión de aprendizaje. Preséntame una primera actividad adecuada a mi nivel y tema, y conversa conmigo en español mientras practico el idioma objetivo."
-    });
+      userMessage: "Inicia directamente con una actividad concreta adecuada al nivel y tema seleccionados. No hagas diagnóstico, no estimes mi nivel ni hagas preguntas abiertas para evaluarlo. No presentes una prueba inicial. Explícame brevemente la tarea y espera mi respuesta."
+    }, undefined, { signal: sessionAbortController?.signal });
+    if (session !== activeSession || sessionAbortController?.signal.aborted) return;
     applyLearnerUpdate(session, result.learnerUpdate);
     renderAITutorTurn(result);
   } catch (error) {
@@ -379,6 +379,7 @@ function renderAITutorTurn(result) {
 }
 
 async function submitAITutorAnswer(answer) {
+  const activeSession = session;
   const cleanAnswer = String(answer || "").trim();
   if (!cleanAnswer) {
     showFeedback("Escribe una respuesta antes de continuar.", false);
@@ -401,7 +402,7 @@ async function submitAITutorAnswer(answer) {
         duration: session.config.duration,
         turn: session.turn + 1,
         topic: session.config.topic,
-        diagnostic: session.config.level === "diagnostic",
+        diagnostic: false,
         currentExercise: aiCurrentExercise,
         performance: {
           streak: session.streak,
@@ -413,7 +414,8 @@ async function submitAITutorAnswer(answer) {
       },
       history: conversationHistory,
       userMessage: cleanAnswer
-    });
+    }, undefined, { signal: sessionAbortController?.signal });
+    if (session !== activeSession || sessionAbortController?.signal.aborted) return;
     aiHistory = [
       ...conversationHistory,
       { role: "user", content: cleanAnswer }
@@ -434,7 +436,7 @@ async function submitAITutorAnswer(answer) {
     $("error-count").textContent = session.errors.length;
     renderAITutorTurn(result);
   } catch (error) {
-    showAITutorError(error, cleanAnswer);
+    if (session === activeSession && !sessionAbortController?.signal.aborted) showAITutorError(error, cleanAnswer);
   }
 }
 
@@ -469,7 +471,7 @@ async function requestAdaptiveHint() {
       },
       history,
       userMessage: "Dame una pista adicional, más específica que la anterior, para resolver la actividad actual. No reveles la respuesta ni cambies de actividad."
-    });
+    }, undefined, { signal: sessionAbortController?.signal });
     if (session !== activeSession || aiCurrentExercise !== activeExercise || !aiMode) return;
     const hint = result.exercise?.hint;
     if (typeof hint !== "string" || !hint.trim()) {
@@ -577,9 +579,9 @@ function finishDiagnostic() {
   const score = diagnostic.score;
   session.config.level = score <= 1 ? "zero" : score <= 3 ? "basic" : "intermediate";
   session.config.diagnosticScore = score;
-  $("stats").hidden = false;
-  $("hint-btn").hidden = false;
-  $("review-btn").hidden = false;
+  $("stats").hidden = true;
+  $("hint-btn").hidden = true;
+  $("review-btn").hidden = true;
   $("feedback").textContent = "Nivel inicial estimado: " + levelLabel(session.config.level) + ". Es orientativo y se ajustará según tus respuestas.";
   $("feedback").classList.remove("hidden","bad");
   renderLesson();
@@ -696,8 +698,6 @@ function finishSession() {
   if (!session || sessionFinished) return;
   sessionFinished = true;
   speech.stop();
-  showScreen("exercises");
-  setExerciseTab("global");
   $("lesson-panel").classList.add("hidden");
   $("summary-panel").classList.remove("hidden");
   $("session-status").textContent = "Sesión finalizada";
@@ -721,14 +721,7 @@ function finishSession() {
 }
 
 $("new-session").addEventListener("click", () => {
-  speech.stop();
-  aiMode = false;
-  sessionFinished = false;
-  setExerciseTab("global");
-  $("summary-panel").classList.add("hidden");
-  $("setup-panel").classList.remove("hidden");
-  $("session-status").textContent = "Nueva sesión";
-  refreshDashboard();
+  closeSessionAndReturn();
 });
 $("export-btn").addEventListener("click", () => {
   const data = { exportedAt:new Date().toISOString(), summary:buildSummary(session), config:session.config, answers:session.answers };
@@ -742,7 +735,9 @@ $("export-btn").addEventListener("click", () => {
 
 // Main navigation and language onboarding
 function showScreen(name) {
+  $("session-view").classList.add("hidden");
   document.querySelectorAll(".app-screen").forEach(screen => screen.classList.toggle("hidden", screen.id !== "screen-" + name));
+  $("app-shell").classList.remove("session-active");
   document.querySelectorAll(".nav-item").forEach(button => {
     const active = button.dataset.screen === name;
     button.classList.toggle("active", active);
@@ -751,6 +746,37 @@ function showScreen(name) {
   });
   window.scrollTo(0, 0);
 }
+function showSessionView(mode) {
+  document.querySelectorAll(".app-screen").forEach(screen => screen.classList.add("hidden"));
+  $("session-view").classList.remove("hidden");
+  $("app-shell").classList.add("session-active");
+  $("session-mode-label").textContent = mode === "review" ? "Repaso" : "Global";
+  window.scrollTo(0, 0);
+}
+function closeSessionAndReturn() {
+  sessionAbortController?.abort();
+  sessionAbortController = null;
+  speech.stop();
+  session = null;
+  aiMode = false;
+  aiHistory = [];
+  aiLastResult = null;
+  aiCurrentExercise = null;
+  aiHintPending = false;
+  aiHintLevel = 0;
+  sessionFinished = false;
+  currentExercise = null;
+  reviewMode = false;
+  $("lesson-panel").classList.remove("hidden");
+  $("summary-panel").classList.add("hidden");
+  $("setup-panel").classList.add("hidden");
+  $("session-view").classList.add("hidden");
+  $("app-shell").classList.remove("session-active");
+  $("exercise-choice-panel").classList.remove("hidden");
+  $("review-exercises").classList.add("hidden");
+  showScreen("exercises");
+}
+
 function setExerciseTab(name) {
   const review = name === "review";
   $("global-exercises").classList.toggle("hidden", review);
@@ -763,11 +789,52 @@ function setExerciseTab(name) {
   if (review) refreshDashboard();
 }
 document.querySelectorAll("[data-screen]").forEach(button => button.addEventListener("click", () => showScreen(button.dataset.screen)));
-document.querySelectorAll("[data-exercise-tab]").forEach(button => button.addEventListener("click", () => setExerciseTab(button.dataset.exerciseTab)));
-$("home-start-exercises").addEventListener("click", () => { showScreen("exercises"); setExerciseTab("global"); });
-$("brand-home").addEventListener("click", event => { event.preventDefault(); showScreen("home"); });
-$("start-review-from-tab").addEventListener("click", startSpacedReview);
-$("settings-audio-toggle").addEventListener("click", () => speech.setEnabled(!speech.enabled));
+document.querySelectorAll("[data-mode]").forEach(button => button.addEventListener("click", () => {
+  selectedExerciseMode = button.dataset.mode;
+  $("exercise-choice-panel").classList.add("hidden");
+  $("setup-panel").classList.remove("hidden");
+  $("setup-title").textContent = selectedExerciseMode === "review" ? "Preparar repaso" : "Preparar sesión";
+  $("review-exercises").classList.toggle("hidden", selectedExerciseMode !== "review");
+  if (selectedExerciseMode === "review") refreshDashboard();
+}));
+$("route-start-exercises").addEventListener("click", () => showScreen("exercises"));
+$("setup-back").addEventListener("click", () => {
+  $("setup-panel").classList.add("hidden");
+  $("review-exercises").classList.add("hidden");
+  $("exercise-choice-panel").classList.remove("hidden");
+});
+$("session-close").addEventListener("click", () => $("session-confirm").showModal());
+$("cancel-session-close").addEventListener("click", () => $("session-confirm").close());
+$("confirm-session-close").addEventListener("click", () => {
+  $("session-confirm").close();
+  closeSessionAndReturn();
+});
+$("language-apply").addEventListener("click", () => {
+  const selected = getSelectedCatalog();
+  if (!selected) {
+    $("audio-status").textContent = "Completa el nombre y locale del idioma.";
+    return;
+  }
+  try { persistSettings(); } catch {}
+  document.querySelector(".language-menu")?.removeAttribute("open");
+  refreshDashboard();
+});
+document.querySelectorAll("[data-theory]").forEach(button => button.addEventListener("click", () => {
+  const details = {
+    grammar:["Gramática","Estructuras y reglas del idioma organizadas por nivel."],
+    vocabulary:["Vocabulario","Palabras y expresiones útiles agrupadas por tema."],
+    expressions:["Expresiones","Frases habituales para situaciones reales."]
+  };
+  const [title,description]=details[button.dataset.theory];
+  $("theory-title").textContent=title;
+  $("theory-description").textContent=description;
+  $("theory-detail").classList.remove("hidden");
+  document.querySelector(".theory-grid").classList.add("hidden");
+}));
+$("theory-back").addEventListener("click", () => {
+  $("theory-detail").classList.add("hidden");
+  document.querySelector(".theory-grid").classList.remove("hidden");
+});
 function persistSettings() {
   const savedSettings = {
     selectedLanguage: $("language").value,
@@ -779,34 +846,13 @@ function persistSettings() {
   };
   localStorage.setItem("adaptive-language-tutor.settings", JSON.stringify(savedSettings));
 }
-$("settings-save").addEventListener("click", () => {
-  try {
-    persistSettings();
-    $("settings-status").textContent = "Configuración guardada para las próximas sesiones.";
-  } catch {
-    $("settings-status").textContent = "No se pudo guardar en este dispositivo; los cambios siguen activos durante esta sesión.";
-  }
-  refreshDashboard();
-});
-$("settings-export").addEventListener("click", () => {
-  if (!session) { $("settings-status").textContent = "Completa una sesión antes de exportar un resumen."; return; }
-  $("export-btn").click();
-});
-$("change-language").addEventListener("click", () => {
-  try {
-    const saved = JSON.parse(localStorage.getItem("adaptive-language-tutor.settings") || "{}");
-    delete saved.selectedLanguage;
-    localStorage.setItem("adaptive-language-tutor.settings", JSON.stringify(saved));
-  } catch {}
-  $("app-shell").classList.add("hidden");
-  $("language-gate").classList.remove("hidden");
-});
+
 document.querySelectorAll("[data-language]").forEach(button => button.addEventListener("click", () => {
   $("language").value = button.dataset.language;
   $("language").dispatchEvent(new Event("change"));
   try { persistSettings(); } catch {}
   $("language-gate").classList.add("hidden");
   $("app-shell").classList.remove("hidden");
-  showScreen("home");
-  if (button.dataset.language === "other") showScreen("settings");
+  showScreen("route");
+  if (button.dataset.language === "other") document.querySelector(".language-menu")?.setAttribute("open", "");
 }));
