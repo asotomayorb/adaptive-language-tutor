@@ -156,7 +156,7 @@ function getSelectedCatalog() {
     definition.label.toLocaleLowerCase() === label.toLocaleLowerCase()
   );
   if (known) return catalogs[known[0]];
-  const normalized = label.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLocaleLowerCase();
+  const normalized = label.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase();
   const locale = customLanguageLocales[normalized] || "und";
   const slug = normalized.replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "custom";
   return { id: locale === "und" ? "custom-" + slug : locale, label, locale, exercises:[] };
@@ -168,7 +168,7 @@ function updateLanguageFlag() {
     name.toLocaleLowerCase() === customName.toLocaleLowerCase() ||
     definition.label.toLocaleLowerCase() === customName.toLocaleLowerCase()
   ) : null;
-  const customKey = customName.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLocaleLowerCase();
+  const customKey = customName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase();
   $("selected-language-flag").textContent = selected === "other"
     ? known?.[1].flag || customLanguageFlags[customKey] || "🌐"
     : languageDefinitions[selected]?.flag || "🌐";
