@@ -311,5 +311,6 @@ Esta sección **prevalece sobre cualquier regla anterior incompatible** de las s
 - [x] Los borradores de Ruta se guardan por idioma e incluyen el estado conversacional IA para permitir reanudación.
 - [x] Documentación y pruebas E2E actualizadas para los flujos nuevos.
 - [ ] Ampliar la profundidad y variedad de unidades de Ruta; la primera unidad cubre Fundamentos/Saludos y presentaciones.
-- [ ] Ejecutar npm run check, npm test y npm run test:e2e en CI; validar visual y auditivamente en Android real.
+- [x] GitHub Actions: npm run check, npm test y npm run test:e2e completados correctamente en el commit 3eef3801 (18-11-2026).
+- [ ] Validar visual y auditivamente en Android real.
 - [ ] Verificar el comportamiento de las 23 voces según las voces instaladas en el dispositivo.
