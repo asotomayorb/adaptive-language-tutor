@@ -111,6 +111,11 @@ try {
   assert.equal(await page.locator("#theory-grid").isVisible(), true, "Theory navigation should return to categories");
   await page.locator('[data-screen="exercises"]').click();
   assert.equal(await page.locator("#exercise-choice-panel").isVisible(), true, "Exercises navigation should return to its setup screen");
+  await page.locator('[data-mode="review"]').click();
+  await page.locator('[data-screen="theory"]').click();
+  await page.locator('[data-screen="exercises"]').click();
+  assert.equal(await page.locator('[data-mode="global"]').getAttribute("class").then(value => value.includes("selected")), true, "Exercises should reset to Global mode");
+  assert.equal(await page.locator("#topic").isDisabled(), false, "the topic selector should be enabled again");
 
   // Local exercise: first three questions are alternatives, then answers are written.
   await page.locator('[data-screen="exercises"]').click();
