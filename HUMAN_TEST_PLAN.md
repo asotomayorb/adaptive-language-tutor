@@ -157,3 +157,18 @@ Para cada escenario registrar:
 - [ ] Ruta requiere 8/10 en la comprobación de diez ejercicios y después una actividad integradora.
 - [ ] Ejercicios descarta una sesión incompleta y no la agrega al historial.
 - [ ] La última corrección aparece en el resumen y conserva su control de audio.
+
+## 8. Feedback y teoría — revisión 18-11-2026
+
+- [ ] Con un idioma guardado, recargar la app y comprobar que la bienvenida sigue visible hasta pulsar Iniciar.
+- [ ] Responder una alternativa incorrecta: la pregunta no cambia, la alternativa correcta queda verde y la seleccionada roja; aparece explicación y botón Continuar.
+- [ ] Responder correctamente: aparece Correcto, no se muestra explicación adicional y solo se avanza al pulsar Continuar.
+- [ ] En preguntas escritas, el feedback también permanece en la pregunta actual hasta Continuar.
+- [ ] El audio reproduce la frase completa de la pregunta; en una pregunta de recuerdo con hueco se oye la frase con pausa y no la palabra omitida.
+- [ ] Los ejercicios de comprensión auditiva/traducción usan `speechText` y reproducen la frase completa en el idioma objetivo, sin revelar el texto de respuesta.
+- [ ] No aparecen rótulos ni listados de texto “Pronunciación” o “Vocabulario” en el ejercicio IA; los controles de audio siguen disponibles.
+- [ ] Teoría muestra pronombres en tabla de dos columnas, traducción al español y botón de pronunciación por pronombre.
+- [ ] Ser/estar muestra formas conjugadas, frases de ejemplo y reglas/excepciones del idioma seleccionado.
+- [ ] Al volver a una sección, se muestra su pantalla inicial y no el subtema/diapositiva anterior.
+- [ ] Ruta conserva la respuesta pendiente y su feedback al cerrar, recargar y reanudar.
+
