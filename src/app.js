@@ -1384,7 +1384,7 @@ const verbLessons = {
 };
 function renderPronounTable(sample, languageName, locale) {
   if (!sample?.pronouns) return "";
-  const words = sample.pronouns.split(/\\s*,\\s*/);
+  const words = sample.pronouns.split(/\s*,\s*/);
   const meanings = pronounTranslations[languageName] || [];
   const rows = words.map((word,index) => '<tr><td><strong class="theory-target-word">' + escapeHTML(word) + '</strong> ' + speakerButton(word, locale) + '</td><td>' + escapeHTML(meanings[index] || "forma personal") + '</td></tr>').join("");
   return '<table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>Significado</th></tr></thead><tbody>' + rows + '</tbody></table><p class="theory-footnote">Pulsa el icono para escuchar cada forma. El significado puede variar según el contexto y el grado de formalidad.</p>';
