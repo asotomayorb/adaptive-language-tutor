@@ -198,6 +198,18 @@ try {
 
   // AI session contract: the first three questions use alternatives; the fourth uses text input.
   const aiContext = await browser.newContext();
+  await aiContext.addInitScript(() => {
+    window.__spoken = [];
+    const synth = {
+      getVoices: () => [{ name: "Brazilian Portuguese", lang: "pt-BR" }, { name: "Spanish", lang: "es-CL" }],
+      speak: utterance => window.__spoken.push({ text: utterance.text, lang: utterance.lang, voice: utterance.voice?.name }),
+      cancel: () => {}
+    };
+    Object.defineProperty(window, "speechSynthesis", { configurable: true, value: synth });
+    window.SpeechSynthesisUtterance = class {
+      constructor(text) { this.text = text; this.lang = ""; this.voice = null; }
+    };
+  });
   const aiPage = await aiContext.newPage();
   const aiErrors = [];
   aiPage.on("pageerror", error => aiErrors.push(error.message));
