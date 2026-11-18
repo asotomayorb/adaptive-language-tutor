@@ -183,3 +183,33 @@ Nunca subir claves API al repositorio. Para pruebas iniciales con proveedores ex
 - El idioma/locale debe conservarse correctamente en tutoría IA y TTS.
 - Global y Repaso son modalidades diferentes; Repaso trabaja con errores/elementos guardados de sesiones completadas, no con datos de una sesión descartada.
 - El desarrollo permanece en GitHub/Render; el proyecto original de Replit no se toca sin autorización.
+
+
+## 14. Implementación móvil — estado al 18-11-2026
+
+### Implementado en la rama móvil
+- [x] Cuatro secciones en navegación: Ruta, Ejercicios, Teoría y Estadísticas.
+- [x] Barra inferior con cuatro iconos sin etiquetas; el seleccionado se destaca.
+- [x] Cabecera global con selector de idioma y control de audio.
+- [x] Estado de audio apagado visible con icono de silencio y X superpuesta.
+- [x] Ruta inicial sin panel de estadísticas ni métricas.
+- [x] Ejercicios con selección Global / Repaso y pantalla de preparación posterior.
+- [x] Preparación con duración, nivel y tema.
+- [x] Vista de sesión a pantalla completa; barra inferior y controles de navegación desaparecen.
+- [x] En sesión solo quedan los controles superiores X y audio; contadores y botones auxiliares de pista/repaso quedan ocultos.
+- [x] La X solicita confirmación mientras la sesión está activa; confirmar cancela solicitudes y descarta el estado temporal de esa sesión.
+- [x] No se inicia un diagnóstico ni se envían indicadores de diagnóstico al tutor IA.
+- [x] Solicitudes IA limitadas a 30 segundos, cancelables al cerrar y con alternativa para continuar con ejercicios locales.
+- [x] Repaso usa una copia temporal de progreso; se guarda al completar el conjunto de repasos, y se descarta si se cierra antes.
+- [x] Estadísticas aparecen únicamente en la sección Estadísticas.
+
+### Pendiente / no debe darse por terminado
+- [ ] Convertir Ruta en un recorrido narrativo real con etapas, contenidos y desbloqueos persistentes. El contenido de etapa actual es todavía un esqueleto visual.
+- [ ] Incorporar contenido didáctico real en Teoría, conectado al idioma y nivel. Las tarjetas actuales son categorías iniciales.
+- [ ] Verificar en navegador que los cuatro flujos se comportan correctamente en distintos tamaños móviles.
+- [ ] Ejecutar `npm run check`, `npm test` y `npm run test:e2e` en CI o entorno con dependencias.
+- [ ] Probar en un teléfono Android real, especialmente selector de idioma, teclado, audio, diálogo de cierre y áreas seguras.
+- [ ] Confirmar que el servicio Render preview despliega este commit y que la sesión IA funciona con el proveedor configurado.
+
+### Nota sobre duración
+La selección se expresa en minutos. En la implementación actual se asignan provisionalmente dos turnos de ejercicio por minuto (por ejemplo, 10 minutos = 20 turnos). Ajustar esta equivalencia tras pruebas reales de duración de sesión.
