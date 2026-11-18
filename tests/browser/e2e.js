@@ -79,6 +79,12 @@ try {
   await page.locator('[data-language="Italiano"]').click();
   assert.equal(await page.locator("#selected-language-flag").innerText(), "🇮🇹");
   await page.locator("#open-language-picker").click();
+  await page.locator('[data-language="other"]').click();
+  await page.locator("#custom-language-name").fill("Suajili");
+  assert.equal(await page.locator("#custom-language-locale").count(), 0, "custom languages must not request a locale");
+  await page.locator("#language-apply").click();
+  assert.equal(await page.locator("#selected-language-flag").innerText(), "🇰🇪", "recognized custom language should infer its flag");
+  await page.locator("#open-language-picker").click();
   await page.locator('[data-language="Portugués brasileño"]').click();
 
   // Theory categories open a large list; each topic opens its own full-screen slide.
