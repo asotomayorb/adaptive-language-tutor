@@ -290,7 +290,7 @@ try {
 updateLanguageFlag();
 refreshDashboard();
 routeDraft = getRouteDraftForLanguage(getSelectedCatalog()?.id);
-if (routeDraft?.session) $("route-resume").classList.remove("hidden");
+$("route-resume").classList.add("hidden");
 checkTutorHealth().then(status => {
   aiConfigured = Boolean(status.ai?.configured);
   $("ai-status").textContent = aiConfigured
