@@ -1098,6 +1098,9 @@ function showScreen(name) {
   if (name === "exercises") {
     $("exercise-choice-panel").classList.remove("hidden");
     $("review-exercises").classList.add("hidden");
+    selectedExerciseMode = "global";
+    document.querySelectorAll("[data-mode]").forEach(item => item.classList.toggle("selected", item.dataset.mode === "global"));
+    $("topic").disabled = false;
   }
   if (name === "stats") refreshDashboard();
   document.querySelectorAll(".app-screen").forEach(screen => screen.classList.toggle("hidden", screen.id !== "screen-" + name));
