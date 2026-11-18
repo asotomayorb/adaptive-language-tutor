@@ -115,10 +115,11 @@ try {
   aiPage.on("pageerror", error => aiPageErrors.push(error.message));
   await aiPage.addInitScript(() => {
     window.__spoken = [];
+    window.__speechCancelled = 0;
     const synth = {
       getVoices: () => [{ name: "French", lang: "fr-FR" }],
       speak: utterance => window.__spoken.push({ text: utterance.text, lang: utterance.lang, voice: utterance.voice?.name }),
-      cancel: () => {}
+      cancel: () => { window.__speechCancelled += 1; }
     };
     Object.defineProperty(window, "speechSynthesis", { configurable: true, value: synth });
     window.SpeechSynthesisUtterance = class {
@@ -267,7 +268,9 @@ try {
   await aiPage.getByRole("button", { name: /Iniciar repaso/ }).click();
   await aiPage.locator("#spaced-answer").fill("Je m’appelle Ana.");
   await aiPage.locator("#check-spaced").click();
+  const cancellationsBeforeNextReview = await aiPage.evaluate(() => window.__speechCancelled);
   await aiPage.getByRole("button", { name: "Siguiente →" }).click();
+  assert.ok(await aiPage.evaluate(count => window.__speechCancelled > count, cancellationsBeforeNextReview), "moving to the next spaced-review card should cancel speech from the previous card");
   await aiPage.getByRole("button", { name: "Lo recordé" }).click();
   await aiPage.getByRole("button", { name: "Siguiente →" }).click();
   const reviewed = await aiPage.evaluate(() => JSON.parse(localStorage.getItem("adaptive-language-tutor.progress")));
