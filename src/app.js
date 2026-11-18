@@ -402,13 +402,13 @@ function renderAITutorTurn(result) {
 
   const message = '<p>' + escapeHTML(result.message || "") + '</p>';
   const prompt = aiCurrentExercise.prompt
-    ? '<h3>' + escapeHTML(aiCurrentExercise.prompt) + '</h3>'
+    ? '<h3>' + renderVariantTerms(aiCurrentExercise.prompt) + '</h3>'
     : '<p class="muted">Responde libremente para continuar la conversación.</p>';
   const previous = aiPendingFeedback;
   aiPendingFeedback = null;
   const feedback = previous
     ? '<div class="feedback-note"><span>Respuesta anterior</span><p>' + escapeHTML(previous.text) + '</p>' +
-      (previous.expected ? '<p class="model-answer">Respuesta modelo: ' + escapeHTML(previous.expected) + ' ' + speakerButton(previous.expected, session.config.languageLocale || session.config.languageId) + '</p>' : '') + '</div>'
+      (previous.expected ? '<p class="model-answer">Respuesta modelo: ' + renderVariantTerms(previous.expected) + ' ' + speakerButton(previous.expected, session.config.languageLocale || session.config.languageId) + '</p>' : '') + '</div>'
     : "";
   const vocabulary = (result.learnerUpdate?.vocabulary || []).filter(item => item?.term);
   const vocabularyMarkup = vocabulary.length
