@@ -1392,10 +1392,17 @@ function renderPronounTable(sample, languageName, locale) {
 function renderVerbLesson(languageName) {
   const lesson = verbLessons[languageName];
   if (!lesson) return '<p class="theory-slide-text">La forma de expresar identidad, estado y ubicación depende de este idioma. Compara siempre la estructura verbal con una frase real y revisa las formas personales en el contexto de la unidad.</p>';
-  const rows = lesson.tables.map(row => row.length === 3 && ["Persona","Forma"].includes(row[1])
-    ? '<tr><th colspan="2">' + escapeHTML(row[0]) + '</th></tr>'
-    : '<tr><td>' + escapeHTML(row[0]) + '</td><td><strong class="theory-target-word">' + escapeHTML(row[1]) + '</strong></td></tr>'
-  ).join("");
+  const headers = ["Persona","Forma","Uso","Ejemplo","Significado"];
+  const locale = getSelectedCatalog()?.locale || "und";
+  const rows = lesson.tables.map(row => {
+    if (row.length === 3 && headers.includes(row[1]) && headers.includes(row[2])) {
+      return '<tr><th colspan="3">' + escapeHTML(row[0]) + '</th></tr>';
+    }
+    if (row.length === 3) {
+      return '<tr><td>' + escapeHTML(row[0]) + '</td><td><strong class="theory-target-word">' + escapeHTML(row[1]) + '</strong> ' + speakerButton(row[0], locale) + '</td><td>' + escapeHTML(row[2]) + '</td></tr>';
+    }
+    return '<tr><td>' + escapeHTML(row[0]) + '</td><td><strong class="theory-target-word">' + escapeHTML(row[1]) + '</strong> ' + speakerButton(row[1], locale) + '</td></tr>';
+  }).join("");
   return '<p class="theory-slide-text">' + escapeHTML(lesson.lead) + '</p><table class="theory-pronoun-table"><tbody>' + rows + '</tbody></table><section class="theory-example"><span>Ejemplos aplicados</span><p>' + escapeHTML(lesson.example) + '</p><p class="theory-slide-text">' + escapeHTML(lesson.rule) + '</p></section>';
 }
 let activeTheoryTopics = [];
