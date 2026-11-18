@@ -327,6 +327,6 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 
 - [x] Los logs del proveedor ya no incluyen el texto completo del error upstream; registran proveedor, modelo, duración, tipo de error y status upstream cuando existe.
 - [x] Prueba unitaria intercepta el log y confirma que el detalle sensible simulado no se registra.
-- [ ] Confirmar CI en el HEAD que contiene la corrección y la prueba.
+- [x] CI del commit de prueba `7e6860f`: Tests run `44209349422` y Browser E2E run `44209349457` (este último aún en ejecución al registrar); el HEAD documental `48ac3e1` pasó Tests `44209375902` y Browser E2E `44209375927`.
 
 **Alcance:** limita el detalle almacenado en logs de errores del proveedor. Aún debe definirse retención, acceso y monitorización de logs en el hosting de producción.
