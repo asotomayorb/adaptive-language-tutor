@@ -152,6 +152,12 @@ let aiHintPending = false;
 let sessionFinished = false;
 let selectedExerciseMode = "global";
 let sessionAbortController = null;
+let routeMode = false;
+let routeIntegration = false;
+let routeIntegrationAttempts = 0;
+let routeDraft = null;
+const ROUTE_STORAGE_KEY = "adaptive-language-tutor.route-progress";
+try { routeDraft = JSON.parse(localStorage.getItem(ROUTE_STORAGE_KEY) || "null"); } catch { routeDraft = null; }
 
 function refreshDashboard() {
   const languageId = getSelectedCatalog()?.id;
@@ -198,6 +204,7 @@ try {
 } catch { /* Ignore malformed optional settings; progress storage remains independent. */ }
 updateLanguageFlag();
 refreshDashboard();
+if (routeDraft?.session) $("route-resume").classList.remove("hidden");
 checkTutorHealth().then(status => {
   aiConfigured = Boolean(status.ai?.configured);
   $("ai-status").textContent = aiConfigured
@@ -596,6 +603,100 @@ function showAITutorError(error, previousAnswer) {
   });
 }
 
+function saveRouteDraft() {
+  if (!routeMode || !session) return;
+  routeDraft = {
+    languageId: session.config.languageId,
+    session: JSON.parse(JSON.stringify(session)),
+    integration: routeIntegration,
+    integrationAttempts: routeIntegrationAttempts
+  };
+  try { localStorage.setItem(ROUTE_STORAGE_KEY, JSON.stringify(routeDraft)); } catch {}
+  $("route-resume").classList.remove("hidden");
+}
+function startRouteSession(resume = false) {
+  catalog = getSelectedCatalog();
+  if (!catalog) return;
+  if (!catalog.exercises.length) {
+    $("route-start").textContent = "Ruta aún no disponible para este idioma";
+    return;
+  }
+  if (resume && routeDraft?.session && routeDraft.languageId === catalog.id) {
+    session = routeDraft.session;
+    routeIntegration = Boolean(routeDraft.integration);
+    routeIntegrationAttempts = Number(routeDraft.integrationAttempts || 0);
+  } else {
+    session = createSession({
+      language:catalog.label, languageId:catalog.id, languageLocale:catalog.locale,
+      duration:10, questionCount:10, level:"zero", topic:"daily", routeMode:true
+    });
+    routeIntegration = false;
+    routeIntegrationAttempts = 0;
+    saveRouteDraft();
+  }
+  routeMode = true;
+  session.config.routeMode = true;
+  sessionAbortController?.abort();
+  sessionAbortController = new AbortController();
+  sessionFinished = false;
+  aiMode = false;
+  reviewMode = false;
+  $("lesson-panel").classList.remove("hidden");
+  $("summary-panel").classList.add("hidden");
+  showSessionView("Ruta");
+  if (routeIntegration) renderRouteIntegration();
+  else renderLesson();
+}
+function renderRouteIntegration() {
+  speech.stop();
+  const prompt = catalog.id === "en-US"
+    ? "Introduce yourself in one short message: say hello, give your name and say where you are from."
+    : "Preséntate en un solo mensaje: saluda, di tu nombre y de dónde eres.";
+  currentExercise = {
+    id:"route-integration-fundamentals", prompt,
+    target: catalog.id === "en-US" ? "Hello, my name is Ana and I am from Chile." : "Olá, meu nome é Ana e sou do Chile.",
+    acceptedAnswers: catalog.id === "en-US"
+      ? ["Hello, I'm Ana and I'm from Chile.","Hi, my name is Ana. I am from Chile."]
+      : ["Olá! Eu me chamo Ana e sou do Chile.","Oi, meu nome é Ana. Eu sou do Chile."],
+    explanation:"La actividad integra saludo, presentación y procedencia."
+  };
+  $("lesson-phase").textContent = "HITO INTEGRADOR";
+  $("turn-count").textContent = "Actividad final";
+  $("progress-bar").style.width = "100%";
+  $("lesson-content").innerHTML = '<p class="eyebrow">UNIDAD 01 · FUNDAMENTOS</p><h3>' + escapeHTML(prompt) + '</h3><p>Combina lo practicado en los diez ejercicios anteriores.</p>';
+  $("answer-area").innerHTML = '<textarea id="route-integration-answer" class="answer-input" rows="3" placeholder="Escribe tu presentación…"></textarea><button id="route-integration-submit" class="primary" type="button">Comprobar actividad</button>';
+  $("route-integration-submit").addEventListener("click", () => {
+    const answer = $("route-integration-answer").value.trim();
+    if (evaluateAnswer(answer, currentExercise)) {
+      session.routeIntegrationComplete = true;
+      routeDraft = null;
+      try { localStorage.removeItem(ROUTE_STORAGE_KEY); } catch {}
+      $("route-resume").classList.add("hidden");
+      pendingFeedback = { text:"Actividad integradora completada. Unidad superada.", expected:currentExercise.target };
+      finishSession();
+    } else {
+      routeIntegrationAttempts += 1;
+      saveRouteDraft();
+      $("lesson-content").innerHTML = '<div class="feedback-note"><span>Actividad integradora</span><p>La presentación todavía necesita ajustes. Incluye saludo, nombre y procedencia; puedes volver a intentarlo.</p></div><h3>' + escapeHTML(prompt) + '</h3>';
+      $("route-integration-answer").value = answer;
+    }
+  });
+}
+function renderRouteAssessmentFailed() {
+  saveRouteDraft();
+  $("lesson-phase").textContent = "REFUERZO NECESARIO";
+  $("turn-count").textContent = session.correct + " / 10 correctas";
+  $("progress-bar").style.width = "100%";
+  $("lesson-content").innerHTML = '<div class="feedback-note"><span>Unidad aún no superada</span><p>Necesitas al menos 8 respuestas correctas de 10. Tu resultado fue ' + session.correct + '/10. Puedes repetir la comprobación.</p></div>';
+  $("answer-area").innerHTML = '<button id="route-retry" class="primary" type="button">Repetir los 10 ejercicios</button>';
+  $("route-retry").addEventListener("click", () => {
+    session = createSession({ ...session.config, duration:10, questionCount:10 });
+    routeIntegration = false;
+    routeIntegrationAttempts = 0;
+    saveRouteDraft();
+    renderLesson();
+  });
+}
 function getTopicExercises() {
   const matches = catalog.exercises.filter(exercise => session.config.topic === "random" || exercise.topic === session.config.topic);
   return matches.length ? matches : catalog.exercises;
@@ -670,6 +771,19 @@ function submitAnswer(answer) {
     expected: currentExercise.target
   };
   updateStats();
+  if (routeMode) {
+    saveRouteDraft();
+    if (session.turn >= 10) {
+      if (session.correct >= 8) {
+        routeIntegration = true;
+        saveRouteDraft();
+        renderRouteIntegration();
+      } else renderRouteAssessmentFailed();
+      return;
+    }
+    renderLesson();
+    return;
+  }
   if (session.turn >= session.config.duration) {
     finishSession();
     return;
@@ -734,6 +848,12 @@ $("review-btn").addEventListener("click", () => {
 function finishSession() {
   if (!session || sessionFinished) return;
   sessionFinished = true;
+  if (routeMode && session.routeIntegrationComplete) {
+    try { localStorage.removeItem(ROUTE_STORAGE_KEY); } catch {}
+    routeDraft = null;
+    $("route-resume").classList.add("hidden");
+    $("route-start").textContent = "Unidad completada";
+  }
   speech.stop();
   $("lesson-panel").classList.add("hidden");
   $("summary-panel").classList.remove("hidden");
@@ -804,7 +924,9 @@ function closeSessionAndReturn() {
   $("app-shell").classList.remove("session-active");
   $("exercise-choice-panel").classList.remove("hidden");
   $("review-exercises").classList.add("hidden");
-  showScreen("exercises");
+  const returnScreen = routeMode ? "route" : "exercises";
+  routeMode = false;
+  showScreen(returnScreen);
 }
 
  document.querySelectorAll("[data-screen]").forEach(button => button.addEventListener("click", () => showScreen(button.dataset.screen)));
@@ -816,9 +938,11 @@ document.querySelectorAll("[data-mode]").forEach(button => button.addEventListen
   if (selectedExerciseMode === "review") refreshDashboard();
 }));
 $("route-start-exercises")?.addEventListener("click", () => showScreen("exercises"));
+$("route-start").addEventListener("click", () => startRouteSession(false));
+$("route-resume").addEventListener("click", () => startRouteSession(true));
 $("setup-back")?.addEventListener("click", () => showScreen("exercises"));
 $("session-close").addEventListener("click", () => {
-  if (sessionFinished) closeSessionAndReturn();
+  if (sessionFinished || routeMode) closeSessionAndReturn();
   else $("session-confirm").showModal();
 });
 $("cancel-session-close").addEventListener("click", () => $("session-confirm").close());
