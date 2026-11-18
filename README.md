@@ -306,8 +306,10 @@ Esta sección **prevalece sobre cualquier regla anterior incompatible** de las s
 - [x] Ejemplos localizados básicos para el catálogo estándar.
 - [x] Primeras tres preguntas de selección múltiple y posteriores de escritura en modo local y contrato IA.
 - [x] Feedback neutral diferido a la pregunta siguiente y respuesta modelo con audio.
-- [x] Ruta: comprobación de diez preguntas, umbral 8/10, actividad integradora y guardado parcial reanudable para los catálogos con contenido local.
+- [x] Ruta: comprobación de diez preguntas, umbral 8/10, actividad integradora y guardado parcial reanudable.
+- [x] Ruta admite ejercicios locales para portugués e inglés y tutor IA para los demás idiomas cuando el proveedor está configurado.
+- [x] Los borradores de Ruta se guardan por idioma e incluyen el estado conversacional IA para permitir reanudación.
 - [x] Documentación y pruebas E2E actualizadas para los flujos nuevos.
-- [ ] Extender la Ruta con contenido local para los 23 idiomas; por ahora la unidad inicial funciona con los catálogos locales de portugués e inglés.
+- [ ] Ampliar la profundidad y variedad de unidades de Ruta; la primera unidad cubre Fundamentos/Saludos y presentaciones.
 - [ ] Ejecutar npm run check, npm test y npm run test:e2e en CI; validar visual y auditivamente en Android real.
 - [ ] Verificar el comportamiento de las 23 voces según las voces instaladas en el dispositivo.
