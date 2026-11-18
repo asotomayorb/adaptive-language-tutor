@@ -939,7 +939,8 @@ function showAnswerFeedback({ correct, expected, explanation, selected, options 
   $("feedback").classList.remove("hidden","bad");
   $("answer-area").querySelectorAll("[data-choice],[data-ai-choice]").forEach(button => {
     const value = button.textContent.trim().toLocaleLowerCase();
-    const isCorrect = value === String(correctOption || expected || "").trim().toLocaleLowerCase();
+    const correctValue = correct ? (selected || correctOption || expected) : (correctOption || expected);
+    const isCorrect = value === String(correctValue || "").trim().toLocaleLowerCase();
     const isSelected = value === String(selected || "").trim().toLocaleLowerCase();
     button.classList.toggle("answer-correct", isCorrect);
     button.classList.toggle("answer-incorrect", !correct && isSelected && !isCorrect);
