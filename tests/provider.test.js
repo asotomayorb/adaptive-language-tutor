@@ -86,6 +86,21 @@ test("Gemini adapter uses its native generateContent format", async () => {
   assert.equal((await provider.generateTutorTurn({ userMessage: "Hello" })).message, "Vamos a practicar.");
 });
 
+test("provider rejects oversized structured tutor responses", async () => {
+  const oversized = JSON.parse(tutorJson);
+  oversized.message = "x".repeat(17 * 1024);
+  const provider = createAIProvider(
+    { AI_PROVIDER: "openai", AI_API_KEY: "secret", AI_MODEL: "test-model" },
+    fakeFetch("https://api.openai.com/v1/chat/completions", { authorization: "Bearer secret" }, {
+      choices: [{ message: { content: JSON.stringify(oversized) } }]
+    })
+  );
+  await assert.rejects(
+    () => provider.generateTutorTurn({ userMessage: "Hello" }),
+    /exceeds the tutor size limit/i
+  );
+});
+
 test("provider preserves validated target-language speech segments", async () => {
   const provider = createAIProvider(
     { AI_PROVIDER: "openai", AI_API_KEY: "secret", AI_MODEL: "test-model" },
