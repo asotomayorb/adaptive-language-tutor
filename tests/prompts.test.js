@@ -7,6 +7,8 @@ test("tutor prompt defines adaptive, communicative teaching rules", () => {
   assert.match(TUTOR_SYSTEM_PROMPT, /respuestas semánticamente equivalentes/i);
   assert.match(TUTOR_SYSTEM_PROMPT, /session\.currentExercise/i);
   assert.match(TUTOR_SYSTEM_PROMPT, /evaluate_and_continue/i);
+  assert.match(TUTOR_SYSTEM_PROMPT, /transición breve y neutral/i);
+  assert.match(TUTOR_SYSTEM_PROMPT, /no incluyas bloques o listas tituladas/i);
 });
 
 test("OpenAI response schema is strict and contains the complete tutor contract", () => {
