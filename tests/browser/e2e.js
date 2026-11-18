@@ -172,6 +172,7 @@ try {
   await aiPage.locator('[data-screen="exercises"]').click();
   await aiPage.locator("#start-session").waitFor({ state: "visible" });
   await aiPage.locator("#start-session").click();
+  await aiPage.locator("#answer-area [data-ai-choice]").first().waitFor();
   for (let turn = 0; turn < 3; turn += 1) {
     assert.equal(await aiPage.locator("#answer-area [data-ai-choice]").count(), 3);
     await aiPage.locator("#answer-area [data-ai-choice]").first().click();
