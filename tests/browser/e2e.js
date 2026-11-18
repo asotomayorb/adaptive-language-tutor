@@ -116,7 +116,7 @@ try {
   await page.locator("#summary-panel").waitFor({ state: "visible" });
   const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("adaptive-language-tutor.progress") || "{}"));
   assert.equal(saved.sessions?.length, 1, "completed exercise session should be saved");
-  assert.equal(saved.sessions[0].turns, 5);
+  assert.equal(saved.sessions[0].attempted, 5);
 
   // Incomplete Exercises sessions are discarded; no partial session is persisted.
   await page.locator("#new-session").click();
