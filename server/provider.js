@@ -260,7 +260,13 @@ export function createAIProvider(env = process.env, fetchImpl = fetch) {
         const result = validateTutorResult(extractJson(extractText(data)));
         return enforceSessionDuration(result, input);
       } catch (error) {
-        console.error("[ai-provider] request failed", JSON.stringify({ provider, model, elapsedMs: Date.now() - requestStartedAt, errorName: error?.name || "Error", error: error?.message || String(error) }));
+        console.error("[ai-provider] request failed", JSON.stringify({
+          provider,
+          model,
+          elapsedMs: Date.now() - requestStartedAt,
+          errorName: error?.name || "Error",
+          upstreamStatus: Number.isInteger(error?.status) ? error.status : null
+        }));
         if (error?.name === "TimeoutError" || error?.name === "AbortError") {
           throw new Error("AI provider request timed out after 45 seconds.");
         }
