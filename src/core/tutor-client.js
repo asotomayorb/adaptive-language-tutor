@@ -13,13 +13,31 @@ export async function checkTutorHealth(fetchImpl = fetch, timeoutMs = 5000) {
   }
 }
 
-export async function requestTutorTurn(input, fetchImpl = fetch) {
-  const response = await fetchImpl("/api/tutor", {
-    method: "POST",
-    headers: { "content-type": "application/json", accept: "application/json" },
-    body: JSON.stringify(input)
-  });
-  const result = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(result.error || "The tutor could not respond.");
-  return result;
+export async function requestTutorTurn(input, fetchImpl = fetch, options = {}) {
+  const { signal: sessionSignal, timeoutMs = 30000 } = options;
+  if (sessionSignal?.aborted) throw new Error("La sesión ya no está activa.");
+
+  const controller = new AbortController();
+  const abortForSession = () => controller.abort();
+  sessionSignal?.addEventListener("abort", abortForSession, { once: true });
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetchImpl("/api/tutor", {
+      method: "POST",
+      headers: { "content-type": "application/json", accept: "application/json" },
+      body: JSON.stringify(input),
+      signal: controller.signal
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result.error || "El tutor no pudo responder.");
+    return result;
+  } catch (error) {
+    if (sessionSignal?.aborted) throw new Error("La sesión fue cerrada.");
+    if (controller.signal.aborted) throw new Error("El tutor tardó demasiado en responder. Puedes reintentar.");
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+    sessionSignal?.removeEventListener("abort", abortForSession);
+  }
 }
