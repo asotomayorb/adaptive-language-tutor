@@ -171,7 +171,8 @@ function startSpacedReview() {
   dueReviewCards = getDueCards(progress, Date.now(), catalog.id).filter(card => card.cardType !== "pattern");
   reviewProgressDraft = JSON.parse(JSON.stringify(progress));
   reviewIndex = 0;
-  if (!dueReviewCards.length) { refreshDashboard(); return; }
+  if (!dueReviewCards.length) { reviewProgressDraft = null; refreshDashboard(); return; }
+  sessionFinished = false;
   showSessionView("review");
   $("setup-panel").classList.add("hidden");
   $("summary-panel").classList.add("hidden");
@@ -193,6 +194,7 @@ function renderSpacedReview() {
       saveProgress(progress);
       reviewProgressDraft = null;
     }
+    sessionFinished = true;
     $("lesson-panel").classList.add("hidden");
     $("summary-panel").classList.remove("hidden");
     $("summary-content").textContent = "Has terminado los repasos disponibles.";
@@ -285,7 +287,7 @@ function getAILearnerContext(config = session.config) {
     targetLanguageLocale: config.languageLocale || catalog?.locale || config.languageId,
     level: config.estimatedLevel || config.level,
     topic: config.topic,
-    sessionDuration: config.duration
+    sessionDuration: config.durationMinutes || config.duration
   };
 }
 
@@ -308,6 +310,7 @@ async function startAITutorSession(config) {
       learner: getAILearnerContext(config),
       session: {
         duration: config.duration,
+        durationMinutes: config.durationMinutes,
         turn: 0,
         topic: config.topic,
         diagnostic: false,
@@ -405,6 +408,7 @@ async function submitAITutorAnswer(answer) {
       learner: getAILearnerContext(),
       session: {
         duration: session.config.duration,
+        durationMinutes: session.config.durationMinutes,
         turn: session.turn + 1,
         topic: session.config.topic,
         diagnostic: false,
@@ -550,12 +554,15 @@ function chooseExercise() {
   if (session.config.level === "zero") {
     const beginner = candidates.filter(exercise => exercise.level === "A1");
     if (beginner.length) candidates = beginner;
+  } else if (session.config.level === "advanced") {
+    const advanced = candidates.filter(exercise => exercise.level === "A2");
+    if (advanced.length) candidates = advanced;
   }
   return candidates[session.turn % candidates.length];
 }
 
 function levelLabel(level) {
-  return ({zero:"principiante",basic:"básico",intermediate:"intermedio"})[level] || "básico";
+  return ({zero:"principiante",basic:"intermedio",intermediate:"intermedio",advanced:"avanzado"})[level] || "intermedio";
 }
 
 function renderLesson() {
