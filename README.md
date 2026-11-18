@@ -258,3 +258,56 @@ La selección se expresa en minutos. En la implementación actual se asignan pro
 
 
 **Despliegue de preview:** el commit de código `6eb031fb9b1051ad993df1e9ea8dbf4cd96f9472` se desplegó correctamente en Render el 18-11-2026 (deploy `dep-dbuugt8u01pc73e2o700`). La aplicación quedó disponible en la URL de preview. El despliegue confirma instalación y arranque del servidor, no la validación visual/funcional en navegador ni los tests de proyecto.
+
+
+## 16. Revisión pedagógica y de contenido — 18-11-2026 (decisiones vigentes)
+
+Esta sección **prevalece sobre cualquier regla anterior incompatible** de las secciones 5, 6, 8, 13, 14 y 15.
+
+### Ruta: hitos aprobados
+- Una unidad cubre un objetivo comunicativo concreto y entre 3 y 5 microtemas.
+- La comprobación de dominio consta de **10 ejercicios** (no 5) y exige al menos **8/10 respuestas correctas**.
+- Tras superar la comprobación, se completa una actividad integradora que combina lo aprendido en la unidad.
+- El nivel, tema y contenido se fijan por unidad; Ruta no ofrece los selectores de Ejercicios.
+- Cada respuesta confirmada se guarda inmediatamente en un borrador independiente. Cerrar Ruta conserva el progreso y ofrece “Continuar recorrido” al volver.
+- Si no se alcanza 8/10, se repite la comprobación. El hito no se desbloquea hasta superar también la actividad integradora.
+- Ejercicios mantiene la regla opuesta: una sesión incompleta se descarta y no se guarda como progreso parcial.
+
+### Teoría: navegación por diapositivas
+- Las categorías principales son Gramática, Vocabulario y Expresiones.
+- Al elegir categoría se muestra un listado legible de temas, sin párrafos diminutos en la lista.
+- Al tocar un tema se abre una vista completa independiente con el contenido desarrollado en una diapositiva.
+- Las diapositivas incluyen navegación anterior/siguiente y cierre/retorno al listado.
+- Los ejemplos deben corresponder al idioma seleccionado. No mostrar ejemplos de inglés/portugués como si fueran del idioma de destino cuando no corresponda.
+
+### Catálogo estándar de idiomas
+- El mosaico ofrece portugués brasileño, inglés, italiano, alemán, ruso, francés, español, japonés, chino mandarín, coreano, neerlandés, árabe, hindi, turco, griego, polaco, sueco, noruego, danés, hebreo, vietnamita, indonesio y tailandés.
+- No solicitar al usuario nombre de idioma libre ni locale. Cada idioma del catálogo tiene internamente su locale estándar para voz y tutoría, sin mostrar ese código en la interfaz.
+- Los idiomas con ejercicios locales disponibles funcionan sin IA; los restantes requieren tutor IA configurado para generar ejercicios.
+- La variante regional se enseña dentro del contenido cuando sea relevante. Ejemplo: una palabra inglesa como “color” puede mostrar una explicación emergente con la forma británica “colour”.
+
+### Ejercicios: secuencia de respuesta y feedback
+- La cantidad se expresa en preguntas; el valor inicial es 10, con opciones 5/10/15/20.
+- Las **tres primeras preguntas** son siempre de selección múltiple con tres alternativas, sin importar el nivel seleccionado.
+- Desde la cuarta pregunta se solicita una respuesta escrita, sin alternativas.
+- Al responder, la aplicación avanza automáticamente a la pregunta siguiente.
+- La evaluación de la respuesta anterior aparece en formato neutral dentro de la siguiente pregunta, junto con la respuesta modelo y su control de pronunciación. La última respuesta se incluye en el resumen.
+- Las opciones iniciales, respuestas modelo, pistas y correcciones mantienen controles de audio individuales. La preferencia global de audio persiste entre sesiones.
+
+### Bienvenida
+- La bienvenida se muestra en la primera apertura sin idioma seleccionado.
+- Al tocar Iniciar desaparece inmediatamente; si no existe idioma guardado, se abre el mosaico de idiomas.
+- En siguientes aperturas, con idioma ya guardado, se entra directamente a Ruta.
+
+### Estado técnico de esta revisión
+- [x] Mosaico estándar sin entrada manual de locale y 23 idiomas.
+- [x] Locale interno por idioma y persistencia de la bandera.
+- [x] Listado de temas de Teoría y diapositivas con flechas anterior/siguiente.
+- [x] Ejemplos localizados básicos para el catálogo estándar.
+- [x] Primeras tres preguntas de selección múltiple y posteriores de escritura en modo local y contrato IA.
+- [x] Feedback neutral diferido a la pregunta siguiente y respuesta modelo con audio.
+- [x] Ruta: comprobación de diez preguntas, umbral 8/10, actividad integradora y guardado parcial reanudable para los catálogos con contenido local.
+- [x] Documentación y pruebas E2E actualizadas para los flujos nuevos.
+- [ ] Extender la Ruta con contenido local para los 23 idiomas; por ahora la unidad inicial funciona con los catálogos locales de portugués e inglés.
+- [ ] Ejecutar npm run check, npm test y npm run test:e2e en CI; validar visual y auditivamente en Android real.
+- [ ] Verificar el comportamiento de las 23 voces según las voces instaladas en el dispositivo.
