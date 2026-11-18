@@ -743,7 +743,7 @@ function showScreen(name) {
     if (active) button.setAttribute("aria-current", "page");
     else button.removeAttribute("aria-current");
   });
-  window.scrollTo({ top: 0, behavior: "instant" });
+  window.scrollTo(0, 0);
 }
 function setExerciseTab(name) {
   const review = name === "review";
