@@ -86,7 +86,7 @@ export const english = {
           "I want a table for two"
         ],
         "hint": "Room significa habitación.",
-        hintSpeechSegments:["Room"], explanationSpeechSegments:["I need a room for two people"], "explanation": "I need... expresa una necesidad; for two people indica para dos personas."
+        hintSpeechSegments:["Room"], explanationSpeechSegments:["I need","for two people"], "explanation": "I need... expresa una necesidad; for two people indica para dos personas."
       },
       {
         "id": "en-food-02",
