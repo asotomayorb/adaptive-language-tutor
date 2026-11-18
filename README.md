@@ -253,3 +253,5 @@ La selección se expresa en minutos. En la implementación actual se asignan pro
 - [ ] Ejecutar npm run check, npm test, npm run test:e2e y pruebas reales en Android tras estos cambios.
 
 **Nota de precisión:** la pantalla Ruta sigue siendo una estructura visual de etapas; todavía no inicia una sesión con contenido prefijado ni guarda progreso parcial. El gráfico actual muestra la precisión de sesiones completadas como indicador observable, no una estimación ficticia de dominio del idioma.
+
+- [x] Corrección de navegación: al finalizar o descartar una sesión de Ejercicios, la pantalla vuelve a mostrar Global/Repaso y los tres desplegables; no quedan ocultos tras regresar de la sesión.
