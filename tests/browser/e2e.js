@@ -186,8 +186,9 @@ try {
   assert.equal(await page.locator("#welcome-screen").isVisible(), true, "returning users must also explicitly press Start");
   await page.locator("#welcome-start").click();
   assert.equal(await page.locator("#welcome-screen").isVisible(), false, "Start should reveal the saved app");
-  assert.equal(await page.locator("#route-resume").isVisible(), true, "Route should offer resume after reload");
-  await page.locator("#route-resume").click();
+  assert.equal(await page.locator("#route-resume").isVisible(), false, "Route should use a single resume banner");
+  assert.match(await page.locator("#route-start").innerText(), /Continuar recorrido/i, "the start banner should become Continue after the first start");
+  await page.locator("#route-start").click();
   assert.match(await page.locator("#turn-count").innerText(), /2 \/ 10/);
   assert.equal(await page.locator("#answer-area #continue-answer").isVisible(), true, "Route should restore the pending feedback and Continue action");
   assert.deepEqual(pageErrors, [], "browser should not report uncaught page errors");
@@ -226,7 +227,8 @@ try {
   await aiPage.locator("#feedback .answer-status.correct").waitFor({ state: "visible" });
   assert.equal(await aiPage.locator("#answer-area #continue-answer").isVisible(), true, "AI evaluation must wait for Continue");
   await aiPage.locator("#session-close").click();
-  assert.equal(await aiPage.locator("#route-resume").isVisible(), true, "AI-backed Route must save partial progress too");
+  assert.equal(await aiPage.locator("#route-resume").isVisible(), false, "AI-backed Route must use the same single banner");
+  assert.match(await aiPage.locator("#route-start").innerText(), /Continuar recorrido/i);
   await aiPage.locator('[data-screen="exercises"]').click();
   await aiPage.locator("#start-session").waitFor({ state: "visible" });
   await aiPage.locator("#start-session").click();
