@@ -172,3 +172,25 @@ Para cada escenario registrar:
 - [ ] Al volver a una sección, se muestra su pantalla inicial y no el subtema/diapositiva anterior.
 - [ ] Ruta conserva la respuesta pendiente y su feedback al cerrar, recargar y reanudar.
 
+
+
+## 11. Validación de correcciones — 18-11-2026
+
+- [ ] Primera pulsación de Ruta inicia el recorrido y guarda el borrador inicial antes de contestar.
+- [ ] Tras iniciar, el mismo banner cambia a **Continuar recorrido**; no aparece un segundo botón para iniciar ni se reinicia el progreso.
+- [ ] Cerrar y recargar conserva el número de pregunta, el estado de respuesta pendiente y el botón Continuar.
+- [ ] Las preguntas IA no muestran comentarios introductorios grises encima de la consigna.
+- [ ] Probar al menos tres preguntas con instrucción en español + frase objetivo: el audio lee el segmento correcto en el locale objetivo, sin leer la instrucción en español.
+- [ ] Probar un hueco escrito con un solo guion bajo y otro con varios: el audio hace una pausa y nunca verbaliza “guion bajo”.
+- [ ] Probar una pregunta de texto libre: al enviar, desaparece el botón Enviar respuesta; queda el feedback y luego Continuar.
+- [ ] Las preguntas de texto libre tienen una respuesta modelo verificable; no se admiten preferencias o conversación abierta sin contexto.
+- [ ] Completar una sesión con al menos un error: el error concreto aparece inmediatamente en Repaso tras finalizar y persistir la sesión.
+- [ ] Calificar el error en Repaso: el intervalo siguiente se actualiza; si se falla, vuelve al intervalo inicial.
+- [ ] Teoría italiana: comprobar artículos definidos/indefinidos, *passato prossimo* con avere/essere, concordancia del participio, futuro simple, vocabulario y expresiones con audio y traducción.
+
+## 12. Funcionalidades futuras — criterios antes de implementar
+
+- [ ] Comprensión lectora: textos adecuados al nivel, de dominio público/licencia abierta verificada o redactados originalmente; mostrar fuente y atribución.
+- [ ] Las preguntas se responden con evidencia del texto y tienen una respuesta delimitada.
+- [ ] Audio cultural por bandera: verificar derechos de la grabación específica, no solo de la composición; duración objetivo de 1–2 segundos.
+- [ ] Si no existe un audio inequívocamente reutilizable para un país/idioma, usar un recurso original/licenciado o no reproducir clip.
