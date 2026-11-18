@@ -109,7 +109,7 @@ let sessionFinished = false;
 function refreshDashboard() {
   const languageId = getSelectedCatalog()?.id;
   const stats = getProgressStats(progress, languageId);
-  const due = getDueCards(progress, Date.now(), languageId);
+  const due = getDueCards(progress, Date.now(), languageId).filter(card => card.cardType !== "pattern");
   $("progress-dashboard").innerHTML =
     '<p class="eyebrow">TU PROGRESO GUARDADO</p>' +
     '<div class="progress-summary"><span><strong>' + stats.sessions + '</strong> sesiones</span>' +
@@ -123,7 +123,7 @@ function refreshDashboard() {
   if (reviewCount) reviewCount.textContent = String(due.length);
   const reviewDashboard = $("review-dashboard");
   if (reviewDashboard) reviewDashboard.innerHTML = due.length
-    ? "<strong>" + due.length + " elementos pendientes.</strong><p>Incluye errores y patrones que conviene reforzar.</p>"
+    ? "<strong>" + due.length + " errores pendientes.</strong><p>Este apartado contiene únicamente respuestas incorrectas registradas en sesiones anteriores.</p>"
     : "No tienes repasos pendientes. Los errores que cometas durante las sesiones aparecerán aquí.";
   const statsContent = $("statistics-content");
   if (statsContent) statsContent.innerHTML =
@@ -159,7 +159,7 @@ function startSpacedReview() {
   speech.stop();
   catalog = getSelectedCatalog();
   if (!catalog) { $("ai-status").textContent = "Indica el nombre del idioma y un locale válido (por ejemplo, fr-FR)."; return; }
-  dueReviewCards = getDueCards(progress, Date.now(), catalog.id);
+  dueReviewCards = getDueCards(progress, Date.now(), catalog.id).filter(card => card.cardType !== "pattern");
   reviewIndex = 0;
   if (!dueReviewCards.length) { refreshDashboard(); return; }
   showScreen("exercises");
