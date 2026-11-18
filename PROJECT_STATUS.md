@@ -463,5 +463,6 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] Mosaico de 23 idiomas estándar y alta de idiomas no listados mediante nombre únicamente; no se pide locale. El locale reconocido se infiere internamente.
 - [x] Explicación emergente de variantes ortográficas inglesas (p. ej. color/colour).
 - [x] Bienvenida desaparece al pulsar Iniciar y no se repite tras guardar idioma.
-- [ ] La Ruta implementada usa contenido local de portugués brasileño e inglés. Los demás idiomas aparecen en el catálogo y pueden practicar mediante IA, pero aún no tienen una Ruta local completa.
+- [x] Ruta funciona con ejercicios locales para portugués/inglés y con tutor IA para otros idiomas cuando el proveedor está configurado; los borradores quedan separados por idioma.
+- [ ] Ampliar el catálogo de unidades y revisar el contenido de la primera unidad.
 - [ ] Ejecutar tests unitarios, check, Browser E2E y validar en Android real.
