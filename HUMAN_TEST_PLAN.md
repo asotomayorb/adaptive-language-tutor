@@ -121,3 +121,19 @@ Para cada escenario registrar:
 - [ ] En móvil no hay scroll horizontal, controles cortados ni solapamiento con la barra inferior o las áreas seguras del dispositivo.
 
 **Criterio de salida:** todos los flujos anteriores deben aprobarse en viewport móvil y en un teléfono real antes de considerar completada esta revisión de experiencia. La especificación completa está en [README.md](README.md).
+
+
+## 9. Refinamientos de interfaz móvil — 18-11-2026
+
+- [ ] Primera apertura: aparece bienvenida con título grande y botón Iniciar.
+- [ ] Pulsar Iniciar sin idioma guardado abre el mosaico; seleccionar portugués muestra 🇧🇷 y lleva a Ruta.
+- [ ] Seleccionar inglés muestra 🇺🇸; cerrar y reabrir el navegador conserva la selección.
+- [ ] El selector central del menú inferior muestra globo y bandera; al cambiar idioma vuelve a Ruta.
+- [ ] Confirmar que las cinco posiciones inferiores son mapa, pesas, selector central, libro y gráfico, sin etiquetas textuales en los cuatro accesos de sección.
+- [ ] En Ejercicios, Global/Repaso y cantidad/nivel/tema están visibles juntos; cambiar de opción no navega a otra pantalla.
+- [ ] La cantidad seleccionada se interpreta como preguntas (por ejemplo, 5 preguntas produce cinco turnos, no diez).
+- [ ] Estadísticas muestra datos reales cuando existen sesiones y un estado vacío cuando no hay historial.
+- [ ] Teoría muestra temas y explicaciones dentro de cada categoría, en pt-BR e inglés.
+- [ ] El audio sigue activado/desactivado al cambiar de sesión y al recargar la aplicación; comprobar controles de audio en pistas y correcciones.
+- [ ] Revisar selector, mosaico, áreas táctiles, barra inferior y diálogos en Android real.
+- [ ] Ruta aún está pendiente: no evaluar como completa hasta que tenga unidades, hitos, guardado parcial y recuperación al volver a abrir.
