@@ -113,6 +113,9 @@ function enforceSessionDuration(result, input) {
 }
 
 function validateTutorResult(result) {
+  if (Buffer.byteLength(JSON.stringify(result), "utf8") > 16 * 1024) {
+    throw contractError("The AI provider response exceeds the tutor size limit.");
+  }
   const statuses = ["correct", "partially_correct", "incorrect", "not_applicable"];
   const actions = ["answer", "continue", "review", "finish"];
   const exerciseTypes = ["translation", "comprehension", "grammar", "production", "conversation"];
