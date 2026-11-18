@@ -33,6 +33,7 @@ Probar al menos dos idiomas con proveedor real:
 - [ ] Confirmar que la sesión no termina antes de la duración configurada.
 - [ ] Solicitar pistas y comprobar que no se crea una actividad nueva ni se incrementa el turno.
 - [ ] Provocar un error transitorio de red/proveedor y comprobar que el reintento no envía solicitudes duplicadas.
+- [ ] Ante un error del proveedor, comprobar que la interfaz muestra un mensaje genérico sin detalles técnicos internos ni contenido de la respuesta upstream.
 - [ ] Finalizar la sesión, revisar el resumen, recargar la página y confirmar persistencia.
 - [ ] Exportar el progreso y comprobar que el archivo JSON se descarga y contiene la sesión.
 
