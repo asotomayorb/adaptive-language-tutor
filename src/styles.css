@@ -314,3 +314,5 @@
 }
 
 .answer-option.answer-correct:disabled,.answer-option.answer-incorrect:disabled{opacity:1;cursor:default}
+
+.ai-answer-option.answer-correct:disabled,.ai-answer-option.answer-incorrect:disabled{opacity:1;cursor:default}
