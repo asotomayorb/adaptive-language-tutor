@@ -1,43 +1,132 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#172b4d"><title>Adaptive Language Tutor</title><link rel="stylesheet" href="./src/styles.css"><script type="module" src="./src/app.js"></script></head>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f3f5f8">
+  <title>Adaptive Language Tutor</title>
+  <link rel="stylesheet" href="./src/styles.css">
+  <script type="module" src="./src/app.js"></script>
+</head>
 <body>
 <section id="language-gate" class="language-gate">
-  <div class="gate-brand"><span class="brand-mark">A</span><p class="eyebrow">APRENDIZAJE PERSONALIZADO</p></div>
-  <h1>¿Qué idioma quieres aprender?</h1><p class="intro">Selecciona el idioma objetivo para adaptar tus ejercicios y repasos.</p>
+  <div class="gate-brand"><span class="brand-mark">A</span></div>
+  <h1>¿Qué idioma quieres aprender?</h1>
   <div class="language-options">
     <button class="language-choice" type="button" data-language="Portugués brasileño"><span class="flag">🇧🇷</span><span><strong>Portugués</strong><small>Brasil</small></span><span class="choice-arrow">→</span></button>
     <button class="language-choice" type="button" data-language="Inglés"><span class="flag">🇺🇸</span><span><strong>Inglés</strong><small>Estados Unidos</small></span><span class="choice-arrow">→</span></button>
-    <button class="language-choice" type="button" data-language="other"><span class="flag">🌐</span><span><strong>Otro idioma</strong><small>Configurar idioma personalizado</small></span><span class="choice-arrow">→</span></button>
+    <button class="language-choice" type="button" data-language="other"><span class="flag">🌐</span><span><strong>Otro idioma</strong><small>Personalizar idioma</small></span><span class="choice-arrow">→</span></button>
   </div>
 </section>
+
 <main id="app-shell" class="app-shell hidden">
-  <header class="topbar"><a class="brand" href="#" id="brand-home"><span class="brand-mark">A</span><span><strong>Language Tutor</strong><small id="selected-language-label">Aprendizaje adaptativo</small></span></a><div class="header-actions"><button id="audio-toggle" class="audio-toggle" type="button" aria-pressed="true" aria-label="Desactivar lectura automática" title="Lectura automática activada">🔊</button><span class="status" id="session-status">Nueva sesión</span></div></header>
-  <p id="audio-status" class="audio-status" role="status" aria-live="polite"></p>
-  <section id="screen-home" class="app-screen">
-    <section class="hero"><p class="eyebrow">APRENDIZAJE PERSONALIZADO</p><h1>Aprende un idioma<br><span>a través de la conversación.</span></h1><p class="intro">Práctica guiada que ajusta la dificultad, corrige errores y refuerza lo aprendido.</p></section>
-    <section class="panel"><div id="progress-dashboard" class="progress-dashboard" aria-live="polite"></div><div class="home-action"><div><p class="eyebrow">SIGUIENTE PASO</p><h2>Continúa aprendiendo</h2><p class="muted">Practica con ejercicios globales o refuerza únicamente tus errores.</p></div><button id="home-start-exercises" class="primary" type="button">Ir a ejercicios →</button></div></section>
-  </section>
-  <section id="screen-exercises" class="app-screen hidden">
-    <div class="screen-heading"><p class="eyebrow">PRÁCTICA ADAPTATIVA</p><h1>Ejercicios</h1><p class="intro">Avanza con actividades globales o concéntrate en los errores.</p></div>
-    <div class="exercise-tabs" role="tablist" aria-label="Tipo de ejercicio"><button class="exercise-tab active" type="button" data-exercise-tab="global" role="tab" aria-selected="true">Global</button><button class="exercise-tab" type="button" data-exercise-tab="review" role="tab" aria-selected="false">Repaso <span id="review-count" class="tab-count">0</span></button></div>
-    <div id="global-exercises" class="exercise-view">
-      <section id="setup-panel" class="panel"><p id="ai-status" class="muted" role="status">Comprobando disponibilidad del tutor IA…</p><div class="section-heading"><div><p class="eyebrow">SESIÓN GLOBAL</p><h2>Tu práctica</h2></div><span class="step">01 / 03</span></div>
-        <form id="setup-form" class="setup-grid"><div class="form-footer"><p>La sesión combinará comprensión, vocabulario y producción.</p><button id="start-session" class="primary" type="submit" disabled>Comenzar sesión →</button></div></form>
-      </section>
-      <section id="lesson-panel" class="panel hidden" aria-live="polite"><div class="lesson-meta"><span class="eyebrow" id="lesson-phase">PRÁCTICA</span><span id="turn-count"></span></div><div class="progress-track"><div id="progress-bar"></div></div><div class="stats" id="stats"><span>Racha <strong id="streak">0</strong></span><span>Palabras <strong id="word-count">0</strong></span><span>Errores <strong id="error-count">0</strong></span></div><div id="lesson-content" class="lesson-content"></div><div id="answer-area" class="answer-area"></div><div class="lesson-actions"><button id="hint-btn" class="secondary" type="button">Ver una pista</button><button id="review-btn" class="text-button" type="button">REPASAR ERROR</button></div><div id="feedback" class="feedback hidden"></div></section>
-      <section id="summary-panel" class="panel hidden" aria-live="polite"><p class="eyebrow">SESIÓN COMPLETADA</p><h2>Tu progreso</h2><div id="summary-content"></div><div class="form-footer"><button id="new-session" class="primary" type="button">Nueva sesión →</button><button id="export-btn" class="secondary" type="button">Exportar progreso</button></div></section>
+  <header class="topbar">
+    <div class="topbar-spacer"></div>
+    <div class="header-actions">
+      <details class="language-menu">
+        <summary class="icon-control" aria-label="Cambiar idioma" title="Cambiar idioma">🌐</summary>
+        <div class="language-popover">
+          <label for="language">Idioma objetivo</label>
+          <select id="language">
+            <option>Portugués brasileño</option>
+            <option>Inglés</option>
+            <option value="other">Otro idioma</option>
+          </select>
+          <label id="custom-language-name-field" class="hidden">Nombre<input id="custom-language-name" placeholder="Ej. Francés"></label>
+          <label id="custom-language-locale-field" class="hidden">Locale<input id="custom-language-locale" placeholder="Ej. fr-FR" autocomplete="off"></label>
+          <button id="language-apply" class="primary" type="button">Aplicar</button>
+        </div>
+      </details>
+      <button id="audio-toggle" class="icon-control audio-toggle" type="button" aria-pressed="true" aria-label="Desactivar audio" title="Audio activado">🔊</button>
     </div>
-    <div id="review-exercises" class="exercise-view hidden"><section class="panel"><p class="eyebrow">REFUERZO PERSONALIZADO</p><h2>Repaso de errores</h2><p class="muted">Aquí encontrarás únicamente ejercicios que respondiste incorrectamente en sesiones anteriores. El repaso no consume turnos de la práctica global.</p><div id="review-dashboard" class="review-dashboard"></div><button id="start-review-from-tab" class="primary" type="button">Iniciar repaso →</button></section></div>
+  </header>
+  <p id="audio-status" class="audio-status" role="status" aria-live="polite"></p>
+
+  <section id="screen-route" class="app-screen">
+    <div class="screen-heading"><h1>Ruta</h1></div>
+    <section class="route-hero">
+      <p class="eyebrow">TU RECORRIDO</p>
+      <h2>Tu camino de aprendizaje</h2>
+      <p>Avanza paso a paso.</p>
+    </section>
+    <section class="route-stage panel">
+      <div class="stage-topline"><span class="stage-number">01</span><span class="stage-state">Disponible</span></div>
+      <h2>Fundamentos</h2>
+      <p>Primeros pasos en el idioma.</p>
+      <div class="route-step"><span class="step-dot complete">✓</span><span>Introducción</span></div>
+      <div class="route-step"><span class="step-dot current">›</span><span>Primeras conversaciones</span></div>
+      <div class="route-step muted-step"><span class="step-dot">⌑</span><span>Siguiente etapa</span></div>
+      <button id="route-start-exercises" class="secondary" type="button">Continuar recorrido →</button>
+    </section>
   </section>
-  <section id="screen-stats" class="app-screen hidden"><div class="screen-heading"><p class="eyebrow">EVOLUCIÓN</p><h1>Estadísticas</h1><p class="intro">Consulta tu avance en el idioma seleccionado.</p></div><section class="panel"><div id="statistics-content" class="statistics-grid"></div></section></section>
-  <section id="screen-settings" class="app-screen hidden"><div class="screen-heading"><p class="eyebrow">PREFERENCIAS</p><h1>Configuración</h1><p class="intro">Ajusta el idioma y las condiciones de tus sesiones.</p></div><section class="panel"><div class="settings-grid">
-    <label>Idioma objetivo<select id="language"><option>Portugués brasileño</option><option>Inglés</option><option value="other">Otro idioma (tutor IA)</option></select></label>
-    <label id="custom-language-name-field" class="hidden">Nombre del idioma<input id="custom-language-name" placeholder="Ej. Francés"></label>
-    <label id="custom-language-locale-field" class="hidden">Código de idioma / locale<input id="custom-language-locale" placeholder="Ej. fr-FR" autocomplete="off"></label>
-    <label>Duración de sesión<select id="duration"><option value="8">8 turnos</option><option value="15" selected>15 turnos</option><option value="25">25 turnos</option></select></label>
-    <label>Nivel inicial<select id="level"><option value="zero">Desde cero</option><option value="basic" selected>Básico / intermedio</option><option value="diagnostic">Diagnóstico (4 preguntas)</option></select></label>
-    <label>Tema preferido<select id="topic"><option value="daily">Vida cotidiana</option><option value="travel">Viajes</option><option value="food">Comida y restaurantes</option><option value="work">Trabajo y estudios</option><option value="random">Aleatorio</option></select></label>
-  </div><div class="settings-audio"><div><strong>Lectura automática</strong><p class="muted">Reproducir en voz alta las frases y alternativas del idioma objetivo.</p></div><button id="settings-audio-toggle" class="secondary" type="button">Activar / desactivar audio</button></div><div class="settings-actions"><button id="settings-save" class="primary" type="button">Guardar configuración</button><button id="settings-export" class="secondary" type="button">Exportar progreso</button><button id="change-language" class="text-button" type="button">Cambiar idioma inicial</button></div><p id="settings-status" class="muted" role="status"></p></section></section>
-  <footer><span>LANGUAGE TUTOR</span><span>Aprendizaje adaptativo</span></footer>
-  <nav class="bottom-nav" aria-label="Navegación principal"><button class="nav-item active" type="button" data-screen="home" aria-current="page"><span class="nav-icon">⌂</span><span>Inicio</span></button><button class="nav-item" type="button" data-screen="exercises"><span class="nav-icon">▤</span><span>Ejercicios</span></button><button class="nav-item" type="button" data-screen="stats"><span class="nav-icon">▥</span><span>Estadísticas</span></button><button class="nav-item" type="button" data-screen="settings"><span class="nav-icon">⚙</span><span>Configuración</span></button></nav>
-</main></body></html>
+
+  <section id="screen-exercises" class="app-screen hidden">
+    <div class="screen-heading"><h1>Ejercicios</h1></div>
+    <div id="exercise-choice-panel" class="exercise-choices">
+      <button class="choice-card" type="button" data-mode="global"><span class="choice-icon">◎</span><span><strong>Global</strong><small>Práctica general de distintas habilidades.</small></span><span class="choice-arrow">→</span></button>
+      <button class="choice-card" type="button" data-mode="review"><span class="choice-icon">↻</span><span><strong>Repaso</strong><small>Refuerza errores de sesiones anteriores.</small><em id="review-count" class="tab-count">0</em></span><span class="choice-arrow">→</span></button>
+    </div>
+    <section id="setup-panel" class="panel hidden">
+      <div class="section-heading"><h2 id="setup-title">Preparar sesión</h2></div>
+      <p id="ai-status" class="muted" role="status">Comprobando disponibilidad del tutor IA…</p>
+      <form id="setup-form" class="setup-grid">
+        <label>Duración<select id="duration"><option value="5">5 minutos</option><option value="10" selected>10 minutos</option><option value="15">15 minutos</option><option value="20">20 minutos</option></select></label>
+        <label>Nivel<select id="level"><option value="zero">Principiante</option><option value="basic" selected>Intermedio</option><option value="advanced">Avanzado</option></select></label>
+        <label class="topic-field">Tema<select id="topic"><option value="daily">Vida cotidiana</option><option value="travel">Viajes</option><option value="food">Comida y restaurantes</option><option value="work">Trabajo y estudios</option><option value="random">Todos los temas</option></select></label>
+        <div class="form-footer"><button id="setup-back" class="text-button" type="button">Volver</button><button id="start-session" class="primary" type="submit" disabled>Comenzar sesión →</button></div>
+      </form>
+    </section>
+    <section id="review-exercises" class="panel hidden">
+      <h2>Repaso</h2><div id="review-dashboard" class="review-dashboard"></div>
+    </section>
+  </section>
+
+  <section id="screen-theory" class="app-screen hidden">
+    <div class="screen-heading"><h1>Teoría</h1></div>
+    <div class="theory-grid">
+      <button class="theory-card" type="button" data-theory="grammar"><span>文</span><strong>Gramática</strong></button>
+      <button class="theory-card" type="button" data-theory="vocabulary"><span>Aa</span><strong>Vocabulario</strong></button>
+      <button class="theory-card" type="button" data-theory="expressions"><span>“ ”</span><strong>Expresiones</strong></button>
+    </div>
+    <section id="theory-detail" class="panel hidden"><button id="theory-back" class="text-button" type="button">← Volver</button><h2 id="theory-title"></h2><p id="theory-description"></p></section>
+  </section>
+
+  <section id="screen-stats" class="app-screen hidden">
+    <div class="screen-heading"><h1>Estadísticas</h1></div>
+    <section class="panel"><div id="statistics-content" class="statistics-grid"></div></section>
+  </section>
+
+  <section id="session-view" class="session-view hidden">
+    <header class="session-topbar">
+      <button id="session-close" class="icon-control" type="button" aria-label="Cerrar sesión" title="Cerrar sesión">×</button>
+      <span id="session-mode-label">Global</span>
+      <button id="session-audio-toggle" class="icon-control audio-toggle" type="button" aria-pressed="true" aria-label="Desactivar audio">🔊</button>
+    </header>
+    <section id="lesson-panel" class="lesson-panel" aria-live="polite">
+      <div class="lesson-meta"><span class="eyebrow" id="lesson-phase">PRÁCTICA</span><span id="turn-count"></span></div>
+      <div class="progress-track"><div id="progress-bar"></div></div>
+      <div class="stats" id="stats" hidden><span>Racha <strong id="streak">0</strong></span><span>Palabras <strong id="word-count">0</strong></span><span>Errores <strong id="error-count">0</strong></span></div>
+      <div id="lesson-content" class="lesson-content"></div>
+      <div id="answer-area" class="answer-area"></div>
+      <div class="lesson-actions"><button id="hint-btn" class="secondary" type="button">Pista</button><button id="review-btn" class="text-button" type="button">Repasar error</button></div>
+      <div id="feedback" class="feedback hidden"></div>
+    </section>
+    <section id="summary-panel" class="panel hidden" aria-live="polite"><h2>Sesión completada</h2><div id="summary-content"></div><button id="new-session" class="primary" type="button">Volver a ejercicios</button></section>
+  </section>
+
+  <footer class="app-footer hidden"><span id="session-status"></span></footer>
+  <nav class="bottom-nav" aria-label="Navegación principal">
+    <button class="nav-item active" type="button" data-screen="route" aria-label="Ruta" aria-current="page"><span class="nav-icon">⌂</span></button>
+    <button class="nav-item" type="button" data-screen="exercises" aria-label="Ejercicios"><span class="nav-icon">▤</span></button>
+    <button class="nav-item" type="button" data-screen="theory" aria-label="Teoría"><span class="nav-icon">▧</span></button>
+    <button class="nav-item" type="button" data-screen="stats" aria-label="Estadísticas"><span class="nav-icon">▥</span></button>
+  </nav>
+</main>
+
+<dialog id="session-confirm" class="confirm-dialog">
+  <h2>¿Finalizar sesión?</h2>
+  <p>El progreso de esta sesión se descartará. Los datos de sesiones anteriores permanecerán intactos.</p>
+  <div class="dialog-actions"><button id="cancel-session-close" class="secondary" type="button">Cancelar</button><button id="confirm-session-close" class="primary" type="button">Descartar</button></div>
+</dialog>
+</body>
+</html>
