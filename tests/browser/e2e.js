@@ -134,7 +134,7 @@ try {
   await page.locator("#answer-area [data-choice]").first().click();
   await page.locator("#answer-area [data-choice]").first().click();
   await page.locator("#session-close").click();
-  const draft = await page.evaluate(() => JSON.parse(localStorage.getItem("adaptive-language-tutor.route-progress") || "null"));
+  const draft = await page.evaluate(() => JSON.parse(localStorage.getItem("adaptive-language-tutor.route-progress:pt-BR") || "null"));
   assert.equal(draft.session.turn, 2, "Route must save confirmed answers immediately");
   await page.reload({ waitUntil: "networkidle" });
   assert.equal(await page.locator("#route-resume").isVisible(), true, "Route should offer resume after reload");
