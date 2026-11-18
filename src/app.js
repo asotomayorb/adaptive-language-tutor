@@ -936,7 +936,7 @@ function updateStats() {
   $("error-count").textContent = session.errors.length;
 }
 function showAnswerFeedback({ correct, expected, expectedLocale, explanation, selected, options = [], correctOption }) {
-  const expectedText = expected ? '<p class="answer-correct-text">Respuesta correcta: ' + renderVariantTerms(expected) + ' ' + speakerButton(expected, expectedLocale || session?.config.languageLocale || catalog?.locale) + '</p>' : "";
+  const expectedText = !correct && expected ? '<p class="answer-correct-text">Respuesta correcta: ' + renderVariantTerms(expected) + ' ' + speakerButton(expected, expectedLocale || session?.config.languageLocale || catalog?.locale) + '</p>' : "";
   const explanationText = !correct && explanation ? '<p class="answer-explanation">' + renderVariantTerms(explanation) + '</p>' : "";
   $("feedback").innerHTML = (correct ? '<p class="answer-status correct">Correcto</p>' : '<p class="answer-status incorrect">Incorrecto</p>') + expectedText + explanationText;
   $("feedback").classList.remove("hidden","bad");
