@@ -59,7 +59,9 @@ try {
   });
 
   await page.goto(baseUrl, { waitUntil: "networkidle" });
-  assert.match(await page.title(), /Adaptive Language Tutor/);
+  assert.match(await page.title(), /Language Tutor/);
+  await page.locator('[data-language="Portugués brasileño"]').click();
+  await page.locator('[data-screen="exercises"]').click();
   await page.locator("#ai-status").waitFor();
   await page.locator("#start-session").waitFor({ state: "visible" });
   await page.locator("#level").selectOption("diagnostic");
@@ -196,10 +198,13 @@ try {
   });
 
   await aiPage.goto(baseUrl, { waitUntil: "networkidle" });
+  await aiPage.locator('[data-language="other"]').click();
   await aiPage.locator("#language").selectOption("other");
   await aiPage.locator("#custom-language-name").fill("Francés");
   await aiPage.locator("#custom-language-locale").fill("fr-FR");
   await aiPage.locator("#duration").selectOption("8");
+  await aiPage.locator("#settings-save").click();
+  await aiPage.locator('[data-screen="exercises"]').click();
   await aiPage.locator("#start-session").click();
   await aiPage.getByRole("button", { name: "Reintentar sesión" }).click();
   await aiPage.locator("#lesson-content").getByRole("heading", { name: "Comment tu t’appelles ?" }).waitFor();
@@ -269,22 +274,21 @@ try {
     localStorage.setItem(key, JSON.stringify(progress));
   });
   await aiPage.reload({ waitUntil: "networkidle" });
-  await aiPage.locator("#language").selectOption("other");
-  await aiPage.locator("#custom-language-name").fill("Francés");
-  await aiPage.locator("#custom-language-locale").fill("fr-FR");
+  await aiPage.locator('[data-screen="settings"]').click();
+  assert.equal(await aiPage.locator("#language").inputValue(), "other", "selected target language should persist after reload");
+  assert.equal(await aiPage.locator("#custom-language-locale").inputValue(), "fr-FR", "custom locale should persist after reload");
+  await aiPage.locator('[data-screen="home"]').click();
   await aiPage.getByRole("button", { name: /Iniciar repaso/ }).click();
   await aiPage.locator("#spaced-answer").fill("Je m’appelle Ana.");
   await aiPage.locator("#check-spaced").click();
   const cancellationsBeforeNextReview = await aiPage.evaluate(() => window.__speechCancelled);
   await aiPage.getByRole("button", { name: "Siguiente →" }).click();
   assert.ok(await aiPage.evaluate(count => window.__speechCancelled > count, cancellationsBeforeNextReview), "moving to the next spaced-review card should cancel speech from the previous card");
-  await aiPage.getByRole("button", { name: "Lo recordé" }).click();
-  await aiPage.getByRole("button", { name: "Siguiente →" }).click();
   const reviewed = await aiPage.evaluate(() => JSON.parse(localStorage.getItem("adaptive-language-tutor.progress")));
-  assert.equal(reviewed.reviewCards[0].repetitions, 1, "a correct AI review should increment repetitions");
+  assert.equal(reviewed.reviewCards[0].repetitions, 1, "a correct error review should increment repetitions");
   const patternCard = reviewed.reviewCards.find(card => card.cardType === "pattern");
-  assert.equal(patternCard.repetitions, 1, "self-assessed pattern review should increment repetitions");
-  assert.ok(new Date(reviewed.reviewCards[0].dueAt).getTime() > Date.now(), "a correct AI review should schedule the next interval");
+  assert.equal(patternCard.repetitions, 0, "qualitative learning patterns must remain outside the errors-only review section");
+  assert.ok(new Date(reviewed.reviewCards[0].dueAt).getTime() > Date.now(), "a correct error review should schedule the next interval");
 
   assert.equal(startCalls, 2, "initial AI session request should be retried once");
   assert.equal(answerCalls, 2, "AI answer request should be retried once");
@@ -305,6 +309,8 @@ try {
   const mobileErrors = [];
   mobilePage.on("pageerror", error => mobileErrors.push(error.message));
   await mobilePage.goto(baseUrl, { waitUntil: "networkidle" });
+  await mobilePage.locator('[data-language="Portugués brasileño"]').click();
+  await mobilePage.locator('[data-screen="exercises"]').click();
   await mobilePage.waitForFunction(() => {
     const button = document.querySelector("#start-session");
     return button && !button.disabled;
