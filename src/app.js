@@ -421,7 +421,7 @@ function renderAITutorTurn(result) {
   const previous = aiPendingFeedback;
   aiPendingFeedback = null;
   const feedback = previous
-    ? '<div class="feedback-note"><span>Respuesta anterior</span><p>' + escapeHTML(previous.text) + '</p>' +
+    ? '<div class="feedback-note"><span>Respuesta anterior</span><p>' + renderVariantTerms(previous.text) + '</p>' +
       (previous.expected ? '<p class="model-answer">Respuesta modelo: ' + renderVariantTerms(previous.expected) + ' ' + speakerButton(previous.expected, session.config.languageLocale || session.config.languageId) + '</p>' : '') + '</div>'
     : "";
   const vocabulary = (result.learnerUpdate?.vocabulary || []).filter(item => item?.term);
@@ -694,7 +694,7 @@ function renderRouteIntegration() {
   $("lesson-phase").textContent = "HITO INTEGRADOR";
   $("turn-count").textContent = "Actividad final";
   $("progress-bar").style.width = "100%";
-  $("lesson-content").innerHTML = (previous ? '<div class="feedback-note"><span>Respuesta anterior</span><p>' + escapeHTML(previous.text) + '</p><p class="model-answer">Respuesta modelo: ' + escapeHTML(previous.expected) + ' ' + speakerButton(previous.expected, catalog.locale) + '</p></div>' : '') + '<p class="eyebrow">UNIDAD 01 · FUNDAMENTOS</p><h3>' + escapeHTML(prompt) + '</h3><p>Combina lo practicado en los diez ejercicios anteriores.</p>';
+  $("lesson-content").innerHTML = (previous ? '<div class="feedback-note"><span>Respuesta anterior</span><p>' + renderVariantTerms(previous.text) + '</p><p class="model-answer">Respuesta modelo: ' + renderVariantTerms(previous.expected) + ' ' + speakerButton(previous.expected, catalog.locale) + '</p></div>' : '') + '<p class="eyebrow">UNIDAD 01 · FUNDAMENTOS</p><h3>' + escapeHTML(prompt) + '</h3><p>Combina lo practicado en los diez ejercicios anteriores.</p>';
   bindSpeakerButtons($("lesson-content"));
   $("answer-area").innerHTML = '<textarea id="route-integration-answer" class="answer-input" rows="3" placeholder="Escribe tu presentación…"></textarea><button id="route-integration-submit" class="primary" type="button">Comprobar actividad</button>';
   $("route-integration-submit").addEventListener("click", () => {
