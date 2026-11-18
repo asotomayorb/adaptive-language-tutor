@@ -135,7 +135,7 @@ try {
   await page.locator("#start-session").waitFor({ state: "attached" });
   await page.locator("#duration").selectOption("5");
   await page.locator("#start-session").click();
-  assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "Bonjour" && item.lang === "fr-FR")), "audio should speak the complete question, not only the answer word");
+  assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "Bom dia" && item.lang === "pt-BR")), "audio should speak the complete target-language phrase");
   for (let turn = 0; turn < 3; turn += 1) {
     assert.equal(await page.locator("#answer-area [data-choice]").count(), 3, "first three questions should have three choices");
     const questionBefore = await page.locator("#lesson-content h3").innerText();
