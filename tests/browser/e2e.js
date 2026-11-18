@@ -213,7 +213,10 @@ try {
   for (let turn = 0; turn < 3; turn += 1) {
     assert.equal(await aiPage.locator("#answer-area [data-ai-choice]").count(), 3);
     await aiPage.locator("#answer-area [data-ai-choice]").first().click();
-    await aiPage.locator("#lesson-content .feedback-note").waitFor({ state: "visible" });
+    await aiPage.locator("#feedback .answer-status.correct").waitFor({ state: "visible" });
+    assert.equal(await aiPage.locator("#answer-area #continue-answer").isVisible(), true);
+    assert.doesNotMatch(await aiPage.locator("#lesson-content").innerText(), /Pronunciación|Vocabulario/i, "answer-revealing labels should not be displayed");
+    await aiPage.locator("#answer-area #continue-answer").click();
   }
   await aiPage.locator("#ai-answer").waitFor({ state: "visible" });
   assert.equal(await aiPage.locator("#ai-answer").isVisible(), true, "AI should switch to written answers after three questions");
