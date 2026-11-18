@@ -141,6 +141,14 @@ $("language").addEventListener("change", () => {
 });
 $("custom-language-name").addEventListener("input", refreshDashboard);
 $("custom-language-locale").addEventListener("input", refreshDashboard);
+try {
+  const savedSettings = JSON.parse(localStorage.getItem("adaptive-language-tutor.settings") || "{}");
+  if (savedSettings.duration) $("duration").value = String(savedSettings.duration);
+  if (savedSettings.level) $("level").value = savedSettings.level;
+  if (savedSettings.topic) $("topic").value = savedSettings.topic;
+  if (savedSettings.customLanguageName) $("custom-language-name").value = savedSettings.customLanguageName;
+  if (savedSettings.customLanguageLocale) $("custom-language-locale").value = savedSettings.customLanguageLocale;
+} catch { /* Ignore malformed optional settings; progress storage remains independent. */ }
 updateCustomLanguageFields();
 refreshDashboard();
 checkTutorHealth().then(status => {
@@ -755,8 +763,20 @@ $("brand-home").addEventListener("click", event => { event.preventDefault(); sho
 $("start-review-from-tab").addEventListener("click", startSpacedReview);
 $("settings-audio-toggle").addEventListener("click", () => speech.setEnabled(!speech.enabled));
 $("settings-save").addEventListener("click", () => {
+  const savedSettings = {
+    duration: $("duration").value,
+    level: $("level").value,
+    topic: $("topic").value,
+    customLanguageName: $("custom-language-name").value.trim(),
+    customLanguageLocale: $("custom-language-locale").value.trim()
+  };
+  try {
+    localStorage.setItem("adaptive-language-tutor.settings", JSON.stringify(savedSettings));
+    $("settings-status").textContent = "Configuración guardada para las próximas sesiones.";
+  } catch {
+    $("settings-status").textContent = "No se pudo guardar en este dispositivo; los cambios siguen activos durante esta sesión.";
+  }
   refreshDashboard();
-  $("settings-status").textContent = "Configuración guardada para las próximas sesiones.";
 });
 $("settings-export").addEventListener("click", () => {
   if (!session) { $("settings-status").textContent = "Completa una sesión antes de exportar un resumen."; return; }
