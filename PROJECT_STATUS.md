@@ -460,7 +460,7 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] Ejercicios: 3 primeras preguntas con alternativas y luego escritura, independientemente del nivel.
 - [x] Feedback neutral diferido a la pregunta siguiente; respuesta modelo con control de pronunciación.
 - [x] Teoría con listado de temas y diapositivas a pantalla completa con navegación anterior/siguiente.
-- [x] Mosaico de 23 idiomas estándar; no se pide locale al usuario. Locale queda como dato interno para voz/tutor.
+- [x] Mosaico de 23 idiomas estándar y alta de idiomas no listados mediante nombre únicamente; no se pide locale. El locale reconocido se infiere internamente.
 - [x] Explicación emergente de variantes ortográficas inglesas (p. ej. color/colour).
 - [x] Bienvenida desaparece al pulsar Iniciar y no se repite tras guardar idioma.
 - [ ] La Ruta implementada usa contenido local de portugués brasileño e inglés. Los demás idiomas aparecen en el catálogo y pueden practicar mediante IA, pero aún no tienen una Ruta local completa.
