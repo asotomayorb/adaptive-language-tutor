@@ -222,6 +222,28 @@ test("a response outside the tutor contract is rejected", async () => {
 });
 
 
+test("provider logs do not include upstream error response details", async () => {
+  const originalError = console.error;
+  const logged = [];
+  console.error = (...args) => logged.push(args.join(" "));
+  try {
+    const provider = createAIProvider(
+      { AI_PROVIDER: "openai", AI_API_KEY: "secret", AI_MODEL: "test-model" },
+      async () => ({
+        ok: false,
+        status: 401,
+        json: async () => ({ error: { message: "sensitive upstream diagnostic detail" } })
+      })
+    );
+    await assert.rejects(() => provider.generateTutorTurn({ userMessage: "Hi" }), /request failed/i);
+    assert.equal(logged.length, 1);
+    assert.match(logged[0], /"upstreamStatus":401/);
+    assert.doesNotMatch(logged.join(" "), /sensitive upstream diagnostic detail/);
+  } finally {
+    console.error = originalError;
+  }
+});
+
 test("provider requests have a timeout and report stalled requests clearly", async () => {
   const provider = createAIProvider(
     { AI_PROVIDER: "openai", AI_API_KEY: "secret", AI_MODEL: "test-model" },
