@@ -443,3 +443,9 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 **Importante:** no declarar esta revisión lista para prueba humana hasta cerrar los tests, la verificación en móvil y la progresión de Ruta.
 
 - [x] Se corrigió el retorno desde una sesión para mantener visibles las opciones de Ejercicios y sus desplegables. Último commit de código: `6eb031f`.
+
+
+### Despliegue de refinamientos móviles — 18-11-2026
+- [x] Render build y deploy completados correctamente para el commit de código `6eb031fb9b1051ad993df1e9ea8dbf4cd96f9472` (deploy `dep-dbuugt8u01pc73e2o700`).
+- [x] El servidor arrancó y anunció el servicio disponible.
+- [ ] Tests de proyecto y prueba visual/funcional Android aún pendientes; el build de Render no los reemplaza.
