@@ -320,3 +320,13 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [ ] Confirmar Tests y Browser E2E en el HEAD que contiene el cambio y la prueba.
 
 **Alcance:** reduce la exposición de detalles internos al cliente. No sustituye la revisión de retención y acceso a logs del servidor, que sigue pendiente.
+
+### Reducción de datos sensibles en logs IA — 18-11-2026
+
+**Commits:** backend `ce8696c3792d92c147b5376dfdddfda81db6c919`; prueba `7e6860f7245944a4e44d7cad6f16c946cd4eb756`.
+
+- [x] Los logs del proveedor ya no incluyen el texto completo del error upstream; registran proveedor, modelo, duración, tipo de error y status upstream cuando existe.
+- [x] Prueba unitaria intercepta el log y confirma que el detalle sensible simulado no se registra.
+- [ ] Confirmar CI en el HEAD que contiene la corrección y la prueba.
+
+**Alcance:** limita el detalle almacenado en logs de errores del proveedor. Aún debe definirse retención, acceso y monitorización de logs en el hosting de producción.
