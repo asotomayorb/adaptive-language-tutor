@@ -44,6 +44,8 @@ Realizar estas comprobaciones en un navegador de escritorio y en un teléfono re
 - [ ] El audio automático comienza tras una acción explícita del usuario.
 - [ ] El control global activa y desactiva la lectura; el estado se conserva al recargar.
 - [ ] Desactivar el audio cancela la locución en curso.
+- [ ] Solicitar una pista o enviar una respuesta mientras hay audio en curso detiene inmediatamente la locución anterior, sin esperar la respuesta del servidor.
+- [ ] Si una solicitud IA falla, no continúa reproduciéndose audio de la actividad anterior.
 - [ ] Reactivar el audio lee los fragmentos visibles del idioma objetivo, también en el panel de resumen.
 - [ ] Al cambiar entre resumen, lección y otras vistas, reactivar el audio no debe leer fragmentos de paneles ocultos.
 - [ ] La primera pista IA pronuncia automáticamente los fragmentos del idioma objetivo incluidos en la pista; la pista adicional también los reproduce.
