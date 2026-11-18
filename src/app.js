@@ -414,7 +414,7 @@ function renderAITutorTurn(result) {
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
 
-  const message = '<p>' + escapeHTML(result.message || "") + '</p>';
+  const message = '<p>' + renderVariantTerms(result.message || "") + '</p>';
   const prompt = aiCurrentExercise.prompt
     ? '<h3>' + renderVariantTerms(aiCurrentExercise.prompt) + '</h3>'
     : '<p class="muted">Responde libremente para continuar la conversación.</p>';
@@ -427,7 +427,7 @@ function renderAITutorTurn(result) {
   const vocabulary = (result.learnerUpdate?.vocabulary || []).filter(item => item?.term);
   const vocabularyMarkup = vocabulary.length
     ? '<div class="ai-vocabulary"><span class="muted">Vocabulario</span>' + vocabulary.map(item =>
-        '<span class="vocabulary-item">' + escapeHTML(item.term) + speakerButton(item.term, session.config.languageId) + '</span>'
+        '<span class="vocabulary-item">' + renderVariantTerms(item.term) + speakerButton(item.term, session.config.languageLocale || session.config.languageId) + '</span>'
       ).join("") + '</div>'
     : "";
   const speechSegments = (result.speechSegments || []).filter(item =>
