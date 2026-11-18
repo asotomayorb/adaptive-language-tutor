@@ -170,8 +170,8 @@ function updateLanguageFlag() {
   ) : null;
   const customKey = customName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase();
   $("selected-language-flag").textContent = selected === "other"
-    ? known?.[1].flag || customLanguageFlags[customKey] || "🌐"
-    : languageDefinitions[selected]?.flag || "🌐";
+    ? known?.[1].flag || customLanguageFlags[customKey] || "🏳️"
+    : languageDefinitions[selected]?.flag || "🏳️";
   if (typeof ROUTE_STORAGE_KEY !== "undefined") {
     const selectedCatalog = getSelectedCatalog();
     routeDraft = getRouteDraftForLanguage(selectedCatalog?.id);
