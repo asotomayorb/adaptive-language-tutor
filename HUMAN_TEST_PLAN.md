@@ -153,7 +153,7 @@ Para cada escenario registrar:
 - [ ] En ejercicios de cualquier nivel, las tres primeras preguntas muestran tres alternativas y la cuarta solicita escritura.
 - [ ] Tras responder, se avanza automáticamente; el feedback aparece neutral en la siguiente pregunta, con respuesta modelo y botón de pronunciación.
 - [ ] Comprobar que las variantes “color/colour” abren una explicación emergente al tocar la palabra cuando el contenido inglés las incluye.
-- [ ] Ruta guarda cada respuesta confirmada; cerrar, recargar y continuar retoma el número de pregunta.
+- [ ] Ruta guarda cada respuesta confirmada tanto en modo local como IA; cerrar, recargar y continuar retoma el número de pregunta y el contexto conversacional.
 - [ ] Ruta requiere 8/10 en la comprobación de diez ejercicios y después una actividad integradora.
 - [ ] Ejercicios descarta una sesión incompleta y no la agrega al historial.
 - [ ] La última corrección aparece en el resumen y conserva su control de audio.
