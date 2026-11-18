@@ -81,7 +81,6 @@ try {
   await page.locator("#audio-toggle").click();
   assert.equal(await page.locator("#audio-toggle").getAttribute("aria-pressed"), "true", "global audio toggle should re-enable automatic speech");
   assert.ok(await page.evaluate(count => window.__spoken.length > count, speechCountBeforeReenable), "re-enabling audio should read the currently visible target fragments");
-  await page.locator("#audio-toggle").click();
   await page.locator("#hint-btn").click();
   await page.locator("#feedback").waitFor({ state: "visible" });
   assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "dia" && item.lang === "pt-BR")), "local hints should pronounce explicitly annotated target-language fragments");
