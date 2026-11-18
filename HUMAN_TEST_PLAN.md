@@ -144,7 +144,7 @@ Para cada escenario registrar:
 ## 10. Revisión pedagógica y de idiomas — 18-11-2026
 
 - [ ] Bienvenida desaparece inmediatamente al pulsar Iniciar; en siguientes aperturas con idioma guardado no vuelve a aparecer.
-- [ ] El mosaico contiene los 23 idiomas estándar y no solicita nombre/locale manual.
+- [ ] El mosaico contiene los 23 idiomas estándar; la opción Otro idioma solicita solo nombre y nunca locale. Verificar que Suajili infiere 🇰🇪.
 - [ ] Cambiar idioma actualiza bandera y regresa automáticamente a Ruta.
 - [ ] Italiano, alemán, ruso, francés y otros idiomas muestran su bandera y locale interno correcto en solicitudes IA/TTS.
 - [ ] Teoría: seleccionar categoría abre lista de temas legible; seleccionar tema abre diapositiva completa.
