@@ -176,8 +176,9 @@ try {
   for (let turn = 0; turn < 3; turn += 1) {
     assert.equal(await aiPage.locator("#answer-area [data-ai-choice]").count(), 3);
     await aiPage.locator("#answer-area [data-ai-choice]").first().click();
-    assert.equal(await aiPage.locator("#lesson-content .feedback-note").isVisible(), true);
+    await aiPage.locator("#lesson-content .feedback-note").waitFor({ state: "visible" });
   }
+  await aiPage.locator("#ai-answer").waitFor({ state: "visible" });
   assert.equal(await aiPage.locator("#ai-answer").isVisible(), true, "AI should switch to written answers after three questions");
   assert.deepEqual(aiErrors, [], "AI browser flow should not report uncaught page errors");
 } finally {
