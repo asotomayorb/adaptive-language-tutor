@@ -238,7 +238,7 @@ try {
   await aiPage.locator('[data-screen="route"]').click();
   await aiPage.locator("#route-start").click();
   await aiPage.locator("#answer-area [data-ai-choice]").first().waitFor();
-  await aiPage.waitForFunction(() => window.__spoken.some(item => item.text === "Bom dia" && item.lang === "pt-BR"));
+  await aiPage.waitForFunction(() => window.__spoken.some(item => item.text === "Bonjour" && item.lang === "fr-FR"));
   assert.equal(await aiPage.evaluate(() => window.__spoken.some(item => item.text.includes("Instrucción en español"))), false,
     "mixed AI speech must ignore source-language segments");
   await aiPage.locator("#answer-area [data-ai-choice]").first().click();
