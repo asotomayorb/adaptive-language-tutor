@@ -544,7 +544,7 @@ async function submitAITutorAnswer(answer) {
   speech.stop();
   const submitButton = $("submit-ai-answer");
   const answerInput = $("ai-answer");
-  if (submitButton) submitButton.disabled = true;
+  if (submitButton) submitButton.remove();
   if (answerInput) answerInput.disabled = true;
   $("answer-area").querySelectorAll("[data-ai-choice]").forEach(button => { button.disabled = true; });
   try {
@@ -597,7 +597,6 @@ async function submitAITutorAnswer(answer) {
       result, evaluation, exercise: evaluatedExercise, answer: cleanAnswer,
       routeIntegrationQuestion: Boolean(routeMode && routeIntegration && session.turn >= 11)
     };
-    if (submitButton) submitButton.remove();
     showAnswerFeedback({
       correct: evaluation.status === "correct",
       expected: evaluatedExercise.expectedAnswer || "",
