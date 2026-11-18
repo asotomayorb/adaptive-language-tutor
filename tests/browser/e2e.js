@@ -209,7 +209,9 @@ try {
   await aiPage.locator("#feedback").getByText(/Je m’appelle/).waitFor();
   assert.ok(await aiPage.evaluate(count => window.__spoken.length > count && window.__spoken.at(-1)?.text === "Je m’appelle" && window.__spoken.at(-1)?.lang === "fr-FR", spokenBeforeFirstHint), "the first AI hint should automatically pronounce its target-language fragment");
   const turnBeforeExtraHint = await aiPage.locator("#turn-count").innerText();
+  const cancellationsBeforeExtraHint = await aiPage.evaluate(() => window.__speechCancelled);
   await aiPage.locator("#hint-btn").click();
+  assert.ok(await aiPage.evaluate(count => window.__speechCancelled > count, cancellationsBeforeExtraHint), "requesting another hint should cancel any previous speech");
   await aiPage.locator("#feedback").getByText(/verbo que expresa tu nombre/).waitFor();
   assert.equal(await aiPage.locator("#turn-count").innerText(), turnBeforeExtraHint, "an additional hint must not advance the session");
   assert.equal(hintCalls, 1, "a second hint should call the AI tutor once");
@@ -218,7 +220,9 @@ try {
   await hintSpeaker.click();
   assert.ok(await aiPage.evaluate(() => window.__spoken.some(item => item.text === "s’appeler" && item.lang === "fr-FR")), "additional hint fragments should support manual pronunciation");
   await aiPage.locator("#ai-answer").fill("Je m’appelle Ana.");
+  const cancellationsBeforeAnswer = await aiPage.evaluate(() => window.__speechCancelled);
   await aiPage.locator("#submit-ai-answer").click();
+  assert.ok(await aiPage.evaluate(count => window.__speechCancelled > count, cancellationsBeforeAnswer), "submitting an answer should immediately cancel speech from the previous turn");
   await aiPage.getByRole("button", { name: "Reintentar envío" }).click();
   assert.equal(await aiPage.locator("#retry-ai").isDisabled(), true, "retry control should disable immediately to prevent duplicate requests");
   await aiPage.getByRole("button", { name: "Ver resumen →" }).click();
