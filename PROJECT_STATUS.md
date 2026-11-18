@@ -310,3 +310,13 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [ ] Confirmar CI en el HEAD que contiene tanto la corrección como la prueba.
 
 **Alcance:** corrige la transición entre tarjetas del repaso espaciado. No sustituye la prueba auditiva en dispositivos reales ni cierra la auditoría global de audio.
+
+## Normalización de errores del proveedor IA — 18-11-2026
+
+**Commits:** backend `1e0b744b6aa2c3d885dd498b32ae20ed403d47e6`; prueba API `d10a3d1f36c0401f783d161acb36b3c56c59ae5b`.
+
+- [x] El endpoint ya no devuelve al navegador el mensaje interno de excepción del proveedor ni su código HTTP upstream; responde con un mensaje genérico y estado 502.
+- [x] Prueba API de regresión confirma que un error simulado con detalle interno no aparece en la respuesta pública.
+- [ ] Confirmar Tests y Browser E2E en el HEAD que contiene el cambio y la prueba.
+
+**Alcance:** reduce la exposición de detalles internos al cliente. No sustituye la revisión de retención y acceso a logs del servidor, que sigue pendiente.
