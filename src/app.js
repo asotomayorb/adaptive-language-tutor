@@ -99,6 +99,7 @@ let reviewMode = false;
 let progress = loadProgress();
 let dueReviewCards = [];
 let reviewIndex = 0;
+let reviewProgressDraft = null;
 let aiConfigured = false;
 let aiReady = false;
 let aiMode = false;
@@ -168,6 +169,7 @@ function startSpacedReview() {
   catalog = getSelectedCatalog();
   if (!catalog) { $("ai-status").textContent = "Indica el nombre del idioma y un locale válido (por ejemplo, fr-FR)."; return; }
   dueReviewCards = getDueCards(progress, Date.now(), catalog.id).filter(card => card.cardType !== "pattern");
+  reviewProgressDraft = JSON.parse(JSON.stringify(progress));
   reviewIndex = 0;
   if (!dueReviewCards.length) { refreshDashboard(); return; }
   showSessionView("review");
@@ -186,6 +188,11 @@ function startSpacedReview() {
 function renderSpacedReview() {
   speech.stop();
   if (reviewIndex >= dueReviewCards.length) {
+    if (reviewProgressDraft) {
+      progress = reviewProgressDraft;
+      saveProgress(progress);
+      reviewProgressDraft = null;
+    }
     $("lesson-panel").classList.add("hidden");
     $("summary-panel").classList.remove("hidden");
     $("summary-content").textContent = "Has terminado los repasos disponibles.";
@@ -203,8 +210,7 @@ function renderSpacedReview() {
     $("lesson-content").innerHTML = '<p class="eyebrow">REPASO DE PATRÓN</p><h3>' + escapeHTML(card.pattern) + '</h3><p>Intenta recordar una frase propia que aplique este patrón. Este repaso no consume turnos de práctica.</p>';
     $("answer-area").innerHTML = '<p class="muted">¿Pudiste recordar y aplicar el patrón?</p><button id="pattern-recalled" class="primary" type="button">Lo recordé</button><button id="pattern-practice" class="secondary" type="button">Necesito practicarlo</button>';
     const gradePattern = recalled => {
-      const result = gradeReview(progress, card.key, recalled);
-      saveProgress(progress);
+      const result = gradeReview(reviewProgressDraft || progress, card.key, recalled);
       showFeedback(recalled
         ? "Registrado. Próximo repaso en " + (result?.nextIntervalDays || 1) + " días."
         : "Registrado. Volverá a aparecer mañana; intenta crear una frase nueva con este patrón.", recalled);
@@ -222,8 +228,7 @@ function renderSpacedReview() {
     const answer = $("spaced-answer").value;
     const checkExercise = exercise || { target: expected, acceptedAnswers: [] };
     const correct = evaluateAnswer(answer, checkExercise);
-    const result = gradeReview(progress, card.key, correct);
-    saveProgress(progress);
+    const result = gradeReview(reviewProgressDraft || progress, card.key, correct);
     const interval = result?.nextIntervalDays || 1;
     showFeedback(correct
       ? "Correcto. Próximo repaso en " + interval + " días."
@@ -503,9 +508,11 @@ function showAITutorError(error, previousAnswer) {
   $("feedback").textContent = error.message || "Error de conexión.";
   $("feedback").classList.remove("hidden", "bad");
   $("feedback").classList.add("bad");
-  $("answer-area").innerHTML = previousAnswer
-    ? '<button id="retry-ai" class="primary" type="button">Reintentar envío</button>'
-    : '<button id="retry-ai" class="primary" type="button">Reintentar sesión</button>';
+  $("answer-area").innerHTML =
+    (previousAnswer
+      ? '<button id="retry-ai" class="primary" type="button">Reintentar envío</button>'
+      : '<button id="retry-ai" class="primary" type="button">Reintentar sesión</button>') +
+    '<button id="continue-local" class="secondary" type="button">Continuar sin tutor IA</button>';
   $("retry-ai").addEventListener("click", () => {
     const retryButton = $("retry-ai");
     if (retryButton.disabled) return;
@@ -513,6 +520,13 @@ function showAITutorError(error, previousAnswer) {
     retryButton.textContent = "Reintentando…";
     if (previousAnswer) submitAITutorAnswer(previousAnswer);
     else startAITutorSession(session.config);
+  });
+  $("continue-local").addEventListener("click", () => {
+    aiMode = false;
+    aiHistory = [];
+    aiLastResult = null;
+    aiCurrentExercise = null;
+    renderLesson();
   });
 }
 
@@ -702,6 +716,7 @@ function closeSessionAndReturn() {
   sessionAbortController = null;
   speech.stop();
   session = null;
+  reviewProgressDraft = null;
   aiMode = false;
   aiHistory = [];
   aiLastResult = null;
