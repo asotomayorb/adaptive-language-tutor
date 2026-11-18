@@ -131,6 +131,7 @@
     <button type="button" data-language="Vietnamita"><span>🇻🇳</span><strong>Vietnamita</strong><small>Vietnam</small></button>
     <button type="button" data-language="Indonesio"><span>🇮🇩</span><strong>Indonesio</strong><small>Indonesia</small></button>
     <button type="button" data-language="Tailandés"><span>🇹🇭</span><strong>Tailandés</strong><small>Tailandia</small></button>
+    <button type="button" data-language="other"><span>🌐</span><strong>Otro idioma</strong><small>Escribir nombre</small></button>
   </div>
   <select id="language" class="hidden" aria-hidden="true" tabindex="-1">
     <option value="Portugués brasileño">Portugués</option><option value="Inglés">Inglés</option>
@@ -138,8 +139,12 @@
     <option value="Francés">Francés</option><option value="Español">Español</option><option value="Japonés">Japonés</option>
     <option value="Chino mandarín">Chino mandarín</option><option value="Coreano">Coreano</option><option value="Neerlandés">Neerlandés</option>
     <option value="Árabe">Árabe</option><option value="Hindi">Hindi</option><option value="Turco">Turco</option><option value="Griego">Griego</option><option value="Polaco">Polaco</option>
-    <option value="Sueco">Sueco</option><option value="Noruego">Noruego</option><option value="Danés">Danés</option><option value="Hebreo">Hebreo</option><option value="Vietnamita">Vietnamita</option><option value="Indonesio">Indonesio</option><option value="Tailandés">Tailandés</option>
+    <option value="Sueco">Sueco</option><option value="Noruego">Noruego</option><option value="Danés">Danés</option><option value="Hebreo">Hebreo</option><option value="Vietnamita">Vietnamita</option><option value="Indonesio">Indonesio</option><option value="Tailandés">Tailandés</option><option value="other">Otro idioma</option>
   </select>
+  <div id="custom-language-fields" class="custom-language-fields hidden">
+    <label>Nombre del idioma<input id="custom-language-name" placeholder="Ej. Suajili" autocomplete="off"></label>
+  </div>
+  <button id="language-apply" class="primary hidden" type="button">Confirmar idioma</button>
   <button id="language-cancel" class="text-button language-cancel" type="button">Cancelar</button>
 </dialog>
 
