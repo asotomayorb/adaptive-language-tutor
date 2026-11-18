@@ -133,10 +133,14 @@ function getExerciseSpeech(exercise) {
   const prompt = String(exercise?.prompt || "");
   const afterInstruction = prompt.includes(":") ? prompt.slice(prompt.indexOf(":") + 1) : prompt;
   const sentence = afterInstruction.replace(/\([^)]*\)/g, "").trim();
-  if (/_{2,}/.test(sentence)) {
-    return { text: sentence.replace(/_{2,}/g, "…").replace(/[“”]/g, "").trim(), locale: catalog?.locale || "und" };
-  }
-  return { text: prompt, locale: "es-CL" };
+  const hasGap = /_{1,}|＿+/u.test(sentence);
+  const spoken = sentence.replace(/_{1,}|＿+/gu, "…").replace(/[“”]/g, "").trim();
+  return {
+    text: spoken || prompt,
+    locale: prompt.includes(":") || hasGap
+      ? (exercise?.speechLocale || catalog?.locale || "und")
+      : (exercise?.speechLocale || "es-CL")
+  };
 }
 function autoSpeak(text, locale = catalog?.locale) {
   if (text && speech.enabled) speech.speak(text, locale, { automatic: true });
@@ -187,11 +191,14 @@ function updateLanguageFlag() {
   if (typeof ROUTE_STORAGE_KEY !== "undefined") {
     const selectedCatalog = getSelectedCatalog();
     routeDraft = getRouteDraftForLanguage(selectedCatalog?.id);
-    $("route-resume").classList.toggle("hidden", !routeDraft?.session);
-    let completed = false;
-    try { completed = Boolean(selectedCatalog && localStorage.getItem("adaptive-language-tutor.route-completed:" + selectedCatalog.id) === "true"); } catch {}
+    $("route-resume").classList.add("hidden");
+    let completed = false, started = false;
+    try {
+      completed = Boolean(selectedCatalog && localStorage.getItem("adaptive-language-tutor.route-completed:" + selectedCatalog.id) === "true");
+      started = Boolean(selectedCatalog && localStorage.getItem("adaptive-language-tutor.route-started:" + selectedCatalog.id) === "true");
+    } catch {}
     const routeAvailable = Boolean(selectedCatalog?.exercises?.length || aiConfigured);
-    $("route-start").textContent = completed ? "Unidad completada" : routeAvailable ? "Comenzar unidad" : "Ruta en preparación";
+    $("route-start").textContent = completed ? "Unidad completada" : started ? "Continuar recorrido" : routeAvailable ? "Comenzar unidad" : "Ruta en preparación";
     $("route-start").disabled = Boolean(completed || !routeAvailable);
   }
 }
@@ -476,22 +483,17 @@ function renderAITutorTurn(result) {
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
 
-  const message = '<p>' + renderVariantTerms(result.message || "") + '</p>';
   const prompt = aiCurrentExercise.prompt
     ? '<h3>' + renderVariantTerms(aiCurrentExercise.prompt) + '</h3>'
-    : '<p class="muted">Responde libremente para continuar la conversación.</p>';
-  const speechSegments = (result.speechSegments || []).filter(item =>
-    item && typeof item.text === "string" && item.text.trim() &&
-    typeof item.locale === "string" && item.locale.trim()
-  );
-  const speechMarkup = "";
+    : '<h3>El tutor está preparando una actividad cerrada.</h3>';
+  const questionSpeech = getExerciseSpeech(aiCurrentExercise);
   const promptAudio = aiCurrentExercise.prompt
-    ? speakerButton(aiCurrentExercise.prompt, session.config.languageLocale || session.config.languageId)
+    ? speakerButton(questionSpeech.text, questionSpeech.locale)
     : "";
-  $("lesson-content").innerHTML = message + prompt + promptAudio + speechMarkup;
+  $("lesson-content").innerHTML = prompt + promptAudio;
   bindSpeakerButtons($("lesson-content"));
   bindVariantLinks($("lesson-content"));
-  speech.speakSequence(speechSegments, { automatic: true });
+  autoSpeak(questionSpeech.text, questionSpeech.locale);
   $("feedback").classList.add("hidden");
   $("hint-btn").hidden = false;
   $("review-btn").hidden = true;
@@ -509,7 +511,7 @@ function renderAITutorTurn(result) {
       : '<p class="muted">El tutor está preparando las alternativas. Reintenta para continuar.</p><button id="retry-ai-options" class="secondary" type="button">Reintentar</button>';
     $("answer-area").querySelectorAll("[data-ai-choice]").forEach(button => button.addEventListener("click", () => submitAITutorAnswer(options[Number(button.dataset.aiChoice)])));
     $("retry-ai-options")?.addEventListener("click", () => startAITutorSession(session.config));
-  } else {
+  } else if (aiCurrentExercise.prompt && String(aiCurrentExercise.expectedAnswer || "").trim()) {
     $("answer-area").innerHTML =
       '<input id="ai-answer" class="answer-input" placeholder="Escribe tu respuesta…" autocomplete="off">' +
       '<button id="submit-ai-answer" class="primary" type="button">Enviar respuesta →</button>';
@@ -517,6 +519,9 @@ function renderAITutorTurn(result) {
     $("ai-answer").addEventListener("keydown", event => {
       if (event.key === "Enter") submitAITutorAnswer($("ai-answer").value);
     });
+  } else {
+    $("answer-area").innerHTML = '<p class="muted">La actividad no tiene una respuesta verificable. Se solicitará una pregunta concreta.</p><button id="retry-ai-options" class="secondary" type="button">Reintentar</button>';
+    $("retry-ai-options").addEventListener("click", () => startAITutorSession(session.config));
   }
 }
 
@@ -583,6 +588,7 @@ async function submitAITutorAnswer(answer) {
       result, evaluation, exercise: evaluatedExercise, answer: cleanAnswer,
       routeIntegrationQuestion: Boolean(routeMode && routeIntegration && session.turn >= 11)
     };
+    if (submitButton) submitButton.remove();
     showAnswerFeedback({
       correct: evaluation.status === "correct",
       expected: evaluatedExercise.expectedAnswer || "",
@@ -708,6 +714,12 @@ function saveRouteDraft() {
 function startRouteSession(resume = false) {
   catalog = getSelectedCatalog();
   if (!catalog) return;
+  const routeStartedKey = "adaptive-language-tutor.route-started:" + catalog.id;
+  const routeCompletedKey = "adaptive-language-tutor.route-completed:" + catalog.id;
+  const alreadyStarted = localStorage.getItem(routeStartedKey) === "true";
+  const completed = localStorage.getItem(routeCompletedKey) === "true";
+  if (completed) return;
+  resume = Boolean(resume || alreadyStarted);
   routeDraft = getRouteDraftForLanguage(catalog.id);
   const useAI = !catalog.exercises.length;
   if (useAI && !aiConfigured) {
@@ -744,6 +756,12 @@ function startRouteSession(resume = false) {
   }
   routeMode = true;
   session.config.routeMode = true;
+  if (!alreadyStarted) {
+    localStorage.setItem(routeStartedKey, "true");
+    saveRouteDraft();
+    $("route-start").textContent = "Continuar recorrido";
+    $("route-resume").classList.add("hidden");
+  }
   sessionAbortController?.abort();
   sessionAbortController = new AbortController();
   sessionFinished = false;
@@ -913,6 +931,7 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
 
 function submitAnswer(answer) {
   const result = recordAnswer(session, currentExercise, answer);
+  $("submit-free")?.remove();
   localPendingAnswer = {
     correct: result.correct, expected: currentExercise.target,
     expectedLocale: currentExercise.answerLocale || (currentExercise.speechMode === "listening" ? "es-CL" : catalog.locale),
@@ -1161,7 +1180,7 @@ document.querySelectorAll("[data-mode]").forEach(button => button.addEventListen
   if (selectedExerciseMode === "review") refreshDashboard();
 }));
 $("route-start-exercises")?.addEventListener("click", () => showScreen("exercises"));
-$("route-start").addEventListener("click", () => startRouteSession(false));
+$("route-start").addEventListener("click", () => startRouteSession(localStorage.getItem("adaptive-language-tutor.route-started:" + (getSelectedCatalog()?.id || "")) === "true"));
 $("route-resume").addEventListener("click", () => startRouteSession(true));
 $("setup-back")?.addEventListener("click", () => showScreen("exercises"));
 $("session-close").addEventListener("click", () => {
