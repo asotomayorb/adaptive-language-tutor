@@ -868,7 +868,7 @@ function chooseExercise() {
     const advanced = candidates.filter(exercise => exercise.level === "A2");
     if (advanced.length) candidates = advanced;
   }
-  return candidates[session.turn % candidates.length];
+  return candidates[0];
 }
 
 function levelLabel(level) {
