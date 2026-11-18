@@ -143,6 +143,11 @@ $("custom-language-name").addEventListener("input", refreshDashboard);
 $("custom-language-locale").addEventListener("input", refreshDashboard);
 try {
   const savedSettings = JSON.parse(localStorage.getItem("adaptive-language-tutor.settings") || "{}");
+  if (savedSettings.selectedLanguage) {
+    $("language").value = savedSettings.selectedLanguage;
+    $("language-gate").classList.add("hidden");
+    $("app-shell").classList.remove("hidden");
+  }
   if (savedSettings.duration) $("duration").value = String(savedSettings.duration);
   if (savedSettings.level) $("level").value = savedSettings.level;
   if (savedSettings.topic) $("topic").value = savedSettings.topic;
@@ -252,6 +257,7 @@ $("setup-form").addEventListener("submit", event => {
     return;
   }
   const config = { language:catalog.label, languageId:catalog.id, languageLocale:catalog.locale || catalog.id, duration:Number($("duration").value), level:$("level").value, topic:$("topic").value };
+  persistSettings();
   session = createSession(config);
   sessionFinished = false;
   reviewMode = false;
@@ -762,16 +768,20 @@ $("home-start-exercises").addEventListener("click", () => { showScreen("exercise
 $("brand-home").addEventListener("click", event => { event.preventDefault(); showScreen("home"); });
 $("start-review-from-tab").addEventListener("click", startSpacedReview);
 $("settings-audio-toggle").addEventListener("click", () => speech.setEnabled(!speech.enabled));
-$("settings-save").addEventListener("click", () => {
+function persistSettings() {
   const savedSettings = {
+    selectedLanguage: $("language").value,
     duration: $("duration").value,
     level: $("level").value,
     topic: $("topic").value,
     customLanguageName: $("custom-language-name").value.trim(),
     customLanguageLocale: $("custom-language-locale").value.trim()
   };
+  localStorage.setItem("adaptive-language-tutor.settings", JSON.stringify(savedSettings));
+}
+$("settings-save").addEventListener("click", () => {
   try {
-    localStorage.setItem("adaptive-language-tutor.settings", JSON.stringify(savedSettings));
+    persistSettings();
     $("settings-status").textContent = "Configuración guardada para las próximas sesiones.";
   } catch {
     $("settings-status").textContent = "No se pudo guardar en este dispositivo; los cambios siguen activos durante esta sesión.";
@@ -783,12 +793,18 @@ $("settings-export").addEventListener("click", () => {
   $("export-btn").click();
 });
 $("change-language").addEventListener("click", () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem("adaptive-language-tutor.settings") || "{}");
+    delete saved.selectedLanguage;
+    localStorage.setItem("adaptive-language-tutor.settings", JSON.stringify(saved));
+  } catch {}
   $("app-shell").classList.add("hidden");
   $("language-gate").classList.remove("hidden");
 });
 document.querySelectorAll("[data-language]").forEach(button => button.addEventListener("click", () => {
   $("language").value = button.dataset.language;
   $("language").dispatchEvent(new Event("change"));
+  try { persistSettings(); } catch {}
   $("language-gate").classList.add("hidden");
   $("app-shell").classList.remove("hidden");
   showScreen("home");
