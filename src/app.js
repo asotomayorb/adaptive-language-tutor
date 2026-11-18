@@ -136,8 +136,12 @@ function getSelectedCatalog() {
 function updateLanguageFlag() {
   $("selected-language-flag").textContent = languageDefinitions[$("language").value]?.flag || "🌐";
   if (typeof ROUTE_STORAGE_KEY !== "undefined") {
-    routeDraft = getRouteDraftForLanguage(getSelectedCatalog()?.id);
+    const selectedCatalog = getSelectedCatalog();
+    routeDraft = getRouteDraftForLanguage(selectedCatalog?.id);
     $("route-resume").classList.toggle("hidden", !routeDraft?.session);
+    const completed = selectedCatalog && localStorage.getItem("adaptive-language-tutor.route-completed:" + selectedCatalog.id) === "true";
+    $("route-start").textContent = completed ? "Unidad completada" : selectedCatalog?.exercises?.length ? "Comenzar unidad" : "Ruta en preparación";
+    $("route-start").disabled = Boolean(completed || !selectedCatalog?.exercises?.length);
   }
 }
 let session = null;
@@ -882,7 +886,9 @@ function finishSession() {
     try { localStorage.removeItem(ROUTE_STORAGE_KEY); } catch {}
     routeDraft = null;
     $("route-resume").classList.add("hidden");
+    localStorage.setItem("adaptive-language-tutor.route-completed:" + session.config.languageId, "true");
     $("route-start").textContent = "Unidad completada";
+    $("route-start").disabled = true;
   }
   speech.stop();
   $("lesson-panel").classList.add("hidden");
