@@ -74,6 +74,27 @@ test("tutor endpoint returns service unavailable without configured AI", async (
   });
 });
 
+test("tutor endpoint does not expose internal provider errors", async () => {
+  await withServer({
+    configured: true,
+    provider: "test",
+    generateTutorTurn: async () => {
+      const error = new Error("upstream response exposed secret diagnostic detail");
+      error.status = 429;
+      throw error;
+    }
+  }, async base => {
+    const response = await fetch(base + "/api/tutor", {
+      method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ userMessage: "practice" })
+    });
+    assert.equal(response.status, 502);
+    const body = await response.json();
+    assert.equal(body.error, "El tutor IA no está disponible temporalmente. Intenta nuevamente.");
+    assert.doesNotMatch(JSON.stringify(body), /secret diagnostic detail|upstream response/);
+  });
+});
+
 test("tutor endpoint forwards validated context to the provider", async () => {
   let received;
   await withServer({
