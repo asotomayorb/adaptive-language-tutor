@@ -175,6 +175,7 @@ try {
   assert.equal(await page.locator("#route-resume").isVisible(), true, "Route should offer resume after reload");
   await page.locator("#route-resume").click();
   assert.match(await page.locator("#turn-count").innerText(), /2 \/ 10/);
+  assert.equal(await page.locator("#answer-area #continue-answer").isVisible(), true, "Route should restore the pending feedback and Continue action");
   assert.deepEqual(pageErrors, [], "browser should not report uncaught page errors");
 
   // AI session contract: the first three questions use alternatives; the fourth uses text input.
