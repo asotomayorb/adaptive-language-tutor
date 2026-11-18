@@ -132,7 +132,7 @@ function getExerciseSpeech(exercise) {
   }
   const prompt = String(exercise?.prompt || "");
   const afterInstruction = prompt.includes(":") ? prompt.slice(prompt.indexOf(":") + 1) : prompt;
-  const sentence = afterInstruction.replace(/\\([^)]*\\)/g, "").trim();
+  const sentence = afterInstruction.replace(/\([^)]*\)/g, "").trim();
   if (/_{2,}/.test(sentence)) {
     return { text: sentence.replace(/_{2,}/g, "…").replace(/[“”]/g, "").trim(), locale: catalog?.locale || "und" };
   }
