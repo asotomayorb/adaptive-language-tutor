@@ -136,7 +136,7 @@ export function createAppServer(aiProvider = provider) {
         const result = await aiProvider.generateTutorTurn(input);
         return send(response, 200, result);
       } catch (error) {
-        return send(response, error.status || 502, { error: error.message || "Tutor request failed." });
+        return send(response, 502, { error: "El tutor IA no está disponible temporalmente. Intenta nuevamente." });
       } finally {
         activeTutorRequests -= 1;
       }
