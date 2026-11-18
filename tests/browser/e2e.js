@@ -97,7 +97,7 @@ try {
   await topicRows.first().click();
   assert.equal(await page.locator("#theory-detail").isVisible(), true);
   assert.equal(await page.locator("#theory-title").innerText(), "Pronombres personales");
-  assert.match(await page.locator("#theory-description").innerText(), /eu, você/i);
+  assert.match(await page.locator("#theory-description").innerText(), /eu\s*▶\s*yo[\s\S]*você/i);
   assert.ok(await page.locator("#theory-description .theory-pronoun-table tbody tr").count() >= 5, "pronouns should be shown in a bilingual table");
   assert.ok(await page.locator("#theory-description [data-speak]").count() >= 5, "each pronoun should have pronunciation audio");
   await page.locator("#theory-next").click();
