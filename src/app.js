@@ -9,7 +9,7 @@ import { createSpeechController } from "./core/speech.js";
 const $ = id => document.getElementById(id);
 const languageDefinitions = {
   "Portugués brasileño": { id:"pt-BR", label:"Portugués", locale:"pt-BR", flag:"🇧🇷", catalog:ptBR },
-  "Inglés": { id:"en-US", label:"Inglés", locale:"en-US", flag:"🇺🇸", catalog:english },
+  "Inglés": { id:"en", label:"Inglés", locale:"en-US", flag:"🇺🇸", catalog:{ ...english, locale:"en-US" } },
   "Italiano": { id:"it-IT", label:"Italiano", locale:"it-IT", flag:"🇮🇹" },
   "Alemán": { id:"de-DE", label:"Alemán", locale:"de-DE", flag:"🇩🇪" },
   "Ruso": { id:"ru-RU", label:"Ruso", locale:"ru-RU", flag:"🇷🇺" },
@@ -345,6 +345,7 @@ function getAILearnerContext(config = session.config) {
 async function startAITutorSession(config) {
   const activeSession = session;
   aiMode = true;
+  aiPendingFeedback = null;
   aiHistory = [];
   aiLastResult = null;
   aiCurrentExercise = null;
@@ -609,7 +610,8 @@ function saveRouteDraft() {
     languageId: session.config.languageId,
     session: JSON.parse(JSON.stringify(session)),
     integration: routeIntegration,
-    integrationAttempts: routeIntegrationAttempts
+    integrationAttempts: routeIntegrationAttempts,
+    failed: session.turn >= 10 && !routeIntegration && session.correct < 8
   };
   try { localStorage.setItem(ROUTE_STORAGE_KEY, JSON.stringify(routeDraft)); } catch {}
   $("route-resume").classList.remove("hidden");
@@ -645,6 +647,7 @@ function startRouteSession(resume = false) {
   $("summary-panel").classList.add("hidden");
   showSessionView("Ruta");
   if (routeIntegration) renderRouteIntegration();
+  else if (session.turn >= 10) renderRouteAssessmentFailed();
   else renderLesson();
 }
 function renderRouteIntegration() {
