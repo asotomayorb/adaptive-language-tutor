@@ -15,9 +15,10 @@ const GEMINI_RESPONSE_SCHEMA = {
         prompt: { type: "STRING", nullable: true },
         expectedAnswer: { type: "STRING", nullable: true },
         acceptedAnswers: { type: "ARRAY", items: { type: "STRING" } },
+        options: { type: "ARRAY", items: { type: "STRING" } },
         hint: { type: "STRING", nullable: true }
       },
-      required: ["type", "prompt", "expectedAnswer", "acceptedAnswers", "hint"]
+      required: ["type", "prompt", "expectedAnswer", "acceptedAnswers", "options", "hint"]
     },
     evaluation: {
       type: "OBJECT", nullable: true,
@@ -106,6 +107,18 @@ function enforceSessionDuration(result, input) {
     throw contractError("The tutor attempted to finish before the configured session duration.");
   }
   const expectedLocale = input?.learner?.targetLanguageLocale;
+  const turn = Number(input?.session?.turn);
+  if (input?.task === "start_lesson" && (!result.exercise || result.exercise.options.length !== 3)) {
+    throw contractError("The first tutor question must include exactly three multiple-choice options.");
+  }
+  if (input?.task === "evaluate_and_continue" && Number.isFinite(turn) && turn < 3 &&
+      (!result.exercise || result.exercise.options.length !== 3)) {
+    throw contractError("The first three tutor questions must include exactly three multiple-choice options.");
+  }
+  if (input?.task === "evaluate_and_continue" && Number.isFinite(turn) && turn >= 3 &&
+      result.exercise && result.exercise.options.length !== 0) {
+    throw contractError("Tutor questions after the first three must require written answers without options.");
+  }
   if (expectedLocale && result.speechSegments.some(segment => segment.locale !== expectedLocale)) {
     throw contractError("The tutor returned a speech segment with a locale different from the selected target language.");
   }
@@ -129,6 +142,8 @@ function validateTutorResult(result) {
       !(typeof result.exercise.expectedAnswer === "string" || result.exercise.expectedAnswer === null) ||
       !Array.isArray(result.exercise.acceptedAnswers) ||
       !result.exercise.acceptedAnswers.every(item => typeof item === "string") ||
+      !Array.isArray(result.exercise.options) ||
+      !result.exercise.options.every(item => typeof item === "string") ||
       !(typeof result.exercise.hint === "string" || result.exercise.hint === null))) {
     throw contractError("The AI provider returned an invalid exercise (exercise fields: " + Object.keys(result.exercise || {}).join(", ") + ").");
   }
