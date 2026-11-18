@@ -619,6 +619,7 @@ function saveRouteDraft() {
     session: JSON.parse(JSON.stringify(session)),
     integration: routeIntegration,
     integrationAttempts: routeIntegrationAttempts,
+    pendingFeedback,
     failed: session.turn >= 10 && !routeIntegration && session.correct < 8
   };
   try { localStorage.setItem(ROUTE_STORAGE_KEY, JSON.stringify(routeDraft)); } catch {}
@@ -633,6 +634,7 @@ function startRouteSession(resume = false) {
   }
   if (resume && routeDraft?.session && routeDraft.languageId === catalog.id) {
     session = routeDraft.session;
+    pendingFeedback = routeDraft.pendingFeedback || null;
     routeIntegration = Boolean(routeDraft.integration);
     routeIntegrationAttempts = Number(routeDraft.integrationAttempts || 0);
   } else {
@@ -642,6 +644,7 @@ function startRouteSession(resume = false) {
     });
     routeIntegration = false;
     routeIntegrationAttempts = 0;
+    pendingFeedback = null;
     saveRouteDraft();
   }
   routeMode = true;
@@ -660,9 +663,11 @@ function startRouteSession(resume = false) {
 }
 function renderRouteIntegration() {
   speech.stop();
-  const prompt = catalog.id === "en-US"
+  const prompt = catalog.id === "en"
     ? "Introduce yourself in one short message: say hello, give your name and say where you are from."
     : "Preséntate en un solo mensaje: saluda, di tu nombre y de dónde eres.";
+  const previous = pendingFeedback;
+  pendingFeedback = null;
   currentExercise = {
     id:"route-integration-fundamentals", prompt,
     target: catalog.id === "en-US" ? "Hello, my name is Ana and I am from Chile." : "Olá, meu nome é Ana e sou do Chile.",
@@ -674,7 +679,8 @@ function renderRouteIntegration() {
   $("lesson-phase").textContent = "HITO INTEGRADOR";
   $("turn-count").textContent = "Actividad final";
   $("progress-bar").style.width = "100%";
-  $("lesson-content").innerHTML = '<p class="eyebrow">UNIDAD 01 · FUNDAMENTOS</p><h3>' + escapeHTML(prompt) + '</h3><p>Combina lo practicado en los diez ejercicios anteriores.</p>';
+  $("lesson-content").innerHTML = (previous ? '<div class="feedback-note"><span>Respuesta anterior</span><p>' + escapeHTML(previous.text) + '</p><p class="model-answer">Respuesta modelo: ' + escapeHTML(previous.expected) + ' ' + speakerButton(previous.expected, catalog.locale) + '</p></div>' : '') + '<p class="eyebrow">UNIDAD 01 · FUNDAMENTOS</p><h3>' + escapeHTML(prompt) + '</h3><p>Combina lo practicado en los diez ejercicios anteriores.</p>';
+  bindSpeakerButtons($("lesson-content"));
   $("answer-area").innerHTML = '<textarea id="route-integration-answer" class="answer-input" rows="3" placeholder="Escribe tu presentación…"></textarea><button id="route-integration-submit" class="primary" type="button">Comprobar actividad</button>';
   $("route-integration-submit").addEventListener("click", () => {
     const answer = $("route-integration-answer").value.trim();
@@ -694,6 +700,7 @@ function renderRouteIntegration() {
   });
 }
 function renderRouteAssessmentFailed() {
+  pendingFeedback = null;
   saveRouteDraft();
   $("lesson-phase").textContent = "REFUERZO NECESARIO";
   $("turn-count").textContent = session.correct + " / 10 correctas";
@@ -704,6 +711,7 @@ function renderRouteAssessmentFailed() {
     session = createSession({ ...session.config, duration:10, questionCount:10 });
     routeIntegration = false;
     routeIntegrationAttempts = 0;
+    pendingFeedback = null;
     saveRouteDraft();
     renderLesson();
   });
