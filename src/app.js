@@ -452,8 +452,10 @@ function renderAITutorTurn(result) {
   aiHintPending = false;
   $("hint-btn").disabled = false;
   $("hint-btn").textContent = "Pista";
-  $("lesson-phase").textContent = "TUTOR IA · CONVERSACIÓN";
-  $("turn-count").textContent = "Pregunta " + Math.min(session.turn + 1, session.config.duration) + " / " + session.config.duration;
+  $("lesson-phase").textContent = routeMode && routeIntegration ? "HITO INTEGRADOR" : "TUTOR IA · CONVERSACIÓN";
+  $("turn-count").textContent = routeMode && routeIntegration
+    ? "Actividad integradora"
+    : "Pregunta " + Math.min(session.turn + 1, session.config.duration) + " / " + session.config.duration;
   $("progress-bar").style.width = (session.turn / session.config.duration * 100) + "%";
   $("streak").textContent = session.streak;
   $("word-count").textContent = session.vocabulary.length;
