@@ -342,3 +342,13 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] CI del código `24503f8`: Tests run `44270792647` y Browser E2E run `44270792661`, aprobados. El HEAD documental `b4fc1de` también pasó Tests run `44270925154` y Browser E2E run `44270924865`.
 
 **Motivo:** antes, la voz de la actividad anterior podía continuar durante la espera de una pista o evaluación; ahora la cancelación sucede en la interacción del usuario, no al renderizar la respuesta siguiente.
+
+## Límite de tamaño para respuestas IA — 18-11-2026
+
+**Commits:** validación `f5c3fe8680d0291b72688c73bdc84fa02ca44b55`; prueba `b713d0446dcbf36a79a50f6aa68d4830b2bc9587`.
+
+- [x] El backend rechaza respuestas estructuradas del proveedor superiores a 16 KiB antes de devolverlas al navegador.
+- [x] Prueba de regresión cubre una respuesta JSON sobredimensionada.
+- [ ] Confirmar CI del commit de prueba y del HEAD documental.
+
+**Motivo:** limitar el tamaño de contenido generado por el proveedor evita respuestas anormalmente grandes que puedan degradar la interfaz y ampliar innecesariamente el historial enviado en turnos posteriores.
