@@ -67,7 +67,7 @@ export function persistSession(progress, session, summary, now = Date.now()) {
       languageId, prompt: error.prompt, expected: error.expected,
       explanation: error.explanation || "", skill: error.skill || "",
       intervalIndex: 0, repetitions: 0, lastReviewedAt: null,
-      dueAt: new Date(now + 24 * 60 * 60 * 1000).toISOString()
+      dueAt: new Date(now).toISOString()
     };
     if (existing) {
       Object.assign(existing, card);
