@@ -7,7 +7,25 @@ import { escapeHTML } from "./core/html.js";
 import { createSpeechController } from "./core/speech.js";
 
 const $ = id => document.getElementById(id);
-const catalogs = { "Portugués brasileño": ptBR, "Inglés": english };
+const languageDefinitions = {
+  "Portugués brasileño": { id:"pt-BR", label:"Portugués", locale:"pt-BR", flag:"🇧🇷", catalog:ptBR },
+  "Inglés": { id:"en-US", label:"Inglés", locale:"en-US", flag:"🇺🇸", catalog:english },
+  "Italiano": { id:"it-IT", label:"Italiano", locale:"it-IT", flag:"🇮🇹" },
+  "Alemán": { id:"de-DE", label:"Alemán", locale:"de-DE", flag:"🇩🇪" },
+  "Ruso": { id:"ru-RU", label:"Ruso", locale:"ru-RU", flag:"🇷🇺" },
+  "Francés": { id:"fr-FR", label:"Francés", locale:"fr-FR", flag:"🇫🇷" },
+  "Español": { id:"es-ES", label:"Español", locale:"es-ES", flag:"🇪🇸" },
+  "Japonés": { id:"ja-JP", label:"Japonés", locale:"ja-JP", flag:"🇯🇵" },
+  "Chino mandarín": { id:"zh-CN", label:"Chino mandarín", locale:"zh-CN", flag:"🇨🇳" },
+  "Coreano": { id:"ko-KR", label:"Coreano", locale:"ko-KR", flag:"🇰🇷" },
+  "Neerlandés": { id:"nl-NL", label:"Neerlandés", locale:"nl-NL", flag:"🇳🇱" },
+  "Árabe": { id:"ar-SA", label:"Árabe", locale:"ar-SA", flag:"🇸🇦" },
+  "Hindi": { id:"hi-IN", label:"Hindi", locale:"hi-IN", flag:"🇮🇳" },
+  "Turco": { id:"tr-TR", label:"Turco", locale:"tr-TR", flag:"🇹🇷" },
+  "Griego": { id:"el-GR", label:"Griego", locale:"el-GR", flag:"🇬🇷" },
+  "Polaco": { id:"pl-PL", label:"Polaco", locale:"pl-PL", flag:"🇵🇱" }
+};
+const catalogs = Object.fromEntries(Object.entries(languageDefinitions).map(([name,definition]) => [name, definition.catalog || { id:definition.id, label:definition.label, locale:definition.locale, exercises:[] }]));
 const speech = createSpeechController({ onStatus: updateAudioStatus });
 function updateAudioStatus(status) {
   const toggles = [document.getElementById("audio-toggle"), document.getElementById("session-audio-toggle")].filter(Boolean);
@@ -76,30 +94,10 @@ function autoSpeak(text, locale = catalog?.locale) {
 }
 const topicLabels = { daily:"vida cotidiana", travel:"viajes", food:"comida y restaurantes", work:"trabajo y estudios", random:"tema sorpresa" };
 function getSelectedCatalog() {
-  const selected = $("language").value;
-  if (selected !== "other") return catalogs[selected] || null;
-  const label = $("custom-language-name").value.trim();
-  const locale = $("custom-language-locale").value.trim();
-  if (!label || !/^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/i.test(locale)) return null;
-  return { id: locale, label, locale, exercises: [] };
-}
-function updateCustomLanguageFields() {
-  const custom = $("language").value === "other";
-  $("custom-language-fields").classList.toggle("hidden", !custom);
-  $("language-apply").classList.toggle("hidden", !custom);
-  $("custom-language-name").required = custom;
-  $("custom-language-locale").required = custom;
-}
-function languageFlag(language, locale = "") {
-  const region = String(locale).split("-").pop()?.toUpperCase();
-  const regionalFlags = { BR:"🇧🇷", US:"🇺🇸", GB:"🇬🇧", AU:"🇦🇺", CA:"🇨🇦", IE:"🇮🇪", FR:"🇫🇷", DE:"🇩🇪", ES:"🇪🇸", IT:"🇮🇹", JP:"🇯🇵", CN:"🇨🇳", KR:"🇰🇷", MX:"🇲🇽", PT:"🇵🇹", NL:"🇳🇱", RU:"🇷🇺", IN:"🇮🇳" };
-  return ({ "Portugués brasileño":"🇧🇷", "Inglés":"🇺🇸" })[language] || regionalFlags[region] || "🌐";
+  return catalogs[$("language").value] || null;
 }
 function updateLanguageFlag() {
-  const selected = $("language").value;
-  $("selected-language-flag").textContent = selected === "other"
-    ? languageFlag($("custom-language-name").value.trim(), $("custom-language-locale").value.trim())
-    : languageFlag(selected);
+  $("selected-language-flag").textContent = languageDefinitions[$("language").value]?.flag || "🌐";
 }
 let session = null;
 let catalog = null;
@@ -150,11 +148,9 @@ function refreshDashboard() {
   }
 }
 $("language").addEventListener("change", () => {
-  updateCustomLanguageFields();
+  updateLanguageFlag();
   refreshDashboard();
 });
-$("custom-language-name").addEventListener("input", refreshDashboard);
-$("custom-language-locale").addEventListener("input", () => { updateLanguageFlag(); refreshDashboard(); });
 try {
   const savedSettings = JSON.parse(localStorage.getItem("adaptive-language-tutor.settings") || "{}");
   if (savedSettings.selectedLanguage) {
@@ -166,10 +162,8 @@ try {
   if (savedSettings.duration) $("duration").value = String(savedSettings.duration);
   if (savedSettings.level) $("level").value = savedSettings.level;
   if (savedSettings.topic) $("topic").value = savedSettings.topic;
-  if (savedSettings.customLanguageName) $("custom-language-name").value = savedSettings.customLanguageName;
-  if (savedSettings.customLanguageLocale) $("custom-language-locale").value = savedSettings.customLanguageLocale;
+
 } catch { /* Ignore malformed optional settings; progress storage remains independent. */ }
-updateCustomLanguageFields();
 updateLanguageFlag();
 refreshDashboard();
 checkTutorHealth().then(status => {
@@ -187,7 +181,7 @@ checkTutorHealth().then(status => {
 function startSpacedReview() {
   speech.stop();
   catalog = getSelectedCatalog();
-  if (!catalog) { $("ai-status").textContent = "Indica el nombre del idioma y un locale válido (por ejemplo, fr-FR)."; return; }
+  if (!catalog) { $("ai-status").textContent = "Selecciona un idioma del mosaico."; return; }
   dueReviewCards = getDueCards(progress, Date.now(), catalog.id).filter(card => card.cardType !== "pattern");
   reviewProgressDraft = JSON.parse(JSON.stringify(progress));
   reviewIndex = 0;
@@ -265,7 +259,7 @@ $("setup-form").addEventListener("submit", event => {
   if (!aiReady) return;
   catalog = getSelectedCatalog();
   if (!catalog) {
-    $("ai-status").textContent = "Indica el nombre del idioma y un locale válido (por ejemplo, fr-FR).";
+    $("ai-status").textContent = "Selecciona un idioma del mosaico.";
     return;
   }
   if (!catalog.exercises.length && !aiConfigured) {
@@ -777,20 +771,7 @@ $("confirm-session-close").addEventListener("click", () => {
   $("session-confirm").close();
   closeSessionAndReturn();
 });
-$("language-apply").addEventListener("click", () => {
-  const selected = getSelectedCatalog();
-  if (!selected) {
-    $("audio-status").textContent = "Completa el nombre y locale del idioma.";
-    return;
-  }
-  try { persistSettings(); } catch {}
-  $("selected-language-flag").textContent = languageFlag(selected.label, selected.locale || selected.id);
-  $("language-picker").close();
-  $("welcome-screen").classList.add("hidden");
-  $("app-shell").classList.remove("hidden");
-  showScreen("route");
-  refreshDashboard();
-});
+
 document.querySelectorAll("[data-theory]").forEach(button => button.addEventListener("click", () => {
   const language = getSelectedCatalog()?.id || "pt-BR";
   const content = {
@@ -829,23 +810,20 @@ function persistSettings() {
     duration: $("duration").value,
     level: $("level").value,
     topic: $("topic").value,
-    customLanguageName: $("custom-language-name").value.trim(),
-    customLanguageLocale: $("custom-language-locale").value.trim()
   };
   localStorage.setItem("adaptive-language-tutor.settings", JSON.stringify(savedSettings));
 }
 $("welcome-start").addEventListener("click", () => {
+  $("welcome-screen").classList.add("hidden");
   if ($("language").value && localStorage.getItem("adaptive-language-tutor.settings")) {
-    $("welcome-screen").classList.add("hidden");
     $("app-shell").classList.remove("hidden");
     showScreen("route");
   } else {
+    $("app-shell").classList.add("hidden");
     $("language-picker").showModal();
   }
 });
 $("open-language-picker").addEventListener("click", () => {
-  $("custom-language-fields").classList.add("hidden");
-  $("language-apply").classList.add("hidden");
   $("language-picker").showModal();
 });
 $("language-cancel").addEventListener("click", () => {
@@ -857,13 +835,6 @@ $("language-cancel").addEventListener("click", () => {
 });
 document.querySelectorAll("[data-language]").forEach(button => button.addEventListener("click", () => {
   $("language").value = button.dataset.language;
-  updateCustomLanguageFields();
-  if (button.dataset.language === "other") {
-    $("custom-language-name").focus();
-    return;
-  }
-  $("custom-language-name").value = "";
-  $("custom-language-locale").value = "";
   try { persistSettings(); } catch {}
   updateLanguageFlag();
   $("language-picker").close();
@@ -872,5 +843,4 @@ document.querySelectorAll("[data-language]").forEach(button => button.addEventLi
   showScreen("route");
   refreshDashboard();
 }));
-$("custom-language-name").addEventListener("input", updateLanguageFlag);
 
