@@ -199,3 +199,28 @@ test("tutor endpoint bounds concurrent provider requests", async () => {
     assert.equal((await second).status, 200);
   });
 });
+
+
+test("preview password protects app and tutor endpoint while health stays available", async () => {
+  const previous = process.env.PREVIEW_PASSWORD;
+  process.env.PREVIEW_PASSWORD = "test-preview-secret";
+  try {
+    await withServer({ configured: false, provider: null }, async base => {
+      const health = await fetch(base + "/api/health");
+      assert.equal(health.status, 200);
+
+      const blocked = await fetch(base + "/");
+      assert.equal(blocked.status, 401);
+      assert.match(blocked.headers.get("www-authenticate") || "", /Basic realm/);
+
+      const authorized = await fetch(base + "/", {
+        headers: { authorization: "Basic " + Buffer.from("tester:test-preview-secret").toString("base64") }
+      });
+      assert.equal(authorized.status, 200);
+      assert.match(await authorized.text(), /Adaptive Language Tutor/);
+    });
+  } finally {
+    if (previous === undefined) delete process.env.PREVIEW_PASSWORD;
+    else process.env.PREVIEW_PASSWORD = previous;
+  }
+});
