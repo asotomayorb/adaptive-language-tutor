@@ -767,6 +767,7 @@ function startRouteSession(resume = false) {
     session.turn = completedTurn;
     showAnswerFeedback({
       correct: localPendingAnswer.correct, expected: localPendingAnswer.expected,
+      expectedLocale: localPendingAnswer.expectedLocale,
       explanation: localPendingAnswer.correct ? "" : localPendingAnswer.explanation,
       selected: localPendingAnswer.selected, options: localPendingAnswer.options || [],
       correctOption: localPendingAnswer.expected
@@ -896,7 +897,7 @@ function renderLesson() {
   autoSpeak(questionSpeech.text, questionSpeech.locale);
   if (session.turn < 3) {
     const options = currentExercise.options || [];
-    $("answer-area").innerHTML = options.map((option,index) => '<div class="answer-option-row"><button class="answer-option" data-choice="' + index + '">' + escapeHTML(option) + '</button>' + speakerButton(option, catalog.locale) + '</div>').join("");
+    $("answer-area").innerHTML = options.map((option,index) => '<div class="answer-option-row"><button class="answer-option" data-choice="' + index + '">' + escapeHTML(option) + '</button>' + speakerButton(option, currentExercise.optionsLocale || (currentExercise.speechMode === "listening" ? "es-CL" : catalog.locale)) + '</div>').join("");
     $("answer-area").querySelectorAll("[data-choice]").forEach(button => button.addEventListener("click", () => submitAnswer(options[Number(button.dataset.choice)])));
     bindSpeakerButtons($("answer-area"));
   } else {
@@ -914,12 +915,14 @@ function submitAnswer(answer) {
   const result = recordAnswer(session, currentExercise, answer);
   localPendingAnswer = {
     correct: result.correct, expected: currentExercise.target,
+    expectedLocale: currentExercise.answerLocale || (currentExercise.speechMode === "listening" ? "es-CL" : catalog.locale),
     explanation: currentExercise.explanation || "", selected: String(answer || ""),
     exercise: currentExercise, options: currentExercise.options || []
   };
   updateStats();
   showAnswerFeedback({
     correct: result.correct, expected: currentExercise.target,
+    expectedLocale: currentExercise.answerLocale || (currentExercise.speechMode === "listening" ? "es-CL" : catalog.locale),
     explanation: result.correct ? "" : currentExercise.explanation,
     selected: String(answer || ""), options: currentExercise.options || [],
     correctOption: currentExercise.target
@@ -932,8 +935,8 @@ function updateStats() {
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
 }
-function showAnswerFeedback({ correct, expected, explanation, selected, options = [], correctOption }) {
-  const expectedText = expected ? '<p class="answer-correct-text">Respuesta correcta: ' + renderVariantTerms(expected) + ' ' + speakerButton(expected, session?.config.languageLocale || catalog?.locale) + '</p>' : "";
+function showAnswerFeedback({ correct, expected, expectedLocale, explanation, selected, options = [], correctOption }) {
+  const expectedText = expected ? '<p class="answer-correct-text">Respuesta correcta: ' + renderVariantTerms(expected) + ' ' + speakerButton(expected, expectedLocale || session?.config.languageLocale || catalog?.locale) + '</p>' : "";
   const explanationText = !correct && explanation ? '<p class="answer-explanation">' + renderVariantTerms(explanation) + '</p>' : "";
   $("feedback").innerHTML = (correct ? '<p class="answer-status correct">Correcto</p>' : '<p class="answer-status incorrect">Incorrecto</p>') + expectedText + explanationText;
   $("feedback").classList.remove("hidden","bad");
