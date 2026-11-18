@@ -34,6 +34,8 @@
       <div class="route-step"><span class="step-dot current">›</span><span>Frases cotidianas</span></div>
       <div class="route-step muted-step"><span class="step-dot">3</span><span>Preguntas básicas</span></div>
       <div class="route-step muted-step"><span class="step-dot">4</span><span>Primera conversación</span></div>
+      <button id="route-start" class="primary route-start" type="button">Comenzar unidad</button>
+      <button id="route-resume" class="secondary route-start hidden" type="button">Continuar recorrido</button>
     </section>
   </section>
 
@@ -57,7 +59,7 @@
 
   <section id="screen-theory" class="app-screen hidden">
     <div class="screen-heading"><h1>Teoría</h1></div>
-    <div class="theory-grid">
+    <div id="theory-grid" class="theory-grid">
       <button class="theory-card" type="button" data-theory="grammar"><span>文</span><strong>Gramática</strong></button>
       <button class="theory-card" type="button" data-theory="vocabulary"><span>Aa</span><strong>Vocabulario</strong></button>
       <button class="theory-card" type="button" data-theory="expressions"><span>“ ”</span><strong>Expresiones</strong></button>
@@ -132,6 +134,8 @@
   </select>
   <button id="language-cancel" class="text-button language-cancel" type="button">Cancelar</button>
 </dialog>
+
+<dialog id="variant-dialog" class="confirm-dialog"><h2 id="variant-word"></h2><p id="variant-description"></p><div class="dialog-actions"><button id="variant-close" class="primary" type="button">Cerrar</button></div></dialog>
 
 <dialog id="session-confirm" class="confirm-dialog">
   <h2>¿Finalizar sesión?</h2>
