@@ -352,3 +352,15 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] CI del commit de prueba `b713d04`: Tests run `44271230670` y Browser E2E run `44271230710`, aprobados. El HEAD documental `90297c8` tiene Tests run `44271256424` aprobado; Browser E2E run `44271256523` sigue en ejecución.
 
 **Motivo:** limitar el tamaño de contenido generado por el proveedor evita respuestas anormalmente grandes que puedan degradar la interfaz y ampliar innecesariamente el historial enviado en turnos posteriores.
+
+## Pronunciación de fragmentos en pistas y explicaciones locales — 18-11-2026
+
+**Commits:** catálogo pt-BR `a5b98ff8ec37adf76b005470ddb0abd5c19775b7`; catálogo inglés `396331fad5fb02fd85510a183d727ef66a329bd3`; lógica `7be892007250a854b9612d3a3f9f8d54d9111746`; prueba E2E `526ade6a461eecaf5686081a81c4e94625eade58`; plan humano `3e819dcd7595c0a6d496a27d7d6e20523da2bd36`.
+
+- [x] Los catálogos locales pt-BR e inglés anotan explícitamente los fragmentos objetivos que aparecen en sus pistas y explicaciones.
+- [x] El tutor reproduce esos fragmentos y añade controles de reproducción manual, sin leer en voz alta la explicación completa en español.
+- [x] La misma lógica se aplica al feedback de respuestas y al repaso espaciado; se conserva el locale de cada idioma.
+- [x] Browser E2E añadido para verificar el fragmento `dia` en una pista y `Bom dia` en una explicación pt-BR.
+- [ ] Confirmar CI del cambio de código y del HEAD documental.
+
+**Alcance:** los catálogos locales iniciales son pt-BR e inglés. El contenido de idiomas personalizados depende de los `speechSegments` proporcionados por el tutor IA y validados por el backend.
