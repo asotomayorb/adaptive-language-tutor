@@ -474,7 +474,7 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] Feedback local e IA permanece al final de la pregunta actual. No hay avance automático; botón Continuar.
 - [x] Alternativas colorean respuesta correcta en verde y opción incorrecta seleccionada en rojo; explicación adicional solo cuando hay error.
 - [x] Se ocultan los bloques de texto Pronunciación/Vocabulario; se mantienen los controles de audio y lectura completa de la pregunta. Los ejemplos de escucha en portugués/inglés pronuncian la frase completa y piden su traducción al español; los ejercicios con hueco pronuncian la frase dejando pausa.
-- [x] Teoría de pronombres en tabla bilingüe con audio por fila y contenido de ser/estar aplicado a los 23 idiomas estándar.
+- [x] Teoría de pronombres en tabla bilingüe con audio por fila y contenido aplicado de artículos, ser/estar y tiempos presente/pasado/futuro para los 23 idiomas estándar.
 - [x] Navegación entre secciones reinicia la vista en el inicio de cada sección.
 - [x] Ruta guarda y restaura el feedback pendiente de la pregunta actual.
 - [ ] Ejecutar CI E2E de esta revisión y validar el flujo en Android real.
