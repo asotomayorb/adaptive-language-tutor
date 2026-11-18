@@ -126,6 +126,18 @@ function appendCatalogSpeech(root, exercise, field, includeTarget = false) {
   appendSpeechButtons(root, segments);
   speech.speakSequence(segments, { automatic: true });
 }
+function getExerciseSpeech(exercise) {
+  if (exercise?.speechText && typeof exercise.speechText === "string") {
+    return { text: exercise.speechText, locale: exercise.speechLocale || catalog?.locale || "und" };
+  }
+  const prompt = String(exercise?.prompt || "");
+  const afterInstruction = prompt.includes(":") ? prompt.slice(prompt.indexOf(":") + 1) : prompt;
+  const sentence = afterInstruction.replace(/\\([^)]*\\)/g, "").trim();
+  if (/_{2,}/.test(sentence)) {
+    return { text: sentence.replace(/_{2,}/g, "…").replace(/[“”]/g, "").trim(), locale: catalog?.locale || "und" };
+  }
+  return { text: prompt, locale: "es-CL" };
+}
 function autoSpeak(text, locale = catalog?.locale) {
   if (text && speech.enabled) speech.speak(text, locale, { automatic: true });
 }
@@ -876,8 +888,9 @@ function renderLesson() {
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
   pendingFeedback = null;
+  const questionSpeech = getExerciseSpeech(currentExercise);
   $("lesson-content").innerHTML = '<p class="eyebrow">TEMA: ' + escapeHTML(topicLabels[session.config.topic].toUpperCase()) + ' · NIVEL ' + escapeHTML(levelLabel(session.config.level).toUpperCase()) + '</p><h3>' + renderVariantTerms(currentExercise.prompt) + '</h3>' +
-    speakerButton(currentExercise.target || currentExercise.prompt, catalog.locale);
+    speakerButton(questionSpeech.text, questionSpeech.locale);
   bindVariantLinks($("lesson-content"));
   bindSpeakerButtons($("lesson-content"));
   speech.stop();
@@ -886,7 +899,7 @@ function renderLesson() {
     $("answer-area").innerHTML = options.map((option,index) => '<div class="answer-option-row"><button class="answer-option" data-choice="' + index + '">' + escapeHTML(option) + '</button>' + speakerButton(option, catalog.locale) + '</div>').join("");
     $("answer-area").querySelectorAll("[data-choice]").forEach(button => button.addEventListener("click", () => submitAnswer(options[Number(button.dataset.choice)])));
     bindSpeakerButtons($("answer-area"));
-    autoSpeak(currentExercise.target || currentExercise.prompt, catalog.locale);
+    autoSpeak(questionSpeech.text, questionSpeech.locale);
   } else {
     $("answer-area").innerHTML = '<input id="free-answer" class="answer-input" placeholder="Escribe tu respuesta…" autocomplete="off"><button id="submit-free" class="primary" type="button">Enviar respuesta →</button>';
     $("submit-free").addEventListener("click", () => submitAnswer($("free-answer").value));
@@ -934,7 +947,7 @@ function showAnswerFeedback({ correct, expected, explanation, selected, options 
     button.disabled = true;
   });
   $("answer-area").querySelectorAll("input").forEach(input => { input.disabled = true; });
-  $("answer-area").querySelectorAll("button:not([data-choice]):not([data-ai-choice])").forEach(button => { button.disabled = true; });
+  $("answer-area").querySelectorAll("button:not([data-choice]):not([data-ai-choice]):not([data-speak])").forEach(button => { button.disabled = true; });
   $("answer-area").insertAdjacentHTML("beforeend", '<button id="continue-answer" class="primary answer-continue" type="button">Continuar →</button>');
   bindSpeakerButtons($("feedback"));
   $("continue-answer").addEventListener("click", continueAfterAnswer);
