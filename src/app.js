@@ -1284,6 +1284,102 @@ const verbLessons = {
     tables:[["SER · presente","Persona","Forma"],["yo","soy"],["tú","eres"],["él / ella / usted","es"],["nosotros","somos"],["vosotros","sois"],["ellos / ustedes","son"],["ESTAR · presente","Persona","Forma"],["yo","estoy"],["tú","estás"],["él / ella / usted","está"],["nosotros","estamos"],["vosotros","estáis"],["ellos / ustedes","están"]],
     example:"Soy de Chile (origen). / Estoy cansado (estado). / Estamos en casa (ubicación).",
     rule:"SER: identidad, origen, profesión y características. ESTAR: ubicación, estado y resultado. Excepción importante: ser listo = inteligente; estar listo = preparado."
+  },
+  "Neerlandés":{
+    lead:"Zijn expresa identidad, estado y ubicación. La forma verbal cambia con la persona y jij tiene una forma especial en preguntas.",
+    tables:[["ZIJN · presente","Persona","Forma"],["ik","ben"],["jij / je","bent (pregunta: ben jij?)"],["hij / zij / het","is"],["wij / jullie / zij","zijn"]],
+    example:"Ik ben student. / Zij is moe. / We zijn thuis.",
+    rule:"El verbo es irregular. En una pregunta con jij, la -t desaparece cuando el verbo va delante: Ben jij klaar?"
+  },
+  "Japonés":{
+    lead:"です (desu) funciona como cópula para identificar o describir; います/あります expresan existencia o ubicación. No cambia según la persona.",
+    tables:[["CÓPULA · forma cortés","Uso","Forma"],["presente afirmativo","です (desu)"],["presente negativo","ではありません / じゃありません"],["pasado afirmativo","でした"],["pasado negativo","ではありませんでした"]],
+    example:"私は学生です (Soy estudiante). / 私は家にいます (Estoy en casa).",
+    rule:"El sujeto suele omitirse si se entiende. Para personas y animales se usa います; para objetos y plantas, あります. El orden habitual sitúa el verbo al final."
+  },
+  "Chino mandarín":{
+    lead:"是 (shì) une sujeto e identidad; 在 (zài) indica ubicación. Los verbos no se conjugan por persona ni número.",
+    tables:[["SER / IDENTIDAD","Uso","Forma"],["identidad","我是学生 (wǒ shì xuésheng)"],["ESTAR / UBICACIÓN","Uso","Forma"],["ubicación","我在家 (wǒ zài jiā)"],["estado / existencia","我很好 (wǒ hěn hǎo)"]],
+    example:"我是智利人 (Soy chileno/a). / 我在家 (Estoy en casa).",
+    rule:"No uses 是 delante de adjetivos simples: 很好 significa estar bien. Para ubicación utiliza 在. El verbo no cambia según yo/tú/él."
+  },
+  "Coreano":{
+    lead:"이다 (ida) es la cópula de identidad; 있다 (itda) expresa existencia, posesión o ubicación. Las terminaciones cambian según cortesía y tiempo.",
+    tables:[["IDENTIDAD · estilo cortés","Uso","Forma"],["después de consonante","이에요"],["después de vocal","예요"],["forma formal","입니다"],["ESTAR / EXISTIR","Uso","Forma"],["presente cortés","있어요"],["pasado cortés","있었어요"],["negación","없어요 (no hay / no tener)"]],
+    example:"저는 학생이에요 (Soy estudiante). / 집에 있어요 (Estoy en casa).",
+    rule:"La cópula se une al sustantivo: 학생이에요, 의사예요. Para ubicación se usa el marcador 에 + 있어요. La cortesía es esencial."
+  },
+  "Árabe":{
+    lead:"En presente, las oraciones nominales suelen omitir el verbo ser/estar. كان (kāna) expresa ser/estar en pasado y cambia según género y número.",
+    tables:[["PRESENTE","Ejemplo","Significado"],["أنا طالب","anā ṭālib","Soy estudiante"],["هي في البيت","hiya fī al-bayt","Ella está en casa"],["PASADO · كان","Persona","Forma"],["هو","كان (kāna)"],["هي","كانت (kānat)"],["هم","كانوا (kānū)"]],
+    example:"أنا من تشيلي (Soy de Chile). / أنا في البيت (Estoy en casa). / كنت في البيت (Estuve en casa).",
+    rule:"No añadas كان en una oración nominal presente simple. El adjetivo y el sustantivo pueden concordar en género y número; el árabe tiene diferencias dialectales."
+  },
+  "Hindi":{
+    lead:"होना (honā) significa ser/estar. En presente, हूँ / हो / है / हैं cambian con la persona, el número y el nivel de respeto; algunas formas también concuerdan con género.",
+    tables:[["होना · presente","Persona","Forma"],["मैं","हूँ (hū̃)"],["तुम","हो (ho)"],["वह","है (hai)"],["हम","हैं (haĩ)"],["आप / वे","हैं (haĩ)"]],
+    example:"मैं चिली से हूँ (Soy de Chile). / वह घर पर है (Él/ella está en casa).",
+    rule:"आप utiliza la forma respetuosa हैं. En construcciones de pasado y participio, el género del sujeto puede cambiar la forma verbal."
+  },
+  "Turco":{
+    lead:"Turco expresa identidad con sufijos de cópula añadidos al sustantivo o adjetivo. La terminación cambia por persona y armonía vocálica; el pronombre puede omitirse.",
+    tables:[["CÓPULA · presente","Persona","Ejemplo"],["ben","öğretmenim"],["sen","öğretmensin"],["o","öğretmen"],["biz","öğretmeniz"],["siz","öğretmensiniz"],["onlar","öğretmen(ler)"]],
+    example:"Ben Şililiyim (Soy chileno/a). / Evdeyim (Estoy en casa).",
+    rule:"El sufijo depende de la última vocal (armonía vocálica). En tercera persona singular puede no aparecer un sufijo audible. La ubicación suele marcarse con -de/-da."
+  },
+  "Griego":{
+    lead:"Είμαι (eímai) cubre ser y estar. Es irregular y conserva una forma propia para cada persona.",
+    tables:[["ΕΙΜΑΙ · presente","Persona","Forma"],["εγώ","είμαι"],["εσύ","είσαι"],["αυτός / αυτή","είναι"],["εμείς","είμαστε"],["εσείς","είστε"],["αυτοί / αυτές","είναι"]],
+    example:"Είμαι από τη Χιλή (Soy de Chile). / Είμαι κουρασμένος (Estoy cansado). / Είμαστε στο σπίτι (Estamos en casa).",
+    rule:"El adjetivo concuerda en género y número. La ubicación se expresa con una preposición y el caso correspondiente."
+  },
+  "Polaco":{
+    lead:"Być significa ser/estar y es irregular. El verbo cambia según la persona; en pasado también concuerda en género.",
+    tables:[["BYĆ · presente","Persona","Forma"],["ja","jestem"],["ty","jesteś"],["on / ona / ono","jest"],["my","jesteśmy"],["wy","jesteście"],["oni / one","są"]],
+    example:"Jestem z Chile (Soy de Chile). / Jestem w domu (Estoy en casa).",
+    rule:"En pasado se distingue género: byłem (masculino), byłam (femenino). El presente de być es obligatorio en estas oraciones."
+  },
+  "Sueco":{
+    lead:"Vara cubre ser y estar. En presente, la forma är es la misma para todas las personas.",
+    tables:[["VARA · presente","Persona","Forma"],["jag","är"],["du","är"],["han / hon / den / det","är"],["vi / ni / de","är"]],
+    example:"Jag är från Chile (Soy de Chile). / Jag är trött (Estoy cansado/a). / Vi är hemma (Estamos en casa).",
+    rule:"La forma no cambia con la persona. Para el pasado se usa var; para el supino/participio, varit."
+  },
+  "Noruego":{
+    lead:"Være expresa ser/estar y utiliza er para todas las personas en presente.",
+    tables:[["VÆRE · presente","Persona","Forma"],["jeg","er"],["du","er"],["han / hun / det","er"],["vi / dere / de","er"]],
+    example:"Jeg er fra Chile (Soy de Chile). / Jeg er trøtt (Estoy cansado/a). / Vi er hjemme (Estamos en casa).",
+    rule:"La forma presente no cambia por persona. El pasado es var y el participio ha sido/estado se forma con vært."
+  },
+  "Danés":{
+    lead:"Være cubre ser y estar; en presente la forma er se utiliza con todas las personas.",
+    tables:[["VÆRE · presente","Persona","Forma"],["jeg","er"],["du","er"],["han / hun / det","er"],["vi / I / de","er"]],
+    example:"Jeg er fra Chile (Soy de Chile). / Jeg er træt (Estoy cansado/a). / Vi er hjemme (Estamos en casa).",
+    rule:"El presente no cambia según la persona. El pasado es var y el participio es været."
+  },
+  "Hebreo":{
+    lead:"En presente, el hebreo suele usar oraciones nominales sin verbo ser/estar. היה (hayá) aparece en pasado y cambia según género y número.",
+    tables:[["PRESENTE","Ejemplo","Significado"],["אני סטודנט","ani student","Soy estudiante (masculino)"],["אני בבית","ani babáyit","Estoy en casa"],["PASADO · היה","Persona","Forma"],["él","היה (hayá)"],["ella","הייתה (haytá)"],["ellos","היו (hayú)"]],
+    example:"אני מצ׳ילה (Soy de Chile). / היא בבית (Ella está en casa).",
+    rule:"El verbo presente se omite normalmente. En pasado, la forma concuerda con género y número; el futuro utiliza יהיה y sus variantes."
+  },
+  "Vietnamita":{
+    lead:"Là introduce identidad o profesión; ở expresa ubicación. Los verbos no se conjugan por persona y el contexto marca el tiempo.",
+    tables:[["IDENTIDAD / UBICACIÓN","Uso","Forma"],["identidad","là"],["ubicación","ở"],["pasado","đã + verbo"],["futuro","sẽ + verbo"]],
+    example:"Tôi là sinh viên (Soy estudiante). / Tôi ở nhà (Estoy en casa).",
+    rule:"No cambies el verbo según yo/tú/él. Para marcar pasado o futuro se añaden partículas como đã o sẽ."
+  },
+  "Indonesio":{
+    lead:"Indonesio suele omitir la cópula en frases nominales; adalah da énfasis o define, y berada indica ubicación. No hay conjugación por persona.",
+    tables:[["IDENTIDAD / UBICACIÓN","Uso","Forma"],["definición","adalah"],["ubicación","berada"],["pasado","sudah + verbo"],["futuro","akan + verbo"]],
+    example:"Saya mahasiswa (Soy estudiante). / Saya berada di rumah (Estoy en casa).",
+    rule:"En conversación, la cópula suele omitirse. El tiempo se expresa mediante palabras como sudah (ya) y akan (futuro), no mediante terminaciones verbales."
+  },
+  "Tailandés":{
+    lead:"เป็น (pen) expresa identidad o profesión; อยู่ (yùu) indica ubicación o permanencia. Los verbos no se conjugan por persona.",
+    tables:[["IDENTIDAD / UBICACIÓN","Uso","Forma"],["identidad / profesión","เป็น (pen)"],["ubicación / permanencia","อยู่ (yùu)"],["pasado","เคย / แล้ว según contexto"],["futuro","จะ (jà) + verbo"]],
+    example:"ฉันเป็นนักเรียน (Soy estudiante). / ฉันอยู่ที่บ้าน (Estoy en casa).",
+    rule:"No existe flexión verbal por persona. La cortesía se expresa con partículas como ครับ / ค่ะ y el tiempo mediante marcadores."
   }
 };
 function renderPronounTable(sample, languageName, locale) {
