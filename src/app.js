@@ -761,10 +761,7 @@ function startRouteSession(resume = false) {
       correctOption: aiPendingTurn.exercise?.expectedAnswer || ""
     });
   } else if (localPendingAnswer) {
-    const completedTurn = session.turn;
-    session.turn = Math.max(0, completedTurn - 1);
-    renderLesson();
-    session.turn = completedTurn;
+    renderLesson({ exercise: localPendingAnswer.exercise, answered: true });
     showAnswerFeedback({
       correct: localPendingAnswer.correct, expected: localPendingAnswer.expected,
       expectedLocale: localPendingAnswer.expectedLocale,
@@ -876,14 +873,15 @@ function levelLabel(level) {
   return ({zero:"principiante",basic:"intermedio",intermediate:"intermedio",advanced:"avanzado"})[level] || "intermedio";
 }
 
-function renderLesson() {
-  if (session.turn >= session.config.duration) { finishSession(); return; }
+function renderLesson({ exercise: exerciseOverride = null, answered = false } = {}) {
+  if (session.turn >= session.config.duration && !answered) { finishSession(); return; }
   reviewMode = false;
-  currentExercise = chooseExercise();
+  const questionIndex = answered ? Math.max(0, session.turn - 1) : session.turn;
+  currentExercise = exerciseOverride || chooseExercise();
   const adaptation = getAdaptation(session);
   $("lesson-phase").textContent = "CONVERSACIÓN GUIADA";
-  $("turn-count").textContent = "Pregunta " + (session.turn + 1) + " / " + session.config.duration;
-  $("progress-bar").style.width = (session.turn / session.config.duration * 100) + "%";
+  $("turn-count").textContent = "Pregunta " + (questionIndex + 1) + " / " + session.config.duration;
+  $("progress-bar").style.width = (questionIndex / session.config.duration * 100) + "%";
   $("streak").textContent = session.streak;
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
@@ -895,7 +893,7 @@ function renderLesson() {
   bindSpeakerButtons($("lesson-content"));
   speech.stop();
   autoSpeak(questionSpeech.text, questionSpeech.locale);
-  if (session.turn < 3) {
+  if (questionIndex < 3) {
     const options = currentExercise.options || [];
     $("answer-area").innerHTML = options.map((option,index) => '<div class="answer-option-row"><button class="answer-option" data-choice="' + index + '">' + escapeHTML(option) + '</button>' + speakerButton(option, currentExercise.optionsLocale || (currentExercise.speechMode === "listening" ? "es-CL" : catalog.locale)) + '</div>').join("");
     $("answer-area").querySelectorAll("[data-choice]").forEach(button => button.addEventListener("click", () => submitAnswer(options[Number(button.dataset.choice)])));
