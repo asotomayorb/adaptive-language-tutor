@@ -62,7 +62,11 @@
       <button class="theory-card" type="button" data-theory="vocabulary"><span>Aa</span><strong>Vocabulario</strong></button>
       <button class="theory-card" type="button" data-theory="expressions"><span>“ ”</span><strong>Expresiones</strong></button>
     </div>
-    <section id="theory-detail" class="panel hidden"><button id="theory-back" class="text-button" type="button">← Volver</button><h2 id="theory-title"></h2><div id="theory-description"></div></section>
+    <section id="theory-detail" class="theory-slide hidden" aria-modal="true" role="dialog">
+    <header class="theory-slide-header"><button id="theory-back" class="icon-control" type="button" aria-label="Volver a temas">←</button><span id="theory-counter"></span><button id="theory-close" class="icon-control" type="button" aria-label="Cerrar teoría">×</button></header>
+    <div class="theory-slide-content"><p id="theory-category" class="eyebrow"></p><h2 id="theory-title"></h2><div id="theory-description"></div></div>
+    <footer class="theory-slide-footer"><button id="theory-prev" class="secondary" type="button">← Anterior</button><button id="theory-next" class="primary" type="button">Siguiente →</button></footer>
+  </section>
   </section>
 
   <section id="screen-stats" class="app-screen hidden">
@@ -103,16 +107,28 @@
   <div class="language-mosaic">
     <button type="button" data-language="Portugués brasileño"><span>🇧🇷</span><strong>Portugués</strong><small>Brasil</small></button>
     <button type="button" data-language="Inglés"><span>🇺🇸</span><strong>Inglés</strong><small>Estados Unidos</small></button>
-    <button type="button" data-language="other"><span>🌍</span><strong>Otro idioma</strong><small>Personalizar</small></button>
-  </div>
-  <div id="custom-language-fields" class="custom-language-fields hidden">
-    <label>Nombre del idioma<input id="custom-language-name" placeholder="Ej. Francés"></label>
-    <label>Locale<input id="custom-language-locale" placeholder="Ej. fr-FR" autocomplete="off"></label>
+    <button type="button" data-language="Italiano"><span>🇮🇹</span><strong>Italiano</strong><small>Italia</small></button>
+    <button type="button" data-language="Alemán"><span>🇩🇪</span><strong>Alemán</strong><small>Alemania</small></button>
+    <button type="button" data-language="Ruso"><span>🇷🇺</span><strong>Ruso</strong><small>Rusia</small></button>
+    <button type="button" data-language="Francés"><span>🇫🇷</span><strong>Francés</strong><small>Francia</small></button>
+    <button type="button" data-language="Español"><span>🇪🇸</span><strong>Español</strong><small>España</small></button>
+    <button type="button" data-language="Japonés"><span>🇯🇵</span><strong>Japonés</strong><small>Japón</small></button>
+    <button type="button" data-language="Chino mandarín"><span>🇨🇳</span><strong>Chino</strong><small>China</small></button>
+    <button type="button" data-language="Coreano"><span>🇰🇷</span><strong>Coreano</strong><small>Corea del Sur</small></button>
+    <button type="button" data-language="Neerlandés"><span>🇳🇱</span><strong>Neerlandés</strong><small>Países Bajos</small></button>
+    <button type="button" data-language="Árabe"><span>🇸🇦</span><strong>Árabe</strong><small>Países árabes</small></button>
+    <button type="button" data-language="Hindi"><span>🇮🇳</span><strong>Hindi</strong><small>India</small></button>
+    <button type="button" data-language="Turco"><span>🇹🇷</span><strong>Turco</strong><small>Turquía</small></button>
+    <button type="button" data-language="Griego"><span>🇬🇷</span><strong>Griego</strong><small>Grecia</small></button>
+    <button type="button" data-language="Polaco"><span>🇵🇱</span><strong>Polaco</strong><small>Polonia</small></button>
   </div>
   <select id="language" class="hidden" aria-hidden="true" tabindex="-1">
-    <option>Portugués brasileño</option><option>Inglés</option><option value="other">Otro idioma</option>
+    <option value="Portugués brasileño">Portugués</option><option value="Inglés">Inglés</option>
+    <option value="Italiano">Italiano</option><option value="Alemán">Alemán</option><option value="Ruso">Ruso</option>
+    <option value="Francés">Francés</option><option value="Español">Español</option><option value="Japonés">Japonés</option>
+    <option value="Chino mandarín">Chino mandarín</option><option value="Coreano">Coreano</option><option value="Neerlandés">Neerlandés</option>
+    <option value="Árabe">Árabe</option><option value="Hindi">Hindi</option><option value="Turco">Turco</option><option value="Griego">Griego</option><option value="Polaco">Polaco</option>
   </select>
-  <button id="language-apply" class="primary hidden" type="button">Confirmar idioma</button>
   <button id="language-cancel" class="text-button language-cancel" type="button">Cancelar</button>
 </dialog>
 
