@@ -178,8 +178,9 @@ function updateLanguageFlag() {
     $("route-resume").classList.toggle("hidden", !routeDraft?.session);
     let completed = false;
     try { completed = Boolean(selectedCatalog && localStorage.getItem("adaptive-language-tutor.route-completed:" + selectedCatalog.id) === "true"); } catch {}
-    $("route-start").textContent = completed ? "Unidad completada" : selectedCatalog?.exercises?.length ? "Comenzar unidad" : "Ruta en preparación";
-    $("route-start").disabled = Boolean(completed || !selectedCatalog?.exercises?.length);
+    const routeAvailable = Boolean(selectedCatalog?.exercises?.length || aiConfigured);
+    $("route-start").textContent = completed ? "Unidad completada" : routeAvailable ? "Comenzar unidad" : "Ruta en preparación";
+    $("route-start").disabled = Boolean(completed || !routeAvailable);
   }
 }
 let session = null;
@@ -551,9 +552,11 @@ async function submitAITutorAnswer(answer) {
         }
       },
       history: conversationHistory,
-      userMessage: cleanAnswer + (session.turn + 1 < 3
-        ? " La próxima actividad debe ser una pregunta de selección múltiple con tres alternativas plausibles en exercise.options."
-        : " Desde ahora la próxima actividad debe requerir que escriba la respuesta, sin alternativas.")
+      userMessage: cleanAnswer + (routeMode && session.turn + 1 === 10
+        ? " Esta respuesta completa la comprobación de dominio de diez preguntas. La siguiente actividad debe ser una tarea integradora escrita que combine el tema completo; no incluyas alternativas."
+        : session.turn + 1 < 3
+          ? " La próxima actividad debe ser una pregunta de selección múltiple con tres alternativas plausibles en exercise.options."
+          : " Desde ahora la próxima actividad debe requerir que escriba la respuesta, sin alternativas.")
     }, undefined, { signal: sessionAbortController?.signal });
     if (session !== activeSession || sessionAbortController?.signal.aborted) return;
     aiHistory = [
@@ -578,7 +581,22 @@ async function submitAITutorAnswer(answer) {
     $("streak").textContent = session.streak;
     $("word-count").textContent = session.vocabulary.length;
     $("error-count").textContent = session.errors.length;
+    if (routeMode && session.turn === 10 && !routeIntegration) {
+      if (session.correct < 8) {
+        renderRouteAssessmentFailed();
+        return;
+      }
+      routeIntegration = true;
+    } else if (routeMode && routeIntegration && session.turn >= 11) {
+      if (evaluation.status === "correct") {
+        session.routeIntegrationComplete = true;
+        pendingFeedback = { text: evaluation.feedback || "Actividad integradora completada.", expected: evaluatedExercise.expectedAnswer || "" };
+        finishSession();
+      } else renderRouteAssessmentFailed();
+      return;
+    }
     renderAITutorTurn(result);
+    if (routeMode) saveRouteDraft();
   } catch (error) {
     if (session === activeSession && !sessionAbortController?.signal.aborted) showAITutorError(error, cleanAnswer);
   }
@@ -677,6 +695,11 @@ function saveRouteDraft() {
     integration: routeIntegration,
     integrationAttempts: routeIntegrationAttempts,
     pendingFeedback,
+    aiMode,
+    aiHistory,
+    aiLastResult,
+    aiCurrentExercise,
+    aiPendingFeedback,
     failed: session.turn >= 10 && !routeIntegration && session.correct < 8
   };
   try { localStorage.setItem(ROUTE_STORAGE_KEY + ":" + session.config.languageId, JSON.stringify(routeDraft)); } catch {}
@@ -686,8 +709,9 @@ function startRouteSession(resume = false) {
   catalog = getSelectedCatalog();
   if (!catalog) return;
   routeDraft = getRouteDraftForLanguage(catalog.id);
-  if (!catalog.exercises.length) {
-    $("route-start").textContent = "Ruta aún no disponible para este idioma";
+  const useAI = !catalog.exercises.length;
+  if (useAI && !aiConfigured) {
+    $("route-start").textContent = "Ruta en preparación";
     return;
   }
   if (resume && routeDraft?.session && routeDraft.languageId === catalog.id) {
@@ -695,28 +719,39 @@ function startRouteSession(resume = false) {
     pendingFeedback = routeDraft.pendingFeedback || null;
     routeIntegration = Boolean(routeDraft.integration);
     routeIntegrationAttempts = Number(routeDraft.integrationAttempts || 0);
+    aiMode = Boolean(routeDraft.aiMode);
+    aiHistory = routeDraft.aiHistory || [];
+    aiLastResult = routeDraft.aiLastResult || null;
+    aiCurrentExercise = routeDraft.aiCurrentExercise || null;
+    aiPendingFeedback = routeDraft.aiPendingFeedback || null;
   } else {
     session = createSession({
       language:catalog.label, languageId:catalog.id, languageLocale:catalog.locale,
-      duration:10, questionCount:10, level:"zero", topic:"daily", routeMode:true
+      duration:useAI ? 11 : 10, questionCount:useAI ? 11 : 10, level:"zero", topic:"daily", routeMode:true
     });
     routeIntegration = false;
     routeIntegrationAttempts = 0;
     pendingFeedback = null;
-    saveRouteDraft();
+    aiMode = useAI;
+    aiHistory = [];
+    aiLastResult = null;
+    aiCurrentExercise = null;
+    aiPendingFeedback = null;
   }
   routeMode = true;
   session.config.routeMode = true;
   sessionAbortController?.abort();
   sessionAbortController = new AbortController();
   sessionFinished = false;
-  aiMode = false;
   reviewMode = false;
   $("lesson-panel").classList.remove("hidden");
   $("summary-panel").classList.add("hidden");
   showSessionView("Ruta");
-  if (routeIntegration) renderRouteIntegration();
+  if (routeIntegration && aiMode && aiLastResult) renderAITutorTurn(aiLastResult);
+  else if (routeIntegration) renderRouteIntegration();
   else if (session.turn >= 10) renderRouteAssessmentFailed();
+  else if (aiMode && aiLastResult) renderAITutorTurn(aiLastResult);
+  else if (aiMode) startAITutorSession(session.config);
   else renderLesson();
 }
 function renderRouteIntegration() {
@@ -763,15 +798,25 @@ function renderRouteAssessmentFailed() {
   $("lesson-phase").textContent = "REFUERZO NECESARIO";
   $("turn-count").textContent = session.correct + " / 10 correctas";
   $("progress-bar").style.width = "100%";
-  $("lesson-content").innerHTML = '<div class="feedback-note"><span>Unidad aún no superada</span><p>Necesitas al menos 8 respuestas correctas de 10. Tu resultado fue ' + session.correct + '/10. Puedes repetir la comprobación.</p></div>';
-  $("answer-area").innerHTML = '<button id="route-retry" class="primary" type="button">Repetir los 10 ejercicios</button>';
+  const integrationFailed = routeIntegration && session.turn >= 11;
+  $("lesson-content").innerHTML = '<div class="feedback-note"><span>' + (integrationFailed ? "Actividad integradora pendiente" : "Unidad aún no superada") + '</span><p>' +
+    (integrationFailed ? "La actividad integradora necesita otra oportunidad. Repite la unidad para consolidar el contenido." : "Necesitas al menos 8 respuestas correctas de 10. Tu resultado fue " + session.correct + "/10. Puedes repetir la comprobación.") +
+    '</p></div>';
+  $("answer-area").innerHTML = '<button id="route-retry" class="primary" type="button">Repetir la unidad</button>';
   $("route-retry").addEventListener("click", () => {
-    session = createSession({ ...session.config, duration:10, questionCount:10 });
+    const useAI = !catalog.exercises.length;
+    session = createSession({ ...session.config, duration:useAI ? 11 : 10, questionCount:useAI ? 11 : 10 });
     routeIntegration = false;
     routeIntegrationAttempts = 0;
     pendingFeedback = null;
+    aiMode = useAI;
+    aiHistory = [];
+    aiLastResult = null;
+    aiCurrentExercise = null;
+    aiPendingFeedback = null;
     saveRouteDraft();
-    renderLesson();
+    if (useAI) startAITutorSession(session.config);
+    else renderLesson();
   });
 }
 function getTopicExercises() {
