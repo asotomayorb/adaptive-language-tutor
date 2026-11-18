@@ -26,6 +26,7 @@ Probar al menos dos idiomas con proveedor real:
 
 - [ ] Portugués brasileño: locale `pt-BR`.
 - [ ] Francés personalizado: locale `fr-FR`.
+- [ ] Inglés del catálogo local: locale `en`; evaluar naturalidad, corrección, vocabulario y situaciones reales.
 - [ ] Verificar que el idioma y locale elegidos llegan al tutor y se conservan en el resumen.
 - [ ] Completar una sesión de al menos tres respuestas.
 - [ ] Probar respuestas correctas, parciales, incorrectas y conversacionales.
@@ -52,6 +53,7 @@ Realizar estas comprobaciones en un navegador de escritorio y en un teléfono re
 - [ ] En los ejercicios locales, las pistas y explicaciones pronuncian únicamente los fragmentos del idioma objetivo anotados para ese contenido, sin leer la frase explicativa completa en español.
 - [ ] Si solo existe una voz genérica del idioma (por ejemplo, `pt` sin variante regional), comprobar que se utiliza como fallback antes de recurrir a la voz predeterminada.
 - [ ] Los fragmentos de portugués usan `pt-BR`; los de francés usan `fr-FR`.
+- [ ] Los fragmentos del catálogo inglés usan locale `en` y seleccionan una voz inglesa compatible instalada en el dispositivo.
 - [ ] Los botones individuales reproducen solo su fragmento y permiten repetirlo.
 - [ ] El vocabulario del resumen se lee en el idioma objetivo y puede repetirse manualmente.
 - [ ] Cambiar de turno, iniciar otra sesión o entrar al repaso detiene la locución anterior.
