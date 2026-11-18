@@ -765,7 +765,10 @@ function startRouteSession(resume = false) {
       correctOption: aiPendingTurn.exercise?.expectedAnswer || ""
     });
   } else if (localPendingAnswer) {
+    const completedTurn = session.turn;
+    session.turn = Math.max(0, completedTurn - 1);
     renderLesson();
+    session.turn = completedTurn;
     showAnswerFeedback({
       correct: localPendingAnswer.correct, expected: localPendingAnswer.expected,
       explanation: localPendingAnswer.correct ? "" : localPendingAnswer.explanation,
@@ -894,12 +897,12 @@ function renderLesson() {
   bindVariantLinks($("lesson-content"));
   bindSpeakerButtons($("lesson-content"));
   speech.stop();
+  autoSpeak(questionSpeech.text, questionSpeech.locale);
   if (session.turn < 3) {
     const options = currentExercise.options || [];
     $("answer-area").innerHTML = options.map((option,index) => '<div class="answer-option-row"><button class="answer-option" data-choice="' + index + '">' + escapeHTML(option) + '</button>' + speakerButton(option, catalog.locale) + '</div>').join("");
     $("answer-area").querySelectorAll("[data-choice]").forEach(button => button.addEventListener("click", () => submitAnswer(options[Number(button.dataset.choice)])));
     bindSpeakerButtons($("answer-area"));
-    autoSpeak(questionSpeech.text, questionSpeech.locale);
   } else {
     $("answer-area").innerHTML = '<input id="free-answer" class="answer-input" placeholder="Escribe tu respuesta…" autocomplete="off"><button id="submit-free" class="primary" type="button">Enviar respuesta →</button>';
     $("submit-free").addEventListener("click", () => submitAnswer($("free-answer").value));
@@ -1125,6 +1128,8 @@ function closeSessionAndReturn() {
   aiHistory = [];
   aiLastResult = null;
   aiCurrentExercise = null;
+  aiPendingTurn = null;
+  localPendingAnswer = null;
   aiHintPending = false;
   aiHintLevel = 0;
   sessionFinished = false;
