@@ -938,6 +938,8 @@ function showAnswerFeedback({ correct, expected, expectedLocale, explanation, se
   const explanationText = !correct && explanation ? '<p class="answer-explanation">' + renderVariantTerms(explanation) + '</p>' : "";
   $("feedback").innerHTML = (correct ? '<p class="answer-status correct">Correcto</p>' : '<p class="answer-status incorrect">Incorrecto</p>') + expectedText + explanationText;
   $("feedback").classList.remove("hidden","bad");
+  $("hint-btn").disabled = true;
+  $("review-btn").disabled = true;
   $("answer-area").querySelectorAll("[data-choice],[data-ai-choice]").forEach(button => {
     const value = button.textContent.trim().toLocaleLowerCase();
     const correctValue = correct ? (selected || correctOption || expected) : (correctOption || expected);
