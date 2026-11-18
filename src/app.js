@@ -337,6 +337,7 @@ async function submitAITutorAnswer(answer) {
     showFeedback("Escribe una respuesta antes de continuar.", false);
     return;
   }
+  speech.stop();
   const submitButton = $("submit-ai-answer");
   const answerInput = $("ai-answer");
   if (submitButton) submitButton.disabled = true;
@@ -448,6 +449,7 @@ async function requestAdaptiveHint() {
 }
 
 function showAITutorError(error, previousAnswer) {
+  speech.stop();
   $("lesson-content").textContent = "No se pudo completar la solicitud al tutor IA.";
   $("feedback").textContent = error.message || "Error de conexión.";
   $("feedback").classList.remove("hidden", "bad");
@@ -603,6 +605,7 @@ function showFeedback(message, positive) {
 }
 
 $("hint-btn").addEventListener("click", () => {
+  speech.stop();
   if (aiMode) {
     if (aiHintLevel === 0 && aiCurrentExercise?.hint) {
       aiHintLevel = 1;
