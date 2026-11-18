@@ -164,8 +164,6 @@ function startSpacedReview() {
   if (!dueReviewCards.length) { refreshDashboard(); return; }
   showScreen("exercises");
   setExerciseTab("global");
-  showScreen("exercises");
-  setExerciseTab("global");
   $("setup-panel").classList.add("hidden");
   $("summary-panel").classList.add("hidden");
   $("lesson-panel").classList.remove("hidden");
