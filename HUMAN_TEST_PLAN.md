@@ -51,6 +51,7 @@ Realizar estas comprobaciones en un navegador de escritorio y en un teléfono re
 - [ ] Los botones individuales reproducen solo su fragmento y permiten repetirlo.
 - [ ] El vocabulario del resumen se lee en el idioma objetivo y puede repetirse manualmente.
 - [ ] Cambiar de turno, iniciar otra sesión o entrar al repaso detiene la locución anterior.
+- [ ] Al avanzar entre tarjetas del repaso espaciado, no continúa la pronunciación de la tarjeta anterior.
 - [ ] Si el sistema no tiene una voz compatible, la práctica escrita sigue funcionando y la interfaz informa el fallback.
 - [ ] Comprobar que no se pronuncian por error las explicaciones auxiliares en español como si fueran texto objetivo.
 
