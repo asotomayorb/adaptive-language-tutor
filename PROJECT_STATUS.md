@@ -423,3 +423,21 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [ ] Revisar duración efectiva de sesiones y equivalencia provisional de dos turnos por minuto.
 
 **Estado:** primera implementación de la estructura móvil realizada en la rama. Todavía no está certificada por pruebas automatizadas ni prueba humana. No fusionar a main ni considerar lista para producción hasta cerrar las verificaciones anteriores.
+
+
+## Refinamientos de interfaz móvil — 18-11-2026
+
+**Rama:** feature/mobile-bottom-navigation.
+
+- [x] Se sustituyó el acceso inicial por bienvenida con botón Iniciar.
+- [x] Se rediseñó la barra inferior con Ruta/mapa, Ejercicios/pesas, selector central globo+bandera, Teoría/libro y Estadísticas/gráfico.
+- [x] El selector de idioma abre mosaico; la selección estándar se persiste y vuelve a Ruta. Para idiomas personalizados se toma la región del locale como bandera cuando está disponible.
+- [x] Ejercicios presenta Global/Repaso y los tres selectores en una sola pantalla; cantidad ahora son preguntas (5/10/15/20).
+- [x] Estadísticas muestra barras de precisión de sesiones históricas reales, o estado vacío.
+- [x] Teoría tiene contenido inicial de Gramática, Vocabulario y Expresiones para pt-BR e inglés.
+- [ ] Falta implementar Ruta como flujo pedagógico real con tema/nivel fijos, hitos y guardado parcial.
+- [ ] El criterio sugerido para Ruta (80% en cinco preguntas y actividad integradora) está documentado en README, pero pendiente de aprobación.
+- [ ] Aún no se han ejecutado npm run check, npm test ni npm run test:e2e para esta revisión.
+- [ ] Falta verificación visual y funcional en Android y confirmación de despliegue Render.
+
+**Importante:** no declarar esta revisión lista para prueba humana hasta cerrar los tests, la verificación en móvil y la progresión de Ruta.
