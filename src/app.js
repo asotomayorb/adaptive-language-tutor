@@ -139,7 +139,8 @@ function updateLanguageFlag() {
     const selectedCatalog = getSelectedCatalog();
     routeDraft = getRouteDraftForLanguage(selectedCatalog?.id);
     $("route-resume").classList.toggle("hidden", !routeDraft?.session);
-    const completed = selectedCatalog && localStorage.getItem("adaptive-language-tutor.route-completed:" + selectedCatalog.id) === "true";
+    let completed = false;
+    try { completed = Boolean(selectedCatalog && localStorage.getItem("adaptive-language-tutor.route-completed:" + selectedCatalog.id) === "true"); } catch {}
     $("route-start").textContent = completed ? "Unidad completada" : selectedCatalog?.exercises?.length ? "Comenzar unidad" : "Ruta en preparación";
     $("route-start").disabled = Boolean(completed || !selectedCatalog?.exercises?.length);
   }
