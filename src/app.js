@@ -90,13 +90,15 @@ function updateCustomLanguageFields() {
   $("custom-language-name").required = custom;
   $("custom-language-locale").required = custom;
 }
-function languageFlag(language) {
-  return ({ "Portugués brasileño":"🇧🇷", "Inglés":"🇺🇸" })[language] || "🏳️";
+function languageFlag(language, locale = "") {
+  const region = String(locale).split("-").pop()?.toUpperCase();
+  const regionalFlags = { BR:"🇧🇷", US:"🇺🇸", GB:"🇬🇧", AU:"🇦🇺", CA:"🇨🇦", IE:"🇮🇪", FR:"🇫🇷", DE:"🇩🇪", ES:"🇪🇸", IT:"🇮🇹", JP:"🇯🇵", CN:"🇨🇳", KR:"🇰🇷", MX:"🇲🇽", PT:"🇵🇹", NL:"🇳🇱", RU:"🇷🇺", IN:"🇮🇳" };
+  return ({ "Portugués brasileño":"🇧🇷", "Inglés":"🇺🇸" })[language] || regionalFlags[region] || "🌐";
 }
 function updateLanguageFlag() {
   const selected = $("language").value;
   $("selected-language-flag").textContent = selected === "other"
-    ? languageFlag($("custom-language-name").value.trim())
+    ? languageFlag($("custom-language-name").value.trim(), $("custom-language-locale").value.trim())
     : languageFlag(selected);
 }
 let session = null;
@@ -786,7 +788,7 @@ $("language-apply").addEventListener("click", () => {
     return;
   }
   try { persistSettings(); } catch {}
-  $("selected-language-flag").textContent = selected.id === "pt-BR" ? "🇧🇷" : selected.id === "en" ? "🇺🇸" : "🏳️";
+  $("selected-language-flag").textContent = languageFlag(selected.label, selected.locale || selected.id);
   $("language-picker").close();
   $("welcome-screen").classList.add("hidden");
   $("app-shell").classList.remove("hidden");
