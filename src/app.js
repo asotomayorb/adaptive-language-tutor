@@ -59,6 +59,36 @@ document.getElementById("session-audio-toggle")?.addEventListener("click", toggl
 function speakerButton(text, locale) {
   return '<button class="speak-button" type="button" data-speak="' + escapeHTML(text) + '" data-locale="' + escapeHTML(locale || "") + '" aria-label="Reproducir pronunciación" title="Escuchar">▶</button>';
 }
+const spellingVariants = {
+  color:["colour","En inglés estadounidense se escribe color; en inglés británico, colour."],
+  favorite:["favourite","En inglés estadounidense se escribe favorite; en inglés británico, favourite."],
+  center:["centre","En inglés estadounidense se escribe center; en inglés británico, centre."],
+  theater:["theatre","En inglés estadounidense se escribe theater; en inglés británico, theatre."],
+  traveled:["travelled","En inglés estadounidense se escribe traveled; en inglés británico, travelled."],
+  organize:["organise","En inglés estadounidense se escribe organize; en inglés británico, organise."]
+};
+function renderVariantTerms(value) {
+  let html = escapeHTML(value || "");
+  if (!["en-US","en-GB"].includes(catalog?.locale)) return html;
+  for (const [word] of Object.entries(spellingVariants)) {
+    const expression = new RegExp("\\b(" + word + ")\\b", "gi");
+    html = html.replace(expression, match => '<button class="variant-link" type="button" data-variant="' + match.toLowerCase() + '">' + match + '</button>');
+  }
+  return html;
+}
+function bindVariantLinks(root) {
+  root.querySelectorAll("[data-variant]:not([data-variant-bound])").forEach(button => {
+    button.dataset.variantBound = "true";
+    button.addEventListener("click", () => {
+      const word = button.dataset.variant;
+      const [alternative, explanation] = spellingVariants[word];
+      $("variant-word").textContent = word + " / " + alternative;
+      $("variant-description").textContent = explanation;
+      $("variant-dialog").showModal();
+    });
+  });
+}
+
 function bindSpeakerButtons(root) {
   root.querySelectorAll("[data-speak]:not([data-speech-bound])").forEach(button => {
     button.dataset.speechBound = "true";
@@ -382,6 +412,7 @@ function renderAITutorTurn(result) {
     : "";
   $("lesson-content").innerHTML = message + feedback + prompt + speechMarkup + vocabularyMarkup;
   bindSpeakerButtons($("lesson-content"));
+  bindVariantLinks($("lesson-content"));
   speech.speakSequence(speechSegments, { automatic: true });
   $("feedback").classList.add("hidden");
   $("hint-btn").hidden = false;
@@ -612,7 +643,8 @@ function renderLesson() {
   const feedbackMarkup = previous
     ? '<div class="feedback-note"><span>Respuesta anterior</span><p>' + escapeHTML(previous.text) + '</p><p class="model-answer">Respuesta modelo: ' + escapeHTML(previous.expected) + ' ' + speakerButton(previous.expected, catalog.locale) + '</p></div>'
     : "";
-  $("lesson-content").innerHTML = feedbackMarkup + '<p class="eyebrow">TEMA: ' + escapeHTML(topicLabels[session.config.topic].toUpperCase()) + ' · NIVEL ' + escapeHTML(levelLabel(session.config.level).toUpperCase()) + '</p><h3>' + escapeHTML(currentExercise.prompt) + '</h3>';
+  $("lesson-content").innerHTML = feedbackMarkup + '<p class="eyebrow">TEMA: ' + escapeHTML(topicLabels[session.config.topic].toUpperCase()) + ' · NIVEL ' + escapeHTML(levelLabel(session.config.level).toUpperCase()) + '</p><h3>' + renderVariantTerms(currentExercise.prompt) + '</h3>';
+  bindVariantLinks($("lesson-content"));
   speech.stop();
   if (session.turn < 3) {
     const options = currentExercise.options || [];
@@ -855,6 +887,7 @@ $("theory-back").addEventListener("click", () => $("theory-detail").classList.ad
 $("theory-close").addEventListener("click", () => $("theory-detail").classList.add("hidden"));
 $("theory-prev").addEventListener("click", () => openTheoryTopic(activeTheoryIndex - 1));
 $("theory-next").addEventListener("click", () => openTheoryTopic(activeTheoryIndex + 1));
+$("variant-close").addEventListener("click", () => $("variant-dialog").close());
 function persistSettings() {
   const savedSettings = {
     selectedLanguage: $("language").value,
