@@ -282,7 +282,7 @@ Esta sección **prevalece sobre cualquier regla anterior incompatible** de las s
 
 ### Catálogo estándar de idiomas
 - El mosaico ofrece portugués brasileño, inglés, italiano, alemán, ruso, francés, español, japonés, chino mandarín, coreano, neerlandés, árabe, hindi, turco, griego, polaco, sueco, noruego, danés, hebreo, vietnamita, indonesio y tailandés.
-- El mosaico incluye 23 idiomas estándar y permite añadir un idioma no listado escribiendo solo su nombre, sin pedir locale. El sistema infiere locale/bandera para idiomas reconocidos; si no existe una equivalencia conocida, usa locale neutral y un globo como indicador visual. Los códigos internos nunca se muestran en la interfaz.
+- El mosaico incluye 23 idiomas estándar y permite añadir un idioma no listado escribiendo solo su nombre, sin pedir locale. El sistema infiere locale/bandera para idiomas reconocidos; si no existe una equivalencia conocida, usa locale neutral y una bandera neutra cuando no existe una bandera reconocida. Los códigos internos nunca se muestran en la interfaz.
 - Los idiomas con ejercicios locales disponibles funcionan sin IA; los restantes requieren tutor IA configurado para generar ejercicios.
 - La variante regional se enseña dentro del contenido cuando sea relevante. Ejemplo: una palabra inglesa como “color” puede mostrar una explicación emergente con la forma británica “colour”.
 
