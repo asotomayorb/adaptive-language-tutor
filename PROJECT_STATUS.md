@@ -377,3 +377,24 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [ ] Validación humana real: naturalidad pedagógica, pronunciación, voces instaladas, calidad auditiva y persistencia en el dispositivo/entorno del usuario.
 
 **Decisión:** la auditoría automatizada está cerrada para iniciar una prueba humana controlada. Esto no habilita producción. Siguen pendientes autenticación, cuotas compartidas, retención/acceso a logs, idempotencia, hosting y revisión de despliegue. PR #2 permanece draft; no merge, despliegue público ni sincronización con Replit.
+
+
+## Requisitos de producto móvil consolidados — 18-11-2026
+
+**Especificación vigente:** [README.md](README.md), secciones 2 a 9 y 11.  
+**Pruebas de aceptación añadidas:** [HUMAN_TEST_PLAN.md](HUMAN_TEST_PLAN.md), sección 8.
+
+- [x] Se registraron las decisiones nuevas en README: navegación Ruta / Ejercicios / Teoría / Estadísticas; barra inferior solo con iconos; Ruta minimalista sin métricas; idioma y audio en cabecera; sin sección Configuración.
+- [x] Se registró el flujo Global/Repaso → preparación (duración, nivel, tema) → ejercicio a pantalla completa.
+- [x] Se registró la decisión de no realizar diagnóstico inicial y comenzar directamente en el nivel elegido.
+- [x] Se registró que cerrar con X, tras confirmar, descarta el progreso temporal de la sesión actual sin borrar el historial previo.
+- [x] Se añadieron criterios de aceptación para recuperación de fallos IA, limpieza de estado entre sesiones/idiomas y comportamiento móvil.
+- [ ] Implementar la nueva navegación y las pantallas Ruta y Teoría.
+- [ ] Eliminar la pantalla/sección Configuración y mover selector de idioma a la cabecera global.
+- [ ] Implementar el flujo de preparación y sesión a pantalla completa, con X y audio únicamente.
+- [ ] Eliminar el diagnóstico inicial y asegurar que el nivel seleccionado se aplique desde la primera actividad.
+- [ ] Corregir el bloqueo del tutor IA, incluyendo timeout, cancelación de solicitudes obsoletas, recuperación y reinicio del estado de actividad.
+- [ ] Asegurar que el cierre confirmado descarta la sesión actual y no persiste datos parciales.
+- [ ] Ejecutar pruebas unitarias, Browser E2E y validación en dispositivo móvil real.
+
+**Importante:** este registro confirma que la especificación y los casos de prueba quedaron documentados. No significa que los cambios de interfaz y lógica ya estén implementados. La revisión del código de la rama muestra que la interfaz actual todavía contiene Inicio/Configuración, navegación con etiquetas, métricas en Inicio y ejercicios integrados en la misma vista; esos elementos siguen pendientes de sustituir conforme al README.
