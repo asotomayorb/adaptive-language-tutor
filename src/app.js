@@ -188,7 +188,9 @@ let catalog = null;
 let diagnostic = null;
 let currentExercise = null;
 let pendingFeedback = null;
+let localPendingAnswer = null;
 let aiPendingFeedback = null;
+let aiPendingTurn = null;
 let reviewExercise = null;
 let reviewMode = false;
 let progress = loadProgress();
@@ -258,8 +260,8 @@ try {
   if (savedSettings.selectedLanguage) {
     $("language").value = savedSettings.selectedLanguage;
     if (savedSettings.customLanguageName) $("custom-language-name").value = savedSettings.customLanguageName;
-    $("welcome-screen").classList.add("hidden");
-    $("app-shell").classList.remove("hidden");
+    $("welcome-screen").classList.remove("hidden");
+    $("app-shell").classList.add("hidden");
   }
   if (savedSettings.duration) $("duration").value = String(savedSettings.duration);
   if (savedSettings.level) $("level").value = savedSettings.level;
@@ -465,28 +467,19 @@ function renderAITutorTurn(result) {
   const prompt = aiCurrentExercise.prompt
     ? '<h3>' + renderVariantTerms(aiCurrentExercise.prompt) + '</h3>'
     : '<p class="muted">Responde libremente para continuar la conversación.</p>';
-  const previous = aiPendingFeedback;
-  aiPendingFeedback = null;
-  const feedback = previous
-    ? '<div class="feedback-note"><span>Respuesta anterior</span><p>' + renderVariantTerms(previous.text) + '</p>' +
-      (previous.expected ? '<p class="model-answer">Respuesta modelo: ' + renderVariantTerms(previous.expected) + ' ' + speakerButton(previous.expected, session.config.languageLocale || session.config.languageId) + '</p>' : '') + '</div>'
-    : "";
-  const vocabulary = (result.learnerUpdate?.vocabulary || []).filter(item => item?.term);
-  const vocabularyMarkup = vocabulary.length
-    ? '<div class="ai-vocabulary"><span class="muted">Vocabulario</span>' + vocabulary.map(item =>
-        '<span class="vocabulary-item">' + renderVariantTerms(item.term) + speakerButton(item.term, session.config.languageLocale || session.config.languageId) + '</span>'
-      ).join("") + '</div>'
-    : "";
   const speechSegments = (result.speechSegments || []).filter(item =>
     item && typeof item.text === "string" && item.text.trim() &&
     typeof item.locale === "string" && item.locale.trim()
   );
   const speechMarkup = speechSegments.length
-    ? '<div class="ai-speech-segments"><span class="muted">Pronunciación</span>' + speechSegments.map(item =>
+    ? '<div class="ai-speech-segments">' + speechSegments.map(item =>
         '<span class="vocabulary-item">' + escapeHTML(item.text) + speakerButton(item.text, item.locale) + '</span>'
       ).join("") + '</div>'
     : "";
-  $("lesson-content").innerHTML = message + feedback + prompt + speechMarkup + vocabularyMarkup;
+  const promptAudio = aiCurrentExercise.prompt
+    ? speakerButton(aiCurrentExercise.prompt, session.config.languageLocale || session.config.languageId)
+    : "";
+  $("lesson-content").innerHTML = message + prompt + promptAudio + speechMarkup;
   bindSpeakerButtons($("lesson-content"));
   bindVariantLinks($("lesson-content"));
   speech.speakSequence(speechSegments, { automatic: true });
@@ -577,28 +570,21 @@ async function submitAITutorAnswer(answer) {
       feedback: evaluation.feedback || "",
       skill: evaluation.skill || "Producción"
     });
-    aiPendingFeedback = {
-      text: evaluation.feedback || (evaluation.status === "correct" ? "Correcto." : "Respuesta revisada."),
-      expected: evaluatedExercise.expectedAnswer || ""
+    aiPendingTurn = {
+      result, evaluation, exercise: evaluatedExercise, answer: cleanAnswer,
+      routeIntegrationQuestion: Boolean(routeMode && routeIntegration && session.turn >= 11)
     };
+    showAnswerFeedback({
+      correct: evaluation.status === "correct",
+      expected: evaluatedExercise.expectedAnswer || "",
+      explanation: evaluation.status === "correct" ? "" : evaluation.feedback || "Revisa la estructura y vuelve a intentarlo.",
+      selected: cleanAnswer,
+      options: evaluatedExercise.options || [],
+      correctOption: evaluatedExercise.expectedAnswer || ""
+    });
     $("streak").textContent = session.streak;
     $("word-count").textContent = session.vocabulary.length;
     $("error-count").textContent = session.errors.length;
-    if (routeMode && session.turn === 10 && !routeIntegration) {
-      if (session.correct < 8) {
-        renderRouteAssessmentFailed();
-        return;
-      }
-      routeIntegration = true;
-    } else if (routeMode && routeIntegration && session.turn >= 11) {
-      if (evaluation.status === "correct") {
-        session.routeIntegrationComplete = true;
-        pendingFeedback = { text: evaluation.feedback || "Actividad integradora completada.", expected: evaluatedExercise.expectedAnswer || "" };
-        finishSession();
-      } else renderRouteAssessmentFailed();
-      return;
-    }
-    renderAITutorTurn(result);
     if (routeMode) saveRouteDraft();
   } catch (error) {
     if (session === activeSession && !sessionAbortController?.signal.aborted) showAITutorError(error, cleanAnswer);
@@ -698,6 +684,8 @@ function saveRouteDraft() {
     integration: routeIntegration,
     integrationAttempts: routeIntegrationAttempts,
     pendingFeedback,
+    localPendingAnswer,
+    aiPendingTurn,
     aiMode,
     aiHistory,
     aiLastResult,
@@ -720,6 +708,8 @@ function startRouteSession(resume = false) {
   if (resume && routeDraft?.session && routeDraft.languageId === catalog.id) {
     session = routeDraft.session;
     pendingFeedback = routeDraft.pendingFeedback || null;
+    localPendingAnswer = routeDraft.localPendingAnswer || null;
+    aiPendingTurn = routeDraft.aiPendingTurn || null;
     routeIntegration = Boolean(routeDraft.integration);
     routeIntegrationAttempts = Number(routeDraft.integrationAttempts || 0);
     aiMode = Boolean(routeDraft.aiMode);
@@ -735,6 +725,8 @@ function startRouteSession(resume = false) {
     routeIntegration = false;
     routeIntegrationAttempts = 0;
     pendingFeedback = null;
+    localPendingAnswer = null;
+    aiPendingTurn = null;
     aiMode = useAI;
     aiHistory = [];
     aiLastResult = null;
@@ -750,7 +742,25 @@ function startRouteSession(resume = false) {
   $("lesson-panel").classList.remove("hidden");
   $("summary-panel").classList.add("hidden");
   showSessionView("Ruta");
-  if (session.turn >= 11) renderRouteAssessmentFailed();
+  if (aiPendingTurn) {
+    renderAITutorTurn(aiLastResult);
+    showAnswerFeedback({
+      correct: aiPendingTurn.evaluation?.status === "correct",
+      expected: aiPendingTurn.exercise?.expectedAnswer || "",
+      explanation: aiPendingTurn.evaluation?.status === "correct" ? "" : aiPendingTurn.evaluation?.feedback || "",
+      selected: aiPendingTurn.answer || "",
+      options: aiPendingTurn.exercise?.options || [],
+      correctOption: aiPendingTurn.exercise?.expectedAnswer || ""
+    });
+  } else if (localPendingAnswer) {
+    renderLesson();
+    showAnswerFeedback({
+      correct: localPendingAnswer.correct, expected: localPendingAnswer.expected,
+      explanation: localPendingAnswer.correct ? "" : localPendingAnswer.explanation,
+      selected: localPendingAnswer.selected, options: localPendingAnswer.options || [],
+      correctOption: localPendingAnswer.expected
+    });
+  } else if (session.turn >= 11) renderRouteAssessmentFailed();
   else if (routeIntegration && aiMode && aiLastResult) renderAITutorTurn(aiLastResult);
   else if (routeIntegration) renderRouteIntegration();
   else if (session.turn >= 10) renderRouteAssessmentFailed();
@@ -865,12 +875,9 @@ function renderLesson() {
   $("streak").textContent = session.streak;
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
-  const previous = pendingFeedback;
   pendingFeedback = null;
-  const feedbackMarkup = previous
-    ? '<div class="feedback-note"><span>Respuesta anterior</span><p>' + renderVariantTerms(previous.text) + '</p><p class="model-answer">Respuesta modelo: ' + renderVariantTerms(previous.expected) + ' ' + speakerButton(previous.expected, catalog.locale) + '</p></div>'
-    : "";
-  $("lesson-content").innerHTML = feedbackMarkup + '<p class="eyebrow">TEMA: ' + escapeHTML(topicLabels[session.config.topic].toUpperCase()) + ' · NIVEL ' + escapeHTML(levelLabel(session.config.level).toUpperCase()) + '</p><h3>' + renderVariantTerms(currentExercise.prompt) + '</h3>';
+  $("lesson-content").innerHTML = '<p class="eyebrow">TEMA: ' + escapeHTML(topicLabels[session.config.topic].toUpperCase()) + ' · NIVEL ' + escapeHTML(levelLabel(session.config.level).toUpperCase()) + '</p><h3>' + renderVariantTerms(currentExercise.prompt) + '</h3>' +
+    speakerButton(currentExercise.target || currentExercise.prompt, catalog.locale);
   bindVariantLinks($("lesson-content"));
   bindSpeakerButtons($("lesson-content"));
   speech.stop();
@@ -879,7 +886,7 @@ function renderLesson() {
     $("answer-area").innerHTML = options.map((option,index) => '<div class="answer-option-row"><button class="answer-option" data-choice="' + index + '">' + escapeHTML(option) + '</button>' + speakerButton(option, catalog.locale) + '</div>').join("");
     $("answer-area").querySelectorAll("[data-choice]").forEach(button => button.addEventListener("click", () => submitAnswer(options[Number(button.dataset.choice)])));
     bindSpeakerButtons($("answer-area"));
-    autoSpeak(options.join(". "), catalog.locale);
+    autoSpeak(currentExercise.target || currentExercise.prompt, catalog.locale);
   } else {
     $("answer-area").innerHTML = '<input id="free-answer" class="answer-input" placeholder="Escribe tu respuesta…" autocomplete="off"><button id="submit-free" class="primary" type="button">Enviar respuesta →</button>';
     $("submit-free").addEventListener("click", () => submitAnswer($("free-answer").value));
@@ -893,13 +900,73 @@ function renderLesson() {
 
 function submitAnswer(answer) {
   const result = recordAnswer(session, currentExercise, answer);
-  pendingFeedback = {
-    text: result.correct ? "Correcto. " + currentExercise.explanation : "No era correcto. " + currentExercise.explanation,
-    expected: currentExercise.target
+  localPendingAnswer = {
+    correct: result.correct, expected: currentExercise.target,
+    explanation: currentExercise.explanation || "", selected: String(answer || ""),
+    exercise: currentExercise, options: currentExercise.options || []
   };
   updateStats();
+  showAnswerFeedback({
+    correct: result.correct, expected: currentExercise.target,
+    explanation: result.correct ? "" : currentExercise.explanation,
+    selected: String(answer || ""), options: currentExercise.options || [],
+    correctOption: currentExercise.target
+  });
+  if (routeMode) saveRouteDraft();
+}
+
+function updateStats() {
+  $("streak").textContent = session.streak;
+  $("word-count").textContent = session.vocabulary.length;
+  $("error-count").textContent = session.errors.length;
+}
+function showAnswerFeedback({ correct, expected, explanation, selected, options = [], correctOption }) {
+  const expectedText = expected ? '<p class="answer-correct-text">Respuesta correcta: ' + renderVariantTerms(expected) + ' ' + speakerButton(expected, session?.config.languageLocale || catalog?.locale) + '</p>' : "";
+  const explanationText = !correct && explanation ? '<p class="answer-explanation">' + renderVariantTerms(explanation) + '</p>' : "";
+  $("feedback").innerHTML = (correct ? '<p class="answer-status correct">Correcto</p>' : '<p class="answer-status incorrect">Incorrecto</p>') + expectedText + explanationText;
+  $("feedback").classList.remove("hidden","bad");
+  $("answer-area").querySelectorAll("[data-choice],[data-ai-choice]").forEach(button => {
+    const value = button.textContent.trim().toLocaleLowerCase();
+    const isCorrect = value === String(correctOption || expected || "").trim().toLocaleLowerCase();
+    const isSelected = value === String(selected || "").trim().toLocaleLowerCase();
+    button.classList.toggle("answer-correct", isCorrect);
+    button.classList.toggle("answer-incorrect", !correct && isSelected && !isCorrect);
+    button.disabled = true;
+  });
+  $("answer-area").querySelectorAll("input").forEach(input => { input.disabled = true; });
+  $("answer-area").querySelectorAll("button:not([data-choice]):not([data-ai-choice])").forEach(button => { button.disabled = true; });
+  $("answer-area").insertAdjacentHTML("beforeend", '<button id="continue-answer" class="primary answer-continue" type="button">Continuar →</button>');
+  bindSpeakerButtons($("feedback"));
+  $("continue-answer").addEventListener("click", continueAfterAnswer);
+}
+function continueAfterAnswer() {
+  $("feedback").classList.add("hidden");
+  if (aiMode && aiPendingTurn) {
+    const pending = aiPendingTurn;
+    aiPendingTurn = null;
+    const evaluation = pending.evaluation || {};
+    if (routeMode && pending.routeIntegrationQuestion) {
+      if (evaluation.status === "correct") {
+        session.routeIntegrationComplete = true;
+        pendingFeedback = { text: evaluation.feedback || "Actividad integradora completada.", expected: pending.exercise.expectedAnswer || "" };
+        finishSession();
+      } else renderRouteAssessmentFailed();
+      return;
+    }
+    if (routeMode && session.turn === 10 && !routeIntegration) {
+      if (session.correct < 8) { renderRouteAssessmentFailed(); return; }
+      routeIntegration = true;
+    }
+    if (pending.result?.nextAction === "finish" || (!routeMode && session.turn >= session.config.duration)) {
+      finishSession();
+      return;
+    }
+    renderAITutorTurn(pending.result);
+    if (routeMode) saveRouteDraft();
+    return;
+  }
+  localPendingAnswer = null;
   if (routeMode) {
-    saveRouteDraft();
     if (session.turn >= 10) {
       if (session.correct >= 8) {
         routeIntegration = true;
@@ -908,20 +975,12 @@ function submitAnswer(answer) {
       } else renderRouteAssessmentFailed();
       return;
     }
-    renderLesson();
-    return;
-  }
-  if (session.turn >= session.config.duration) {
+    saveRouteDraft();
+  } else if (session.turn >= session.config.duration) {
     finishSession();
     return;
   }
   renderLesson();
-}
-
-function updateStats() {
-  $("streak").textContent = session.streak;
-  $("word-count").textContent = session.vocabulary.length;
-  $("error-count").textContent = session.errors.length;
 }
 function showFeedback(message, positive) {
   $("feedback").textContent = message;
@@ -1015,6 +1074,17 @@ $("new-session").addEventListener("click", () => {
 // Main navigation and language onboarding
 function showScreen(name) {
   $("session-view").classList.add("hidden");
+  $("app-shell").classList.remove("session-active");
+  if (name === "theory") {
+    $("theory-detail").classList.add("hidden");
+    $("theory-topic-list").classList.add("hidden");
+    $("theory-grid").classList.remove("hidden");
+  }
+  if (name === "exercises") {
+    $("exercise-choice-panel").classList.remove("hidden");
+    $("review-exercises").classList.add("hidden");
+  }
+  if (name === "stats") refreshDashboard();
   document.querySelectorAll(".app-screen").forEach(screen => screen.classList.toggle("hidden", screen.id !== "screen-" + name));
   $("app-shell").classList.remove("session-active");
   document.querySelectorAll(".nav-item").forEach(button => {
@@ -1188,8 +1258,8 @@ function persistSettings() {
   localStorage.setItem("adaptive-language-tutor.settings", JSON.stringify(savedSettings));
 }
 $("welcome-start").addEventListener("click", () => {
-  $("welcome-screen").classList.add("hidden");
   if ($("language").value && localStorage.getItem("adaptive-language-tutor.settings")) {
+    $("welcome-screen").classList.add("hidden");
     $("app-shell").classList.remove("hidden");
     showScreen("route");
   } else {
