@@ -85,10 +85,19 @@ function getSelectedCatalog() {
 }
 function updateCustomLanguageFields() {
   const custom = $("language").value === "other";
-  $("custom-language-name-field").classList.toggle("hidden", !custom);
-  $("custom-language-locale-field").classList.toggle("hidden", !custom);
+  $("custom-language-fields").classList.toggle("hidden", !custom);
+  $("language-apply").classList.toggle("hidden", !custom);
   $("custom-language-name").required = custom;
   $("custom-language-locale").required = custom;
+}
+function languageFlag(language) {
+  return ({ "Portugués brasileño":"🇧🇷", "Inglés":"🇺🇸" })[language] || "🏳️";
+}
+function updateLanguageFlag() {
+  const selected = $("language").value;
+  $("selected-language-flag").textContent = selected === "other"
+    ? languageFlag($("custom-language-name").value.trim())
+    : languageFlag(selected);
 }
 let session = null;
 let catalog = null;
@@ -125,11 +134,18 @@ function refreshDashboard() {
     ? "<strong>" + due.length + " errores pendientes.</strong><p>Este apartado contiene únicamente respuestas incorrectas registradas en sesiones anteriores.</p>"
     : "No tienes repasos pendientes. Los errores que cometas durante las sesiones aparecerán aquí.";
   const statsContent = $("statistics-content");
-  if (statsContent) statsContent.innerHTML =
-    '<div class="stat-card"><span>Sesiones completadas</span><strong>' + stats.sessions + '</strong></div>' +
-    '<div class="stat-card"><span>Palabras aprendidas</span><strong>' + stats.vocabulary + '</strong></div>' +
-    '<div class="stat-card"><span>Precisión media</span><strong>' + stats.averageAccuracy + '%</strong></div>' +
-    '<div class="stat-card"><span>Repasos pendientes</span><strong>' + due.length + '</strong></div>';
+  if (statsContent) {
+    const sessions = progress.sessions.filter(item => !languageId || item.languageId === languageId).slice(-8);
+    const bars = sessions.map((item, index) => '<div class="progress-bar-column"><span>' + item.accuracy + '%</span><i style="height:' + Math.max(5, item.accuracy) + '%"></i><small>' + (index + 1) + '</small></div>').join("");
+    statsContent.innerHTML =
+      '<div class="stat-card"><span>Sesiones completadas</span><strong>' + stats.sessions + '</strong></div>' +
+      '<div class="stat-card"><span>Palabras aprendidas</span><strong>' + stats.vocabulary + '</strong></div>' +
+      '<div class="stat-card"><span>Precisión media</span><strong>' + stats.averageAccuracy + '%</strong></div>' +
+      '<div class="stat-card"><span>Repasos pendientes</span><strong>' + due.length + '</strong></div>' +
+      '<section class="progress-chart-card"><h2>Avance por sesión</h2>' +
+      (bars ? '<div class="progress-chart" role="img" aria-label="Precisión de las últimas sesiones">' + bars + '</div><p>Precisión de cada sesión completada</p>' : '<p class="empty-chart">Completa tu primera sesión para ver aquí tu evolución.</p>') +
+      '</section>';
+  }
 }
 $("language").addEventListener("change", () => {
   updateCustomLanguageFields();
@@ -141,8 +157,10 @@ try {
   const savedSettings = JSON.parse(localStorage.getItem("adaptive-language-tutor.settings") || "{}");
   if (savedSettings.selectedLanguage) {
     $("language").value = savedSettings.selectedLanguage;
-    $("language-gate").classList.add("hidden");
+    $("welcome-screen").classList.add("hidden");
     $("app-shell").classList.remove("hidden");
+    if (savedSettings.customLanguageName) $("selected-language-flag").textContent = "🏳️";
+    else updateLanguageFlag();
   }
   if (savedSettings.duration) $("duration").value = String(savedSettings.duration);
   if (savedSettings.level) $("level").value = savedSettings.level;
@@ -258,7 +276,8 @@ $("setup-form").addEventListener("submit", event => {
     return;
   }
   const durationMinutes = Number($("duration").value);
-  const config = { language:catalog.label, languageId:catalog.id, languageLocale:catalog.locale || catalog.id, duration:durationMinutes * 2, durationMinutes, level:$("level").value, topic:$("topic").value };
+  const questionCount = Number($("duration").value);
+  const config = { language:catalog.label, languageId:catalog.id, languageLocale:catalog.locale || catalog.id, duration:questionCount, questionCount, level:$("level").value, topic:$("topic").value };
   persistSettings();
   sessionAbortController?.abort();
   sessionAbortController = new AbortController();
@@ -287,7 +306,7 @@ function getAILearnerContext(config = session.config) {
     targetLanguageLocale: config.languageLocale || catalog?.locale || config.languageId,
     level: config.estimatedLevel || config.level,
     topic: config.topic,
-    sessionDuration: config.durationMinutes || config.duration
+    questionCount: config.questionCount || config.duration
   };
 }
 
@@ -310,7 +329,6 @@ async function startAITutorSession(config) {
       learner: getAILearnerContext(config),
       session: {
         duration: config.duration,
-        durationMinutes: config.durationMinutes,
         turn: 0,
         topic: config.topic,
         diagnostic: false,
@@ -336,7 +354,7 @@ function renderAITutorTurn(result) {
   $("hint-btn").disabled = false;
   $("hint-btn").textContent = "Pista";
   $("lesson-phase").textContent = "TUTOR IA · CONVERSACIÓN";
-  $("turn-count").textContent = "Turno " + Math.min(session.turn + 1, session.config.duration) + " / " + session.config.duration;
+  $("turn-count").textContent = "Pregunta " + Math.min(session.turn + 1, session.config.duration) + " / " + session.config.duration;
   $("progress-bar").style.width = (session.turn / session.config.duration * 100) + "%";
   $("streak").textContent = session.streak;
   $("word-count").textContent = session.vocabulary.length;
@@ -408,7 +426,6 @@ async function submitAITutorAnswer(answer) {
       learner: getAILearnerContext(),
       session: {
         duration: session.config.duration,
-        durationMinutes: session.config.durationMinutes,
         turn: session.turn + 1,
         topic: session.config.topic,
         diagnostic: false,
@@ -571,7 +588,7 @@ function renderLesson() {
   currentExercise = chooseExercise();
   const adaptation = getAdaptation(session);
   $("lesson-phase").textContent = "CONVERSACIÓN GUIADA";
-  $("turn-count").textContent = "Turno " + (session.turn + 1) + " / " + session.config.duration;
+  $("turn-count").textContent = "Pregunta " + (session.turn + 1) + " / " + session.config.duration;
   $("progress-bar").style.width = (session.turn / session.config.duration * 100) + "%";
   $("streak").textContent = session.streak;
   $("word-count").textContent = session.vocabulary.length;
@@ -746,18 +763,13 @@ function closeSessionAndReturn() {
  document.querySelectorAll("[data-screen]").forEach(button => button.addEventListener("click", () => showScreen(button.dataset.screen)));
 document.querySelectorAll("[data-mode]").forEach(button => button.addEventListener("click", () => {
   selectedExerciseMode = button.dataset.mode;
-  $("exercise-choice-panel").classList.add("hidden");
-  $("setup-panel").classList.remove("hidden");
-  $("setup-title").textContent = selectedExerciseMode === "review" ? "Preparar repaso" : "Preparar sesión";
+  document.querySelectorAll("[data-mode]").forEach(item => item.classList.toggle("selected", item === button));
   $("review-exercises").classList.toggle("hidden", selectedExerciseMode !== "review");
+  $("topic").disabled = selectedExerciseMode === "review";
   if (selectedExerciseMode === "review") refreshDashboard();
 }));
-$("route-start-exercises").addEventListener("click", () => showScreen("exercises"));
-$("setup-back").addEventListener("click", () => {
-  $("setup-panel").classList.add("hidden");
-  $("review-exercises").classList.add("hidden");
-  $("exercise-choice-panel").classList.remove("hidden");
-});
+$("route-start-exercises")?.addEventListener("click", () => showScreen("exercises"));
+$("setup-back")?.addEventListener("click", () => showScreen("exercises"));
 $("session-close").addEventListener("click", () => {
   if (sessionFinished) closeSessionAndReturn();
   else $("session-confirm").showModal();
@@ -774,18 +786,38 @@ $("language-apply").addEventListener("click", () => {
     return;
   }
   try { persistSettings(); } catch {}
-  document.querySelector(".language-menu")?.removeAttribute("open");
+  $("selected-language-flag").textContent = selected.id === "pt-BR" ? "🇧🇷" : selected.id === "en" ? "🇺🇸" : "🏳️";
+  $("language-picker").close();
+  $("welcome-screen").classList.add("hidden");
+  $("app-shell").classList.remove("hidden");
+  showScreen("route");
   refreshDashboard();
 });
 document.querySelectorAll("[data-theory]").forEach(button => button.addEventListener("click", () => {
-  const details = {
-    grammar:["Gramática","Estructuras y reglas del idioma organizadas por nivel."],
-    vocabulary:["Vocabulario","Palabras y expresiones útiles agrupadas por tema."],
-    expressions:["Expresiones","Frases habituales para situaciones reales."]
+  const language = getSelectedCatalog()?.id || "pt-BR";
+  const content = {
+    grammar: ["Gramática", [
+      ["Pronombres personales", language === "en" ? "I, you, he, she, it, we, they. Se usan normalmente antes del verbo." : "Eu, você, ele, ela, nós, vocês, eles/elas. En portugués el pronombre suele acompañar al verbo."],
+      ["Verbo ser y estar", language === "en" ? "Be cambia según la persona: I am, you are, he/she is. Se usa para identidad y estados." : "Ser expresa identidad o característica; estar expresa estado o ubicación: eu sou, eu estou."],
+      ["Artículos", language === "en" ? "The es definido; a/an es indefinido. An precede a sonido vocálico." : "O, a, os, as son definidos; um, uma, uns, umas son indefinidos."],
+      ["Presente", language === "en" ? "Para hábitos: I work. Con he/she/it se añade -s: she works." : "Para hábitos: eu trabalho, você estuda. La terminación cambia según el verbo y la persona."]
+    ]],
+    vocabulary: ["Vocabulario", [
+      ["Saludos", language === "en" ? "Hello — hola · Good morning — buenos días · See you — hasta luego." : "Olá — hola · Bom dia — buenos días · Até logo — hasta luego."],
+      ["Personas", language === "en" ? "Person — persona · friend — amigo/a · family — familia." : "Pessoa — persona · amigo — amigo · família — familia."],
+      ["Tiempo", language === "en" ? "Today — hoy · tomorrow — mañana · yesterday — ayer." : "Hoje — hoy · amanhã — mañana · ontem — ayer."],
+      ["Comida", language === "en" ? "Water — agua · bread — pan · meal — comida." : "Água — agua · pão — pan · refeição — comida."]
+    ]],
+    expressions: ["Expresiones", [
+      ["Presentarse", language === "en" ? "My name is… — Me llamo… · Nice to meet you — Mucho gusto." : "Meu nome é… — Me llamo… · Prazer em conhecer você — Mucho gusto."],
+      ["Pedir ayuda", language === "en" ? "Can you help me? — ¿Puedes ayudarme? · I don't understand — No entiendo." : "Você pode me ajudar? — ¿Puedes ayudarme? · Não entendi — No entendí."],
+      ["En un café", language === "en" ? "I'd like a coffee, please — Quisiera un café, por favor." : "Eu gostaria de um café, por favor — Quisiera un café, por favor."],
+      ["Preguntar", language === "en" ? "Where is…? — ¿Dónde está…? · How much is it? — ¿Cuánto cuesta?" : "Onde fica…? — ¿Dónde queda…? · Quanto custa? — ¿Cuánto cuesta?"]
+    ]]
   };
-  const [title,description]=details[button.dataset.theory];
-  $("theory-title").textContent=title;
-  $("theory-description").textContent=description;
+  const [title, topics] = content[button.dataset.theory];
+  $("theory-title").textContent = title;
+  $("theory-description").innerHTML = '<div class="theory-topic-list">' + topics.map(([name,description]) => '<article class="theory-topic"><h3>' + escapeHTML(name) + '</h3><p>' + escapeHTML(description) + '</p></article>').join("") + '</div>';
   $("theory-detail").classList.remove("hidden");
   document.querySelector(".theory-grid").classList.add("hidden");
 }));
@@ -804,13 +836,43 @@ function persistSettings() {
   };
   localStorage.setItem("adaptive-language-tutor.settings", JSON.stringify(savedSettings));
 }
-
+$("welcome-start").addEventListener("click", () => {
+  if ($("language").value && localStorage.getItem("adaptive-language-tutor.settings")) {
+    $("welcome-screen").classList.add("hidden");
+    $("app-shell").classList.remove("hidden");
+    showScreen("route");
+  } else {
+    $("language-picker").showModal();
+  }
+});
+$("open-language-picker").addEventListener("click", () => {
+  $("custom-language-fields").classList.add("hidden");
+  $("language-apply").classList.add("hidden");
+  $("language-picker").showModal();
+});
+$("language-cancel").addEventListener("click", () => {
+  $("language-picker").close();
+  if (!$("language").value || !localStorage.getItem("adaptive-language-tutor.settings")) {
+    $("welcome-screen").classList.remove("hidden");
+    $("app-shell").classList.add("hidden");
+  }
+});
 document.querySelectorAll("[data-language]").forEach(button => button.addEventListener("click", () => {
   $("language").value = button.dataset.language;
-  $("language").dispatchEvent(new Event("change"));
+  updateCustomLanguageFields();
+  if (button.dataset.language === "other") {
+    $("custom-language-name").focus();
+    return;
+  }
+  $("custom-language-name").value = "";
+  $("custom-language-locale").value = "";
   try { persistSettings(); } catch {}
-  $("language-gate").classList.add("hidden");
+  updateLanguageFlag();
+  $("language-picker").close();
+  $("welcome-screen").classList.add("hidden");
   $("app-shell").classList.remove("hidden");
   showScreen("route");
-  if (button.dataset.language === "other") document.querySelector(".language-menu")?.setAttribute("open", "");
+  refreshDashboard();
 }));
+$("custom-language-name").addEventListener("input", updateLanguageFlag);
+
