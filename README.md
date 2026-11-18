@@ -325,4 +325,6 @@ Esta sección **prevalece sobre cualquier regla anterior incompatible** de las s
 - Cambiar de sección vuelve a su pantalla inicial: categorías de Teoría, configuración de Ejercicios, inicio de Ruta o Estadísticas.
 - Ruta conserva el estado de una respuesta pendiente al guardar y reanudar; el feedback queda en la pregunta respondida y espera Continuar.
 - Se amplió el plan E2E para comprobar bienvenida explícita, feedback sin avance automático, colores, tablas de teoría y reanudación.
+- CI (npm run check, npm test y Browser E2E) aprobado en el commit `e227eea`.
+- Preview Render desplegado y en estado `live` en el commit `e227eea` (deploy `dep-dbv2si8u01pc73clh3u0`).
 
