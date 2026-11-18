@@ -9,34 +9,17 @@
   <script type="module" src="./src/app.js"></script>
 </head>
 <body>
-<section id="language-gate" class="language-gate">
-  <div class="gate-brand"><span class="brand-mark">A</span></div>
-  <h1>¿Qué idioma quieres aprender?</h1>
-  <div class="language-options">
-    <button class="language-choice" type="button" data-language="Portugués brasileño"><span class="flag">🇧🇷</span><span><strong>Portugués</strong><small>Brasil</small></span><span class="choice-arrow">→</span></button>
-    <button class="language-choice" type="button" data-language="Inglés"><span class="flag">🇺🇸</span><span><strong>Inglés</strong><small>Estados Unidos</small></span><span class="choice-arrow">→</span></button>
-    <button class="language-choice" type="button" data-language="other"><span class="flag">🌐</span><span><strong>Otro idioma</strong><small>Personalizar idioma</small></span><span class="choice-arrow">→</span></button>
-  </div>
+<section id="welcome-screen" class="welcome-screen">
+  <div class="welcome-brand"><span class="welcome-mark">A</span></div>
+  <h1>Adaptive<br>Language Tutor</h1>
+  <p>Aprende un idioma, paso a paso.</p>
+  <button id="welcome-start" class="welcome-start" type="button">Iniciar</button>
 </section>
 
 <main id="app-shell" class="app-shell hidden">
   <header class="topbar">
     <div class="topbar-spacer"></div>
     <div class="header-actions">
-      <details class="language-menu">
-        <summary class="icon-control" aria-label="Cambiar idioma" title="Cambiar idioma">🌐</summary>
-        <div class="language-popover">
-          <label for="language">Idioma objetivo</label>
-          <select id="language">
-            <option>Portugués brasileño</option>
-            <option>Inglés</option>
-            <option value="other">Otro idioma</option>
-          </select>
-          <label id="custom-language-name-field" class="hidden">Nombre<input id="custom-language-name" placeholder="Ej. Francés"></label>
-          <label id="custom-language-locale-field" class="hidden">Locale<input id="custom-language-locale" placeholder="Ej. fr-FR" autocomplete="off"></label>
-          <button id="language-apply" class="primary" type="button">Aplicar</button>
-        </div>
-      </details>
       <button id="audio-toggle" class="icon-control audio-toggle" type="button" aria-pressed="true" aria-label="Desactivar audio" title="Audio activado">🔊</button>
     </div>
   </header>
@@ -47,32 +30,29 @@
     <section class="route-stage panel">
       <div class="stage-topline"><span class="stage-number">01</span><span class="stage-state">Disponible</span></div>
       <h2>Fundamentos</h2>
-      <div class="route-step"><span class="step-dot complete">✓</span><span>Introducción</span></div>
-      <div class="route-step"><span class="step-dot current">›</span><span>Primeras conversaciones</span></div>
-      <div class="route-step muted-step"><span class="step-dot">⌑</span><span>Siguiente etapa</span></div>
-      <button id="route-start-exercises" class="secondary" type="button">Continuar recorrido →</button>
+      <div class="route-step"><span class="step-dot complete">✓</span><span>Saludos y presentaciones</span></div>
+      <div class="route-step"><span class="step-dot current">›</span><span>Frases cotidianas</span></div>
+      <div class="route-step muted-step"><span class="step-dot">3</span><span>Preguntas básicas</span></div>
+      <div class="route-step muted-step"><span class="step-dot">4</span><span>Primera conversación</span></div>
     </section>
   </section>
 
   <section id="screen-exercises" class="app-screen hidden">
     <div class="screen-heading"><h1>Ejercicios</h1></div>
     <div id="exercise-choice-panel" class="exercise-choices">
-      <button class="choice-card" type="button" data-mode="global"><span class="choice-icon">◎</span><span><strong>Global</strong><small>Práctica general de distintas habilidades.</small></span><span class="choice-arrow">→</span></button>
-      <button class="choice-card" type="button" data-mode="review"><span class="choice-icon">↻</span><span><strong>Repaso</strong><small>Refuerza errores de sesiones anteriores.</small><em id="review-count" class="tab-count">0</em></span><span class="choice-arrow">→</span></button>
+      <button class="choice-card selected" type="button" data-mode="global"><span class="choice-icon">◎</span><span><strong>Global</strong></span></button>
+      <button class="choice-card" type="button" data-mode="review"><span class="choice-icon">↻</span><span><strong>Repaso</strong><em id="review-count" class="tab-count">0</em></span></button>
     </div>
-    <section id="setup-panel" class="panel hidden">
-      <div class="section-heading"><h2 id="setup-title">Preparar sesión</h2></div>
-      <p id="ai-status" class="muted" role="status">Comprobando disponibilidad del tutor IA…</p>
+    <section id="setup-panel" class="panel">
       <form id="setup-form" class="setup-grid">
-        <label>Duración<select id="duration"><option value="5">5 minutos</option><option value="10" selected>10 minutos</option><option value="15">15 minutos</option><option value="20">20 minutos</option></select></label>
+        <label>Cantidad de preguntas<select id="duration"><option value="5">5 preguntas</option><option value="10" selected>10 preguntas</option><option value="15">15 preguntas</option><option value="20">20 preguntas</option></select></label>
         <label>Nivel<select id="level"><option value="zero">Principiante</option><option value="basic" selected>Intermedio</option><option value="advanced">Avanzado</option></select></label>
         <label class="topic-field">Tema<select id="topic"><option value="daily">Vida cotidiana</option><option value="travel">Viajes</option><option value="food">Comida y restaurantes</option><option value="work">Trabajo y estudios</option><option value="random">Todos los temas</option></select></label>
-        <div class="form-footer"><button id="setup-back" class="text-button" type="button">Volver</button><button id="start-session" class="primary" type="submit" disabled>Comenzar sesión →</button></div>
+        <div class="form-footer"><button id="setup-back" class="text-button hidden" type="button">Volver</button><button id="start-session" class="primary" type="submit" disabled>Comenzar</button></div>
       </form>
+      <p id="ai-status" class="muted hidden" role="status"></p>
     </section>
-    <section id="review-exercises" class="panel hidden">
-      <h2>Repaso</h2><div id="review-dashboard" class="review-dashboard"></div>
-    </section>
+    <section id="review-exercises" class="panel hidden"><div id="review-dashboard" class="review-dashboard"></div></section>
   </section>
 
   <section id="screen-theory" class="app-screen hidden">
@@ -82,7 +62,7 @@
       <button class="theory-card" type="button" data-theory="vocabulary"><span>Aa</span><strong>Vocabulario</strong></button>
       <button class="theory-card" type="button" data-theory="expressions"><span>“ ”</span><strong>Expresiones</strong></button>
     </div>
-    <section id="theory-detail" class="panel hidden"><button id="theory-back" class="text-button" type="button">← Volver</button><h2 id="theory-title"></h2><p id="theory-description"></p></section>
+    <section id="theory-detail" class="panel hidden"><button id="theory-back" class="text-button" type="button">← Volver</button><h2 id="theory-title"></h2><div id="theory-description"></div></section>
   </section>
 
   <section id="screen-stats" class="app-screen hidden">
@@ -110,12 +90,31 @@
 
   <footer class="app-footer hidden"><span id="session-status"></span></footer>
   <nav class="bottom-nav" aria-label="Navegación principal">
-    <button class="nav-item active" type="button" data-screen="route" aria-label="Ruta" aria-current="page"><span class="nav-icon">⌖</span></button>
-    <button class="nav-item" type="button" data-screen="exercises" aria-label="Ejercicios"><span class="nav-icon">▤</span></button>
-    <button class="nav-item" type="button" data-screen="theory" aria-label="Teoría"><span class="nav-icon">▧</span></button>
-    <button class="nav-item" type="button" data-screen="stats" aria-label="Estadísticas"><span class="nav-icon">▥</span></button>
+    <button class="nav-item active" type="button" data-screen="route" aria-label="Ruta" aria-current="page"><span class="nav-icon">🗺️</span></button>
+    <button class="nav-item" type="button" data-screen="exercises" aria-label="Ejercicios"><span class="nav-icon">🏋️</span></button>
+    <button class="nav-language" id="open-language-picker" type="button" aria-label="Cambiar idioma objetivo"><span class="language-globe">🌐</span><span id="selected-language-flag" class="selected-language-flag">🇧🇷</span></button>
+    <button class="nav-item" type="button" data-screen="theory" aria-label="Teoría"><span class="nav-icon">📖</span></button>
+    <button class="nav-item" type="button" data-screen="stats" aria-label="Estadísticas"><span class="nav-icon">📊</span></button>
   </nav>
 </main>
+
+<dialog id="language-picker" class="language-picker confirm-dialog">
+  <div class="language-picker-heading"><span>🌐</span><h2>Elige un idioma</h2></div>
+  <div class="language-mosaic">
+    <button type="button" data-language="Portugués brasileño"><span>🇧🇷</span><strong>Portugués</strong><small>Brasil</small></button>
+    <button type="button" data-language="Inglés"><span>🇺🇸</span><strong>Inglés</strong><small>Estados Unidos</small></button>
+    <button type="button" data-language="other"><span>🌍</span><strong>Otro idioma</strong><small>Personalizar</small></button>
+  </div>
+  <div id="custom-language-fields" class="custom-language-fields hidden">
+    <label>Nombre del idioma<input id="custom-language-name" placeholder="Ej. Francés"></label>
+    <label>Locale<input id="custom-language-locale" placeholder="Ej. fr-FR" autocomplete="off"></label>
+  </div>
+  <select id="language" class="hidden" aria-hidden="true" tabindex="-1">
+    <option>Portugués brasileño</option><option>Inglés</option><option value="other">Otro idioma</option>
+  </select>
+  <button id="language-apply" class="primary hidden" type="button">Confirmar idioma</button>
+  <button id="language-cancel" class="text-button language-cancel" type="button">Cancelar</button>
+</dialog>
 
 <dialog id="session-confirm" class="confirm-dialog">
   <h2>¿Finalizar sesión?</h2>
