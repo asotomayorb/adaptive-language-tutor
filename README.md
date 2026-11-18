@@ -213,3 +213,43 @@ Nunca subir claves API al repositorio. Para pruebas iniciales con proveedores ex
 
 ### Nota sobre duración
 La selección se expresa en minutos. En la implementación actual se asignan provisionalmente dos turnos de ejercicio por minuto (por ejemplo, 10 minutos = 20 turnos). Ajustar esta equivalencia tras pruebas reales de duración de sesión.
+
+
+## 15. Refinamientos de producto móvil — 18-11-2026
+
+### Requisitos confirmados
+- [x] La experiencia debe comenzar con una pantalla de bienvenida: nombre de la aplicación en tamaño destacado y un botón principal “Iniciar”. Al pulsarlo se entra a la aplicación; si aún no hay idioma seleccionado, primero se abre el selector de idiomas.
+- [x] La barra inferior contiene cinco posiciones: Ruta (mapa), Ejercicios (pesas), selector central de idioma (globo + bandera seleccionada), Teoría (libro) y Estadísticas (gráfico). Los cuatro accesos de sección son icon-only; el selector de idioma central es visualmente más grande y destacado.
+- [x] La bandera central debe representar siempre el idioma objetivo actual, conservarse entre visitas y cambiar al seleccionar otro idioma. Al tocar el selector se abre un mosaico de idiomas con bandera; al elegir un idioma se guarda y se vuelve automáticamente a Ruta.
+- [x] En Ejercicios, Global/Repaso y los selectores de cantidad, nivel y tema conviven en la misma pantalla. Los tres parámetros son desplegables; no debe aparecer una pantalla intermedia de preparación ni textos de estado como “Preparar sesión” o “Tutor IA disponible”.
+- [x] La cantidad de ejercicios se expresa en preguntas, no en minutos. Los valores iniciales propuestos en la interfaz son 5, 10, 15 y 20 preguntas.
+- [x] Estadísticas incluye un gráfico de evolución construido únicamente con sesiones reales guardadas. Si no hay sesiones, debe mostrarse un estado vacío, nunca datos inventados.
+- [x] Teoría debe mostrar contenido debajo de cada categoría y no limitarse a subtítulos vacíos.
+- [x] Las pistas y correcciones conservan su control de audio individual. El estado global de audio debe persistir entre sesiones.
+- [x] Ruta no muestra los selectores de Ejercicios. Cada etapa define de antemano tema, nivel y actividad; su duración se determina por hitos pedagógicos, no por minutos.
+
+### Criterio propuesto para hitos de Ruta — pendiente de aprobación
+1. Una unidad cubre un objetivo comunicativo concreto y entre 3 y 5 microtemas relacionados.
+2. Cada microtema contiene 3 a 5 preguntas/actividades breves.
+3. Se desbloquea el siguiente microtema con al menos 80% de acierto en una comprobación de 5 preguntas (mínimo 4 correctas).
+4. El cierre de unidad exige una actividad integradora que combine los microtemas; se puede requerir 80% o una segunda oportunidad de refuerzo.
+5. El progreso parcial de Ruta se guarda después de cada respuesta confirmada; cerrar la sesión permite retomarla desde la última actividad guardada.
+6. Ejercicios mantiene el comportamiento opuesto: cerrar una sesión incompleta descarta todas sus respuestas temporales.
+
+**Propuesta de ejemplo:** “Saludos y presentaciones” → saludos → nombre y procedencia → preguntas personales → diálogo integrado. El nivel y los contenidos se fijan por unidad, según el idioma.
+
+### Estado de implementación de esta revisión
+- [x] Pantalla de bienvenida con botón Iniciar.
+- [x] Barra inferior de cinco posiciones con iconos de mapa, pesas, libro y gráfico; selector de idioma central destacado.
+- [x] Mosaico de selección de idiomas y persistencia de idioma/flag; idiomas iniciales disponibles: portugués brasileño e inglés. Los idiomas personalizados usan la región del locale para intentar mostrar su bandera.
+- [x] Ejercicios: Global/Repaso y campos desplegables en la misma pantalla.
+- [x] Cantidad de preguntas (5/10/15/20) sustituye a duración en minutos en la configuración de la sesión.
+- [x] Gráfico de precisión por sesión con datos guardados y estado vacío.
+- [x] Teoría incorpora contenidos iniciales en Gramática, Vocabulario y Expresiones para portugués brasileño e inglés.
+- [ ] Implementar sesiones reales de Ruta con unidades, hitos, desbloqueos y progreso parcial persistente.
+- [ ] Aprobar o ajustar el umbral de dominio y estructura de hitos propuestos arriba antes de fijar la progresión pedagógica.
+- [ ] Ampliar el mosaico de idiomas y verificar visualmente las banderas en Android.
+- [ ] Auditar el estado persistente del audio en sesiones nuevas y entre reinicios del navegador.
+- [ ] Ejecutar npm run check, npm test, npm run test:e2e y pruebas reales en Android tras estos cambios.
+
+**Nota de precisión:** la pantalla Ruta sigue siendo una estructura visual de etapas; todavía no inicia una sesión con contenido prefijado ni guarda progreso parcial. El gráfico actual muestra la precisión de sesiones completadas como indicador observable, no una estimación ficticia de dominio del idioma.
