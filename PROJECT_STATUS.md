@@ -502,3 +502,10 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 ### Diseño futuro (no implementado)
 - Modo de comprensión lectora con textos originales o de dominio público/licencia abierta verificada, atribución y preguntas cerradas basadas en el texto.
 - Clip cultural de 1–2 segundos asociado a cada bandera, usando exclusivamente grabaciones cuya licencia concreta esté verificada como dominio público o compatible.
+
+
+### Validación cerrada de la iteración — 18-11-2026
+- [x] `npm run check` y tests unitarios aprobados en GitHub Actions run `44424442155`.
+- [x] Browser E2E aprobado en run `44424442327`, incluyendo banner único de Ruta, locución por locale, exclusión de fragmentos en español en el audio objetivo y desaparición del botón de envío de texto.
+- [x] Render preview `live` con código `32673f0`, deploy `dep-dbv3kuhsrm7s73bap9n0`.
+- [ ] Validación manual Android: comprobar voz real, pausas en huecos, apariencia y áreas táctiles.
