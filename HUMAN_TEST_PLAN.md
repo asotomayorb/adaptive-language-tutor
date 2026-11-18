@@ -137,3 +137,5 @@ Para cada escenario registrar:
 - [ ] El audio sigue activado/desactivado al cambiar de sesión y al recargar la aplicación; comprobar controles de audio en pistas y correcciones.
 - [ ] Revisar selector, mosaico, áreas táctiles, barra inferior y diálogos en Android real.
 - [ ] Ruta aún está pendiente: no evaluar como completa hasta que tenga unidades, hitos, guardado parcial y recuperación al volver a abrir.
+
+- [ ] Después de completar o descartar una sesión, volver a Ejercicios y confirmar que Global/Repaso, cantidad, nivel y tema siguen visibles y utilizables.
