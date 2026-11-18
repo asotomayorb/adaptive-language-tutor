@@ -139,3 +139,21 @@ Para cada escenario registrar:
 - [ ] Ruta aún está pendiente: no evaluar como completa hasta que tenga unidades, hitos, guardado parcial y recuperación al volver a abrir.
 
 - [ ] Después de completar o descartar una sesión, volver a Ejercicios y confirmar que Global/Repaso, cantidad, nivel y tema siguen visibles y utilizables.
+
+
+## 10. Revisión pedagógica y de idiomas — 18-11-2026
+
+- [ ] Bienvenida desaparece inmediatamente al pulsar Iniciar; en siguientes aperturas con idioma guardado no vuelve a aparecer.
+- [ ] El mosaico contiene los 23 idiomas estándar y no solicita nombre/locale manual.
+- [ ] Cambiar idioma actualiza bandera y regresa automáticamente a Ruta.
+- [ ] Italiano, alemán, ruso, francés y otros idiomas muestran su bandera y locale interno correcto en solicitudes IA/TTS.
+- [ ] Teoría: seleccionar categoría abre lista de temas legible; seleccionar tema abre diapositiva completa.
+- [ ] En cada diapositiva, anterior/siguiente cambia el tema y el contador; primera/última diapositiva deshabilitan la flecha que no corresponde.
+- [ ] Verificar ejemplos y pronombres en el idioma elegido; no mostrar ejemplos de otra lengua como equivalentes.
+- [ ] En ejercicios de cualquier nivel, las tres primeras preguntas muestran tres alternativas y la cuarta solicita escritura.
+- [ ] Tras responder, se avanza automáticamente; el feedback aparece neutral en la siguiente pregunta, con respuesta modelo y botón de pronunciación.
+- [ ] Comprobar que las variantes “color/colour” abren una explicación emergente al tocar la palabra cuando el contenido inglés las incluye.
+- [ ] Ruta guarda cada respuesta confirmada; cerrar, recargar y continuar retoma el número de pregunta.
+- [ ] Ruta requiere 8/10 en la comprobación de diez ejercicios y después una actividad integradora.
+- [ ] Ejercicios descarta una sesión incompleta y no la agrega al historial.
+- [ ] La última corrección aparece en el resumen y conserva su control de audio.
