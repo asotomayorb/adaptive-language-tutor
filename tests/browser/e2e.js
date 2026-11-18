@@ -84,10 +84,14 @@ try {
   await page.locator("#audio-toggle").click();
   await page.locator("#hint-btn").click();
   await page.locator("#feedback").waitFor({ state: "visible" });
+  assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "dia" && item.lang === "pt-BR")), "local hints should pronounce explicitly annotated target-language fragments");
 
   // Complete the configured eight-turn local session.
   for (let turn = 0; turn < 8; turn += 1) {
     await page.locator("#answer-area [data-choice]").first().click();
+    if (turn === 0) {
+      assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "Bom dia" && item.lang === "pt-BR")), "local feedback should pronounce only explicitly annotated target-language explanation fragments");
+    }
     await page.getByRole("button", { name: "Continuar →" }).click();
   }
   await page.locator("#summary-panel").waitFor({ state: "visible" });
