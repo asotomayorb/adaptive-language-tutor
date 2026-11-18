@@ -49,6 +49,7 @@ Realizar estas comprobaciones en un navegador de escritorio y en un teléfono re
 - [ ] Reactivar el audio lee los fragmentos visibles del idioma objetivo, también en el panel de resumen.
 - [ ] Al cambiar entre resumen, lección y otras vistas, reactivar el audio no debe leer fragmentos de paneles ocultos.
 - [ ] La primera pista IA pronuncia automáticamente los fragmentos del idioma objetivo incluidos en la pista; la pista adicional también los reproduce.
+- [ ] En los ejercicios locales, las pistas y explicaciones pronuncian únicamente los fragmentos del idioma objetivo anotados para ese contenido, sin leer la frase explicativa completa en español.
 - [ ] Si solo existe una voz genérica del idioma (por ejemplo, `pt` sin variante regional), comprobar que se utiliza como fallback antes de recurrir a la voz predeterminada.
 - [ ] Los fragmentos de portugués usan `pt-BR`; los de francés usan `fr-FR`.
 - [ ] Los botones individuales reproducen solo su fragmento y permiten repetirlo.
