@@ -231,6 +231,8 @@ function renderSpacedReview() {
 
 $("setup-form").addEventListener("submit", event => {
   event.preventDefault();
+  showScreen("exercises");
+  setExerciseTab("global");
   if (!aiReady) return;
   catalog = getSelectedCatalog();
   if (!catalog) {
