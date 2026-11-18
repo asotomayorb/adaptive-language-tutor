@@ -298,3 +298,15 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] Browser E2E para `794d853`: run `44202291477` aprobado.
 
 **Conclusión:** la reanudación automática respeta la vista visible y no debe leer fragmentos de paneles ocultos. La prueba usa SpeechSynthesis simulado; no sustituye la validación auditiva en Android y escritorio. Se mantiene pendiente la auditoría de cobertura de explicaciones/pistas y la prueba humana real.
+
+
+## Cancelación de audio al avanzar el repaso espaciado — 18-11-2026
+
+**Commits:** corrección `5a562b73db2367036faf9c02de662b25bac125f6`; prueba Browser E2E `c081f496dd7ca67163ca8e9daa81b45e3ed7cb03`.
+
+- [x] Se detectó que al pasar a la siguiente tarjeta de repaso espaciado podía continuar la locución automática de la tarjeta anterior.
+- [x] `renderSpacedReview()` ahora detiene la voz antes de renderizar cada tarjeta, incluida la navegación entre tarjetas.
+- [x] Browser E2E comprueba que avanzar desde una tarjeta cuya respuesta se acaba de pronunciar cancela la locución anterior.
+- [ ] Confirmar CI en el HEAD que contiene tanto la corrección como la prueba.
+
+**Alcance:** corrige la transición entre tarjetas del repaso espaciado. No sustituye la prueba auditiva en dispositivos reales ni cierra la auditoría global de audio.
