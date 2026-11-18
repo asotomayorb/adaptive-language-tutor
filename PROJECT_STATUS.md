@@ -339,6 +339,6 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] Al enviar una respuesta, la locución previa se cancela antes de esperar la respuesta de la API.
 - [x] Si falla una solicitud IA, se detiene la voz de la actividad anterior.
 - [x] Browser E2E comprueba cancelación al solicitar una pista adicional y al enviar respuesta.
-- [ ] Confirmar Tests y Browser E2E en el HEAD final.
+- [x] CI del código `24503f8`: Tests run `44270792647` y Browser E2E run `44270792661`, aprobados. El HEAD documental `b4fc1de` también pasó Tests run `44270925154` y Browser E2E run `44270924865`.
 
 **Motivo:** antes, la voz de la actividad anterior podía continuar durante la espera de una pista o evaluación; ahora la cancelación sucede en la interacción del usuario, no al renderizar la respuesta siguiente.
