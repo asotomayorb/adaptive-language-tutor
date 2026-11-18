@@ -135,6 +135,10 @@ function getSelectedCatalog() {
 }
 function updateLanguageFlag() {
   $("selected-language-flag").textContent = languageDefinitions[$("language").value]?.flag || "🌐";
+  if (typeof ROUTE_STORAGE_KEY !== "undefined") {
+    routeDraft = getRouteDraftForLanguage(getSelectedCatalog()?.id);
+    $("route-resume").classList.toggle("hidden", !routeDraft?.session);
+  }
 }
 let session = null;
 let catalog = null;
@@ -164,7 +168,11 @@ let routeIntegration = false;
 let routeIntegrationAttempts = 0;
 let routeDraft = null;
 const ROUTE_STORAGE_KEY = "adaptive-language-tutor.route-progress";
-try { routeDraft = JSON.parse(localStorage.getItem(ROUTE_STORAGE_KEY) || "null"); } catch { routeDraft = null; }
+function getRouteDraftForLanguage(languageId) {
+  if (!languageId) return null;
+  try { return JSON.parse(localStorage.getItem(ROUTE_STORAGE_KEY + ":" + languageId) || "null"); }
+  catch { return null; }
+}
 
 function refreshDashboard() {
   const languageId = getSelectedCatalog()?.id;
@@ -211,6 +219,7 @@ try {
 } catch { /* Ignore malformed optional settings; progress storage remains independent. */ }
 updateLanguageFlag();
 refreshDashboard();
+routeDraft = getRouteDraftForLanguage(getSelectedCatalog()?.id);
 if (routeDraft?.session) $("route-resume").classList.remove("hidden");
 checkTutorHealth().then(status => {
   aiConfigured = Boolean(status.ai?.configured);
@@ -622,12 +631,13 @@ function saveRouteDraft() {
     pendingFeedback,
     failed: session.turn >= 10 && !routeIntegration && session.correct < 8
   };
-  try { localStorage.setItem(ROUTE_STORAGE_KEY, JSON.stringify(routeDraft)); } catch {}
+  try { localStorage.setItem(ROUTE_STORAGE_KEY + ":" + session.config.languageId, JSON.stringify(routeDraft)); } catch {}
   $("route-resume").classList.remove("hidden");
 }
 function startRouteSession(resume = false) {
   catalog = getSelectedCatalog();
   if (!catalog) return;
+  routeDraft = getRouteDraftForLanguage(catalog.id);
   if (!catalog.exercises.length) {
     $("route-start").textContent = "Ruta aún no disponible para este idioma";
     return;
@@ -687,7 +697,7 @@ function renderRouteIntegration() {
     if (evaluateAnswer(answer, currentExercise)) {
       session.routeIntegrationComplete = true;
       routeDraft = null;
-      try { localStorage.removeItem(ROUTE_STORAGE_KEY); } catch {}
+      try { localStorage.removeItem(ROUTE_STORAGE_KEY + ":" + session.config.languageId); } catch {}
       $("route-resume").classList.add("hidden");
       pendingFeedback = { text:"Actividad integradora completada. Unidad superada.", expected:currentExercise.target };
       finishSession();
