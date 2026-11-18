@@ -354,3 +354,10 @@ No implementado todavía. Diseñar como un modo independiente:
 2. Usar únicamente textos originales o materiales con estado de dominio público/licencia abierta verificado para el uso previsto; un artículo de noticias moderno o un fragmento corto de un libro no se vuelve libre por ser breve.
 3. Formular preguntas cerradas sobre información explícita, vocabulario en contexto e inferencias con respuesta justificable en el texto.
 4. Al elegir una bandera/idioma, reproducir un clip identificable de 1–2 segundos solo si la grabación concreta tiene derechos de dominio público o licencia compatible comprobada. La antigüedad de una composición no garantiza que una grabación moderna sea libre.
+
+
+### Validación y preview de esta iteración
+- [x] `npm run check` y tests unitarios aprobados en GitHub Actions (run [44424442155](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44424442155)).
+- [x] Browser E2E aprobado (run [44424442327](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44424442327)).
+- [x] Render preview desplegado y `live` para el código `32673f0` (deploy `dep-dbv3kuhsrm7s73bap9n0`).
+- [ ] Prueba visual y auditiva en Android real; CI no puede verificar la calidad de las voces instaladas ni la interacción táctil del dispositivo.
