@@ -107,7 +107,7 @@ function enforceSessionDuration(result, input) {
     throw contractError("The tutor attempted to finish before the configured session duration.");
   }
   const expectedLocale = input?.learner?.targetLanguageLocale;
-  if (input?.task === "start_lesson" && result.exercise && result.exercise.options.length !== 3) {
+  if (input?.task === "start_lesson" && (!result.exercise || result.exercise.options.length !== 3)) {
     throw contractError("The first tutor question must include exactly three multiple-choice options.");
   }
   if (input?.task === "evaluate_and_continue" && Number.isFinite(turn) && turn < 3 &&
