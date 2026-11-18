@@ -1199,6 +1199,91 @@ const theorySamples = {
   "Indonesio":{pronouns:"saya, kamu, dia, kami, kita, mereka",greeting:"Halo! Selamat pagi! Sampai jumpa!",intro:"Nama saya Ana. Saya dari Chili.",articles:"El indonesio no utiliza artículos equivalentes a el/la o un/una."},
   "Tailandés":{pronouns:"ฉัน, คุณ, เขา, เรา, พวกเขา",greeting:"สวัสดี! อรุณสวัสดิ์! แล้วพบกันใหม่!",intro:"ฉันชื่ออานา ฉันมาจากชิลี",articles:"El tailandés no utiliza artículos equivalentes a el/la o un/una."}
 };
+const pronounTranslations = {
+  "Portugués brasileño":["yo","tú / usted","él","ella","nosotros","ustedes","ellos / ellas"],
+  "Inglés":["yo","tú / ustedes","él","ella","ello / eso","nosotros","ellos / ellas"],
+  "Italiano":["yo","tú","él","ella","nosotros","ustedes","ellos / ellas"],
+  "Alemán":["yo","tú","él","ella","ello","nosotros","vosotros","ellos / ellas"],
+  "Ruso":["yo","tú","él","ella","ello","nosotros","usted / ustedes","ellos / ellas"],
+  "Francés":["yo","tú","él","ella","nosotros","usted / ustedes","ellos","ellas"],
+  "Español":["yo","tú","él","ella","nosotros","vosotros / ustedes","ellos / ellas"],
+  "Japonés":["yo","tú","él","ella","nosotros"],
+  "Chino mandarín":["yo","tú","él","ella","nosotros","ustedes","ellos / ellas"],
+  "Coreano":["yo","tú","él","ella","nosotros","ustedes"],
+  "Neerlandés":["yo","tú","él","ella","nosotros","ustedes","ellos / ellas"],
+  "Árabe":["yo","tú (masculino)","tú (femenino)","él","ella","nosotros","ustedes","ellos"],
+  "Hindi":["yo","tú","él / ella","nosotros","usted / ustedes","ellos / ellas"],
+  "Turco":["yo","tú","él / ella","nosotros","usted / ustedes","ellos / ellas"],
+  "Griego":["yo","tú","él","ella","nosotros","ustedes","ellos"],
+  "Polaco":["yo","tú","él","ella","nosotros","ustedes","ellos / ellas"],
+  "Sueco":["yo","tú","él","ella","nosotros","ustedes","ellos / ellas"],
+  "Noruego":["yo","tú","él","ella","nosotros","ustedes","ellos / ellas"],
+  "Danés":["yo","tú","él","ella","nosotros","ustedes","ellos / ellas"],
+  "Hebreo":["yo","tú (masculino)","tú (femenino)","él","ella","nosotros","ustedes","ellos"],
+  "Vietnamita":["yo","tú","él","ella","nosotros (excl.)","ellos / ellas"],
+  "Indonesio":["yo (formal)","tú","él / ella","nosotros (excl.)","nosotros (incl.)","ellos / ellas"],
+  "Tailandés":["yo","tú / usted","él / ella","nosotros","ellos / ellas"]
+};
+const verbLessons = {
+  "Portugués brasileño": {
+    lead:"Portugués distingue ser (identidad, características y origen) de estar (estado temporal y ubicación). Con você/vocês se usa la forma de tercera persona.",
+    tables:[["SER · identidad","Persona","Forma"],["eu","sou"],["você / ele / ela","é"],["nós","somos"],["vocês / eles / elas","são"],["ESTAR · estado y ubicación","Persona","Forma"],["eu","estou"],["você / ele / ela","está"],["nós","estamos"],["vocês / eles / elas","estão"]],
+    example:"Eu sou chilena. / Hoje estou cansada. / Estamos em casa.",
+    rule:"SER: origen, identidad y rasgos definitorios. ESTAR: estados, condiciones y ubicación. Atención: estar también se usa en estar + gerundio (estou estudando)."
+  },
+  "Inglés":{
+    lead:"El inglés utiliza un solo verbo principal, to be, para los significados habituales de ser y estar. La forma cambia según la persona.",
+    tables:[["TO BE · presente","Persona","Forma"],["I","am"],["you / we / they","are"],["he / she / it","is"]],
+    example:"I am Chilean (soy chileno/a). / I am tired (estoy cansado/a). / We are at home (estamos en casa).",
+    rule:"En preguntas se invierte el orden (Are you ready?). En negativo se añade not (is not / isn't). No se traduce mecánicamente ser/estar: el contexto determina el sentido."
+  },
+  "Italiano":{
+    lead:"Essere expresa identidad, origen y características; stare se usa especialmente con estados, permanencia y algunas construcciones. La ubicación normalmente usa essere.",
+    tables:[["ESSERE","Persona","Forma"],["io","sono"],["tu","sei"],["lui / lei","è"],["noi","siamo"],["voi","siete"],["loro","sono"],["STARE","Persona","Forma"],["io","sto"],["tu","stai"],["lui / lei","sta"],["noi","stiamo"],["voi","state"],["loro","stanno"]],
+    example:"Sono cileno. / Sto bene. / Sto a casa (me quedo en casa).",
+    rule:"Essere: identidad, origen y ubicación (Sono a Roma). Stare: estado o permanencia (Sto bene). Stare + gerundio expresa acción en curso (sto studiando)."
+  },
+  "Alemán":{
+    lead:"Se usa sein para identidad, características, estados y ubicación; no hay una oposición equivalente a ser/estar del español.",
+    tables:[["SEIN · presente","Persona","Forma"],["ich","bin"],["du","bist"],["er / sie / es","ist"],["wir","sind"],["ihr","seid"],["sie / Sie","sind"]],
+    example:"Ich bin Chilene (soy chileno). / Ich bin müde (estoy cansado). / Wir sind zu Hause (estamos en casa).",
+    rule:"El verbo es irregular y debe memorizarse. Para indicar cambio o convertirse se usa werden (ich werde müde = me estoy cansando). La ubicación se expresa con sein y una expresión de lugar."
+  },
+  "Ruso":{
+    lead:"En presente, el ruso normalmente omite el verbo equivalente a ser/estar cuando une sujeto y atributo. El verbo быть aparece con claridad en pasado y futuro.",
+    tables:[["БЫТЬ · formas útiles","Tiempo / persona","Forma"],["presente","normalmente se omite"],["pasado masc. / fem.","был / была"],["futuro · я","буду"],["futuro · ты","будешь"],["futuro · он / она","будет"],["futuro · мы / вы / они","будем / будете / будут"]],
+    example:"Я студент (soy estudiante). / Она дома (ella está en casa). / Я был дома (estuve en casa). / Я буду дома (estaré en casa).",
+    rule:"No añadas есть en una oración nominal presente normal. El pasado concuerda en género y el futuro utiliza буду + infinitivo."
+  },
+  "Francés":{
+    lead:"Être cubre la mayoría de los usos de ser y estar. Es irregular y aparece en identidad, descripción, estado y ubicación.",
+    tables:[["ÊTRE · presente","Persona","Forma"],["je","suis"],["tu","es"],["il / elle / on","est"],["nous","sommes"],["vous","êtes"],["ils / elles","sont"]],
+    example:"Je suis chilien (soy chileno). / Je suis fatigué (estoy cansado). / Nous sommes à Paris (estamos en París).",
+    rule:"Memoriza las seis formas: no siguen un patrón regular. Para indicar permanencia o estado que continúa también puede aparecer rester (Je reste ici)."
+  },
+  "Español":{
+    lead:"El español distingue ser y estar. La elección depende de identidad/rasgo, estado/condición o ubicación; no es simplemente una diferencia entre permanente y temporal.",
+    tables:[["SER · presente","Persona","Forma"],["yo","soy"],["tú","eres"],["él / ella / usted","es"],["nosotros","somos"],["vosotros","sois"],["ellos / ustedes","son"],["ESTAR · presente","Persona","Forma"],["yo","estoy"],["tú","estás"],["él / ella / usted","está"],["nosotros","estamos"],["vosotros","estáis"],["ellos / ustedes","están"]],
+    example:"Soy de Chile (origen). / Estoy cansado (estado). / Estamos en casa (ubicación).",
+    rule:"SER: identidad, origen, profesión y características. ESTAR: ubicación, estado y resultado. Excepción importante: ser listo = inteligente; estar listo = preparado."
+  }
+};
+function renderPronounTable(sample, languageName, locale) {
+  if (!sample?.pronouns) return "";
+  const words = sample.pronouns.split(/\\s*,\\s*/);
+  const meanings = pronounTranslations[languageName] || [];
+  const rows = words.map((word,index) => '<tr><td><strong class="theory-target-word">' + escapeHTML(word) + '</strong> ' + speakerButton(word, locale) + '</td><td>' + escapeHTML(meanings[index] || "forma personal") + '</td></tr>').join("");
+  return '<table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>Significado</th></tr></thead><tbody>' + rows + '</tbody></table><p class="theory-footnote">Pulsa el icono para escuchar cada forma. El significado puede variar según el contexto y el grado de formalidad.</p>';
+}
+function renderVerbLesson(languageName) {
+  const lesson = verbLessons[languageName];
+  if (!lesson) return '<p class="theory-slide-text">La forma de expresar identidad, estado y ubicación depende de este idioma. Compara siempre la estructura verbal con una frase real y revisa las formas personales en el contexto de la unidad.</p>';
+  const rows = lesson.tables.map(row => row.length === 3 && ["Persona","Forma"].includes(row[1])
+    ? '<tr><th colspan="2">' + escapeHTML(row[0]) + '</th></tr>'
+    : '<tr><td>' + escapeHTML(row[0]) + '</td><td><strong class="theory-target-word">' + escapeHTML(row[1]) + '</strong></td></tr>'
+  ).join("");
+  return '<p class="theory-slide-text">' + escapeHTML(lesson.lead) + '</p><table class="theory-pronoun-table"><tbody>' + rows + '</tbody></table><section class="theory-example"><span>Ejemplos aplicados</span><p>' + escapeHTML(lesson.example) + '</p><p class="theory-slide-text">' + escapeHTML(lesson.rule) + '</p></section>';
+}
 let activeTheoryTopics = [];
 let activeTheoryIndex = 0;
 let activeTheoryCategory = "";
@@ -1215,10 +1300,24 @@ function openTheoryTopic(index) {
   const sampleLabel = activeTheoryIndex === 0 && activeTheoryCategory === "Gramática" ? "Ejemplo de pronombres"
     : activeTheoryIndex === 1 && activeTheoryCategory === "Gramática" ? "Artículos"
     : activeTheoryCategory === "Vocabulario" ? "Ejemplo de saludos" : "Ejemplo";
+  const languageName = $("language").value === "other" ? $("custom-language-name").value.trim() : $("language").value;
+  const locale = getSelectedCatalog()?.locale || "und";
+  let detailMarkup = '<p class="theory-slide-text">' + escapeHTML(body) + '</p>';
+  if (activeTheoryCategory === "Gramática" && activeTheoryIndex === 0) {
+    detailMarkup = '<p class="theory-slide-text">Los pronombres indican quién participa en la oración. Estas son las formas personales más habituales:</p>' + renderPronounTable(sample, languageName, locale);
+  } else if (activeTheoryCategory === "Gramática" && activeTheoryIndex === 1 && sample?.articles) {
+    detailMarkup += '<section class="theory-example"><span>Artículos de este idioma</span><p class="theory-target-word">' + escapeHTML(sample.articles) + '</p><p class="theory-slide-text">Observa género, número y si el artículo es definido o indefinido. Algunos idiomas expresan estas diferencias mediante sufijos o no usan artículos.</p></section>';
+  } else if (activeTheoryCategory === "Gramática" && activeTheoryIndex === 2) {
+    detailMarkup = renderVerbLesson(languageName);
+  } else if (activeTheoryCategory === "Gramática" && activeTheoryIndex === 3) {
+    detailMarkup += '<section class="theory-example"><span>Ejemplo en contexto</span><p class="theory-target-word">' + escapeHTML(sample?.intro || "") + '</p><p class="theory-slide-text">Identifica el verbo conjugado y observa qué cambia con la persona. Compara la forma base con la forma usada en la oración.</p></section>';
+  } else if (sampleByTopic) {
+    detailMarkup += '<section class="theory-example"><span>' + escapeHTML(sampleLabel) + ' · ' + escapeHTML(languageDefinitions[$("language").value]?.label || languageName) + '</span><p class="theory-target-word">' + escapeHTML(sampleByTopic) + '</p></section>';
+  }
   $("theory-title").textContent = title;
   $("theory-category").textContent = activeTheoryCategory;
-  $("theory-description").innerHTML = '<p class="theory-slide-text">' + escapeHTML(body) + '</p>' +
-    (sampleByTopic ? '<section class="theory-example"><span>' + escapeHTML(sampleLabel) + ' · ' + escapeHTML(languageDefinitions[$("language").value]?.label || "") + '</span><p>' + escapeHTML(sampleByTopic) + '</p></section>' : '');
+  $("theory-description").innerHTML = detailMarkup;
+  bindSpeakerButtons($("theory-description"));
   $("theory-counter").textContent = (activeTheoryIndex + 1) + " / " + activeTheoryTopics.length;
   $("theory-prev").disabled = activeTheoryIndex === 0;
   $("theory-next").disabled = activeTheoryIndex === activeTheoryTopics.length - 1;
