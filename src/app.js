@@ -469,6 +469,7 @@ async function submitAITutorAnswer(answer) {
   const answerInput = $("ai-answer");
   if (submitButton) submitButton.disabled = true;
   if (answerInput) answerInput.disabled = true;
+  $("answer-area").querySelectorAll("[data-ai-choice]").forEach(button => { button.disabled = true; });
   try {
     const evaluatedExercise = aiCurrentExercise;
     const conversationHistory = [
