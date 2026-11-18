@@ -279,6 +279,7 @@ checkTutorHealth().then(status => {
   $("ai-status").textContent = "Tutor IA no disponible; se utilizarán ejercicios locales";
 }).finally(() => {
   aiReady = true;
+  updateLanguageFlag();
   $("start-session").disabled = false;
 });
 
@@ -747,7 +748,8 @@ function startRouteSession(resume = false) {
   $("lesson-panel").classList.remove("hidden");
   $("summary-panel").classList.add("hidden");
   showSessionView("Ruta");
-  if (routeIntegration && aiMode && aiLastResult) renderAITutorTurn(aiLastResult);
+  if (session.turn >= 11) renderRouteAssessmentFailed();
+  else if (routeIntegration && aiMode && aiLastResult) renderAITutorTurn(aiLastResult);
   else if (routeIntegration) renderRouteIntegration();
   else if (session.turn >= 10) renderRouteAssessmentFailed();
   else if (aiMode && aiLastResult) renderAITutorTurn(aiLastResult);
