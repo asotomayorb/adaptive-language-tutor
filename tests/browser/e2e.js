@@ -163,9 +163,12 @@ try {
   const draft = await page.evaluate(() => JSON.parse(localStorage.getItem("adaptive-language-tutor.route-progress:pt-BR") || "null"));
   assert.equal(draft.session.turn, 2, "Route must save confirmed answers immediately");
   await page.reload({ waitUntil: "networkidle" });
+  assert.equal(await page.locator("#welcome-screen").isVisible(), true, "returning users must also explicitly press Start");
+  await page.locator("#welcome-start").click();
+  assert.equal(await page.locator("#welcome-screen").isVisible(), false, "Start should reveal the saved app");
   assert.equal(await page.locator("#route-resume").isVisible(), true, "Route should offer resume after reload");
   await page.locator("#route-resume").click();
-  assert.match(await page.locator("#turn-count").innerText(), /3 \/ 10/);
+  assert.match(await page.locator("#turn-count").innerText(), /2 \/ 10/);
   assert.deepEqual(pageErrors, [], "browser should not report uncaught page errors");
 
   // AI session contract: the first three questions use alternatives; the fourth uses text input.
