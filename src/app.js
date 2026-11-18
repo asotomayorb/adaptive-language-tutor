@@ -135,11 +135,12 @@ function getExerciseSpeech(exercise) {
   const sentence = afterInstruction.replace(/\([^)]*\)/g, "").trim();
   const hasGap = /_{1,}|＿+/u.test(sentence);
   const spoken = sentence.replace(/_{1,}|＿+/gu, "…").replace(/[“”]/g, "").trim();
+  const sourceInstruction = /^(?:¿?cómo dices|traduce|completa|elige|selecciona|responde|corrige|escucha|marca)\b/i.test(sentence);
   return {
     text: spoken || prompt,
-    locale: prompt.includes(":") || hasGap
+    locale: prompt.includes(":") || hasGap || !sourceInstruction
       ? (exercise?.speechLocale || catalog?.locale || "und")
-      : (exercise?.speechLocale || "es-CL")
+      : "es-CL"
   };
 }
 function autoSpeak(text, locale = catalog?.locale) {
@@ -506,9 +507,11 @@ function renderAITutorTurn(result) {
 
   if (session.turn < 3) {
     const options = Array.isArray(aiCurrentExercise.options) ? aiCurrentExercise.options : [];
-    $("answer-area").innerHTML = options.length >= 2
+    const validClosedChoice = Boolean(aiCurrentExercise.prompt && String(aiCurrentExercise.expectedAnswer || "").trim() &&
+      options.length === 3 && options.some(option => String(option).trim().toLocaleLowerCase() === String(aiCurrentExercise.expectedAnswer).trim().toLocaleLowerCase()));
+    $("answer-area").innerHTML = validClosedChoice
       ? options.map((option,index) => '<button class="answer-option ai-answer-option" type="button" data-ai-choice="' + index + '">' + escapeHTML(option) + '</button>').join("")
-      : '<p class="muted">El tutor está preparando las alternativas. Reintenta para continuar.</p><button id="retry-ai-options" class="secondary" type="button">Reintentar</button>';
+      : '<p class="muted">El tutor está preparando una pregunta cerrada con respuesta verificable.</p><button id="retry-ai-options" class="secondary" type="button">Reintentar</button>';
     $("answer-area").querySelectorAll("[data-ai-choice]").forEach(button => button.addEventListener("click", () => submitAITutorAnswer(options[Number(button.dataset.aiChoice)])));
     $("retry-ai-options")?.addEventListener("click", () => startAITutorSession(session.config));
   } else if (aiCurrentExercise.prompt && String(aiCurrentExercise.expectedAnswer || "").trim()) {
