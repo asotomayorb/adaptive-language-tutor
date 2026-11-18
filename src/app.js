@@ -466,6 +466,7 @@ function renderAITutorTurn(result) {
   aiHintPending = false;
   $("hint-btn").disabled = false;
   $("hint-btn").textContent = "Pista";
+  $("review-btn").disabled = false;
   $("lesson-phase").textContent = routeMode && routeIntegration ? "HITO INTEGRADOR" : "TUTOR IA · CONVERSACIÓN";
   $("turn-count").textContent = routeMode && routeIntegration
     ? "Actividad integradora"
@@ -906,6 +907,7 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   $("feedback").classList.add("hidden");
   $("hint-btn").disabled = false;
   $("hint-btn").hidden = false;
+  $("review-btn").disabled = false;
   $("review-btn").hidden = false;
 }
 
