@@ -168,7 +168,7 @@ Para cada escenario registrar:
 - [ ] Los ejercicios de comprensión auditiva/traducción usan `speechText` y reproducen la frase completa en el idioma objetivo, sin revelar el texto de respuesta.
 - [ ] No aparecen rótulos ni listados de texto “Pronunciación” o “Vocabulario” en el ejercicio IA; los controles de audio siguen disponibles.
 - [ ] Teoría muestra pronombres en tabla de dos columnas, traducción al español y botón de pronunciación por pronombre.
-- [ ] Ser/estar muestra formas conjugadas, frases de ejemplo y reglas/excepciones del idioma seleccionado.
+- [ ] Ser/estar, presente, pasado y futuro muestran formas conjugadas, frases de ejemplo y reglas/excepciones del idioma seleccionado.
 - [ ] Al volver a una sección, se muestra su pantalla inicial y no el subtema/diapositiva anterior.
 - [ ] Ruta conserva la respuesta pendiente y su feedback al cerrar, recargar y reanudar.
 
