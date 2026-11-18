@@ -1,5 +1,6 @@
 import "./load-env.js";
 import { createServer } from "node:http";
+import { timingSafeEqual } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { resolve, sep, extname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -97,6 +98,23 @@ export function createAppServer(aiProvider = provider) {
         status: "ok",
         ai: { configured: aiProvider.configured, provider: aiProvider.configured ? aiProvider.provider : null }
       });
+    }
+    const previewPassword = process.env.PREVIEW_PASSWORD;
+    if (previewPassword) {
+      const authorization = request.headers.authorization || "";
+      const encoded = authorization.startsWith("Basic ") ? authorization.slice(6) : "";
+      let suppliedPassword = "";
+      try {
+        const credentials = Buffer.from(encoded, "base64").toString("utf8");
+        const separator = credentials.indexOf(":");
+        if (separator >= 0) suppliedPassword = credentials.slice(separator + 1);
+      } catch {}
+      const expected = Buffer.from(previewPassword);
+      const supplied = Buffer.from(suppliedPassword);
+      const authorized = expected.length === supplied.length && timingSafeEqual(expected, supplied);
+      if (!authorized) {
+        return send(response, 401, { error: "Preview access requires a password." }, { "www-authenticate": 'Basic realm="Language Tutor Preview", charset="UTF-8"' });
+      }
     }
     if (request.method === "POST" && url.pathname === "/api/tutor") {
       let input;
