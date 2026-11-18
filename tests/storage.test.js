@@ -31,7 +31,7 @@ test("invalid or incompatible stored data safely resets", () => {
   assert.deepEqual(loadProgress(storage), { version: 1, sessions: [], vocabulary: [], reviewCards: [] });
 });
 
-test("persisting a session records history, vocabulary and a review due tomorrow", () => {
+test("persisting a session records history, vocabulary and makes graded errors immediately reviewable", () => {
   const now = Date.parse("2026-01-01T12:00:00.000Z");
   const progress = persistSession(loadProgress(null), baseSession(), {
     attempted: 1, correct: 0, accuracy: 0
@@ -44,8 +44,8 @@ test("persisting a session records history, vocabulary and a review due tomorrow
   const patternCard = progress.reviewCards.find(card => card.cardType === "pattern");
   assert.equal(patternCard.pattern, "Conjugación en primera persona");
   assert.equal(patternCard.expected, "", "pattern cards must not invent a single correct answer");
-  assert.equal(getDueCards(progress, now).length, 0);
-  assert.equal(getDueCards(progress, now + 24 * 60 * 60 * 1000).length, 2);
+  assert.equal(getDueCards(progress, now).length, 1, "the concrete exercise error should be available in Repaso immediately");
+  assert.equal(getDueCards(progress, now + 24 * 60 * 60 * 1000).length, 2, "the qualitative pattern card remains scheduled for tomorrow");
 });
 
 test("AI review cards from separate sessions do not overwrite each other", () => {
