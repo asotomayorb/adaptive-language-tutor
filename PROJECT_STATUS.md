@@ -465,4 +465,5 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] Bienvenida desaparece al pulsar Iniciar y no se repite tras guardar idioma.
 - [x] Ruta funciona con ejercicios locales para portugués/inglés y con tutor IA para otros idiomas cuando el proveedor está configurado; los borradores quedan separados por idioma.
 - [ ] Ampliar el catálogo de unidades y revisar el contenido de la primera unidad.
-- [ ] Ejecutar tests unitarios, check, Browser E2E y validar en Android real.
+- [x] GitHub Actions: npm run check, npm test y Browser E2E completados correctamente en el commit 3eef3801.
+- [ ] Validar visual y auditivamente en Android real.
