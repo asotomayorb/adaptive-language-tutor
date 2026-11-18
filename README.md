@@ -328,3 +328,29 @@ Esta sección **prevalece sobre cualquier regla anterior incompatible** de las s
 - CI (npm run check, npm test y Browser E2E) aprobado en el commit `e227eea`.
 - Preview Render desplegado y en estado `live` en el commit `e227eea` (deploy `dep-dbv2si8u01pc73clh3u0`).
 
+
+
+## Revisión funcional posterior — 18-11-2026
+
+### Cambios incorporados en la rama de desarrollo
+- Ruta utiliza un único banner: la primera pulsación crea y guarda el recorrido; desde entonces el mismo banner cambia a **Continuar recorrido** y restaura el último punto guardado. No vuelve a ofrecer iniciar una segunda ruta para ese idioma.
+- Se eliminan los mensajes introductorios grises del tutor que aparecían encima de la pregunta. La pantalla prioriza la consigna concreta.
+- La locución de preguntas mixtas toma el contenido posterior a la instrucción, conserva el locale del idioma objetivo y convierte guiones bajos simples o múltiples en una pausa. Los ejercicios IA filtran la locución al idioma objetivo y no reproducen segmentos de origen como si fueran el idioma aprendido.
+- En respuestas escritas, el botón **Enviar respuesta** desaparece tras enviar; el flujo queda en el feedback y el botón **Continuar**.
+- El tutor IA debe crear ejercicios cerrados y corregibles. Se prohíben preguntas de preferencias o conversación abierta sin respuesta verificable. Para texto libre solo se aceptan traducciones, huecos, correcciones, transformaciones y comprensión con respuesta delimitada.
+- Los errores de ejercicios concretos se incorporan a Repaso inmediatamente al guardar la sesión; los patrones cualitativos mantienen su programación espaciada inicial.
+- Se amplió Teoría de italiano con tablas aplicadas de artículos definidos/indefinidos, conjugación del *passato prossimo* y *futuro semplice*, ejemplos traducidos y vocabulario/expresiones de uso cotidiano.
+
+### Pendiente de validación
+- Ejecutar CI completo (comprobación estática, tests unitarios y Browser E2E) sobre los últimos commits.
+- Verificar en Android que la locución no mezcla idiomas ni verbaliza el signo de hueco; la síntesis de voz depende de las voces instaladas.
+- Probar que un error finalizado aparece inmediatamente en Repaso y que al calificarlo se programa el siguiente intervalo.
+- Revisar y completar el contenido aplicado de los demás idiomas y categorías; la ampliación detallada de esta tanda se concentra en italiano.
+- No declarar la revisión lista para prueba humana hasta que CI y la prueba visual/auditiva en Android estén aprobados.
+
+### Propuesta futura: comprensión lectora y audio cultural
+No implementado todavía. Diseñar como un modo independiente:
+1. Presentar un texto breve adecuado al nivel, con fuente y atribución visibles.
+2. Usar únicamente textos originales o materiales con estado de dominio público/licencia abierta verificado para el uso previsto; un artículo de noticias moderno o un fragmento corto de un libro no se vuelve libre por ser breve.
+3. Formular preguntas cerradas sobre información explícita, vocabulario en contexto e inferencias con respuesta justificable en el texto.
+4. Al elegir una bandera/idioma, reproducir un clip identificable de 1–2 segundos solo si la grabación concreta tiene derechos de dominio público o licencia compatible comprobada. La antigüedad de una composición no garantiza que una grabación moderna sea libre.
