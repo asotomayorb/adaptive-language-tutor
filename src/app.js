@@ -772,38 +772,66 @@ $("confirm-session-close").addEventListener("click", () => {
   closeSessionAndReturn();
 });
 
-document.querySelectorAll("[data-theory]").forEach(button => button.addEventListener("click", () => {
-  const language = getSelectedCatalog()?.id || "pt-BR";
-  const content = {
-    grammar: ["Gramática", [
-      ["Pronombres personales", language === "en" ? "I, you, he, she, it, we, they. Se usan normalmente antes del verbo." : "Eu, você, ele, ela, nós, vocês, eles/elas. En portugués el pronombre suele acompañar al verbo."],
-      ["Verbo ser y estar", language === "en" ? "Be cambia según la persona: I am, you are, he/she is. Se usa para identidad y estados." : "Ser expresa identidad o característica; estar expresa estado o ubicación: eu sou, eu estou."],
-      ["Artículos", language === "en" ? "The es definido; a/an es indefinido. An precede a sonido vocálico." : "O, a, os, as son definidos; um, uma, uns, umas son indefinidos."],
-      ["Presente", language === "en" ? "Para hábitos: I work. Con he/she/it se añade -s: she works." : "Para hábitos: eu trabalho, você estuda. La terminación cambia según el verbo y la persona."]
-    ]],
-    vocabulary: ["Vocabulario", [
-      ["Saludos", language === "en" ? "Hello — hola · Good morning — buenos días · See you — hasta luego." : "Olá — hola · Bom dia — buenos días · Até logo — hasta luego."],
-      ["Personas", language === "en" ? "Person — persona · friend — amigo/a · family — familia." : "Pessoa — persona · amigo — amigo · família — familia."],
-      ["Tiempo", language === "en" ? "Today — hoy · tomorrow — mañana · yesterday — ayer." : "Hoje — hoy · amanhã — mañana · ontem — ayer."],
-      ["Comida", language === "en" ? "Water — agua · bread — pan · meal — comida." : "Água — agua · pão — pan · refeição — comida."]
-    ]],
-    expressions: ["Expresiones", [
-      ["Presentarse", language === "en" ? "My name is… — Me llamo… · Nice to meet you — Mucho gusto." : "Meu nome é… — Me llamo… · Prazer em conhecer você — Mucho gusto."],
-      ["Pedir ayuda", language === "en" ? "Can you help me? — ¿Puedes ayudarme? · I don't understand — No entiendo." : "Você pode me ajudar? — ¿Puedes ayudarme? · Não entendi — No entendí."],
-      ["En un café", language === "en" ? "I'd like a coffee, please — Quisiera un café, por favor." : "Eu gostaria de um café, por favor — Quisiera un café, por favor."],
-      ["Preguntar", language === "en" ? "Where is…? — ¿Dónde está…? · How much is it? — ¿Cuánto cuesta?" : "Onde fica…? — ¿Dónde queda…? · Quanto custa? — ¿Cuánto cuesta?"]
-    ]]
-  };
-  const [title, topics] = content[button.dataset.theory];
+const theoryContent = {
+  grammar: ["Gramática", [
+    ["Pronombres personales", "Los pronombres indican quién realiza la acción. En inglés: I, you, he, she, it, we, they. En portugués: eu, você, ele, ela, nós, vocês, eles/elas. Observa que el uso y la omisión del pronombre cambian entre idiomas."],
+    ["Artículos", "Los artículos acompañan al sustantivo. Inglés: the (definido), a/an (indefinido). Portugués: o/a/os/as y um/uma/uns/umas. En portugués el artículo concuerda en género y número."],
+    ["Verbo ser y estar", "En inglés ambos sentidos suelen expresarse con be: I am tired / I am Chilean. En portugués se distinguen ser (identidad o característica) y estar (estado o ubicación): eu sou / eu estou."],
+    ["Tiempo presente", "Se usa para hábitos, hechos y situaciones actuales. Inglés: I work; she works (tercera persona añade -s). Portugués: eu trabalho, você trabalha. Aprende cada forma junto con su pronombre."],
+    ["Pasado", "Permite hablar de acciones terminadas. Inglés: worked (regular), went (irregular). Portugués: trabalhei, fui. Memoriza los verbos frecuentes dentro de frases completas."],
+    ["Futuro", "En inglés se usa will + verbo o going to. En portugués cotidiano es frecuente ir + infinitivo: vou estudar (voy a estudiar)."]
+  ]],
+  vocabulary: ["Vocabulario", [
+    ["Saludos", "Inglés: hello, good morning, good evening, see you. Portugués: olá, bom dia, boa tarde, até logo. El saludo cambia según el momento y la formalidad."],
+    ["Personas y familia", "Inglés: person, friend, mother, brother, family. Portugués: pessoa, amigo, mãe, irmão, família. Aprende las palabras con su artículo cuando el idioma lo requiera."],
+    ["Tiempo y fechas", "Inglés: today, tomorrow, yesterday, week, month. Portugués: hoje, amanhã, ontem, semana, mês. Practica fechas y expresiones temporales en contexto."],
+    ["Comida y bebida", "Inglés: water, bread, meal, coffee. Portugués: água, pão, refeição, café. Añade expresiones para pedir y agradecer."],
+    ["Viajes y transporte", "Inglés: ticket, station, luggage, departure. Portugués: passagem, estação, bagagem, partida. Incluye preguntas sobre horarios y direcciones."]
+  ]],
+  expressions: ["Expresiones", [
+    ["Presentarse", "Inglés: My name is… / I'm from Chile. Portugués: Meu nome é… / Sou do Chile. Usa estas estructuras para iniciar una conversación."],
+    ["Pedir ayuda", "Inglés: Could you help me? / I don't understand. Portugués: Você pode me ajudar? / Não entendi. Could y poderia suavizan una petición."],
+    ["En un café", "Inglés: I'd like a coffee, please. Portugués: Eu gostaria de um café, por favor. Añade por favor y gracias para mantener un tono cortés."],
+    ["Preguntar y aclarar", "Inglés: Where is…? / How much is it? Portugués: Onde fica…? / Quanto custa? Escucha la respuesta y confirma la información."],
+    ["Conversación cotidiana", "Inglés: What do you do? / How was your day? Portugués: O que você faz? / Como foi seu dia? Las preguntas abiertas ayudan a mantener el diálogo."]
+  ]]
+};
+let activeTheoryTopics = [];
+let activeTheoryIndex = 0;
+let activeTheoryCategory = "";
+function openTheoryTopic(index) {
+  activeTheoryIndex = Math.max(0, Math.min(index, activeTheoryTopics.length - 1));
+  const [title, body] = activeTheoryTopics[activeTheoryIndex];
   $("theory-title").textContent = title;
-  $("theory-description").innerHTML = '<div class="theory-topic-list">' + topics.map(([name,description]) => '<article class="theory-topic"><h3>' + escapeHTML(name) + '</h3><p>' + escapeHTML(description) + '</p></article>').join("") + '</div>';
+  $("theory-category").textContent = activeTheoryCategory;
+  $("theory-description").innerHTML = '<p class="theory-slide-text">' + escapeHTML(body) + '</p>';
+  $("theory-counter").textContent = (activeTheoryIndex + 1) + " / " + activeTheoryTopics.length;
+  $("theory-prev").disabled = activeTheoryIndex === 0;
+  $("theory-next").disabled = activeTheoryIndex === activeTheoryTopics.length - 1;
   $("theory-detail").classList.remove("hidden");
-  document.querySelector(".theory-grid").classList.add("hidden");
+}
+document.querySelectorAll("[data-theory]").forEach(button => button.addEventListener("click", () => {
+  const [title, topics] = theoryContent[button.dataset.theory];
+  activeTheoryCategory = title;
+  activeTheoryTopics = topics;
+  $("theory-list-title").textContent = title;
+  $("theory-list-items").innerHTML = topics.map(([name],index) =>
+    '<button class="theory-topic-row" type="button" data-theory-topic="' + index + '"><span>' + escapeHTML(name) + '</span><span aria-hidden="true">→</span></button>'
+  ).join("");
+  $("theory-grid").classList.add("hidden");
+  $("theory-topic-list").classList.remove("hidden");
+  $("theory-list-items").querySelectorAll("[data-theory-topic]").forEach(item =>
+    item.addEventListener("click", () => openTheoryTopic(Number(item.dataset.theoryTopic)))
+  );
 }));
-$("theory-back").addEventListener("click", () => {
-  $("theory-detail").classList.add("hidden");
-  document.querySelector(".theory-grid").classList.remove("hidden");
+$("theory-list-back").addEventListener("click", () => {
+  $("theory-topic-list").classList.add("hidden");
+  $("theory-grid").classList.remove("hidden");
 });
+$("theory-back").addEventListener("click", () => $("theory-detail").classList.add("hidden"));
+$("theory-close").addEventListener("click", () => $("theory-detail").classList.add("hidden"));
+$("theory-prev").addEventListener("click", () => openTheoryTopic(activeTheoryIndex - 1));
+$("theory-next").addEventListener("click", () => openTheoryTopic(activeTheoryIndex + 1));
 function persistSettings() {
   const savedSettings = {
     selectedLanguage: $("language").value,
