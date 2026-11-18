@@ -279,6 +279,11 @@ try {
   await aiPage.locator('[data-screen="settings"]').click();
   assert.equal(await aiPage.locator("#language").inputValue(), "other", "selected target language should persist after reload");
   assert.equal(await aiPage.locator("#custom-language-locale").inputValue(), "fr-FR", "custom locale should persist after reload");
+  await aiPage.locator('[data-screen="exercises"]').click();
+  await aiPage.locator('[data-exercise-tab="review"]').click();
+  await aiPage.locator("#review-exercises").waitFor({ state: "visible" });
+  assert.match(await aiPage.locator("#review-dashboard").innerText(), /1 errores pendientes/);
+  await aiPage.locator('[data-exercise-tab="global"]').click();
   await aiPage.locator('[data-screen="home"]').click();
   await aiPage.getByRole("button", { name: /Iniciar repaso/ }).click();
   await aiPage.locator("#spaced-answer").fill("Je m’appelle Ana.");
@@ -312,6 +317,14 @@ try {
   mobilePage.on("pageerror", error => mobileErrors.push(error.message));
   await mobilePage.goto(baseUrl, { waitUntil: "networkidle" });
   await mobilePage.locator('[data-language="Portugués brasileño"]').click();
+  const navPosition = await mobilePage.locator(".bottom-nav").evaluate(element => getComputedStyle(element).position);
+  assert.equal(navPosition, "fixed", "bottom navigation should remain fixed on mobile");
+  await mobilePage.locator('[data-screen="stats"]').click();
+  await mobilePage.locator("#screen-stats").waitFor({ state: "visible" });
+  await mobilePage.locator('[data-screen="settings"]').click();
+  await mobilePage.locator("#screen-settings").waitFor({ state: "visible" });
+  await mobilePage.locator('[data-screen="home"]').click();
+  await mobilePage.locator("#screen-home").waitFor({ state: "visible" });
   await mobilePage.locator('[data-screen="exercises"]').click();
   await mobilePage.waitForFunction(() => {
     const button = document.querySelector("#start-session");
