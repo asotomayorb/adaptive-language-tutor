@@ -29,9 +29,9 @@ function tutorTurn({ turn = 0, start = false } = {}) {
     exercise: {
       type: "grammar",
       prompt: `Pregunta de prueba ${turn + 1}: ¿Cuál es la forma adecuada?`,
-      expectedAnswer: "Bom dia",
-      acceptedAnswers: ["Bom dia"],
-      options: turn < 3 ? ["Bom dia", "Boa noite", "Até logo"] : [],
+      expectedAnswer: "Bonjour",
+      acceptedAnswers: ["Bonjour"],
+      options: turn < 3 ? ["Bonjour", "Bonsoir", "Au revoir"] : [],
       hint: "Piensa en el saludo de la mañana."
     },
     evaluation: start ? null : {
@@ -43,7 +43,7 @@ function tutorTurn({ turn = 0, start = false } = {}) {
     learnerUpdate: { estimatedLevel: "A1", vocabulary: [], errorsToReview: [] },
     speechSegments: [
       { text: "Instrucción en español que no debe leerse", language: "es", locale: "es-CL" },
-      { text: "Bom dia", language: "pt", locale: "pt-BR" }
+      { text: "Bonjour", language: "fr", locale: "fr-FR" }
     ],
     nextAction: "answer"
   };
@@ -135,7 +135,7 @@ try {
   await page.locator("#start-session").waitFor({ state: "attached" });
   await page.locator("#duration").selectOption("5");
   await page.locator("#start-session").click();
-  assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "Bom dia" && item.lang === "pt-BR")), "audio should speak the complete question, not only the answer word");
+  assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "Bonjour" && item.lang === "fr-FR")), "audio should speak the complete question, not only the answer word");
   for (let turn = 0; turn < 3; turn += 1) {
     assert.equal(await page.locator("#answer-area [data-choice]").count(), 3, "first three questions should have three choices");
     const questionBefore = await page.locator("#lesson-content h3").innerText();
@@ -153,7 +153,7 @@ try {
   }
   assert.equal(await page.locator("#answer-area #free-answer").isVisible(), true, "fourth question should require written input");
   for (let turn = 3; turn < 5; turn += 1) {
-    await page.locator("#free-answer").fill("Bom dia");
+    await page.locator("#free-answer").fill("Bonjour");
     await page.locator("#submit-free").click();
     assert.equal(await page.locator("#answer-area #continue-answer").isVisible(), true, "written answers also require Continue");
     if (turn === 4) break;
