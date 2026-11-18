@@ -3,13 +3,13 @@ export const ptBR = {
   label: "Portugués brasileño",
   locale: "pt-BR",
   exercises: [
-    { id:"pt-greet-01", level:"A1", topic:"daily", skill:"Saludos", prompt:"¿Cómo se dice “Buenos días” en portugués?", target:"Bom dia", term:"Bom dia", meaning:"Buenos días", options:["Boa noite","Bom dia","Até logo"], hint:"La expresión contiene la palabra dia (día).", explanation:"Bom dia se usa para saludar durante la mañana." },
-    { id:"pt-verb-01", level:"A1", topic:"daily", skill:"Verbo ser", prompt:"Completa: Eu ___ chileno.", target:"sou", term:"sou", meaning:"soy", options:["sou","estou","é"], hint:"Para identidad u origen, usa el verbo ser.", explanation:"Eu sou significa yo soy. Estou suele expresar estado o ubicación." },
-    { id:"pt-travel-01", level:"A1", topic:"travel", skill:"Preguntas útiles", prompt:"¿Cómo preguntas “¿Dónde está el baño?”", target:"Onde fica o banheiro?", acceptedAnswers:["Onde está o banheiro?"], term:"banheiro", meaning:"baño", options:["Quanto custa?","Onde fica o banheiro?","Que horas são?"], hint:"Empieza con Onde (dónde).", explanation:"Onde fica...? pregunta dónde se encuentra algo." },
-    { id:"pt-food-01", level:"A1", topic:"food", skill:"Pedir comida", prompt:"¿Qué expresión significa “Quisiera un café”?", target:"Eu gostaria de um café", acceptedAnswers:["Gostaria de um café"], term:"café", meaning:"café", options:["Eu gostaria de um café","Estou com fome","A conta, por favor"], hint:"Gostaria es una forma cortés de pedir.", explanation:"Eu gostaria de... equivale a quisiera..." },
-    { id:"pt-work-01", level:"A1", topic:"work", skill:"Presentaciones", prompt:"Completa: Meu nome ___ Ana.", target:"é", term:"nome", meaning:"nombre", options:["sou","é","estou"], hint:"Meu nome significa mi nombre.", explanation:"Meu nome é... significa Mi nombre es..." },
-    { id:"pt-greet-02", level:"A2", topic:"daily", skill:"Conversación", prompt:"¿Cómo respondes “Muito prazer” (mucho gusto)?", target:"O prazer é meu", acceptedAnswers:["Prazer é meu"], term:"O prazer é meu", meaning:"El gusto es mío", options:["O prazer é meu","Até amanhã","Com licença"], hint:"La respuesta expresa que el placer también es tuyo.", explanation:"O prazer é meu es una respuesta natural a Muito prazer." },
-    { id:"pt-travel-02", level:"A2", topic:"travel", skill:"Transporte", prompt:"Traduce: “Quiero comprar un billete.”", target:"Quero comprar uma passagem", acceptedAnswers:["Eu quero comprar uma passagem"], term:"passagem", meaning:"billete / pasaje", options:["Quero comprar uma passagem","Quero fechar a conta","Onde fica a praia"], hint:"Quero significa quiero; passagem es pasaje.", explanation:"Quero comprar uma passagem es una forma habitual de expresar esta necesidad." }
+    { id:"pt-greet-01", level:"A1", topic:"daily", skill:"Saludos", prompt:"¿Cómo se dice “Buenos días” en portugués?", target:"Bom dia", term:"Bom dia", meaning:"Buenos días", options:["Boa noite","Bom dia","Até logo"], hint:"La expresión contiene la palabra dia (día).", hintSpeechSegments:["dia"], explanationSpeechSegments:["Bom dia"], explanation:"Bom dia se usa para saludar durante la mañana." },
+    { id:"pt-verb-01", level:"A1", topic:"daily", skill:"Verbo ser", prompt:"Completa: Eu ___ chileno.", target:"sou", term:"sou", meaning:"soy", options:["sou","estou","é"], hint:"Para identidad u origen, usa el verbo ser.", hintSpeechSegments:[], explanationSpeechSegments:["Eu sou","Estou"], explanation:"Eu sou significa yo soy. Estou suele expresar estado o ubicación." },
+    { id:"pt-travel-01", level:"A1", topic:"travel", skill:"Preguntas útiles", prompt:"¿Cómo preguntas “¿Dónde está el baño?”", target:"Onde fica o banheiro?", acceptedAnswers:["Onde está o banheiro?"], term:"banheiro", meaning:"baño", options:["Quanto custa?","Onde fica o banheiro?","Que horas são?"], hint:"Empieza con Onde (dónde).", hintSpeechSegments:["Onde"], explanationSpeechSegments:["Onde fica"], explanation:"Onde fica...? pregunta dónde se encuentra algo." },
+    { id:"pt-food-01", level:"A1", topic:"food", skill:"Pedir comida", prompt:"¿Qué expresión significa “Quisiera un café”?", target:"Eu gostaria de um café", acceptedAnswers:["Gostaria de um café"], term:"café", meaning:"café", options:["Eu gostaria de um café","Estou com fome","A conta, por favor"], hint:"Gostaria es una forma cortés de pedir.", hintSpeechSegments:["Gostaria"], explanationSpeechSegments:["Eu gostaria de"], explanation:"Eu gostaria de... equivale a quisiera..." },
+    { id:"pt-work-01", level:"A1", topic:"work", skill:"Presentaciones", prompt:"Completa: Meu nome ___ Ana.", target:"é", term:"nome", meaning:"nombre", options:["sou","é","estou"], hint:"Meu nome significa mi nombre.", hintSpeechSegments:["Meu nome"], explanationSpeechSegments:["Meu nome é"], explanation:"Meu nome é... significa Mi nombre es..." },
+    { id:"pt-greet-02", level:"A2", topic:"daily", skill:"Conversación", prompt:"¿Cómo respondes “Muito prazer” (mucho gusto)?", target:"O prazer é meu", acceptedAnswers:["Prazer é meu"], term:"O prazer é meu", meaning:"El gusto es mío", options:["O prazer é meu","Até amanhã","Com licença"], hint:"La respuesta expresa que el placer también es tuyo.", hintSpeechSegments:[], explanationSpeechSegments:["O prazer é meu"], explanation:"O prazer é meu es una respuesta natural a Muito prazer." },
+    { id:"pt-travel-02", level:"A2", topic:"travel", skill:"Transporte", prompt:"Traduce: “Quiero comprar un billete.”", target:"Quero comprar uma passagem", acceptedAnswers:["Eu quero comprar uma passagem"], term:"passagem", meaning:"billete / pasaje", options:["Quero comprar uma passagem","Quero fechar a conta","Onde fica a praia"], hint:"Quero significa quiero; passagem es pasaje.", hintSpeechSegments:["Quero","passagem"], explanationSpeechSegments:["Quero comprar uma passagem"], explanation:"Quero comprar uma passagem es una forma habitual de expresar esta necesidad." }
   ,
       {
         "id": "pt-daily-02",
@@ -29,7 +29,7 @@ export const ptBR = {
           "Quantos anos você tem?"
         ],
         "hint": "Empieza con Como (cómo).",
-        "explanation": "Como você está? es una pregunta habitual para saber cómo se encuentra alguien."
+        hintSpeechSegments:["Como"], explanationSpeechSegments:["Como você está?"], "explanation": "Como você está? es una pregunta habitual para saber cómo se encuentra alguien."
       },
       {
         "id": "pt-daily-03",
@@ -46,7 +46,7 @@ export const ptBR = {
           "moram"
         ],
         "hint": "Con Eu se usa la primera persona singular.",
-        "explanation": "Eu moro significa yo vivo. Morar se usa para hablar del lugar donde resides."
+        hintSpeechSegments:[], explanationSpeechSegments:["Eu moro","Morar"], "explanation": "Eu moro significa yo vivo. Morar se usa para hablar del lugar donde resides."
       },
       {
         "id": "pt-travel-03",
@@ -63,7 +63,7 @@ export const ptBR = {
           "Que horas são?"
         ],
         "hint": "Quanto se relaciona con cantidad.",
-        "explanation": "Quanto custa? es la forma habitual de preguntar el precio."
+        hintSpeechSegments:["Quanto"], explanationSpeechSegments:["Quanto custa?"], "explanation": "Quanto custa? es la forma habitual de preguntar el precio."
       },
       {
         "id": "pt-travel-04",
@@ -83,7 +83,7 @@ export const ptBR = {
           "Preciso de duas passagens"
         ],
         "hint": "Quarto significa habitación; para duas pessoas significa para dos personas.",
-        "explanation": "Preciso de... expresa una necesidad. Quarto es habitación y pessoas es personas."
+        hintSpeechSegments:["Quarto","duas pessoas"], explanationSpeechSegments:["Preciso de","quarto","duas pessoas"], "explanation": "Preciso de... expresa una necesidad. Quarto es habitación y pessoas es personas."
       },
       {
         "id": "pt-food-02",
@@ -100,7 +100,7 @@ export const ptBR = {
           "Bom apetite"
         ],
         "hint": "Conta es la cuenta que pagas al terminar.",
-        "explanation": "A conta, por favor es la forma común de pedir la cuenta en un restaurante."
+        hintSpeechSegments:["Conta"], explanationSpeechSegments:["A conta, por favor"], "explanation": "A conta, por favor es la forma común de pedir la cuenta en un restaurante."
       },
       {
         "id": "pt-food-03",
@@ -117,7 +117,7 @@ export const ptBR = {
           "Mais água, por favor"
         ],
         "hint": "Sem significa sin.",
-        "explanation": "Sem expresa ausencia de algo; cebola significa cebolla."
+        hintSpeechSegments:["Sem"], explanationSpeechSegments:["Sem cebola"], "explanation": "Sem expresa ausencia de algo; cebola significa cebolla."
       },
       {
         "id": "pt-work-02",
@@ -134,7 +134,7 @@ export const ptBR = {
           "trabalham"
         ],
         "hint": "Con Eu se usa trabalho.",
-        "explanation": "Eu trabalho significa yo trabajo. En portugués, trabajar se dice trabalhar."
+        hintSpeechSegments:["trabalho"], explanationSpeechSegments:["Eu trabalho","trabalhar"], "explanation": "Eu trabalho significa yo trabajo. En portugués, trabajar se dice trabalhar."
       },
       {
         "id": "pt-work-03",
@@ -154,7 +154,7 @@ export const ptBR = {
           "Pode me ajudar amanhã?"
         ],
         "hint": "Repetir se parece al español repetir.",
-        "explanation": "Pode repetir, por favor? es una petición cortés y natural para pedir que repitan algo."
+        hintSpeechSegments:["Repetir"], explanationSpeechSegments:["Pode repetir, por favor?"], "explanation": "Pode repetir, por favor? es una petición cortés y natural para pedir que repitan algo."
       },
       {
         "id": "pt-daily-04",
@@ -171,7 +171,7 @@ export const ptBR = {
           "irei"
         ],
         "hint": "La frase habla de ontem (ayer), así que necesita pasado.",
-        "explanation": "Fui es el pasado de ir para eu. Vou es presente y irei es futuro."
+        hintSpeechSegments:["ontem"], explanationSpeechSegments:["Fui","Vou","irei"], "explanation": "Fui es el pasado de ir para eu. Vou es presente y irei es futuro."
       },
       {
         "id": "pt-travel-05",
@@ -191,7 +191,7 @@ export const ptBR = {
           "Atravesse a rua"
         ],
         "hint": "Frente se refiere a la parte delantera.",
-        "explanation": "Siga em frente es una instrucción habitual para continuar recto."
+        hintSpeechSegments:["frente"], explanationSpeechSegments:["Siga em frente"], "explanation": "Siga em frente es una instrucción habitual para continuar recto."
       }
   ]
 };
