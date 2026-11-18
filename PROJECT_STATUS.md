@@ -467,3 +467,15 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [ ] Ampliar el catálogo de unidades y revisar el contenido de la primera unidad.
 - [x] GitHub Actions: npm run check, npm test y Browser E2E completados correctamente en el commit 3eef3801.
 - [ ] Validar visual y auditivamente en Android real.
+
+## Corrección de feedback, bienvenida y teoría — 18-11-2026
+
+- [x] La pantalla de bienvenida ya no se salta al iniciar con idioma guardado; requiere pulsar Iniciar.
+- [x] Feedback local e IA permanece al final de la pregunta actual. No hay avance automático; botón Continuar.
+- [x] Alternativas colorean respuesta correcta en verde y opción incorrecta seleccionada en rojo; explicación adicional solo cuando hay error.
+- [x] Se ocultan los bloques de texto Pronunciación/Vocabulario; se mantienen los controles de audio y lectura completa de la pregunta. Los ejercicios con hueco pronuncian la frase dejando pausa.
+- [x] Teoría de pronombres en tabla bilingüe con audio por fila y contenido de ser/estar aplicado a los 23 idiomas estándar.
+- [x] Navegación entre secciones reinicia la vista en el inicio de cada sección.
+- [x] Ruta guarda y restaura el feedback pendiente de la pregunta actual.
+- [ ] Ejecutar CI E2E de esta revisión y validar el flujo en Android real.
+
