@@ -23,7 +23,14 @@ const languageDefinitions = {
   "Hindi": { id:"hi-IN", label:"Hindi", locale:"hi-IN", flag:"🇮🇳" },
   "Turco": { id:"tr-TR", label:"Turco", locale:"tr-TR", flag:"🇹🇷" },
   "Griego": { id:"el-GR", label:"Griego", locale:"el-GR", flag:"🇬🇷" },
-  "Polaco": { id:"pl-PL", label:"Polaco", locale:"pl-PL", flag:"🇵🇱" }
+  "Polaco": { id:"pl-PL", label:"Polaco", locale:"pl-PL", flag:"🇵🇱" },
+  "Sueco": { id:"sv-SE", label:"Sueco", locale:"sv-SE", flag:"🇸🇪" },
+  "Noruego": { id:"nb-NO", label:"Noruego", locale:"nb-NO", flag:"🇳🇴" },
+  "Danés": { id:"da-DK", label:"Danés", locale:"da-DK", flag:"🇩🇰" },
+  "Hebreo": { id:"he-IL", label:"Hebreo", locale:"he-IL", flag:"🇮🇱" },
+  "Vietnamita": { id:"vi-VN", label:"Vietnamita", locale:"vi-VN", flag:"🇻🇳" },
+  "Indonesio": { id:"id-ID", label:"Indonesio", locale:"id-ID", flag:"🇮🇩" },
+  "Tailandés": { id:"th-TH", label:"Tailandés", locale:"th-TH", flag:"🇹🇭" }
 };
 const catalogs = Object.fromEntries(Object.entries(languageDefinitions).map(([name,definition]) => [name, definition.catalog || { id:definition.id, label:definition.label, locale:definition.locale, exercises:[] }]));
 const speech = createSpeechController({ onStatus: updateAudioStatus });
@@ -749,6 +756,7 @@ function renderLesson() {
     : "";
   $("lesson-content").innerHTML = feedbackMarkup + '<p class="eyebrow">TEMA: ' + escapeHTML(topicLabels[session.config.topic].toUpperCase()) + ' · NIVEL ' + escapeHTML(levelLabel(session.config.level).toUpperCase()) + '</p><h3>' + renderVariantTerms(currentExercise.prompt) + '</h3>';
   bindVariantLinks($("lesson-content"));
+  bindSpeakerButtons($("lesson-content"));
   speech.stop();
   if (session.turn < 3) {
     const options = currentExercise.options || [];
