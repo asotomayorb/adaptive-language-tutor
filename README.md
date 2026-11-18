@@ -314,3 +314,15 @@ Esta sección **prevalece sobre cualquier regla anterior incompatible** de las s
 - [x] GitHub Actions: npm run check, npm test y npm run test:e2e completados correctamente en el commit 3eef3801 (18-11-2026).
 - [ ] Validar visual y auditivamente en Android real.
 - [ ] Verificar el comportamiento de las 23 voces según las voces instaladas en el dispositivo.
+
+## 16. Correcciones de experiencia de ejercicio y teoría — 18-11-2026
+
+- La bienvenida permanece visible al cargar, incluso si existe un idioma guardado. Solo el botón **Iniciar** permite entrar; para usuarios nuevos abre el selector de idioma y la selección confirma la entrada.
+- En ejercicios, la respuesta se evalúa sin abandonar la pregunta. Se muestran estado correcto/incorrecto, respuesta correcta y explicación adicional únicamente cuando hay error. En alternativas, la opción correcta queda verde y la elegida incorrecta roja. El usuario avanza únicamente con **Continuar**.
+- Las sesiones locales y del tutor IA siguen el mismo patrón de espera; el tutor puede preparar la siguiente actividad en segundo plano, pero no la muestra ni cambia de pregunta hasta que el usuario continúe.
+- Se ocultan los rótulos y listados de “Pronunciación” y “Vocabulario” que podían revelar respuestas. Se conserva el audio, que reproduce la frase completa de la pregunta. En ejercicios de recuerdo con espacio en blanco se conserva una pausa; los ejercicios de escucha/traducción pueden definir `speechText` y `speechLocale` para reproducir la frase completa en el idioma objetivo.
+- Teoría: pronombres en tabla bilingüe de dos columnas, con pronunciación reproducible por fila; descripción conceptual más breve y palabras del idioma objetivo destacadas. El tema ser/estar incluye conjugaciones, ejemplos y reglas/excepciones para los 23 idiomas estándar; cada diapositiva mantiene navegación anterior/siguiente.
+- Cambiar de sección vuelve a su pantalla inicial: categorías de Teoría, configuración de Ejercicios, inicio de Ruta o Estadísticas.
+- Ruta conserva el estado de una respuesta pendiente al guardar y reanudar; el feedback queda en la pregunta respondida y espera Continuar.
+- Se amplió el plan E2E para comprobar bienvenida explícita, feedback sin avance automático, colores, tablas de teoría y reanudación.
+
