@@ -717,7 +717,7 @@ function saveRouteDraft() {
     failed: session.turn >= 10 && !routeIntegration && session.correct < 8
   };
   try { localStorage.setItem(ROUTE_STORAGE_KEY + ":" + session.config.languageId, JSON.stringify(routeDraft)); } catch {}
-  $("route-resume").classList.remove("hidden");
+  $("route-resume").classList.add("hidden");
 }
 function startRouteSession(resume = false) {
   catalog = getSelectedCatalog();
