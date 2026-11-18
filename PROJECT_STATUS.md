@@ -441,3 +441,5 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [ ] Falta verificación visual y funcional en Android y confirmación de despliegue Render.
 
 **Importante:** no declarar esta revisión lista para prueba humana hasta cerrar los tests, la verificación en móvil y la progresión de Ruta.
+
+- [x] Se corrigió el retorno desde una sesión para mantener visibles las opciones de Ejercicios y sus desplegables. Último commit de código: `6eb031f`.
