@@ -312,3 +312,5 @@
  .theory-pronoun-table th,.theory-pronoun-table td{padding:9px 8px;font-size:12px}
  .theory-target-word{font-size:17px}
 }
+
+.answer-option.answer-correct:disabled,.answer-option.answer-incorrect:disabled{opacity:1;cursor:default}
