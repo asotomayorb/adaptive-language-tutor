@@ -140,7 +140,10 @@ test("provider rejects speech segments tagged with a different target locale", a
     fakeFetch("https://api.openai.com/v1/chat/completions", {}, {
       choices: [{ message: { content: JSON.stringify({
         message: "Practiquemos.",
-        exercise: null,
+        exercise: {
+          type: "conversation", prompt: "Comment ça va?", expectedAnswer: "Ça va bien.",
+          acceptedAnswers: ["Je vais bien."], options: ["Ça va bien.", "Au revoir.", "Merci."], hint: null
+        },
         evaluation: null,
         learnerUpdate: null,
         speechSegments: [{ text: "Bonjour", language: "fr", locale: "fr-FR" }],
