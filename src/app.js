@@ -964,27 +964,52 @@ $("confirm-session-close").addEventListener("click", () => {
 
 const theoryContent = {
   grammar: ["Gramática", [
-    ["Pronombres personales", "Los pronombres indican quién realiza la acción. En inglés: I, you, he, she, it, we, they. En portugués: eu, você, ele, ela, nós, vocês, eles/elas. Observa que el uso y la omisión del pronombre cambian entre idiomas."],
-    ["Artículos", "Los artículos acompañan al sustantivo. Inglés: the (definido), a/an (indefinido). Portugués: o/a/os/as y um/uma/uns/umas. En portugués el artículo concuerda en género y número."],
-    ["Verbo ser y estar", "En inglés ambos sentidos suelen expresarse con be: I am tired / I am Chilean. En portugués se distinguen ser (identidad o característica) y estar (estado o ubicación): eu sou / eu estou."],
-    ["Tiempo presente", "Se usa para hábitos, hechos y situaciones actuales. Inglés: I work; she works (tercera persona añade -s). Portugués: eu trabalho, você trabalha. Aprende cada forma junto con su pronombre."],
-    ["Pasado", "Permite hablar de acciones terminadas. Inglés: worked (regular), went (irregular). Portugués: trabalhei, fui. Memoriza los verbos frecuentes dentro de frases completas."],
-    ["Futuro", "En inglés se usa will + verbo o going to. En portugués cotidiano es frecuente ir + infinitivo: vou estudar (voy a estudiar)."]
+    ["Pronombres personales", "Los pronombres indican quién realiza la acción. Su forma y frecuencia de uso dependen del idioma; en algunas lenguas pueden omitirse cuando el verbo ya identifica a la persona."],
+    ["Artículos", "Los artículos acompañan al sustantivo y pueden indicar si hablamos de algo conocido o no. Algunos idiomas distinguen género y número; otros no utilizan artículos."],
+    ["Verbo ser y estar", "Este tema expresa identidad, características, estados y ubicación. Algunos idiomas usan dos verbos diferentes; otros concentran varios significados en una sola forma."],
+    ["Tiempo presente", "Se utiliza para hábitos, hechos generales y situaciones actuales. La conjugación puede cambiar según la persona, el número y el tipo de verbo."],
+    ["Pasado", "Permite hablar de acciones terminadas o situaciones anteriores. Aprende las formas regulares e irregulares dentro de frases completas."],
+    ["Futuro", "Expresa planes, predicciones e intenciones. Cada idioma utiliza sus propias formas verbales o construcciones auxiliares."]
   ]],
   vocabulary: ["Vocabulario", [
-    ["Saludos", "Inglés: hello, good morning, good evening, see you. Portugués: olá, bom dia, boa tarde, até logo. El saludo cambia según el momento y la formalidad."],
-    ["Personas y familia", "Inglés: person, friend, mother, brother, family. Portugués: pessoa, amigo, mãe, irmão, família. Aprende las palabras con su artículo cuando el idioma lo requiera."],
-    ["Tiempo y fechas", "Inglés: today, tomorrow, yesterday, week, month. Portugués: hoje, amanhã, ontem, semana, mês. Practica fechas y expresiones temporales en contexto."],
-    ["Comida y bebida", "Inglés: water, bread, meal, coffee. Portugués: água, pão, refeição, café. Añade expresiones para pedir y agradecer."],
-    ["Viajes y transporte", "Inglés: ticket, station, luggage, departure. Portugués: passagem, estação, bagagem, partida. Incluye preguntas sobre horarios y direcciones."]
+    ["Saludos", "Saludos y despedidas formales e informales. Aprende a elegirlos según la hora, la situación y la relación con la otra persona."],
+    ["Personas y familia", "Vocabulario para hablar de personas, relaciones y familia. Aprende cada sustantivo con sus marcas gramaticales cuando corresponda."],
+    ["Tiempo y fechas", "Días, meses, horas y expresiones temporales para organizar actividades y contar cuándo suceden las cosas."],
+    ["Comida y bebida", "Ingredientes, comidas, bebidas y vocabulario para pedir, comprar o expresar preferencias."],
+    ["Viajes y transporte", "Palabras para desplazarse, comprar pasajes, orientarse y resolver situaciones habituales durante un viaje."]
   ]],
   expressions: ["Expresiones", [
-    ["Presentarse", "Inglés: My name is… / I'm from Chile. Portugués: Meu nome é… / Sou do Chile. Usa estas estructuras para iniciar una conversación."],
-    ["Pedir ayuda", "Inglés: Could you help me? / I don't understand. Portugués: Você pode me ajudar? / Não entendi. Could y poderia suavizan una petición."],
-    ["En un café", "Inglés: I'd like a coffee, please. Portugués: Eu gostaria de um café, por favor. Añade por favor y gracias para mantener un tono cortés."],
-    ["Preguntar y aclarar", "Inglés: Where is…? / How much is it? Portugués: Onde fica…? / Quanto custa? Escucha la respuesta y confirma la información."],
-    ["Conversación cotidiana", "Inglés: What do you do? / How was your day? Portugués: O que você faz? / Como foi seu dia? Las preguntas abiertas ayudan a mantener el diálogo."]
+    ["Presentarse", "Estructuras para saludar, decir tu nombre, explicar de dónde eres y conocer a otra persona."],
+    ["Pedir ayuda", "Formas directas y corteses de solicitar ayuda, pedir que repitan y explicar que no has entendido."],
+    ["En un café", "Frases para pedir alimentos y bebidas, consultar opciones y pagar de manera educada."],
+    ["Preguntar y aclarar", "Preguntas para pedir ubicaciones, precios, horarios y confirmar que has entendido la respuesta."],
+    ["Conversación cotidiana", "Preguntas abiertas y respuestas breves para mantener una conversación y mostrar interés."]
   ]]
+};
+const theorySamples = {
+  "Portugués brasileño":{pronouns:"eu, você, ele, ela, nós, vocês, eles/elas",greeting:"Olá! Bom dia! Até logo!",intro:"Meu nome é Ana. Sou do Chile.",articles:"o, a, os, as; um, uma, uns, umas"},
+  "Inglés":{pronouns:"I, you, he, she, it, we, they",greeting:"Hello! Good morning! See you later!",intro:"My name is Ana. I'm from Chile.",articles:"the; a, an"},
+  "Italiano":{pronouns:"io, tu, lui, lei, noi, voi, loro",greeting:"Ciao! Buongiorno! A presto!",intro:"Mi chiamo Ana. Sono del Cile.",articles:"il, lo, la, i, gli, le; un, uno, una"},
+  "Alemán":{pronouns:"ich, du, er, sie, es, wir, ihr, sie",greeting:"Hallo! Guten Morgen! Bis später!",intro:"Ich heiße Ana. Ich komme aus Chile.",articles:"der, die, das; ein, eine"},
+  "Ruso":{pronouns:"я, ты, он, она, оно, мы, вы, они",greeting:"Здравствуйте! Доброе утро! До свидания!",intro:"Меня зовут Ана. Я из Чили.",articles:"El ruso no utiliza artículos equivalentes a el/la o un/una."},
+  "Francés":{pronouns:"je, tu, il, elle, nous, vous, ils, elles",greeting:"Bonjour! Salut! À bientôt!",intro:"Je m'appelle Ana. Je viens du Chili.",articles:"le, la, les; un, une, des"},
+  "Español":{pronouns:"yo, tú, él, ella, nosotros, vosotros/ustedes, ellos",greeting:"¡Hola! ¡Buenos días! ¡Hasta luego!",intro:"Me llamo Ana. Soy de Chile.",articles:"el, la, los, las; un, una, unos, unas"},
+  "Japonés":{pronouns:"私, あなた, 彼, 彼女, 私たち",greeting:"こんにちは。おはようございます。またね。",intro:"私はアナです。チリ出身です。",articles:"El japonés no utiliza artículos equivalentes a el/la o un/una."},
+  "Chino mandarín":{pronouns:"我, 你, 他, 她, 我们, 你们, 他们",greeting:"你好！早上好！再见！",intro:"我叫安娜。我来自智利。",articles:"El chino mandarín no utiliza artículos equivalentes a el/la o un/una."},
+  "Coreano":{pronouns:"나, 너, 그, 그녀, 우리, 여러분",greeting:"안녕하세요! 좋은 아침이에요! 안녕히 가세요!",intro:"제 이름은 아나예요. 저는 칠레에서 왔어요.",articles:"El coreano no utiliza artículos equivalentes a el/la o un/una."},
+  "Neerlandés":{pronouns:"ik, jij, hij, zij, wij, jullie, zij",greeting:"Hallo! Goedemorgen! Tot ziens!",intro:"Ik heet Ana. Ik kom uit Chili.",articles:"de, het; een"},
+  "Árabe":{pronouns:"أنا, أنت, هو, هي, نحن, أنتم, هم",greeting:"مرحباً! صباح الخير! إلى اللقاء!",intro:"اسمي آنا. أنا من تشيلي.",articles:"الـ es el artículo definido; no existe un artículo indefinido equivalente."},
+  "Hindi":{pronouns:"मैं, तुम, वह, हम, आप, वे",greeting:"नमस्ते! सुप्रभात! फिर मिलेंगे!",intro:"मेरा नाम आना है। मैं चिली से हूँ।",articles:"El hindi no utiliza artículos equivalentes a el/la o un/una."},
+  "Turco":{pronouns:"ben, sen, o, biz, siz, onlar",greeting:"Merhaba! Günaydın! Görüşürüz!",intro:"Benim adım Ana. Şililiyim.",articles:"bir puede funcionar como artículo indefinido; no hay artículo definido separado."},
+  "Griego":{pronouns:"εγώ, εσύ, αυτός, αυτή, εμείς, εσείς, αυτοί",greeting:"Γεια σου! Καλημέρα! Τα λέμε!",intro:"Με λένε Άννα. Είμαι από τη Χιλή.",articles:"ο, η, το; ένας, μία, ένα"},
+  "Polaco":{pronouns:"ja, ty, on, ona, my, wy, oni/one",greeting:"Cześć! Dzień dobry! Do zobaczenia!",intro:"Mam na imię Ana. Jestem z Chile.",articles:"El polaco no utiliza artículos equivalentes a el/la o un/una."},
+  "Sueco":{pronouns:"jag, du, han, hon, vi, ni, de",greeting:"Hej! God morgon! Vi ses!",intro:"Jag heter Ana. Jag kommer från Chile.",articles:"en, ett; el definido suele expresarse como sufijo."},
+  "Noruego":{pronouns:"jeg, du, han, hun, vi, dere, de",greeting:"Hei! God morgen! Ha det!",intro:"Jeg heter Ana. Jeg kommer fra Chile.",articles:"en, ei, et; el definido suele expresarse como sufijo."},
+  "Danés":{pronouns:"jeg, du, han, hun, vi, I, de",greeting:"Hej! Godmorgen! Vi ses!",intro:"Jeg hedder Ana. Jeg kommer fra Chile.",articles:"en, et; el definido suele expresarse como sufijo."},
+  "Hebreo":{pronouns:"אני, אתה, את, הוא, היא, אנחנו, אתם, הם",greeting:"שלום! בוקר טוב! להתראות!",intro:"קוראים לי אנה. אני מצ׳ילה.",articles:"ה־ es el artículo definido; no existe un artículo indefinido equivalente."},
+  "Vietnamita":{pronouns:"tôi, bạn, anh ấy, cô ấy, chúng tôi, họ",greeting:"Xin chào! Chào buổi sáng! Tạm biệt!",intro:"Tôi tên là Ana. Tôi đến từ Chile.",articles:"El vietnamita no utiliza artículos equivalentes a el/la o un/una."},
+  "Indonesio":{pronouns:"saya, kamu, dia, kami, kita, mereka",greeting:"Halo! Selamat pagi! Sampai jumpa!",intro:"Nama saya Ana. Saya dari Chili.",articles:"El indonesio no utiliza artículos equivalentes a el/la o un/una."},
+  "Tailandés":{pronouns:"ฉัน, คุณ, เขา, เรา, พวกเขา",greeting:"สวัสดี! อรุณสวัสดิ์! แล้วพบกันใหม่!",intro:"ฉันชื่ออานา ฉันมาจากชิลี",articles:"El tailandés no utiliza artículos equivalentes a el/la o un/una."}
 };
 let activeTheoryTopics = [];
 let activeTheoryIndex = 0;
@@ -992,9 +1017,20 @@ let activeTheoryCategory = "";
 function openTheoryTopic(index) {
   activeTheoryIndex = Math.max(0, Math.min(index, activeTheoryTopics.length - 1));
   const [title, body] = activeTheoryTopics[activeTheoryIndex];
+  const sample = theorySamples[$("language").value] || null;
+  const sampleByTopic = activeTheoryCategory === "Gramática"
+    ? (activeTheoryIndex === 0 ? sample?.pronouns : activeTheoryIndex === 1 ? sample?.articles : null)
+    : activeTheoryCategory === "Vocabulario" && activeTheoryIndex === 0
+      ? sample?.greeting
+      : activeTheoryCategory === "Expresiones" && activeTheoryIndex === 0
+        ? sample?.intro : null;
+  const sampleLabel = activeTheoryIndex === 0 && activeTheoryCategory === "Gramática" ? "Ejemplo de pronombres"
+    : activeTheoryIndex === 1 && activeTheoryCategory === "Gramática" ? "Artículos"
+    : activeTheoryCategory === "Vocabulario" ? "Ejemplo de saludos" : "Ejemplo";
   $("theory-title").textContent = title;
   $("theory-category").textContent = activeTheoryCategory;
-  $("theory-description").innerHTML = '<p class="theory-slide-text">' + escapeHTML(body) + '</p>';
+  $("theory-description").innerHTML = '<p class="theory-slide-text">' + escapeHTML(body) + '</p>' +
+    (sampleByTopic ? '<section class="theory-example"><span>' + escapeHTML(sampleLabel) + ' · ' + escapeHTML(languageDefinitions[$("language").value]?.label || "") + '</span><p>' + escapeHTML(sampleByTopic) + '</p></section>' : '');
   $("theory-counter").textContent = (activeTheoryIndex + 1) + " / " + activeTheoryTopics.length;
   $("theory-prev").disabled = activeTheoryIndex === 0;
   $("theory-next").disabled = activeTheoryIndex === activeTheoryTopics.length - 1;
