@@ -119,8 +119,26 @@ function refreshDashboard() {
     (due.length ? '<button id="start-spaced-review" class="secondary" type="button">Iniciar repaso (' + due.length + ') →</button>' : '');
   const reviewButton = $("start-spaced-review");
   if (reviewButton) reviewButton.addEventListener("click", startSpacedReview);
+  const reviewCount = $("review-count");
+  if (reviewCount) reviewCount.textContent = String(due.length);
+  const reviewDashboard = $("review-dashboard");
+  if (reviewDashboard) reviewDashboard.innerHTML = due.length
+    ? "<strong>" + due.length + " elementos pendientes.</strong><p>Incluye errores y patrones que conviene reforzar.</p>"
+    : "No tienes repasos pendientes. Los errores que cometas durante las sesiones aparecerán aquí.";
+  const statsContent = $("statistics-content");
+  if (statsContent) statsContent.innerHTML =
+    '<div class="stat-card"><span>Sesiones completadas</span><strong>' + stats.sessions + '</strong></div>' +
+    '<div class="stat-card"><span>Palabras aprendidas</span><strong>' + stats.vocabulary + '</strong></div>' +
+    '<div class="stat-card"><span>Precisión media</span><strong>' + stats.averageAccuracy + '%</strong></div>' +
+    '<div class="stat-card"><span>Repasos pendientes</span><strong>' + due.length + '</strong></div>';
 }
-$("language").addEventListener("change", () => { updateCustomLanguageFields(); refreshDashboard(); });
+$("language").addEventListener("change", () => {
+  updateCustomLanguageFields();
+  $("selected-language-label").textContent = $("language").value === "other"
+    ? "Idioma personalizado"
+    : $("language").value === "Inglés" ? "🇺🇸 Inglés" : "🇧🇷 Portugués brasileño";
+  refreshDashboard();
+});
 $("custom-language-name").addEventListener("input", refreshDashboard);
 $("custom-language-locale").addEventListener("input", refreshDashboard);
 updateCustomLanguageFields();
@@ -144,6 +162,10 @@ function startSpacedReview() {
   dueReviewCards = getDueCards(progress, Date.now(), catalog.id);
   reviewIndex = 0;
   if (!dueReviewCards.length) { refreshDashboard(); return; }
+  showScreen("exercises");
+  setExerciseTab("global");
+  showScreen("exercises");
+  setExerciseTab("global");
   $("setup-panel").classList.add("hidden");
   $("summary-panel").classList.add("hidden");
   $("lesson-panel").classList.remove("hidden");
@@ -161,6 +183,7 @@ function renderSpacedReview() {
   if (reviewIndex >= dueReviewCards.length) {
     $("lesson-panel").classList.add("hidden");
     $("setup-panel").classList.remove("hidden");
+    setExerciseTab("review");
     $("session-status").textContent = "Repaso completado";
     refreshDashboard();
     return;
@@ -659,6 +682,8 @@ function finishSession() {
   if (!session || sessionFinished) return;
   sessionFinished = true;
   speech.stop();
+  showScreen("exercises");
+  setExerciseTab("global");
   $("lesson-panel").classList.add("hidden");
   $("summary-panel").classList.remove("hidden");
   $("session-status").textContent = "Sesión finalizada";
@@ -685,6 +710,7 @@ $("new-session").addEventListener("click", () => {
   speech.stop();
   aiMode = false;
   sessionFinished = false;
+  setExerciseTab("global");
   $("summary-panel").classList.add("hidden");
   $("setup-panel").classList.remove("hidden");
   $("session-status").textContent = "Nueva sesión";
@@ -698,3 +724,53 @@ $("export-btn").addEventListener("click", () => {
   anchor.href = url; anchor.download = "language-tutor-progress.json"; anchor.click();
   URL.revokeObjectURL(url);
 });
+
+
+// Main navigation and language onboarding
+function showScreen(name) {
+  document.querySelectorAll(".app-screen").forEach(screen => screen.classList.toggle("hidden", screen.id !== "screen-" + name));
+  document.querySelectorAll(".nav-item").forEach(button => {
+    const active = button.dataset.screen === name;
+    button.classList.toggle("active", active);
+    if (active) button.setAttribute("aria-current", "page");
+    else button.removeAttribute("aria-current");
+  });
+  window.scrollTo({ top: 0, behavior: "instant" });
+}
+function setExerciseTab(name) {
+  const review = name === "review";
+  $("global-exercises").classList.toggle("hidden", review);
+  $("review-exercises").classList.toggle("hidden", !review);
+  document.querySelectorAll(".exercise-tab").forEach(button => {
+    const active = button.dataset.exerciseTab === name;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-selected", String(active));
+  });
+  if (review) refreshDashboard();
+}
+document.querySelectorAll("[data-screen]").forEach(button => button.addEventListener("click", () => showScreen(button.dataset.screen)));
+document.querySelectorAll("[data-exercise-tab]").forEach(button => button.addEventListener("click", () => setExerciseTab(button.dataset.exerciseTab)));
+$("home-start-exercises").addEventListener("click", () => { showScreen("exercises"); setExerciseTab("global"); });
+$("brand-home").addEventListener("click", event => { event.preventDefault(); showScreen("home"); });
+$("start-review-from-tab").addEventListener("click", startSpacedReview);
+$("settings-audio-toggle").addEventListener("click", () => speech.setEnabled(!speech.enabled));
+$("settings-save").addEventListener("click", () => {
+  refreshDashboard();
+  $("settings-status").textContent = "Configuración guardada para las próximas sesiones.";
+});
+$("settings-export").addEventListener("click", () => {
+  if (!session) { $("settings-status").textContent = "Completa una sesión antes de exportar un resumen."; return; }
+  $("export-btn").click();
+});
+$("change-language").addEventListener("click", () => {
+  $("app-shell").classList.add("hidden");
+  $("language-gate").classList.remove("hidden");
+});
+document.querySelectorAll("[data-language]").forEach(button => button.addEventListener("click", () => {
+  $("language").value = button.dataset.language;
+  $("language").dispatchEvent(new Event("change"));
+  $("language-gate").classList.add("hidden");
+  $("app-shell").classList.remove("hidden");
+  showScreen("home");
+  if (button.dataset.language === "other") showScreen("settings");
+}));
