@@ -1,37 +1,185 @@
 # Adaptive Language Tutor
 
-Aplicación web de aprendizaje de idiomas con tutor conversacional de IA y modo local de respaldo.
+Aplicación móvil-first para aprender idiomas mediante una ruta progresiva, ejercicios adaptativos, teoría contextual y seguimiento del aprendizaje. Incluye tutor conversacional de IA y modo local de respaldo.
 
-## Estado actual
+> **Documento de referencia del producto.** Antes de implementar o modificar una función, revisar este README y `PROJECT_STATUS.md`. Si una instrucción nueva cambia una decisión anterior, actualizar aquí la decisión vigente y registrar el cambio en la bitácora. No recuperar comportamientos antiguos que contradigan estas reglas.
 
-**Etapa 4 de 8: auditoría funcional y técnica en GitHub.** Gemini 3.5 Flash-Lite completó sesiones reales de 3 turnos en portugués brasileño (`pt-BR`) y francés (`fr-FR`), con 5 fragmentos de voz por idioma. Una sesión real adicional desde Chromium completó 3 turnos en francés, guardó el progreso y exportó el JSON. Tests y Browser E2E están aprobados. Se restringió el acceso a archivos públicos, se añadieron cabeceras de seguridad y se corrigieron los reintentos duplicados. Falta validar voces en dispositivos reales, completar la auditoría funcional y cerrar aspectos de seguridad antes de la prueba humana; no está listo para despliegue público.
+## 1. Estado del proyecto y entorno
 
-**Próximo paso:** completar la cobertura de audio en todas las vistas, probar navegadores/dispositivos reales y cerrar los hallazgos de auditoría. El detalle de etapas, verificaciones y pendientes está en [PROJECT_STATUS.md](PROJECT_STATUS.md). El procedimiento de validación manual está preparado en [HUMAN_TEST_PLAN.md](HUMAN_TEST_PLAN.md).
+- Repositorio: `asotomayorb/adaptive-language-tutor`.
+- Rama de trabajo móvil: `feature/mobile-bottom-navigation`.
+- Desarrollo y correcciones en GitHub; Render se utiliza para el preview móvil.
+- Replit queda intacto y aplazado: **no modificar ni sincronizar el proyecto original de Replit** hasta autorización expresa.
+- Preview Render: https://adaptive-language-tutor-preview-5b3d.onrender.com
+- Estado de producto: en revisión de experiencia móvil y corrección de flujos. La disponibilidad del preview no significa que todos los requisitos de producto estén implementados ni que esté listo para producción.
+- Consultar [PROJECT_STATUS.md](PROJECT_STATUS.md) para el estado técnico verificado y [HUMAN_TEST_PLAN.md](HUMAN_TEST_PLAN.md) para pruebas manuales.
 
-Rama de trabajo: `feature/ai-tutor-pedagogy` · [PR #2](https://github.com/asotomayorb/adaptive-language-tutor/pull/2).
+## 2. Estructura principal de navegación
 
-## Arquitectura
+La aplicación tiene exactamente **cuatro secciones principales**:
+
+1. **Ruta** — recorrido de aprendizaje guiado, con estructura de historia/progresión por etapas. Es la pantalla inicial. Nombre visible recomendado: “Ruta”; puede describirse internamente como “modo historia”. No crear una sección adicional llamada Inicio.
+2. **Ejercicios** — práctica independiente con dos modalidades: **Global** y **Repaso**.
+3. **Teoría** — explicaciones y material de consulta organizados por idioma, nivel y tema; debe poder consultarse sin iniciar una sesión.
+4. **Estadísticas** — historial y métricas del aprendizaje.
+
+Reglas de navegación:
+- Barra inferior fija, optimizada para móvil, con **solo iconos**: sin texto visible bajo los iconos.
+- Los iconos deben ser claros y distinguibles. El seleccionado puede mostrarse ligeramente más grande y/o con mayor grosor/contraste.
+- El nombre de la sección se muestra dentro del contenido de la pantalla, nunca como etiqueta bajo el icono.
+- No incluir una sección “Configuración”.
+- No mostrar una barra de navegación inferior durante una sesión de ejercicio a pantalla completa.
+- No añadir secciones, accesos o textos explicativos que no estén definidos aquí sin actualizar primero esta especificación.
+
+## 3. Diseño y controles globales
+
+- Diseño mobile-first, limpio, minimalista y sin desplazamiento horizontal.
+- Eliminar subtítulos explicativos redundantes, textos de relleno, pie “Language Tutor” y elementos decorativos que no aporten a la tarea.
+- La pantalla Ruta debe ser visualmente minimalista y no mostrar estadísticas, métricas, rachas, palabras, precisión ni resúmenes numéricos.
+- En las pantallas normales (Ruta, Ejercicios, Teoría y Estadísticas), ubicar en la parte superior:
+  - selector de idioma objetivo, representado por un icono;
+  - control de audio, representado por un icono.
+- El estado de audio desactivado debe ser inequívoco: icono con línea diagonal roja o una X gris. Al reactivarlo, volver al icono normal.
+- El idioma debe poder cambiarse desde el control superior, sin una sección de Configuración.
+- En una sesión activa, mostrar únicamente el control de cerrar (X) y el control de audio. No permitir cambiar idioma durante la sesión.
+- Mantener accesibilidad: controles icon-only con `aria-label`, foco visible y objetivos táctiles adecuados.
+
+## 4. Ruta / modo historia
+
+- Es la pantalla inicial y representa el camino principal de aprendizaje.
+- Debe organizar el contenido en etapas o unidades secuenciales, con desbloqueo/progresión comprensible.
+- La experiencia debe sentirse como un recorrido de aprendizaje, no como un panel de estadísticas.
+- No mostrar métricas en esta pantalla.
+- El detalle pedagógico, mapa de unidades, reglas de desbloqueo y contenido narrativo deben definirse y documentarse antes de implementar cada bloque. No inventar una progresión que contradiga el nivel o idioma elegido.
+
+## 5. Ejercicios: modalidades y flujo
+
+La sección Ejercicios ofrece dos opciones iniciales:
+- **Global:** práctica amplia que combina habilidades y contenidos del idioma.
+- **Repaso:** práctica de errores/elementos previamente registrados y pendientes de reforzar.
+
+Flujo obligatorio:
+1. El usuario entra a Ejercicios.
+2. Elige Global o Repaso.
+3. Se abre una pantalla de preparación con duración, nivel y tema.
+4. Al comenzar, se entra en una vista de ejercicio **a pantalla completa**.
+5. En pantalla completa desaparecen la barra inferior y las opciones Global/Repaso. Solo permanecen X y audio, ambos icon-only.
+6. Al tocar X, pedir confirmación antes de abandonar.
+
+Configuración de sesión:
+- Duración, nivel y tema se eligen en la pantalla de preparación, después de elegir Global o Repaso.
+- El nivel elegido se respeta desde la primera actividad.
+- **No realizar diagnóstico inicial** ni iniciar la sesión con preguntas diagnósticas abiertas, independientemente del nivel elegido.
+- La adaptación de dificultad puede ocurrir durante la práctica, de forma gradual y sin bloquear el inicio con un test separado.
+- No mostrar métricas, contadores de racha, palabras o errores durante el ejercicio.
+
+Comportamiento al cerrar:
+- La X abre una confirmación explícita.
+- Decisión vigente: **descartar el progreso de la sesión actual** al confirmar el cierre. No guardar el resultado parcial ni convertir sus respuestas en progreso/tarjetas de repaso.
+- Cancelar mantiene la sesión activa sin alteraciones.
+- El descarte de la sesión actual no debe borrar el historial de sesiones anteriores que ya estaba guardado.
+
+Errores y cambio de contexto:
+- Al cambiar de modalidad, idioma o ruta, reiniciar correctamente el estado temporal de la actividad anterior. No reutilizar preguntas, historial IA, pistas, respuestas pendientes ni indicadores de carga de la sesión previa.
+- Si el usuario cambia de sección mientras no está en una sesión activa, no dejar solicitudes o estados antiguos que contaminen la siguiente actividad.
+- Las solicitudes al tutor IA deben tener timeout, estado de carga visible, manejo de error y opción clara de reintentar o continuar en modo local cuando corresponda.
+- Un fallo o demora de IA nunca debe dejar el ejercicio bloqueado indefinidamente ni impedir navegar a otra sección.
+- Evitar respuestas duplicadas/reintentos concurrentes y cancelar solicitudes obsoletas cuando el usuario abandona o cambia de actividad.
+- El flujo debe seguir siendo utilizable si la IA no está disponible.
+
+## 6. Teoría
+
+- Sección independiente, accesible desde la barra inferior.
+- Material organizado por idioma, nivel y tema.
+- Explicaciones breves y consultables; no debe iniciar automáticamente un ejercicio ni una sesión IA.
+- Desde una explicación puede ofrecerse un acceso voluntario a practicar ese contenido, que debe llevar al flujo de selección/preparación de ejercicios.
+- No duplicar en Teoría la pantalla de estadísticas ni convertirla en un apartado de configuración.
+
+## 7. Estadísticas
+
+- Único lugar donde se muestran métricas, historial y evolución.
+- Las métricas pueden incluir sesiones completadas, vocabulario, precisión, errores/repasos pendientes y evolución temporal, siempre que estén sustentadas por datos reales.
+- No mostrar datos ficticios como si fueran del usuario.
+- No duplicar estas métricas en Ruta ni durante los ejercicios.
+
+## 8. Idiomas y audio
+
+- Idiomas locales iniciales: portugués brasileño (`pt-BR`) e inglés (`en`).
+- Permitir idioma personalizado mediante nombre y locale válido (por ejemplo, francés `fr-FR`) con tutor IA cuando exista proveedor compatible.
+- El locale objetivo debe mantenerse consistente en las actividades, historial y síntesis de voz.
+- La lectura automática puede activarse/desactivarse desde el icono superior.
+- Audio desactivado no debe impedir practicar por escrito.
+- La reactivación no debe reproducir fragmentos de pantallas ocultas ni contenido de actividades anteriores.
+- Los controles de pronunciación individual, cuando existan, reproducen solo el fragmento objetivo correspondiente.
+- No leer automáticamente explicaciones auxiliares en español como si fueran contenido del idioma objetivo.
+- En pantalla completa de ejercicios, conservar el control de audio junto a la X.
+
+## 9. Persistencia y datos
+
+- Separar claramente el progreso histórico ya guardado del estado temporal de una sesión en curso.
+- Al cerrar y confirmar una sesión, descartar solo el estado temporal de esa sesión, según la decisión vigente.
+- No persistir respuestas parciales, métricas ni tarjetas de repaso procedentes de una sesión descartada.
+- No borrar sesiones anteriores, vocabulario o tarjetas ya guardadas.
+- Cualquier cambio en persistencia debe tener pruebas de regresión para evitar pérdida o contaminación de datos.
+
+## 10. Arquitectura técnica conocida
 
 - Frontend: `index.html`, `src/app.js`, `src/styles.css`.
-- Backend y API: `server/index.js`.
+- Backend/API: `server/index.js`.
 - Adaptadores IA: `server/provider.js`.
-- Prompt y esquema: `server/prompts.js`.
+- Prompts/esquemas: `server/prompts.js`.
 - Cliente IA: `src/core/tutor-client.js`.
 - Pedagogía, contenidos y progreso local: `src/core/`, `src/content/`.
 - Pruebas: `tests/`.
+- Runtime: Node.js 20.6 o superior.
 
-## Ejecución local
+## 11. Reglas de implementación y prevención de regresiones
 
-Requiere Node.js 20.6 o superior. Copiar `.env.example` a `.env`, configurar `AI_PROVIDER`, `AI_API_KEY` y `AI_MODEL` (y `AI_BASE_URL` si corresponde), y ejecutar:
+Antes de cambiar código:
+1. Leer este README y revisar el estado real de la rama.
+2. Identificar qué vistas, componentes, persistencia y pruebas se ven afectados.
+3. Mantener las decisiones de producto de este documento como criterios de aceptación.
+4. No afirmar que algo está implementado o probado sin verificarlo en el código y/o ejecutar la prueba correspondiente.
+5. No reemplazar una función existente sin revisar sus dependencias y pruebas.
+
+Después de cada cambio:
+1. Actualizar este README si cambia una decisión, flujo o requisito.
+2. Registrar en `PROJECT_STATUS.md` el cambio técnico, commit, pruebas y pendientes reales.
+3. Actualizar `HUMAN_TEST_PLAN.md` cuando cambie un flujo visible o una interacción.
+4. Ejecutar al menos `npm run check` y `npm test`; ejecutar Browser E2E cuando afecte a la interfaz o navegación.
+5. Verificar la experiencia en viewport móvil y, antes de dar por lista la prueba humana, en un dispositivo real.
+6. Revisar que no se haya reintroducido Inicio como sección, Configuración, etiquetas de texto en la barra inferior, estadísticas en Ruta/ejercicios, diagnóstico inicial o guardado de sesiones descartadas.
+
+## 12. Ejecución local
+
+Copiar `.env.example` a `.env`, configurar `AI_PROVIDER`, `AI_API_KEY` y `AI_MODEL` (y `AI_BASE_URL` si corresponde), y ejecutar:
 
 ```bash
+npm ci
 npm start
 ```
 
-La aplicación queda en `http://localhost:3000`. Desarrollo: `npm run dev`. Validación: `npm run check` y `npm test`. Para una sesión real de diagnóstico del proveedor, inicia el servidor con las variables privadas configuradas y ejecuta `npm run test:provider-live` en otra terminal. El smoke test realiza una sesión corta de tres turnos y no imprime respuestas ni credenciales.
+La aplicación queda en `http://localhost:3000`. Desarrollo: `npm run dev`. Validación: `npm run check` y `npm test`. Para pruebas E2E: `npm run test:e2e`. Para smoke tests reales, usar `npm run test:provider-live` y `npm run test:browser-live` con variables privadas configuradas.
 
 Nunca subir claves API al repositorio. Para pruebas iniciales con proveedores externos, usar datos ficticios.
 
-## Replit
+## 13. Registro de decisiones y cambios
 
-Replit queda aplazado hasta que las etapas de auditoría, proveedor real y prueba humana estén aprobadas. El desarrollo y las correcciones se realizan primero en GitHub.
+### Decisiones vigentes — 18-11-2026
+- Navegación principal: Ruta, Ejercicios, Teoría, Estadísticas.
+- Ruta es la pantalla inicial; “modo historia” describe su enfoque, no una quinta sección.
+- Barra inferior fija con iconos solamente; icono seleccionado ligeramente destacado.
+- Sin sección Configuración. Selector de idioma y audio en la parte superior de las pantallas normales.
+- Pantalla Ruta minimalista, sin métricas.
+- Ejercicios: elegir Global o Repaso; luego duración, nivel y tema; luego ejercicio a pantalla completa.
+- Sin diagnóstico inicial: comenzar directamente en el nivel elegido.
+- Sesión activa: solo X y audio. Cierre confirmado descarta la sesión actual y sus cambios no guardados.
+- La IA debe fallar de forma recuperable y no bloquear la actividad ni la navegación.
+- README es la referencia central para no perder instrucciones previas.
+
+### Historial de requisitos anteriores conservados
+- La app es mobile-first y debe evitar desplazamiento horizontal.
+- El audio puede desactivarse sin perder funcionalidad escrita.
+- El idioma/locale debe conservarse correctamente en tutoría IA y TTS.
+- Global y Repaso son modalidades diferentes; Repaso trabaja con errores/elementos guardados de sesiones completadas, no con datos de una sesión descartada.
+- El desarrollo permanece en GitHub/Render; el proyecto original de Replit no se toca sin autorización.
