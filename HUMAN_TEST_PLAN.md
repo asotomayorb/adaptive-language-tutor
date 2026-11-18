@@ -194,3 +194,11 @@ Para cada escenario registrar:
 - [ ] Las preguntas se responden con evidencia del texto y tienen una respuesta delimitada.
 - [ ] Audio cultural por bandera: verificar derechos de la grabación específica, no solo de la composición; duración objetivo de 1–2 segundos.
 - [ ] Si no existe un audio inequívocamente reutilizable para un país/idioma, usar un recurso original/licenciado o no reproducir clip.
+
+
+## 13. Estado de validación automatizada — 18-11-2026
+
+- [x] Comprobación estática y tests unitarios: GitHub Actions run [44424442155](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44424442155).
+- [x] Browser E2E: GitHub Actions run [44424442327](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44424442327).
+- [x] Preview Render: deploy `dep-dbv3kuhsrm7s73bap9n0`, estado `live`, código `32673f0`.
+- [ ] Prueba auditiva y visual en Android real; confirmar voces disponibles, pronunciación mixta y pausas en los huecos.
