@@ -130,11 +130,48 @@ function autoSpeak(text, locale = catalog?.locale) {
   if (text && speech.enabled) speech.speak(text, locale, { automatic: true });
 }
 const topicLabels = { daily:"vida cotidiana", travel:"viajes", food:"comida y restaurantes", work:"trabajo y estudios", random:"tema sorpresa" };
+const customLanguageLocales = {
+  "suajili":"sw-KE", "ucraniano":"uk-UA", "persa":"fa-IR", "farsi":"fa-IR",
+  "checo":"cs-CZ", "rumano":"ro-RO", "húngaro":"hu-HU", "hungaro":"hu-HU",
+  "finés":"fi-FI", "fines":"fi-FI", "estonio":"et-EE", "croata":"hr-HR",
+  "serbio":"sr-RS", "búlgaro":"bg-BG", "bulgaro":"bg-BG", "catalán":"ca-ES",
+  "catalan":"ca-ES", "gallego":"gl-ES", "urdu":"ur-PK", "bengalí":"bn-BD",
+  "bengali":"bn-BD", "malayo":"ms-MY", "filipino":"fil-PH"
+};
+const customLanguageFlags = {
+  "suajili":"🇰🇪", "ucraniano":"🇺🇦", "persa":"🇮🇷", "farsi":"🇮🇷",
+  "checo":"🇨🇿", "rumano":"🇷🇴", "húngaro":"🇭🇺", "hungaro":"🇭🇺",
+  "finés":"🇫🇮", "fines":"🇫🇮", "estonio":"🇪🇪", "croata":"🇭🇷",
+  "serbio":"🇷🇸", "búlgaro":"🇧🇬", "bulgaro":"🇧🇬", "catalán":"🇪🇸",
+  "catalan":"🇪🇸", "gallego":"🇪🇸", "urdu":"🇵🇰", "bengalí":"🇧🇩",
+  "bengali":"🇧🇩", "malayo":"🇲🇾", "filipino":"🇵🇭"
+};
 function getSelectedCatalog() {
-  return catalogs[$("language").value] || null;
+  const selected = $("language").value;
+  if (selected !== "other") return catalogs[selected] || null;
+  const label = $("custom-language-name").value.trim();
+  if (!label) return null;
+  const known = Object.entries(languageDefinitions).find(([name,definition]) =>
+    name.toLocaleLowerCase() === label.toLocaleLowerCase() ||
+    definition.label.toLocaleLowerCase() === label.toLocaleLowerCase()
+  );
+  if (known) return catalogs[known[0]];
+  const normalized = label.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLocaleLowerCase();
+  const locale = customLanguageLocales[normalized] || "und";
+  const slug = normalized.replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "custom";
+  return { id: locale === "und" ? "custom-" + slug : locale, label, locale, exercises:[] };
 }
 function updateLanguageFlag() {
-  $("selected-language-flag").textContent = languageDefinitions[$("language").value]?.flag || "🌐";
+  const selected = $("language").value;
+  const customName = $("custom-language-name").value.trim();
+  const known = selected === "other" ? Object.entries(languageDefinitions).find(([name,definition]) =>
+    name.toLocaleLowerCase() === customName.toLocaleLowerCase() ||
+    definition.label.toLocaleLowerCase() === customName.toLocaleLowerCase()
+  ) : null;
+  const customKey = customName.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLocaleLowerCase();
+  $("selected-language-flag").textContent = selected === "other"
+    ? known?.[1].flag || customLanguageFlags[customKey] || "🌐"
+    : languageDefinitions[selected]?.flag || "🌐";
   if (typeof ROUTE_STORAGE_KEY !== "undefined") {
     const selectedCatalog = getSelectedCatalog();
     routeDraft = getRouteDraftForLanguage(selectedCatalog?.id);
@@ -206,6 +243,12 @@ function refreshDashboard() {
   }
 }
 $("language").addEventListener("change", () => {
+  $("custom-language-fields").classList.toggle("hidden", $("language").value !== "other");
+  $("language-apply").classList.toggle("hidden", $("language").value !== "other");
+  updateLanguageFlag();
+  refreshDashboard();
+});
+$("custom-language-name").addEventListener("input", () => {
   updateLanguageFlag();
   refreshDashboard();
 });
@@ -213,9 +256,9 @@ try {
   const savedSettings = JSON.parse(localStorage.getItem("adaptive-language-tutor.settings") || "{}");
   if (savedSettings.selectedLanguage) {
     $("language").value = savedSettings.selectedLanguage;
+    if (savedSettings.customLanguageName) $("custom-language-name").value = savedSettings.customLanguageName;
     $("welcome-screen").classList.add("hidden");
     $("app-shell").classList.remove("hidden");
-    updateLanguageFlag();
   }
   if (savedSettings.duration) $("duration").value = String(savedSettings.duration);
   if (savedSettings.level) $("level").value = savedSettings.level;
@@ -1091,6 +1134,7 @@ function persistSettings() {
     duration: $("duration").value,
     level: $("level").value,
     topic: $("topic").value,
+    customLanguageName: $("language").value === "other" ? $("custom-language-name").value.trim() : ""
   };
   localStorage.setItem("adaptive-language-tutor.settings", JSON.stringify(savedSettings));
 }
@@ -1105,6 +1149,9 @@ $("welcome-start").addEventListener("click", () => {
   }
 });
 $("open-language-picker").addEventListener("click", () => {
+  const custom = $("language").value === "other";
+  $("custom-language-fields").classList.toggle("hidden", !custom);
+  $("language-apply").classList.toggle("hidden", !custom);
   $("language-picker").showModal();
 });
 $("language-cancel").addEventListener("click", () => {
@@ -1116,6 +1163,14 @@ $("language-cancel").addEventListener("click", () => {
 });
 document.querySelectorAll("[data-language]").forEach(button => button.addEventListener("click", () => {
   $("language").value = button.dataset.language;
+  if (button.dataset.language === "other") {
+    $("custom-language-fields").classList.remove("hidden");
+    $("language-apply").classList.remove("hidden");
+    $("custom-language-name").focus();
+    updateLanguageFlag();
+    return;
+  }
+  $("custom-language-name").value = "";
   try { persistSettings(); } catch {}
   updateLanguageFlag();
   $("language-picker").close();
@@ -1124,4 +1179,18 @@ document.querySelectorAll("[data-language]").forEach(button => button.addEventLi
   showScreen("route");
   refreshDashboard();
 }));
+$("language-apply").addEventListener("click", () => {
+  const selected = getSelectedCatalog();
+  if (!selected) {
+    $("audio-status").textContent = "Escribe el nombre del idioma para continuar.";
+    return;
+  }
+  try { persistSettings(); } catch {}
+  updateLanguageFlag();
+  $("language-picker").close();
+  $("welcome-screen").classList.add("hidden");
+  $("app-shell").classList.remove("hidden");
+  showScreen("route");
+  refreshDashboard();
+});
 
