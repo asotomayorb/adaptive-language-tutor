@@ -46,7 +46,7 @@ export const ptBR = {
           "moram"
         ],
         "hint": "Con Eu se usa la primera persona singular.",
-        hintSpeechSegments:[], explanationSpeechSegments:["Eu moro","Morar"], "explanation": "Eu moro significa yo vivo. Morar se usa para hablar del lugar donde resides."
+        hintSpeechSegments:["Eu"], explanationSpeechSegments:["Eu moro","Morar"], "explanation": "Eu moro significa yo vivo. Morar se usa para hablar del lugar donde resides."
       },
       {
         "id": "pt-travel-03",
@@ -83,7 +83,7 @@ export const ptBR = {
           "Preciso de duas passagens"
         ],
         "hint": "Quarto significa habitación; para duas pessoas significa para dos personas.",
-        hintSpeechSegments:["Quarto","duas pessoas"], explanationSpeechSegments:["Preciso de","quarto","duas pessoas"], "explanation": "Preciso de... expresa una necesidad. Quarto es habitación y pessoas es personas."
+        hintSpeechSegments:["Quarto","duas pessoas"], explanationSpeechSegments:["Preciso de","Quarto","pessoas"], "explanation": "Preciso de... expresa una necesidad. Quarto es habitación y pessoas es personas."
       },
       {
         "id": "pt-food-02",
@@ -117,7 +117,7 @@ export const ptBR = {
           "Mais água, por favor"
         ],
         "hint": "Sem significa sin.",
-        hintSpeechSegments:["Sem"], explanationSpeechSegments:["Sem cebola"], "explanation": "Sem expresa ausencia de algo; cebola significa cebolla."
+        hintSpeechSegments:["Sem"], explanationSpeechSegments:["Sem","cebola"], "explanation": "Sem expresa ausencia de algo; cebola significa cebolla."
       },
       {
         "id": "pt-work-02",
@@ -134,7 +134,7 @@ export const ptBR = {
           "trabalham"
         ],
         "hint": "Con Eu se usa trabalho.",
-        hintSpeechSegments:["trabalho"], explanationSpeechSegments:["Eu trabalho","trabalhar"], "explanation": "Eu trabalho significa yo trabajo. En portugués, trabajar se dice trabalhar."
+        hintSpeechSegments:["Eu","trabalho"], explanationSpeechSegments:["Eu trabalho","trabalhar"], "explanation": "Eu trabalho significa yo trabajo. En portugués, trabajar se dice trabalhar."
       },
       {
         "id": "pt-work-03",
