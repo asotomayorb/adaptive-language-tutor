@@ -61,11 +61,13 @@ try {
   await page.goto(baseUrl, { waitUntil: "networkidle" });
   assert.match(await page.title(), /Language Tutor/);
   await page.locator('[data-language="Portugués brasileño"]').click();
+  await page.locator('[data-screen="settings"]').click();
+  await page.locator("#level").selectOption("diagnostic");
+  await page.locator("#duration").selectOption("8");
+  await page.locator("#settings-save").click();
   await page.locator('[data-screen="exercises"]').click();
   await page.locator("#ai-status").waitFor();
   await page.locator("#start-session").waitFor({ state: "visible" });
-  await page.locator("#level").selectOption("diagnostic");
-  await page.locator("#duration").selectOption("8");
   await page.locator("#start-session").click();
   // Complete the four-question diagnostic, then verify guided practice.
   for (let question = 0; question < 4; question += 1) {
