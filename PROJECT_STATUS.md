@@ -477,5 +477,7 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] Teoría de pronombres en tabla bilingüe con audio por fila y contenido aplicado de artículos, ser/estar y tiempos presente/pasado/futuro para los 23 idiomas estándar.
 - [x] Navegación entre secciones reinicia la vista en el inicio de cada sección.
 - [x] Ruta guarda y restaura el feedback pendiente de la pregunta actual.
-- [ ] Ejecutar CI E2E de esta revisión y validar el flujo en Android real.
+- [x] CI (npm run check, npm test y Browser E2E) aprobado en el commit `e227eea`.
+- [x] Preview Render desplegado en estado `live` para el commit `e227eea` (deploy `dep-dbv2si8u01pc73clh3u0`).
+- [ ] Validar el flujo visual y auditivo en Android real.
 
