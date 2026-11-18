@@ -109,6 +109,8 @@ try {
   await page.locator('[data-screen="exercises"]').click();
   await page.locator('[data-screen="theory"]').click();
   assert.equal(await page.locator("#theory-grid").isVisible(), true, "Theory navigation should return to categories");
+  await page.locator('[data-screen="exercises"]').click();
+  assert.equal(await page.locator("#exercise-choice-panel").isVisible(), true, "Exercises navigation should return to its setup screen");
 
   // Local exercise: first three questions are alternatives, then answers are written.
   await page.locator('[data-screen="exercises"]').click();
@@ -116,6 +118,7 @@ try {
   await page.locator("#start-session").waitFor({ state: "attached" });
   await page.locator("#duration").selectOption("5");
   await page.locator("#start-session").click();
+  assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text.includes("¿Cómo se dice") && item.lang === "es-CL")), "audio should speak the complete question, not only the answer word");
   for (let turn = 0; turn < 3; turn += 1) {
     assert.equal(await page.locator("#answer-area [data-choice]").count(), 3, "first three questions should have three choices");
     const questionBefore = await page.locator("#lesson-content h3").innerText();
@@ -127,6 +130,9 @@ try {
     assert.equal(await page.locator("#answer-area #continue-answer").isVisible(), true, "learner must explicitly continue");
     assert.equal(await page.locator("#feedback .answer-explanation").isVisible(), true, "only incorrect answers should show explanatory feedback");
     await page.locator("#answer-area #continue-answer").click();
+    if (turn === 0) {
+      assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text.includes("Eu") && item.text.includes("chileno") && item.lang === "pt-BR")), "a recall blank should be spoken as a complete phrase with a pause");
+    }
   }
   assert.equal(await page.locator("#answer-area #free-answer").isVisible(), true, "fourth question should require written input");
   for (let turn = 3; turn < 5; turn += 1) {
