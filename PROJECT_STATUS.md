@@ -166,7 +166,7 @@ Las pruebas actuales de adaptadores usan respuestas simuladas; no acreditan cone
 
 **Estado: preparación parcial.** El plan de prueba humana está preparado en `HUMAN_TEST_PLAN.md`; aún no iniciar la prueba amplia porque falta validar la voz en dispositivos reales y completar la cobertura de pistas/explicaciones.
 
-- [ ] Completar lectura automática de todos los fragmentos objetivo en cada pantalla. Ya existe lectura automática de `speechSegments` IA, opciones y respuestas modelo en ejercicios locales, respuestas de repaso y vocabulario del resumen; falta cobertura integral de pistas, explicaciones y todas las vistas.
+- [x] Cobertura de audio en código para `speechSegments` IA, opciones, respuestas modelo, pistas y explicaciones locales pt-BR/inglés, feedback, repaso y vocabulario del resumen. La validación auditiva real sigue pendiente.
 - [x] El contrato IA usa `speechSegments` con `text`, `language` y `locale`; el prompt separa el idioma objetivo del texto auxiliar en español. El backend rechaza segmentos cuyo locale no coincida con el seleccionado.
 - [x] La selección de voz consulta dinámicamente `SpeechSynthesis.getVoices()` y prioriza coincidencia exacta de locale, con fallback por idioma. E2E simula voces `pt-BR` y `fr-FR`; falta validación auditiva en dispositivos reales.
 - [x] La cobertura efectiva depende de las voces instaladas en el navegador/sistema operativo; si no hay coincidencia, el sistema conserva el locale solicitado, informa el fallback y no bloquea la práctica. La disponibilidad auditiva debe confirmarse en los dispositivos reales.
@@ -247,13 +247,13 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [ ] No hay autenticación ni cuotas por usuario/IP. No exponer públicamente antes de incorporar controles adecuados al hosting elegido.
 - [ ] El progreso y las sesiones permanecen en `localStorage`; no hay sincronización ni recuperación entre dispositivos. En dispositivos compartidos, los datos permanecen accesibles al perfil local del navegador.
 - [ ] Revisar la política de retención y el nivel de detalle de logs del proveedor. El backend registra proveedor/modelo, duración y mensaje de error del proveedor; no registra deliberadamente el texto del alumno, pero los errores upstream deben revisarse antes de producción.
-- [ ] El backend devuelve al cliente el mensaje del error del proveedor. Definir una respuesta pública normalizada y conservar el detalle técnico únicamente en logs controlados.
+- [x] El endpoint devuelve un mensaje público normalizado; no expone el mensaje interno ni el status upstream del proveedor. Los logs tampoco guardan el texto completo del error. Pendiente definir retención, acceso y monitorización de logs en el hosting.
 - [ ] No se ha realizado una prueba de penetración ni una auditoría de despliegue; esta revisión de código no equivale a una certificación de seguridad.
 
 ### Estado de audio y flujo funcional
 - [x] El controlador TTS cancela la locución anterior, respeta el control global y permite reproducción manual por fragmento.
 - [x] Los fragmentos de voz IA se filtran por locale objetivo en backend; las pistas adicionales no incrementan el contador de turnos y conservan la actividad.
-- [ ] Sigue pendiente la validación auditiva en dispositivos reales y la cobertura de lectura automática de todas las explicaciones y pistas.
+- [x] Se completó la cobertura de código para pistas y explicaciones locales pt-BR/inglés y segmentos IA; se añadieron pruebas automatizadas. [ ] Sigue pendiente validación auditiva en dispositivos reales.
 - [ ] Evaluar el comportamiento de reintentos cuando el servidor procesa una petición pero la respuesta se pierde: actualmente no existe idempotencia por identificador de turno, por lo que un reenvío puede repetir una llamada al proveedor.
 
 **Conclusión de auditoría:** no se detectó en esta revisión una ruta que permita servir archivos privados mediante el servidor estático. Los principales bloqueos restantes son de preparación para producción (identidad, cuotas compartidas, privacidad y observabilidad) y validación real de audio/calidad pedagógica. Mantener el PR sin merge y no desplegar públicamente.
@@ -307,7 +307,7 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] Se detectó que al pasar a la siguiente tarjeta de repaso espaciado podía continuar la locución automática de la tarjeta anterior.
 - [x] `renderSpacedReview()` ahora detiene la voz antes de renderizar cada tarjeta, incluida la navegación entre tarjetas.
 - [x] Browser E2E comprueba que avanzar desde una tarjeta cuya respuesta se acaba de pronunciar cancela la locución anterior.
-- [ ] Confirmar CI en el HEAD que contiene tanto la corrección como la prueba.
+- [x] CI del código `c081f49`: Tests run `44208647428` y Browser E2E run `44208647435`, aprobados.
 
 **Alcance:** corrige la transición entre tarjetas del repaso espaciado. No sustituye la prueba auditiva en dispositivos reales ni cierra la auditoría global de audio.
 
@@ -317,7 +317,7 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 
 - [x] El endpoint ya no devuelve al navegador el mensaje interno de excepción del proveedor ni su código HTTP upstream; responde con un mensaje genérico y estado 502.
 - [x] Prueba API de regresión confirma que un error simulado con detalle interno no aparece en la respuesta pública.
-- [ ] Confirmar Tests y Browser E2E en el HEAD que contiene el cambio y la prueba.
+- [x] CI del commit de prueba `d10a3d1`: Tests run `44209021102` y Browser E2E run `44209021047`, aprobados.
 
 **Alcance:** reduce la exposición de detalles internos al cliente. No sustituye la revisión de retención y acceso a logs del servidor, que sigue pendiente.
 
@@ -327,7 +327,7 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 
 - [x] Los logs del proveedor ya no incluyen el texto completo del error upstream; registran proveedor, modelo, duración, tipo de error y status upstream cuando existe.
 - [x] Prueba unitaria intercepta el log y confirma que el detalle sensible simulado no se registra.
-- [x] CI del commit de prueba `7e6860f`: Tests run `44209349422` y Browser E2E run `44209349457` (este último aún en ejecución al registrar); el HEAD documental `48ac3e1` pasó Tests `44209375902` y Browser E2E `44209375927`.
+- [x] CI del commit de prueba `7e6860f`: Tests run `44209349422` y Browser E2E run `44209349457`, aprobados. El HEAD documental `48ac3e1` también pasó ambos workflows.
 
 **Alcance:** limita el detalle almacenado en logs de errores del proveedor. Aún debe definirse retención, acceso y monitorización de logs en el hosting de producción.
 
@@ -361,6 +361,6 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] El tutor reproduce esos fragmentos y añade controles de reproducción manual, sin leer en voz alta la explicación completa en español.
 - [x] La misma lógica se aplica al feedback de respuestas y al repaso espaciado; se conserva el locale de cada idioma.
 - [x] Browser E2E añadido para verificar el fragmento `dia` en una pista y `Bom dia` en una explicación pt-BR.
-- [ ] Confirmar CI del cambio de código y del HEAD documental.
+- [x] CI de lógica y E2E: Tests `44271777573` y Browser E2E `44271777528` aprobados; la ampliación E2E `aa271f6` pasó Tests `44271899793` y Browser E2E `44271899857`. HEAD final de catálogo `5c4a840` pasó Tests `44272216627` y Browser E2E `44272216458`.
 
 **Alcance:** los catálogos locales iniciales son pt-BR e inglés. El contenido de idiomas personalizados depende de los `speechSegments` proporcionados por el tutor IA y validados por el backend.
