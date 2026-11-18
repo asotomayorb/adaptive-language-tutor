@@ -154,15 +154,14 @@ $("language").addEventListener("change", () => {
   refreshDashboard();
 });
 $("custom-language-name").addEventListener("input", refreshDashboard);
-$("custom-language-locale").addEventListener("input", refreshDashboard);
+$("custom-language-locale").addEventListener("input", () => { updateLanguageFlag(); refreshDashboard(); });
 try {
   const savedSettings = JSON.parse(localStorage.getItem("adaptive-language-tutor.settings") || "{}");
   if (savedSettings.selectedLanguage) {
     $("language").value = savedSettings.selectedLanguage;
     $("welcome-screen").classList.add("hidden");
     $("app-shell").classList.remove("hidden");
-    if (savedSettings.customLanguageName) $("selected-language-flag").textContent = "🏳️";
-    else updateLanguageFlag();
+    updateLanguageFlag();
   }
   if (savedSettings.duration) $("duration").value = String(savedSettings.duration);
   if (savedSettings.level) $("level").value = savedSettings.level;
@@ -171,6 +170,7 @@ try {
   if (savedSettings.customLanguageLocale) $("custom-language-locale").value = savedSettings.customLanguageLocale;
 } catch { /* Ignore malformed optional settings; progress storage remains independent. */ }
 updateCustomLanguageFields();
+updateLanguageFlag();
 refreshDashboard();
 checkTutorHealth().then(status => {
   aiConfigured = Boolean(status.ai?.configured);
@@ -277,7 +277,6 @@ $("setup-form").addEventListener("submit", event => {
     startSpacedReview();
     return;
   }
-  const durationMinutes = Number($("duration").value);
   const questionCount = Number($("duration").value);
   const config = { language:catalog.label, languageId:catalog.id, languageLocale:catalog.locale || catalog.id, duration:questionCount, questionCount, level:$("level").value, topic:$("topic").value };
   persistSettings();
