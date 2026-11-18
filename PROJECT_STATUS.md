@@ -364,3 +364,16 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] CI de lógica y E2E: Tests `44271777573` y Browser E2E `44271777528` aprobados; la ampliación E2E `aa271f6` pasó Tests `44271899793` y Browser E2E `44271899857`. HEAD final de catálogo `5c4a840` pasó Tests `44272216627` y Browser E2E `44272216458`.
 
 **Alcance:** los catálogos locales iniciales son pt-BR e inglés. El contenido de idiomas personalizados depende de los `speechSegments` proporcionados por el tutor IA y validados por el backend.
+
+## Preparación de prueba humana controlada — 18-11-2026
+
+**HEAD de código:** `5c4a840ebfceb0b0edee3ea807b7ef9ef5d851ec` — Tests `44272216627` y Browser E2E `44272216458`, aprobados.
+**HEAD de documentación:** `c345281a97c2a0be3da8ad381551dfce158ed924` — Tests `44272649978` y Browser E2E `44272650018`, aprobados.
+**Proveedor real:** smoke test pt-BR/fr-FR y sesión de navegador aprobados en run `44271223866`.
+
+- [x] Cobertura automatizada de flujo local, tutor IA, pistas, feedback, resumen, persistencia, repaso, exportación y reintentos.
+- [x] Audio automático/manual, locales objetivo, fragmentos de pistas y explicaciones, cancelación al cambiar de vista/acción y filtro de paneles ocultos cubiertos por pruebas.
+- [x] `HUMAN_TEST_PLAN.md` actualizado para comprobar portugués brasileño, inglés local (`en`), francés IA (`fr-FR`), audio en Android/escritorio, persistencia y recuperación ante errores.
+- [ ] Validación humana real: naturalidad pedagógica, pronunciación, voces instaladas, calidad auditiva y persistencia en el dispositivo/entorno del usuario.
+
+**Decisión:** la auditoría automatizada está cerrada para iniciar una prueba humana controlada. Esto no habilita producción. Siguen pendientes autenticación, cuotas compartidas, retención/acceso a logs, idempotencia, hosting y revisión de despliegue. PR #2 permanece draft; no merge, despliegue público ni sincronización con Replit.
