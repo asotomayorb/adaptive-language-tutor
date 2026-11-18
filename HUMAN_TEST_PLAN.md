@@ -93,3 +93,31 @@ Para cada escenario registrar:
 | Severidad (bloqueante / alta / media / baja) | |
 
 **Criterio de salida:** no declarar lista para prueba humana amplia mientras falle un flujo principal, no se confirme persistencia/exportación, o la lectura del idioma objetivo no se haya escuchado y verificado en al menos un dispositivo real.
+
+
+## 8. Nueva navegación y experiencia móvil — requisitos vigentes 18-11-2026
+
+- [ ] La barra inferior contiene exactamente cuatro accesos: Ruta, Ejercicios, Teoría y Estadísticas.
+- [ ] La barra muestra iconos sin etiquetas visibles; el seleccionado se distingue sutilmente.
+- [ ] El título de la sección aparece dentro de su pantalla.
+- [ ] Ruta es la pantalla inicial y no muestra métricas ni panel de progreso.
+- [ ] No existe acceso/sección Configuración; idioma y audio están en la cabecera de las pantallas normales.
+- [ ] El selector de idioma permite cambiar el idioma sin perder el audio ni dejar estado de la actividad anterior.
+- [ ] El icono de audio refleja visualmente el estado activado/desactivado (desactivado con diagonal roja o X gris).
+- [ ] Ejercicios ofrece Global y Repaso como dos opciones claras.
+- [ ] Después de elegir Global o Repaso aparece la preparación de duración, nivel y tema.
+- [ ] La primera actividad comienza directamente en el nivel elegido; no aparece test ni pregunta diagnóstica inicial.
+- [ ] La sesión ocupa la pantalla completa y oculta barra inferior y selector Global/Repaso.
+- [ ] Durante la sesión solo quedan visibles X y audio, ambos icon-only.
+- [ ] El audio conserva el estado al entrar/salir de sesión.
+- [ ] Al pulsar X aparece confirmación. Cancelar mantiene intacta la sesión.
+- [ ] Confirmar X descarta solo la sesión actual: no guarda respuestas parciales, métricas ni tarjetas de repaso. El historial previo permanece.
+- [ ] Cambiar de sección, idioma o modalidad no reutiliza preguntas, historial, pistas ni solicitudes pendientes de la actividad anterior.
+- [ ] Una respuesta IA lenta muestra estado de espera y no bloquea indefinidamente; timeout/error permite reintentar o continuar en modo local.
+- [ ] Al fallar IA se puede salir de la sesión y navegar con normalidad.
+- [ ] Teoría abre contenido de consulta sin iniciar una sesión automáticamente.
+- [ ] Estadísticas es el único apartado con métricas e historial.
+- [ ] No aparecen subtítulos redundantes, pie “Language Tutor” ni texto de relleno.
+- [ ] En móvil no hay scroll horizontal, controles cortados ni solapamiento con la barra inferior o las áreas seguras del dispositivo.
+
+**Criterio de salida:** todos los flujos anteriores deben aprobarse en viewport móvil y en un teléfono real antes de considerar completada esta revisión de experiencia. La especificación completa está en [README.md](README.md).
