@@ -41,7 +41,10 @@ function tutorTurn({ turn = 0, start = false } = {}) {
       skill: "Saludos"
     },
     learnerUpdate: { estimatedLevel: "A1", vocabulary: [], errorsToReview: [] },
-    speechSegments: [{ text: "Bom dia", language: "pt", locale: "pt-BR" }],
+    speechSegments: [
+      { text: "Instrucción en español que no debe leerse", language: "es", locale: "es-CL" },
+      { text: "Bom dia", language: "pt", locale: "pt-BR" }
+    ],
     nextAction: "answer"
   };
 }
@@ -223,6 +226,9 @@ try {
   await aiPage.locator('[data-screen="route"]').click();
   await aiPage.locator("#route-start").click();
   await aiPage.locator("#answer-area [data-ai-choice]").first().waitFor();
+  await aiPage.waitForFunction(() => window.__spoken.some(item => item.text === "Bom dia" && item.lang === "pt-BR"));
+  assert.equal(await aiPage.evaluate(() => window.__spoken.some(item => item.text.includes("Instrucción en español"))), false,
+    "mixed AI speech must ignore source-language segments");
   await aiPage.locator("#answer-area [data-ai-choice]").first().click();
   await aiPage.locator("#feedback .answer-status.correct").waitFor({ state: "visible" });
   assert.equal(await aiPage.locator("#answer-area #continue-answer").isVisible(), true, "AI evaluation must wait for Continue");
@@ -243,6 +249,10 @@ try {
   }
   await aiPage.locator("#ai-answer").waitFor({ state: "visible" });
   assert.equal(await aiPage.locator("#ai-answer").isVisible(), true, "AI should switch to written answers after three questions");
+  await aiPage.locator("#ai-answer").fill("Bom dia");
+  await aiPage.locator("#submit-ai-answer").click();
+  await aiPage.locator("#feedback .answer-status.correct").waitFor({ state: "visible" });
+  assert.equal(await aiPage.locator("#submit-ai-answer").count(), 0, "written-answer submit button should disappear after sending");
   assert.deepEqual(aiErrors, [], "AI browser flow should not report uncaught page errors");
 } finally {
   if (browser) await browser.close();
