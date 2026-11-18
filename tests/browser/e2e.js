@@ -104,6 +104,15 @@ try {
   assert.equal(await page.locator("#theory-title").innerText(), "Artículos");
   await page.locator("#theory-next").click();
   assert.match(await page.locator("#theory-description").innerText(), /Eu sou|SER|ESTAR/i, "verb theory should include applied conjugation");
+  await page.locator("#theory-next").click();
+  assert.equal(await page.locator("#theory-title").innerText(), "Tiempo presente");
+  assert.ok(await page.locator("#theory-description .theory-pronoun-table tbody tr").count() >= 4, "present tense should show conjugated forms");
+  await page.locator("#theory-next").click();
+  assert.equal(await page.locator("#theory-title").innerText(), "Pasado");
+  assert.match(await page.locator("#theory-description").innerText(), /Ayer/i, "past tense should include an applied example");
+  await page.locator("#theory-next").click();
+  assert.equal(await page.locator("#theory-title").innerText(), "Futuro");
+  assert.match(await page.locator("#theory-description").innerText(), /Mañana/i, "future tense should include an applied example");
   await page.locator("#theory-close").click();
   // Switching away and back resets Theory to its category start.
   await page.locator('[data-screen="exercises"]').click();
