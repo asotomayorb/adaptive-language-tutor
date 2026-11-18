@@ -175,6 +175,13 @@ try {
   await aiPage.goto(baseUrl, { waitUntil: "networkidle" });
   await aiPage.locator("#welcome-start").click();
   await aiPage.locator('[data-language="Francés"]').click();
+  await aiPage.locator('[data-screen="route"]').click();
+  await aiPage.locator("#route-start").click();
+  await aiPage.locator("#answer-area [data-ai-choice]").first().waitFor();
+  await aiPage.locator("#answer-area [data-ai-choice]").first().click();
+  await aiPage.locator("#lesson-content .feedback-note").waitFor({ state: "visible" });
+  await aiPage.locator("#session-close").click();
+  assert.equal(await aiPage.locator("#route-resume").isVisible(), true, "AI-backed Route must save partial progress too");
   await aiPage.locator('[data-screen="exercises"]').click();
   await aiPage.locator("#start-session").waitFor({ state: "visible" });
   await aiPage.locator("#start-session").click();
