@@ -290,8 +290,8 @@ async function startAITutorSession(config) {
   aiHistory = [];
   aiLastResult = null;
   aiCurrentExercise = null;
-  $("stats").hidden = false;
-  $("hint-btn").hidden = false;
+  $("stats").hidden = true;
+  $("hint-btn").hidden = true;
   $("review-btn").hidden = true;
   $("lesson-phase").textContent = "TUTOR IA · INICIO";
   $("turn-count").textContent = "Preparando tu sesión…";
@@ -315,7 +315,7 @@ async function startAITutorSession(config) {
     applyLearnerUpdate(session, result.learnerUpdate);
     renderAITutorTurn(result);
   } catch (error) {
-    showAITutorError(error, null);
+    if (session === activeSession && !sessionAbortController?.signal.aborted) showAITutorError(error, null);
   }
 }
 
@@ -540,53 +540,6 @@ function chooseExercise() {
   return candidates[session.turn % candidates.length];
 }
 
-function startDiagnostic() {
-  const beginner = catalog.exercises.filter(exercise => exercise.level === "A1").slice(0,3);
-  const challenge = catalog.exercises.filter(exercise => exercise.level === "A2").slice(0,1);
-  diagnostic = { questions:[...beginner, ...challenge], index:0, score:0 };
-  renderDiagnosticQuestion();
-}
-
-function renderDiagnosticQuestion() {
-  const exercise = diagnostic.questions[diagnostic.index];
-  $("lesson-phase").textContent = "DIAGNÓSTICO · " + (diagnostic.index + 1) + " / 4";
-  $("turn-count").textContent = "Evaluación inicial";
-  $("progress-bar").style.width = (diagnostic.index / 4 * 100) + "%";
-  $("stats").hidden = true;
-  $("lesson-content").innerHTML = '<h3>' + escapeHTML(exercise.prompt) + '</h3><p>Responde según lo que ya sabes. Estas preguntas no cuentan en los turnos de práctica.</p>';
-  speech.stop();
-  $("answer-area").innerHTML = exercise.options.map((option,index) =>
-    '<div class="answer-option-row"><button class="answer-option" data-diagnostic="' + index + '">' + escapeHTML(option) + '</button>' + speakerButton(option, catalog.locale) + '</div>'
-  ).join("");
-  $("answer-area").querySelectorAll("[data-diagnostic]").forEach(button => button.addEventListener("click", event => {
-    if (event.target.closest("[data-speak]")) return;
-    if (Number(button.dataset.diagnostic) === exercise.options.indexOf(exercise.target)) diagnostic.score += 1;
-    diagnostic.index += 1;
-    if (diagnostic.index < 4) renderDiagnosticQuestion();
-    else finishDiagnostic();
-  }));
-  $("answer-area").querySelectorAll("[data-speak]").forEach(button => button.addEventListener("click", event => {
-    event.stopPropagation();
-    speech.speak(button.dataset.speak, catalog.locale);
-  }));
-  autoSpeak(exercise.options.join(". "), catalog.locale);
-  $("hint-btn").hidden = true;
-  $("review-btn").hidden = true;
-  $("feedback").classList.add("hidden");
-}
-
-function finishDiagnostic() {
-  const score = diagnostic.score;
-  session.config.level = score <= 1 ? "zero" : score <= 3 ? "basic" : "intermediate";
-  session.config.diagnosticScore = score;
-  $("stats").hidden = true;
-  $("hint-btn").hidden = true;
-  $("review-btn").hidden = true;
-  $("feedback").textContent = "Nivel inicial estimado: " + levelLabel(session.config.level) + ". Es orientativo y se ajustará según tus respuestas.";
-  $("feedback").classList.remove("hidden","bad");
-  renderLesson();
-}
-
 function levelLabel(level) {
   return ({zero:"principiante",basic:"básico",intermediate:"intermedio"})[level] || "básico";
 }
@@ -705,7 +658,7 @@ function finishSession() {
   persistSession(progress, session, summary);
   saveProgress(progress);
   refreshDashboard();
-  const diagnosticText = session.config.diagnosticScore === undefined ? "" : '<li>Diagnóstico inicial: ' + session.config.diagnosticScore + '/4 · nivel estimado ' + levelLabel(session.config.level) + '.</li>';
+  const diagnosticText = "";
   const aiLevelText = aiMode && session.config.estimatedLevel
     ? '<li>Nivel estimado por el tutor IA: ' + escapeHTML(session.config.estimatedLevel) + '.</li>'
     : "";
@@ -723,15 +676,6 @@ function finishSession() {
 $("new-session").addEventListener("click", () => {
   closeSessionAndReturn();
 });
-$("export-btn").addEventListener("click", () => {
-  const data = { exportedAt:new Date().toISOString(), summary:buildSummary(session), config:session.config, answers:session.answers };
-  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-  anchor.href = url; anchor.download = "language-tutor-progress.json"; anchor.click();
-  URL.revokeObjectURL(url);
-});
-
 
 // Main navigation and language onboarding
 function showScreen(name) {
@@ -777,18 +721,7 @@ function closeSessionAndReturn() {
   showScreen("exercises");
 }
 
-function setExerciseTab(name) {
-  const review = name === "review";
-  $("global-exercises").classList.toggle("hidden", review);
-  $("review-exercises").classList.toggle("hidden", !review);
-  document.querySelectorAll(".exercise-tab").forEach(button => {
-    const active = button.dataset.exerciseTab === name;
-    button.classList.toggle("active", active);
-    button.setAttribute("aria-selected", String(active));
-  });
-  if (review) refreshDashboard();
-}
-document.querySelectorAll("[data-screen]").forEach(button => button.addEventListener("click", () => showScreen(button.dataset.screen)));
+ document.querySelectorAll("[data-screen]").forEach(button => button.addEventListener("click", () => showScreen(button.dataset.screen)));
 document.querySelectorAll("[data-mode]").forEach(button => button.addEventListener("click", () => {
   selectedExerciseMode = button.dataset.mode;
   $("exercise-choice-panel").classList.add("hidden");
@@ -803,7 +736,10 @@ $("setup-back").addEventListener("click", () => {
   $("review-exercises").classList.add("hidden");
   $("exercise-choice-panel").classList.remove("hidden");
 });
-$("session-close").addEventListener("click", () => $("session-confirm").showModal());
+$("session-close").addEventListener("click", () => {
+  if (sessionFinished) closeSessionAndReturn();
+  else $("session-confirm").showModal();
+});
 $("cancel-session-close").addEventListener("click", () => $("session-confirm").close());
 $("confirm-session-close").addEventListener("click", () => {
   $("session-confirm").close();
