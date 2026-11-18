@@ -728,8 +728,8 @@ function renderRouteIntegration() {
   pendingFeedback = null;
   currentExercise = {
     id:"route-integration-fundamentals", prompt,
-    target: catalog.id === "en-US" ? "Hello, my name is Ana and I am from Chile." : "Olá, meu nome é Ana e sou do Chile.",
-    acceptedAnswers: catalog.id === "en-US"
+    target: catalog.id === "en" ? "Hello, my name is Ana and I am from Chile." : "Olá, meu nome é Ana e sou do Chile.",
+    acceptedAnswers: catalog.id === "en"
       ? ["Hello, I'm Ana and I'm from Chile.","Hi, my name is Ana. I am from Chile."]
       : ["Olá! Eu me chamo Ana e sou do Chile.","Oi, meu nome é Ana. Eu sou do Chile."],
     explanation:"La actividad integra saludo, presentación y procedencia."
@@ -819,7 +819,7 @@ function renderLesson() {
   const previous = pendingFeedback;
   pendingFeedback = null;
   const feedbackMarkup = previous
-    ? '<div class="feedback-note"><span>Respuesta anterior</span><p>' + escapeHTML(previous.text) + '</p><p class="model-answer">Respuesta modelo: ' + escapeHTML(previous.expected) + ' ' + speakerButton(previous.expected, catalog.locale) + '</p></div>'
+    ? '<div class="feedback-note"><span>Respuesta anterior</span><p>' + renderVariantTerms(previous.text) + '</p><p class="model-answer">Respuesta modelo: ' + renderVariantTerms(previous.expected) + ' ' + speakerButton(previous.expected, catalog.locale) + '</p></div>'
     : "";
   $("lesson-content").innerHTML = feedbackMarkup + '<p class="eyebrow">TEMA: ' + escapeHTML(topicLabels[session.config.topic].toUpperCase()) + ' · NIVEL ' + escapeHTML(levelLabel(session.config.level).toUpperCase()) + '</p><h3>' + renderVariantTerms(currentExercise.prompt) + '</h3>';
   bindVariantLinks($("lesson-content"));
