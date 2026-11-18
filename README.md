@@ -250,8 +250,11 @@ La selección se expresa en minutos. En la implementación actual se asignan pro
 - [ ] Aprobar o ajustar el umbral de dominio y estructura de hitos propuestos arriba antes de fijar la progresión pedagógica.
 - [ ] Ampliar el mosaico de idiomas y verificar visualmente las banderas en Android.
 - [ ] Auditar el estado persistente del audio en sesiones nuevas y entre reinicios del navegador.
-- [ ] Ejecutar npm run check, npm test, npm run test:e2e y pruebas reales en Android tras estos cambios.
+- [ ] Ejecutar npm run check, npm test y npm run test:e2e; la compilación Render no sustituye estas pruebas ni la prueba real en Android.
 
 **Nota de precisión:** la pantalla Ruta sigue siendo una estructura visual de etapas; todavía no inicia una sesión con contenido prefijado ni guarda progreso parcial. El gráfico actual muestra la precisión de sesiones completadas como indicador observable, no una estimación ficticia de dominio del idioma.
 
 - [x] Corrección de navegación: al finalizar o descartar una sesión de Ejercicios, la pantalla vuelve a mostrar Global/Repaso y los tres desplegables; no quedan ocultos tras regresar de la sesión.
+
+
+**Despliegue de preview:** el commit de código `6eb031fb9b1051ad993df1e9ea8dbf4cd96f9472` se desplegó correctamente en Render el 18-11-2026 (deploy `dep-dbuugt8u01pc73e2o700`). La aplicación quedó disponible en la URL de preview. El despliegue confirma instalación y arranque del servidor, no la validación visual/funcional en navegador ni los tests de proyecto.
