@@ -119,7 +119,7 @@ try {
   for (let turn = 0; turn < 3; turn += 1) {
     assert.equal(await page.locator("#answer-area [data-choice]").count(), 3, "first three questions should have three choices");
     const questionBefore = await page.locator("#lesson-content h3").innerText();
-    await page.locator("#answer-area [data-choice]").first().click();
+    await page.locator("#answer-area [data-choice]").last().click();
     assert.equal(await page.locator("#feedback .answer-status.incorrect").isVisible(), true, "incorrect feedback should appear at the end of the current question");
     assert.equal(await page.locator("#lesson-content h3").innerText(), questionBefore, "the current question must remain until Continue");
     assert.equal(await page.locator("#answer-area .answer-incorrect").count(), 1, "the selected wrong answer should be red");
@@ -155,7 +155,7 @@ try {
   // Route partial progress survives leaving and reloading, unlike Exercises.
   await page.locator('[data-screen="route"]').click();
   await page.locator("#route-start").click();
-  await page.locator("#answer-area [data-choice]").first().click();
+  await page.locator("#answer-area [data-choice]").last().click();
   await page.locator("#answer-area #continue-answer").click();
   await page.locator("#answer-area [data-choice]").first().click();
   await page.locator("#feedback #continue-answer").waitFor({ state: "visible" });
