@@ -84,54 +84,10 @@ function renderVariantTerms(value) {
   return html;
 }
 function renderClickableTargetText(value) {
-  const dictionary = [...(session?.vocabulary || []), ...(progress?.vocabulary || []),
-    ...(catalog?.exercises || []).map(item => ({term:item.term,meaning:item.meaning}))];
-  const text = String(value || "");
-  const locale = session?.config.languageLocale || catalog?.locale || "es";
-  let segments;
-  if (typeof Intl !== "undefined" && typeof Intl.Segmenter === "function") {
-    segments = [...new Intl.Segmenter(locale, { granularity:"word" }).segment(text)]
-      .map(item => ({ text:item.segment, isWord:item.isWordLike }));
-  } else {
-    segments = text.split(/([\p{L}\p{M}]+(?:['’][\p{L}\p{M}]+)?)/gu)
-      .map(part => ({ text:part, isWord:/^[\p{L}\p{M}]+(?:['’][\p{L}\p{M}]+)?$/u.test(part) }));
-  }
-  return segments.map(item => {
-    if (!item.isWord) return escapeHTML(item.text);
-    const match = dictionary.find(entry => entry.term && entry.term.toLocaleLowerCase() === item.text.toLocaleLowerCase());
-    return '<span class="target-word-link" role="button" tabindex="0" data-target-word="' + escapeHTML(item.text) +
-      '" data-context="' + escapeHTML(text) + '" data-translation="' + escapeHTML(match?.meaning || "Traducción no registrada") + '">' + escapeHTML(item.text) + '</span>';
-  }).join("");
+  return escapeHTML(value || "");
 }
-function bindTargetWords(root) {
-  root.querySelectorAll("[data-target-word]:not([data-word-bound])").forEach(button => {
-    button.dataset.wordBound = "true";
-    const toggle = async () => {
-      const current = button.parentElement.querySelector(".word-translation");
-      if (current) { current.remove(); return; }
-      const popup = document.createElement("span");
-      popup.className = "word-translation";
-      popup.setAttribute("role","status");
-      popup.textContent = button.dataset.translation;
-      button.insertAdjacentElement("afterend",popup);
-      if (button.dataset.translation !== "Traducción no registrada" || !aiConfigured) return;
-      popup.textContent = "Traduciendo…";
-      try {
-        const result = await requestTutorTurn({
-          task:"translate_word",
-          learner:{ targetLanguageLabel:catalog?.label || session?.config.language, targetLanguageLocale:catalog?.locale || session?.config.languageLocale, nativeLanguage:"Español" },
-          session:{}, history:[],
-          userMessage: JSON.stringify({ word:button.dataset.targetWord, context:button.dataset.context })
-        });
-        popup.textContent = String(result.message || "Traducción no disponible").trim();
-        button.dataset.translation = popup.textContent;
-      } catch {
-        popup.textContent = "Traducción no disponible";
-      }
-    };
-    button.addEventListener("click", event => { event.stopPropagation(); toggle(); });
-    button.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); event.stopPropagation(); toggle(); } });
-  });
+function bindTargetWords() {
+  // Word-level translation was intentionally removed from exercise interactions.
 }
 function bindVariantLinks(root) {
   root.querySelectorAll("[data-variant]:not([data-variant-bound])").forEach(button => {
@@ -313,7 +269,11 @@ function refreshDashboard() {
     : "No tienes repasos pendientes. Los errores que cometas durante las sesiones aparecerán aquí.";
   const statsContent = $("statistics-content");
   if (!statsContent) return;
+  const previousStatsView = $("stats-view-select")?.value || "global";
   const metrics = languages.map(language => {
+    const languageSessions = progress.sessions.filter(item => item.languageId === language.id);
+    const attempted = languageSessions.reduce((sum,item) => sum + (Number(item.attempted) || 0),0);
+    const correct = languageSessions.reduce((sum,item) => sum + (Number(item.correct) || 0),0);
     const stats = getProgressStats(progress, language.id);
     let routePercent = 0;
     try {
@@ -323,7 +283,9 @@ function refreshDashboard() {
         routePercent = Math.min(100, Math.round(((draft?.session?.turn || 0) / 11) * 100));
       }
     } catch {}
-    return { ...language, sessions:stats.sessions, words:stats.vocabulary, accuracy:stats.averageAccuracy, routePercent };
+    return { ...language, sessions:stats.sessions, words:stats.vocabulary,
+      accuracy:attempted ? Math.round(correct / attempted * 100) : stats.averageAccuracy,
+      attempted, correct, routePercent };
   });
   const header = '<thead><tr><th>Indicador</th>' + metrics.map(item =>
     '<th title="' + escapeHTML(item.label) + '">' + item.flag + '</th>').join("") + '</tr></thead>';
@@ -331,38 +293,90 @@ function refreshDashboard() {
   const body = '<tbody>' + rows.map(([label,key,suffix=""]) =>
     '<tr><th scope="row">' + label + '</th>' + metrics.map(item => '<td>' + item[key] + suffix + '</td>').join("") + '</tr>').join("") + '</tbody>';
   const colorFor = index => "hsl(" + Math.round(index * 360 / Math.max(metrics.length, 1)) + " 62% 42%)";
-  const daily = new Map();
-  for (const item of progress.sessions) {
-    if (!item.completedAt || !item.languageId) continue;
-    const day = item.completedAt.slice(0,10);
-    if (!daily.has(day)) daily.set(day,new Map());
-    const byLanguage = daily.get(day);
-    if (!byLanguage.has(item.languageId)) byLanguage.set(item.languageId,[]);
-    byLanguage.get(item.languageId).push(Number(item.accuracy) || 0);
+  const options = '<option value="global">🌐 Global</option>' + metrics.map(item =>
+    '<option value="' + escapeHTML(item.id) + '">' + item.flag + ' ' + escapeHTML(item.label) + '</option>').join("");
+  const selectedView = previousStatsView === "global" || metrics.some(item => item.id === previousStatsView)
+    ? previousStatsView : "global";
+  let chartMarkup = "";
+  if (selectedView === "global") {
+    const totalAttempted = metrics.reduce((sum,item) => sum + item.attempted,0);
+    const totalCorrect = metrics.reduce((sum,item) => sum + item.correct,0);
+    const average = totalAttempted ? Math.round(totalCorrect / totalAttempted * 100)
+      : (metrics.length ? Math.round(metrics.reduce((sum,item)=>sum+item.accuracy,0)/metrics.length) : 0);
+    if (!metrics.length) {
+      chartMarkup = '<p class="empty-chart">Completa una sesión para comparar la precisión entre idiomas.</p>';
+    } else {
+      const width = Math.max(620, metrics.length * 58 + 70), height = 270;
+      const left = 42, right = 16, top = 20, bottom = 66;
+      const plotWidth = width-left-right, plotHeight = height-top-bottom;
+      const yAt = value => top + (100-value)*plotHeight/100;
+      const slot = plotWidth/metrics.length, barWidth = Math.min(34,slot*0.62);
+      const grid = [0,25,50,75,100].map(value =>
+        '<line x1="' + left + '" y1="' + yAt(value) + '" x2="' + (width-right) + '" y2="' + yAt(value) + '" class="chart-gridline"/><text x="4" y="' + (yAt(value)+4) + '" class="chart-axis-label">' + value + '%</text>'
+      ).join("");
+      const bars = metrics.map((item,index) => {
+        const x = left + slot*index + (slot-barWidth)/2, y = yAt(item.accuracy), h = plotHeight*item.accuracy/100;
+        const labelX = left + slot*(index+0.5);
+        return '<rect class="stats-bar" x="' + x + '" y="' + y + '" width="' + barWidth + '" height="' + h + '" rx="5" fill="' + colorFor(index) + '"><title>' + escapeHTML(item.label) + ': ' + item.accuracy + '%</title></rect>' +
+          '<text x="' + labelX + '" y="' + (y-7) + '" text-anchor="middle" class="chart-value-label">' + item.accuracy + '%</text>' +
+          '<text x="' + labelX + '" y="' + (height-42) + '" text-anchor="middle" class="chart-axis-label">' + item.flag + '</text>' +
+          '<text x="' + labelX + '" y="' + (height-25) + '" text-anchor="middle" class="chart-axis-label">' + escapeHTML(item.label.length>12?item.label.slice(0,11)+"…":item.label) + '</text>';
+      }).join("");
+      const averageLine = '<line x1="' + left + '" y1="' + yAt(average) + '" x2="' + (width-right) + '" y2="' + yAt(average) + '" class="stats-average-line"/>' +
+        '<text x="' + (width-right-2) + '" y="' + (yAt(average)-6) + '" text-anchor="end" class="chart-average-label">Promedio ' + average + '%</text>';
+      chartMarkup = '<div class="stats-chart-scroll"><svg class="stats-bar-chart" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="Precisión actual comparada entre idiomas">' +
+        grid + bars + averageLine + '</svg></div><div class="stats-chart-legend"><span><i class="legend-bar"></i>Precisión actual</span><span><i class="legend-dashed"></i>Promedio global ' + average + '%</span></div>';
+    }
+  } else {
+    const language = metrics.find(item => item.id === selectedView);
+    const daily = new Map();
+    for (const item of progress.sessions) {
+      if (item.languageId !== selectedView || !item.completedAt) continue;
+      const day = item.completedAt.slice(0,10);
+      if (!daily.has(day)) daily.set(day,{attempted:0,correct:0});
+      const record = daily.get(day);
+      record.attempted += Number(item.attempted) || 0;
+      record.correct += Number(item.correct) || 0;
+    }
+    const practicedDays = [...daily.entries()].sort(([a],[b]) => a.localeCompare(b)).slice(-15);
+    if (!practicedDays.length) {
+      chartMarkup = '<p class="empty-chart">Todavía no hay días de práctica registrados para ' + escapeHTML(language?.label || "") + '.</p>';
+    } else {
+      const width = 620, height = 270, left = 46, right = 48, top = 20, bottom = 42;
+      const plotWidth = width-left-right, plotHeight = height-top-bottom;
+      const maxQuestions = Math.max(1,...practicedDays.map(([,item])=>item.attempted));
+      const questionMax = Math.max(5,Math.ceil(maxQuestions/5)*5);
+      const xAt = index => practicedDays.length===1 ? left+plotWidth/2 : left+index*plotWidth/(practicedDays.length-1);
+      const yAccuracy = value => top+(100-value)*plotHeight/100;
+      const yQuestions = value => top+(questionMax-value)*plotHeight/questionMax;
+      const grid = [0,25,50,75,100].map(value =>
+        '<line x1="' + left + '" y1="' + yAccuracy(value) + '" x2="' + (width-right) + '" y2="' + yAccuracy(value) + '" class="chart-gridline"/>' +
+        '<text x="3" y="' + (yAccuracy(value)+4) + '" class="chart-axis-label">' + Math.round(questionMax*value/100) + '</text>' +
+        '<text x="' + (width-right+5) + '" y="' + (yAccuracy(value)+4) + '" class="chart-axis-label">' + value + '%</text>'
+      ).join("");
+      const countPoints = practicedDays.map(([,item],index)=>xAt(index)+","+yQuestions(item.attempted)).join(" ");
+      const accuracyPoints = practicedDays.map(([,item],index)=>{
+        const accuracy = item.attempted ? item.correct/item.attempted*100 : 0;
+        return xAt(index)+","+yAccuracy(accuracy);
+      }).join(" ");
+      const dots = practicedDays.map(([,item],index)=>{
+        const accuracy = item.attempted ? item.correct/item.attempted*100 : 0;
+        return '<circle cx="' + xAt(index) + '" cy="' + yQuestions(item.attempted) + '" r="4" class="stats-question-dot"><title>' + item.attempted + ' preguntas</title></circle>' +
+          '<circle cx="' + xAt(index) + '" cy="' + yAccuracy(accuracy) + '" r="4" class="stats-accuracy-dot"><title>' + Math.round(accuracy) + '% precisión</title></circle>' +
+          '<text x="' + xAt(index) + '" y="' + (height-16) + '" text-anchor="middle" class="chart-axis-label">Día ' + (index+1) + '</text>';
+      }).join("");
+      chartMarkup = '<div class="stats-chart-scroll"><svg class="stats-line-chart stats-language-chart" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="Preguntas respondidas y precisión por día practicado">' +
+        grid + '<polyline class="stats-question-line" points="' + countPoints + '"/><polyline class="stats-accuracy-line" points="' + accuracyPoints + '"/>' + dots + '</svg></div>' +
+        '<div class="stats-chart-legend"><span><i class="legend-question"></i>Preguntas respondidas</span><span><i class="legend-accuracy"></i>Precisión (%)</span></div>' +
+        '<p class="chart-note">Últimos ' + practicedDays.length + ' días practicados · sin días de inactividad.</p>';
+    }
   }
-  const days = [...daily.keys()].sort();
-  const width=620,height=230,left=34,right=12,top=14,bottom=30;
-  const xAt = index => days.length <= 1 ? (left+width-right)/2 : left+index*(width-left-right)/(days.length-1);
-  const yAt = value => top+(100-value)*(height-top-bottom)/100;
-  const grid = [0,25,50,75,100].map(value =>
-    '<line x1="' + left + '" y1="' + yAt(value) + '" x2="' + (width-right) + '" y2="' + yAt(value) + '" class="chart-gridline"/><text x="3" y="' + (yAt(value)+4) + '" class="chart-axis-label">' + value + '%</text>'
-  ).join("");
-  const lines = metrics.map((language,index) => {
-    const values = days.map(day => {
-      const records=daily.get(day)?.get(language.id)||[];
-      return records.length ? records.reduce((sum,value)=>sum+value,0)/records.length : null;
-    });
-    const points=values.map((value,i)=>value===null?null:xAt(i)+","+yAt(value)).filter(Boolean);
-    return points.length ? '<polyline class="stats-line" stroke="' + colorFor(index) + '" points="' + points.join(" ") + '"/>' +
-      values.map((value,i)=>value===null?"":'<circle cx="' + xAt(i) + '" cy="' + yAt(value) + '" r="3.5" fill="' + colorFor(index) + '"/>').join("") : "";
-  }).join("");
-  const labels = days.length ? '<text x="' + left + '" y="' + (height-5) + '" class="chart-axis-label">' + days[0] + '</text>' +
-    (days.length>1?'<text x="' + (width-right) + '" y="' + (height-5) + '" text-anchor="end" class="chart-axis-label">' + days.at(-1) + '</text>':"") : "";
-  const legend = metrics.map((item,index)=>'<div class="stats-legend-item"><i style="background:' + colorFor(index) + '"></i>' + item.flag + ' ' + escapeHTML(item.label) + '</div>').join("");
   statsContent.innerHTML = '<section class="stats-table-card"><h2>Progreso por idioma</h2>' +
     (metrics.length?'<div class="stats-table-wrap"><table class="stats-language-table">' + header + body + '</table></div>':'<p class="empty-chart">Aún no hay idiomas con actividad registrada.</p>') +
-    '</section><section class="progress-chart-card"><h2>Evolución diaria</h2>' +
-    (days.length?'<div class="stats-chart-layout"><div class="stats-chart-scroll"><svg class="stats-line-chart" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="Precisión diaria por idioma">' + grid + lines + labels + '</svg></div><div class="stats-legend">' + legend + '</div></div><p>Precisión media de las sesiones completadas cada día.</p>':'<p class="empty-chart">Completa una sesión para ver aquí tu evolución diaria.</p>') + '</section>';
+    '</section><section class="progress-chart-card"><div class="stats-chart-heading"><h2>Evolución</h2><label class="stats-view-picker"><span class="visually-hidden">Vista del gráfico</span><select id="stats-view-select" aria-label="Seleccionar vista de estadísticas">' + options + '</select></label></div>' +
+    chartMarkup + '</section>';
+  $("stats-view-select").value = selectedView;
+  $("stats-view-select").addEventListener("change", refreshDashboard);
 }
 $("language").addEventListener("change", () => {
   $("custom-language-fields").classList.toggle("hidden", $("language").value !== "other");
@@ -555,7 +569,7 @@ async function startAITutorSession(config) {
         performance: { streak: 0, consecutiveCorrect: 0, consecutiveErrors: 0 }
       },
       history: [],
-      userMessage: "Inicia directamente con una actividad concreta adecuada al nivel y tema seleccionados. No hagas diagnóstico, no estimes mi nivel ni hagas preguntas abiertas para evaluarlo. No presentes una prueba inicial. Explícame brevemente la tarea y espera mi respuesta."
+      userMessage: "Inicia directamente con una actividad concreta adecuada al nivel y tema seleccionados. No hagas diagnóstico, no estimes mi nivel ni hagas preguntas abiertas para evaluarlo. No presentes una prueba inicial. Escribe las instrucciones e imperativos siempre en español (idioma origen), en message. Mantén exercise.prompt separado como texto o frase que se debe evaluar; no mezcles la orden con ese texto. Explícame brevemente la tarea y espera mi respuesta."
     }, undefined, { signal: sessionAbortController?.signal });
     if (session !== activeSession || sessionAbortController?.signal.aborted) return;
     applyLearnerUpdate(session, result.learnerUpdate);
@@ -583,6 +597,9 @@ function renderAITutorTurn(result) {
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
 
+  const instruction = String(result.message || "").trim();
+  const instructionMarkup = instruction
+    ? '<p class="exercise-instruction">' + escapeHTML(instruction) + '</p>' : "";
   const prompt = aiCurrentExercise.prompt
     ? '<h3>' + renderClickableTargetText(aiCurrentExercise.prompt) + '</h3>'
     : '<h3>El tutor está preparando una actividad cerrada.</h3>';
@@ -596,7 +613,7 @@ function renderAITutorTurn(result) {
   const promptAudio = aiCurrentExercise.prompt
     ? speakerButton(questionSpeech.text, questionSpeech.locale)
     : "";
-  $("lesson-content").innerHTML = prompt + promptAudio;
+  $("lesson-content").innerHTML = instructionMarkup + prompt + promptAudio;
   bindSpeakerButtons($("lesson-content"));
   bindVariantLinks($("lesson-content"));
   bindTargetWords($("lesson-content"));
@@ -690,7 +707,7 @@ async function submitAITutorAnswer(answer) {
         ? " Esta respuesta completa la comprobación de dominio de diez preguntas. La siguiente actividad debe ser una tarea integradora escrita que combine el tema completo; no incluyas alternativas."
         : session.turn + 1 < 3
           ? " La próxima actividad debe ser una pregunta de selección múltiple con tres alternativas plausibles en exercise.options."
-          : " Desde ahora la próxima actividad debe requerir que escriba la respuesta, sin alternativas.")
+          : " Desde ahora la próxima actividad debe requerir que escriba la respuesta, sin alternativas.") + " Mantén las instrucciones en español (idioma origen) dentro de message y separa el texto a evaluar en exercise.prompt; nunca mezcles una orden en idioma objetivo con la frase preguntada."
     }, undefined, { signal: sessionAbortController?.signal });
     if (session !== activeSession || sessionAbortController?.signal.aborted) return;
     aiHistory = [
@@ -1044,7 +1061,9 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   const promptMarkup = currentExercise.promptLanguage === "target"
     ? renderClickableTargetText(currentExercise.prompt)
     : renderVariantTerms(currentExercise.prompt);
-  $("lesson-content").innerHTML = '<p class="eyebrow">TEMA: ' + escapeHTML(topicLabels[session.config.topic].toUpperCase()) + ' · NIVEL ' + escapeHTML(levelLabel(session.config.level).toUpperCase()) + '</p><h3>' + promptMarkup + '</h3>' +
+  const instructionMarkup = currentExercise.instruction
+    ? '<p class="exercise-instruction">' + escapeHTML(currentExercise.instruction) + '</p>' : "";
+  $("lesson-content").innerHTML = '<p class="eyebrow">TEMA: ' + escapeHTML(topicLabels[session.config.topic].toUpperCase()) + ' · NIVEL ' + escapeHTML(levelLabel(session.config.level).toUpperCase()) + '</p>' + instructionMarkup + '<h3>' + promptMarkup + '</h3>' +
     speakerButton(questionSpeech.text, questionSpeech.locale);
   bindVariantLinks($("lesson-content"));
   bindSpeakerButtons($("lesson-content"));
@@ -1237,23 +1256,23 @@ function finishSession() {
   saveProgress(progress);
   refreshDashboard();
   const summaryLocale = session.config.languageLocale || session.config.languageId;
-  const hits = session.answers.filter(item => item.correct).map(item => item.submitted).filter(Boolean);
+  const attemptedCount = Number(summary.attempted) || session.answers.length;
+  const correctCount = Number(summary.correct) || 0;
+  const errorCount = summary.errors.length;
   const errors = summary.errors.map(item => '<li><span class="summary-submitted">' + escapeHTML(item.submitted) + '</span><span class="summary-arrow"> → </span><span class="summary-expected">' + escapeHTML(item.expected) + '</span></li>').join("");
   const vocabularyText = summary.vocabulary.map(item =>
     '<li>' + renderClickableTargetText(item.term) + ' ' + speakerButton(item.term, summaryLocale) + '</li>'
   ).join("");
   const focusItems = [...new Set([topicLabels[session.config.topic], ...summary.recommendedFocus, ...(summary.reviewPatterns || [])].filter(Boolean))];
   $("summary-content").innerHTML = '<h2 class="summary-title">Resumen</h2>' +
-    '<section class="summary-section"><h3 class="summary-success-title">Aciertos</h3><ul>' +
-    (hits.map(item => '<li><span class="summary-hit">' + renderClickableTargetText(item) + '</span></li>').join("") || '<li>Sin aciertos registrados</li>') + '</ul></section>' +
-    '<section class="summary-section"><h3 class="summary-error-title">Errores</h3><ul>' +
+    '<section class="summary-section"><h3 class="summary-success-title">Aciertos ' + correctCount + '/' + attemptedCount + '</h3></section>' +
+    '<section class="summary-section"><h3 class="summary-error-title">Errores ' + errorCount + '/' + attemptedCount + '</h3><ul>' +
     (errors || '<li>Sin errores</li>') + '</ul></section>' +
     '<section class="summary-section"><h3>Vocabulario</h3><ul>' +
     (vocabularyText || '<li>Sin palabras nuevas</li>') + '</ul></section>' +
     '<section class="summary-section"><h3>Temas</h3><ul>' +
     focusItems.map(item => '<li>' + escapeHTML(item) + '</li>').join("") + '</ul></section>';
   bindSpeakerButtons($("summary-content"));
-  bindTargetWords($("summary-content"));
   speech.speakSequence(summary.vocabulary.map(item => ({ text: item.term, locale: summaryLocale })), { automatic: true });
 }
 
