@@ -165,6 +165,7 @@ try {
   assert.equal(saved.sessions?.length, 1, "completed exercise session should be saved");
   assert.equal(saved.sessions[0].attempted, 5);
   assert.equal(await page.locator("#summary-content h2").innerText(), "Resumen");
+  assert.equal(await page.locator("#session-status").innerText(), "", "no redundant session status should appear below the summary");
   assert.deepEqual(await page.locator("#summary-content h3").allInnerTexts(), ["Aciertos","Errores","Vocabulario","Temas"]);
   // Incomplete Exercises sessions are discarded; no partial session is persisted.
   await page.locator("#new-session").click();
