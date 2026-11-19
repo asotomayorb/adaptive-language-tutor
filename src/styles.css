@@ -316,3 +316,32 @@
 .answer-option.answer-correct:disabled,.answer-option.answer-incorrect:disabled{opacity:1;cursor:default}
 
 .ai-answer-option.answer-correct:disabled,.ai-answer-option.answer-incorrect:disabled{opacity:1;cursor:default}
+
+/* Cross-language daily statistics and concise learning summary */
+.stats-table-card,.progress-chart-card{margin-top:16px;padding:16px;border:1px solid #e3e9f0;border-radius:14px;background:#fff}
+.stats-table-card h2,.progress-chart-card h2{font-size:17px;margin:0 0 14px}
+.stats-table-wrap,.stats-chart-scroll{width:100%;overflow-x:auto}
+.stats-language-table{width:100%;border-collapse:collapse;font-size:13px;text-align:center}
+.stats-language-table th,.stats-language-table td{padding:11px 9px;border-bottom:1px solid #edf0f4;white-space:nowrap}
+.stats-language-table thead th{font-size:19px}
+.stats-language-table th:first-child{text-align:left;font-size:12px;color:#607188}
+.stats-language-table tbody td{font-variant-numeric:tabular-nums;font-weight:700;color:#263c59}
+.stats-chart-layout{display:flex;align-items:center;gap:14px}
+.stats-line-chart{display:block;width:100%;min-width:340px;height:auto;overflow:visible}
+.chart-gridline{stroke:#e8edf3;stroke-width:1}
+.chart-axis-label{fill:#7a8798;font-size:10px}
+.stats-line{fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.stats-legend{display:grid;gap:9px;min-width:110px}
+.stats-legend-item{display:flex;align-items:center;gap:7px;font-size:11px;color:#52657d}
+.stats-legend-item i{width:9px;height:9px;border-radius:50%;flex:0 0 9px}
+.summary-title{font-size:25px;margin:0 0 20px;color:#183b66}
+.summary-section{margin:18px 0}
+.summary-section h3{font-size:15px;margin:0 0 8px;color:#344a64}
+.summary-section ul{margin:0;padding-left:20px;line-height:1.8;color:#586a80;font-size:14px}
+.summary-section .summary-success-title{color:#267447}
+.summary-section .summary-error-title{color:#b33d3d}
+.summary-submitted{color:#b33d3d}
+.summary-expected{color:#267447;font-weight:650}
+.summary-arrow{color:#8290a1}
+.answer-waiting{margin:8px 0;text-align:center}
+@media(max-width:520px){.stats-chart-layout{align-items:stretch;flex-direction:column}.stats-legend{grid-template-columns:repeat(2,minmax(0,1fr))}.stats-table-card,.progress-chart-card{padding:13px}}
