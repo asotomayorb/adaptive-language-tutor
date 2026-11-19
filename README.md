@@ -526,3 +526,47 @@ Todo texto de aprendizaje debe ser original, de dominio público verificado o es
 - Pendiente: prueba humana en Android; la automatización no sustituye la revisión de pronunciación, legibilidad y calidad pedagógica.
 
 - El etiquetado de voz por segmento también se aplica al paquete local de inglés: consigna en español y frase objetivo en inglés (o español cuando el estímulo es una frase fuente).
+
+
+## 16. Revisión de Ruta, Ejercicios y Estadísticas — 19-11-2026
+
+Esta sección establece las decisiones vigentes y **prevalece sobre descripciones anteriores** que todavía nombren la modalidad “Global”, las tres pistas o una Ruta de una sola unidad.
+
+### Ruta: unidades, estrellas y progresión
+
+- Ruta presenta cuatro unidades secuenciales: **Fundamentos**, **Viajes y orientación**, **Comida y restaurantes** y **Trabajo y estudios**.
+- Cada unidad se completa con una secuencia pedagógica de tres etapas:
+  1. Vocabulario y conjugaciones.
+  2. Aplicación en contexto.
+  3. Producción de frases completas.
+- En los idiomas con catálogo local (portugués brasileño e inglés), las unidades usan los ejercicios disponibles de su tema. En idiomas con tutor IA configurado, las cuatro unidades se ofrecen con generación de actividades por tema.
+- La calificación de cada unidad se expresa en **0–5 estrellas**: una estrella por cada tramo completo de 20 puntos porcentuales de precisión (100% = 5 estrellas; 80–99% = 4; 60–79% = 3).
+- La unidad 2 requiere completar la unidad 1 con al menos **3 estrellas**. La unidad 3 requiere completar la unidad 2 con **5 estrellas**. La unidad 4 requiere completar la unidad 3 con **4 estrellas**. La secuencia garantiza que todas las unidades anteriores estén completadas.
+- Si una unidad está completada pero no alcanza el umbral de la siguiente, puede repetirse para mejorar el puntaje. El mejor resultado registrado se reemplaza por el resultado de la última unidad completada; las unidades posteriores permanecen bloqueadas hasta cumplir el requisito.
+- El progreso de Ruta se guarda por idioma y por unidad. Cerrar la aplicación permite retomar la unidad desde la última respuesta confirmada.
+- **Reiniciar ruta** abre una confirmación explícita. Confirmar elimina únicamente el avance/unidades/estrellas de Ruta del idioma activo; no borra historial de ejercicios, vocabulario ni estadísticas generales.
+- El modo relato con personajes ficticios, escenas cotidianas y conversaciones encadenadas queda como evolución futura. La estructura de unidades ya permite incorporarlo sin crear otra sección.
+- Las actividades de emparejar palabra-significado al estilo Duolingo quedan previstas para introducir vocabulario nuevo cuando haya contenido didáctico suficiente. La versión actual usa selección múltiple en las primeras etapas y escritura en la etapa final.
+
+### Ejercicios y Repaso
+
+- La antigua modalidad “Global” se denomina **Ejercicio**.
+- El banner **Ejercicio** despliega/oculta los selectores de duración, nivel y tema. La configuración queda dentro de la misma sección.
+- El banner **Repaso** inicia el repaso directamente al tocarlo, sin una pantalla ni un botón adicional de inicio.
+- Repaso respeta el tipo de respuesta original: alternativas cuando la actividad original era de selección múltiple y respuesta escrita cuando correspondía.
+- Las ayudas aparecen solo para respuestas escritas: primer paso **Pista** y segundo paso **Ver respuesta**. Se ocultan en preguntas de alternativas. La misma regla se aplica a Repaso.
+- El resumen muestra el título **Resumen** centrado y, debajo, el porcentaje de aciertos y una valoración: 100% “Perfecto”; más de 80% “Muy bien”; más de 60% “Bien”; 40–60% “Vas progresando”; menos de 40% “Sigue practicando”. Se elimina el subtítulo independiente “Aciertos”.
+- Las sesiones de Ejercicios siguen sin guardar progreso parcial cuando se descartan mediante la X y su confirmación.
+
+### Estadísticas y recursos visuales
+
+- El gráfico global recupera barras más grandes y reduce el espacio horizontal entre ellas. Los gráficos siguen adaptándose al ancho disponible sin scroll horizontal.
+- Las actividades muestran pictogramas SVG originales elegidos según vocabulario, objeto o tema (por ejemplo, café, transporte, restaurante o trabajo). Son ilustraciones generadas por la propia interfaz, no imágenes copiadas de terceros.
+- Los textos, frases de integración, ejemplos y explicaciones agregados en esta iteración son originales. Todo contenido futuro debe ser original, de dominio público verificado o contar con una licencia abierta compatible; guardar autor/fuente/licencia/atribución cuando corresponda.
+
+### Límites actuales
+
+- La progresión por estrellas está implementada; el equilibrio pedagógico de umbrales y el número de ejercicios por unidad todavía requieren validación humana.
+- Las unidades de portugués e inglés usan catálogos locales. Para otros idiomas, la ruta depende de que el tutor IA esté configurado y disponible.
+- El modo relato y las actividades de emparejar son mejoras futuras, no funcionalidades activas en esta iteración.
+- La prueba automatizada no sustituye la prueba humana en Android: revisar legibilidad, tamaño de barras, tarjetas, teclado, audio y diálogos en el dispositivo real.
