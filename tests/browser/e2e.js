@@ -152,6 +152,7 @@ try {
   assert.ok(await page.locator("#theory-description [data-speak]").count() >= 5, "each pronoun should have pronunciation audio");
   await page.locator("#theory-next").click();
   assert.equal(await page.locator("#theory-title").innerText(), "Artículos");
+  assert.equal(await page.locator("#theory-description .theory-pronoun-table").first().evaluate((table,example) => Boolean(table.compareDocumentPosition(example) & Node.DOCUMENT_POSITION_FOLLOWING), await page.locator("#theory-description .theory-example").first().elementHandle()), true, "article examples should follow the comparison table");
   await page.locator("#theory-next").click();
   assert.match(await page.locator("#theory-description").innerText(), /Eu sou|SER|ESTAR/i, "verb theory should include applied conjugation");
   await page.locator("#theory-next").click();
@@ -159,6 +160,8 @@ try {
   assert.ok(await page.locator("#theory-description .theory-pronoun-table tbody tr").count() >= 4, "present tense should show conjugated forms");
   await page.locator("#theory-next").click();
   assert.equal(await page.locator("#theory-title").innerText(), "Pasado");
+  assert.equal(await page.locator("#theory-description .theory-pronoun-table").first().evaluate((table,example) => Boolean(table.compareDocumentPosition(example) & Node.DOCUMENT_POSITION_FOLLOWING), await page.locator("#theory-description .theory-example").first().elementHandle()), true, "past examples should follow the conjugation table");
+  assert.equal(await page.locator("#theory-description .theory-note").count(), 2, "past rules and irregularities should be grouped in separate note blocks");
   assert.match(await page.locator("#theory-description").innerText(), /Ayer/i, "past tense should include an applied example");
   assert.ok(await page.locator("#theory-description .theory-pronoun-table tbody tr").count() >= 6, "Portuguese past must conjugate for each subject pronoun");
   assert.match(await page.locator("#theory-description").innerText(), /fui|tive|fiz|disse/i, "Portuguese past must explain irregular verbs");
@@ -196,6 +199,10 @@ try {
   assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text.startsWith("Escucha la frase") && item.lang === "es-CL")), "exercise instructions should be spoken in Spanish");
   assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "Bom dia" && item.lang === "pt-BR")), "the target phrase should be spoken in Portuguese");
   assert.equal(await page.locator("#lesson-content [data-speak]").evaluateAll(nodes => nodes.every(node => node.dataset.locale === "pt-BR")), true, "manual play controls should only be offered for target-language speech");
+  assert.ok((await page.locator("#lesson-phase").innerText()).length > 0, "topic/level heading should appear to the left of the question counter");
+  assert.ok((await page.locator("#turn-count").innerText()).includes("Pregunta"), "question counter should remain visible");
+  assert.ok((await page.locator("#lesson-content .exercise-illustration small").innerText()).length > 0, "topic caption should remain below the illustration icon");
+  assert.equal(await page.locator("#lesson-content > .eyebrow").count(), 0, "duplicate topic/level heading below the icon should be removed");
   assert.equal(await page.locator("#review-btn").count(), 0, "the obsolete Repasar error action should not be rendered");
   assert.equal(await page.locator("#lesson-content h3").innerText(), "Bom dia", "target-language phrase should be separate from the source-language instruction");
   assert.equal(await page.locator("#lesson-content .target-word-link").count(), 0, "exercise words should no longer open translation popups");
