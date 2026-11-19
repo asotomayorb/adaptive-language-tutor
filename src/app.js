@@ -1639,7 +1639,33 @@ const verbLessons = {
   }
 };
 const tenseLessons = {
-  "Portugués brasileño":{present:[["eu","falo"],["você / ele / ela","fala"],["nós","falamos"],["vocês / eles","falam"]],past:"Ontem eu falei português.",pastEs:"Ayer hablé portugués.",pastRule:"Para verbos regulares en -ar, el pretérito perfecto usa -ei en eu (falei), -ou en você/ele (falou), -amos en nós (falamos). Hay irregulares como ser → fui.",future:"Amanhã vou falar português.",futureEs:"Mañana hablaré portugués.",futureRule:"En conversación es muy común ir + infinitivo (vou falar). También existe el futuro simple falarei, falará, falaremos."},
+  "Portugués brasileño":{
+    present:[["eu","falo"],["tu","falas (uso regional)"],["você / ele / ela","fala"],["nós","falamos"],["a gente","fala"],["vocês / eles / elas","falam"]],
+    past:"Ontem eu falei português.",
+    pastEs:"Ayer hablé portugués.",
+    pastRule:"El pretérito perfeito indica una acción terminada. En verbos regulares, -ar usa -ei, -aste, -ou, -amos, -aram; -er usa -i, -este, -eu, -emos, -eram; -ir usa -i, -iste, -iu, -imos, -iram. El sujeto você/vocês exige tercera persona. En Brasil, a gente + verbo en tercera persona singular es muy frecuente.",
+    pastForms:[
+      ["eu","falei","Eu falei com Ana ontem.","Ayer hablé con Ana."],
+      ["tu","falaste","Tu falaste com Ana ontem.","Ayer hablaste con Ana (uso regional; la concordancia coloquial puede variar)."],
+      ["você / ele / ela","falou","Você falou com Ana ontem.","Ayer hablaste / habló con Ana."],
+      ["nós","falamos","Nós falamos com Ana ontem.","Ayer hablamos con Ana."],
+      ["a gente","falou","A gente falou com Ana ontem.","Ayer hablamos con Ana (muy habitual en Brasil)."],
+      ["vocês / eles / elas","falaram","Vocês falaram com Ana ontem.","Ayer hablaron con Ana."]
+    ],
+    future:"Amanhã eu vou falar português.",
+    futureEs:"Mañana hablaré portugués.",
+    futureRule:"En portugués brasileño hablado predomina ir en presente + infinitivo. El futuro simple es correcto, pero suele sonar más formal o escrito. La forma auxiliar ir cambia según la persona; el infinitivo principal no cambia.",
+    futureForms:[
+      ["eu","vou falar","Eu vou falar com Ana amanhã.","Mañana hablaré con Ana."],
+      ["tu","vais falar","Tu vais falar com Ana amanhã.","Mañana hablarás con Ana (forma estándar; el uso brasileño regional puede variar)."],
+      ["você / ele / ela","vai falar","Você vai falar com Ana amanhã.","Mañana hablarás / hablará con Ana."],
+      ["nós","vamos falar","Nós vamos falar com Ana amanhã.","Mañana hablaremos con Ana."],
+      ["a gente","vai falar","A gente vai falar com Ana amanhã.","Mañana hablaremos con Ana (muy habitual en Brasil)."],
+      ["vocês / eles / elas","vão falar","Vocês vão falar com Ana amanhã.","Mañana hablarán con Ana."]
+    ],
+    futureSimpleForms:[["eu","falarei"],["tu","falarás"],["você / ele / ela","falará"],["nós","falaremos"],["vocês / eles / elas","falarão"]],
+    exceptions:"Irregulares frecuentes en pretérito perfeito: ser/ir → fui, estar → estive, ter → tive, fazer → fiz, dizer → disse, trazer → trouxe, pôr → pus, ver → vi, vir → vim. En futuro simple cambian algunas raíces: dizer → direi, fazer → farei, trazer → trarei, pôr → porei, ter → terei, vir → virei, ser → serei."
+  },
   "Inglés":{present:[["I","speak"],["you / we / they","speak"],["he / she / it","speaks"]],past:"Yesterday I spoke English.",pastEs:"Ayer hablé inglés.",pastRule:"Speak es irregular: speak – spoke – spoken. El pasado no cambia según la persona.",future:"Tomorrow I will speak English.",futureEs:"Mañana hablaré inglés.",futureRule:"Will + verbo base expresa futuro. También se usa be going to para planes e intenciones."},
   "Italiano":{present:[["io","parlo"],["tu","parli"],["lui / lei","parla"],["noi","parliamo"],["voi","parlate"],["loro","parlano"]],past:"Ieri ho parlato italiano.",pastEs:"Ayer hablé italiano.",pastRule:"El passato prossimo usa avere/essere + participio. Parlare forma parlato; algunos verbos de movimiento usan essere.",future:"Domani parlerò italiano.",futureEs:"Mañana hablaré italiano.",futureRule:"El futuro simple de parlare añade terminaciones: parlerò, parlerai, parlerà, parleremo, parlerete, parleranno."},
   "Alemán":{present:[["ich","spreche"],["du","sprichst"],["er / sie / es","spricht"],["wir","sprechen"],["ihr","sprecht"],["sie / Sie","sprechen"]],past:"Gestern habe ich Deutsch gesprochen.",pastEs:"Ayer hablé alemán.",pastRule:"En conversación se usa mucho Perfekt: haben + participio (gesprochen). Algunos verbos de movimiento forman el perfecto con sein.",future:"Morgen werde ich Deutsch sprechen.",futureEs:"Mañana hablaré alemán.",futureRule:"Werden + infinitivo forma el futuro. En conversación también se usa el presente con una referencia temporal."},
@@ -1672,6 +1698,17 @@ function renderTenseLesson(languageName, topicIndex) {
     return '<p class="theory-slide-text">El presente se usa para hábitos, hechos y situaciones actuales. Observa qué formas cambian y cuáles permanecen iguales:</p><table class="theory-pronoun-table"><thead><tr><th>Persona</th><th>Forma verbal</th></tr></thead><tbody>' + rows + '</tbody></table>';
   }
   const isPast = topicIndex === 4;
+  if (languageName === "Portugués brasileño" && (isPast || topicIndex === 5)) {
+    const forms = isPast ? lesson.pastForms : lesson.futureForms;
+    const rows = forms.map(([person,form,targetExample,translation]) =>
+      '<tr><td><strong>' + escapeHTML(person) + '</strong></td><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td><td>' + escapeHTML(targetExample) + ' ' + speakerButton(targetExample,locale) + '</td><td>' + escapeHTML(translation) + '</td></tr>'
+    ).join("");
+    const header = '<thead><tr><th>Pronombre</th><th>Forma verbal</th><th>Ejemplo en portugués</th><th>Español</th></tr></thead>';
+    const simpleFuture = !isPast && lesson.futureSimpleForms
+      ? '<h3>Futuro simple (más formal)</h3><table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>Forma</th></tr></thead><tbody>' + lesson.futureSimpleForms.map(([person,form]) => '<tr><td>' + escapeHTML(person) + '</td><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td></tr>').join("") + '</tbody></table>'
+      : "";
+    return '<p class="theory-slide-text">' + escapeHTML(isPast ? "El pretérito perfeito se usa para acciones concluidas en un momento pasado. La terminación depende del infinitivo y del sujeto." : "Para hablar del futuro, el portugués brasileño suele usar ir conjugado + infinitivo. El futuro simple existe, pero es más formal.") + '</p><table class="theory-pronoun-table">' + header + '<tbody>' + rows + '</tbody></table><p class="theory-slide-text"><strong>Regla aplicada:</strong> ' + escapeHTML(isPast ? lesson.pastRule : lesson.futureRule) + '</p>' + simpleFuture + '<section class="theory-example"><span>Excepciones e irregulares</span><p>' + escapeHTML(lesson.exceptions) + '</p></section>';
+  }
   const example = isPast ? lesson.past : lesson.future;
   const translation = isPast ? lesson.pastEs : lesson.futureEs;
   const rule = isPast ? lesson.pastRule : lesson.futureRule;
