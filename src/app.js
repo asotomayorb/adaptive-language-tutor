@@ -83,6 +83,26 @@ function renderVariantTerms(value) {
   }
   return html;
 }
+function renderClickableTargetText(value) {
+  const dictionary = [...(session?.vocabulary || []), ...(progress?.vocabulary || []),
+    ...(catalog?.exercises || []).map(item => ({term:item.term,meaning:item.meaning}))];
+  return String(value || "").split(/([\p{L}\p{M}]+(?:['’][\p{L}\p{M}]+)?)/gu).map(part => {
+    if (!/^[\p{L}\p{M}]+(?:['’][\p{L}\p{M}]+)?$/u.test(part)) return escapeHTML(part);
+    const match = dictionary.find(item => item.term && item.term.toLocaleLowerCase() === part.toLocaleLowerCase());
+    return '<button class="target-word-link" type="button" data-target-word="' + escapeHTML(part) +
+      '" data-translation="' + escapeHTML(match?.meaning || "Traducción no registrada") + '">' + escapeHTML(part) + '</button>';
+  }).join("");
+}
+function bindTargetWords(root) {
+  root.querySelectorAll("[data-target-word]:not([data-word-bound])").forEach(button => {
+    button.dataset.wordBound = "true";
+    button.addEventListener("click", () => {
+      const current = button.parentElement.querySelector(".word-translation");
+      if (current) current.remove();
+      else button.insertAdjacentHTML("afterend", '<span class="word-translation" role="status">' + escapeHTML(button.dataset.translation) + '</span>');
+    });
+  });
+}
 function bindVariantLinks(root) {
   root.querySelectorAll("[data-variant]:not([data-variant-bound])").forEach(button => {
     button.dataset.variantBound = "true";
@@ -534,7 +554,7 @@ function renderAITutorTurn(result) {
   $("error-count").textContent = session.errors.length;
 
   const prompt = aiCurrentExercise.prompt
-    ? '<h3>' + renderVariantTerms(aiCurrentExercise.prompt) + '</h3>'
+    ? '<h3>' + renderClickableTargetText(aiCurrentExercise.prompt) + '</h3>'
     : '<h3>El tutor está preparando una actividad cerrada.</h3>';
   const targetLocale = session.config.languageLocale || session.config.languageId;
   const targetSpeech = (result.speechSegments || []).filter(item =>
@@ -549,6 +569,7 @@ function renderAITutorTurn(result) {
   $("lesson-content").innerHTML = prompt + promptAudio;
   bindSpeakerButtons($("lesson-content"));
   bindVariantLinks($("lesson-content"));
+  bindTargetWords($("lesson-content"));
   autoSpeak(questionSpeech.text, questionSpeech.locale);
   $("feedback").classList.add("hidden");
   $("hint-btn").hidden = false;
@@ -565,9 +586,10 @@ function renderAITutorTurn(result) {
     const validClosedChoice = Boolean(aiCurrentExercise.prompt && String(aiCurrentExercise.expectedAnswer || "").trim() &&
       options.length === 3 && options.some(option => String(option).trim().toLocaleLowerCase() === String(aiCurrentExercise.expectedAnswer).trim().toLocaleLowerCase()));
     $("answer-area").innerHTML = validClosedChoice
-      ? options.map((option,index) => '<button class="answer-option ai-answer-option" type="button" data-ai-choice="' + index + '">' + escapeHTML(option) + '</button>').join("")
+      ? options.map((option,index) => '<button class="answer-option ai-answer-option" type="button" data-ai-choice="' + index + '">' + renderClickableTargetText(option) + '</button>').join("")
       : '<p class="muted">El tutor está preparando una pregunta cerrada con respuesta verificable.</p><button id="retry-ai-options" class="secondary" type="button">Reintentar</button>';
     $("answer-area").querySelectorAll("[data-ai-choice]").forEach(button => button.addEventListener("click", () => submitAITutorAnswer(options[Number(button.dataset.aiChoice)])));
+    bindTargetWords($("answer-area"));
     $("retry-ai-options")?.addEventListener("click", () => startAITutorSession(session.config));
   } else if (aiCurrentExercise.prompt && String(aiCurrentExercise.expectedAnswer || "").trim()) {
     $("answer-area").innerHTML =
@@ -997,9 +1019,10 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   autoSpeak(questionSpeech.text, questionSpeech.locale);
   if (questionIndex < 3) {
     const options = currentExercise.options || [];
-    $("answer-area").innerHTML = options.map((option,index) => '<div class="answer-option-row"><button class="answer-option" data-choice="' + index + '">' + escapeHTML(option) + '</button>' + speakerButton(option, currentExercise.optionsLocale || (currentExercise.speechMode === "listening" ? "es-CL" : catalog.locale)) + '</div>').join("");
+    $("answer-area").innerHTML = options.map((option,index) => '<div class="answer-option-row"><button class="answer-option" data-choice="' + index + '">' + renderClickableTargetText(option) + '</button>' + speakerButton(option, currentExercise.optionsLocale || (currentExercise.speechMode === "listening" ? "es-CL" : catalog.locale)) + '</div>').join("");
     $("answer-area").querySelectorAll("[data-choice]").forEach(button => button.addEventListener("click", () => submitAnswer(options[Number(button.dataset.choice)])));
     bindSpeakerButtons($("answer-area"));
+    bindTargetWords($("answer-area"));
   } else {
     $("answer-area").innerHTML = '<input id="free-answer" class="answer-input" placeholder="Escribe tu respuesta…" autocomplete="off"><button id="submit-free" class="primary" type="button">Enviar respuesta →</button>';
     $("submit-free").addEventListener("click", () => submitAnswer($("free-answer").value));
@@ -1038,7 +1061,7 @@ function updateStats() {
   $("error-count").textContent = session.errors.length;
 }
 function showAnswerFeedback({ correct, expected, expectedLocale, explanation, selected, options = [], correctOption, showContinue = true }) {
-  const expectedText = !correct && expected ? '<p class="answer-correct-text">Respuesta correcta: ' + renderVariantTerms(expected) + ' ' + speakerButton(expected, expectedLocale || session?.config.languageLocale || catalog?.locale) + '</p>' : "";
+  const expectedText = !correct && expected ? '<p class="answer-correct-text">Respuesta correcta: ' + renderClickableTargetText(expected) + ' ' + speakerButton(expected, expectedLocale || session?.config.languageLocale || catalog?.locale) + '</p>' : "";
   const explanationText = !correct && explanation ? '<p class="answer-explanation">' + renderVariantTerms(explanation) + '</p>' : "";
   $("feedback").innerHTML = (correct ? '<p class="answer-status correct">Correcto</p>' : '<p class="answer-status incorrect">Incorrecto</p>') + expectedText + explanationText;
   $("feedback").classList.remove("hidden","bad");
@@ -1062,6 +1085,7 @@ function showAnswerFeedback({ correct, expected, expectedLocale, explanation, se
     $("answer-area").insertAdjacentHTML("beforeend", '<p class="muted answer-waiting">Preparando la siguiente pregunta…</p>');
   }
   bindSpeakerButtons($("feedback"));
+  bindTargetWords($("feedback"));
 }
 function continueAfterAnswer() {
   $("feedback").classList.add("hidden");
@@ -1194,6 +1218,7 @@ function finishSession() {
     '<section class="summary-section"><h3>Temas</h3><ul>' +
     focusItems.map(item => '<li>' + escapeHTML(item) + '</li>').join("") + '</ul></section>';
   bindSpeakerButtons($("summary-content"));
+  bindTargetWords($("summary-content"));
   speech.speakSequence(summary.vocabulary.map(item => ({ text: item.term, locale: summaryLocale })), { automatic: true });
 }
 
