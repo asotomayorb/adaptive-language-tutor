@@ -298,7 +298,7 @@ try {
   assert.equal(await aiPage.locator("#submit-ai-answer").count(), 0, "written-answer submit button should disappear after sending");
   assert.equal(await aiPage.locator("#continue-answer").isVisible(), true, "Continue should appear immediately while the next turn is being prepared");
   await aiPage.locator("#continue-answer").click();
-  assert.notMatch(await aiPage.locator("#lesson-content .exercise-instruction").innerText(), /¡Muy bien!/i, "the next question must not repeat contradictory praise after an incorrect answer");
+  assert.doesNotMatch(await aiPage.locator("#lesson-content .exercise-instruction").innerText(), /¡Muy bien!/i, "the next question must not repeat contradictory praise after an incorrect answer");
   assert.equal(await aiPage.locator("#lesson-content .feedback-note").count(), 0, "previous-answer grey notes must not remain above the new question");
   assert.equal(await aiPage.locator("#continue-answer").isVisible(), true, "Continue should appear immediately while the next turn is being prepared");
   await aiPage.locator("#continue-answer").click();
