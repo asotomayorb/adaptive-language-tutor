@@ -1661,7 +1661,7 @@ const tenseLessons = {
     present:[["eu","falo"],["tu","falas (uso regional)"],["você / ele / ela","fala"],["nós","falamos"],["a gente","fala"],["vocês / eles / elas","falam"]],
     past:"Ontem eu falei português.",
     pastEs:"Ayer hablé portugués.",
-    pastRule:"El pretérito perfeito indica una acción terminada. En verbos regulares, -ar usa -ei, -aste, -ou, -amos, -aram; -er usa -i, -este, -eu, -emos, -eram; -ir usa -i, -iste, -iu, -imos, -iram. El sujeto você/vocês exige tercera persona. En Brasil, a gente + verbo en tercera persona singular es muy frecuente.",
+    pastRule:"El pretérito perfeito indica una acción terminada. En verbos regulares, -ar usa -ei, -aste, -ou, -amos, -aram; -er usa -i, -este, -eu, -emos, -eram; -ir usa -i, -iste, -iu, -imos, -iram. El sujeto você/vocês exige tercera persona. En Brasil, a gente + verbo en tercera persona singular es muy frecuente. En regiones que usan tu, la norma es tu falaste; en el habla coloquial también se oye tu falou.",
     pastForms:[
       ["eu","falei","Eu falei com Ana ontem.","Ayer hablé con Ana."],
       ["tu","falaste","Tu falaste com Ana ontem.","Ayer hablaste con Ana (uso regional; la concordancia coloquial puede variar)."],
@@ -1672,7 +1672,7 @@ const tenseLessons = {
     ],
     future:"Amanhã eu vou falar português.",
     futureEs:"Mañana hablaré portugués.",
-    futureRule:"En portugués brasileño hablado predomina ir en presente + infinitivo. El futuro simple es correcto, pero suele sonar más formal o escrito. La forma auxiliar ir cambia según la persona; el infinitivo principal no cambia.",
+    futureRule:"En portugués brasileño hablado predomina ir en presente + infinitivo. El futuro simple es correcto, pero suele sonar más formal o escrito. La forma auxiliar ir cambia según la persona; el infinitivo principal no cambia. Con tu, vais es la forma estándar; en algunas regiones brasileñas se oye tu vai. A gente usa vai.",
     futureForms:[
       ["eu","vou falar","Eu vou falar com Ana amanhã.","Mañana hablaré con Ana."],
       ["tu","vais falar","Tu vais falar com Ana amanhã.","Mañana hablarás con Ana (forma estándar; el uso brasileño regional puede variar)."],
@@ -1681,7 +1681,7 @@ const tenseLessons = {
       ["a gente","vai falar","A gente vai falar com Ana amanhã.","Mañana hablaremos con Ana (muy habitual en Brasil)."],
       ["vocês / eles / elas","vão falar","Vocês vão falar com Ana amanhã.","Mañana hablarán con Ana."]
     ],
-    futureSimpleForms:[["eu","falarei"],["tu","falarás"],["você / ele / ela","falará"],["nós","falaremos"],["vocês / eles / elas","falarão"]],
+    futureSimpleForms:[["eu","falarei"],["tu","falarás"],["você / ele / ela","falará"],["nós","falaremos"],["a gente","falará"],["vocês / eles / elas","falarão"]],
     exceptions:"Irregulares frecuentes en pretérito perfeito: ser/ir → fui, estar → estive, ter → tive, fazer → fiz, dizer → disse, trazer → trouxe, pôr → pus, ver → vi, vir → vim. En futuro simple cambian algunas raíces: dizer → direi, fazer → farei, trazer → trarei, pôr → porei, ter → terei, vir → virei, ser → serei."
   },
   "Inglés":{present:[["I","speak"],["you / we / they","speak"],["he / she / it","speaks"]],past:"Yesterday I spoke English.",pastEs:"Ayer hablé inglés.",pastRule:"Speak es irregular: speak – spoke – spoken. El pasado no cambia según la persona.",future:"Tomorrow I will speak English.",futureEs:"Mañana hablaré inglés.",futureRule:"Will + verbo base expresa futuro. También se usa be going to para planes e intenciones."},
