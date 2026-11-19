@@ -511,3 +511,5 @@ Antes de publicar un paquete generado con IA, debe pasar controles de nivel, pre
 
 ### Política de derechos de contenido
 Todo texto de aprendizaje debe ser original, de dominio público verificado o estar cubierto por una licencia que permita el uso previsto. Guardar fuente, autor, licencia, atribución requerida y fecha de verificación. No reutilizar material protegido solo porque sea accesible públicamente en internet.
+
+- **Práctica local prioritaria:** si el idioma ya tiene un paquete local con suficientes ejercicios para la cantidad elegida, la sesión utiliza el motor determinista y no llama al tutor IA en tiempo real. La IA queda como respaldo cuando falta contenido suficiente (por ejemplo, idiomas aún sin catálogo o sesiones más largas).
