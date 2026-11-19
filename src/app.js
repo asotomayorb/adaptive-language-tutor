@@ -862,10 +862,11 @@ function renderRouteIntegration() {
   pendingFeedback = null;
   currentExercise = {
     id:"route-integration-fundamentals", prompt,
-    target: catalog.id === "en" ? "Hello, my name is Ana and I am from Chile." : "Olá, meu nome é Ana e sou do Chile.",
+    target: catalog.id === "en" ? "Good morning, my name is Ana and I am from Chile." : "Bom dia, meu nome é Ana e sou do Chile.",
+    allowTypo: true,
     acceptedAnswers: catalog.id === "en"
-      ? ["Hello, I'm Ana and I'm from Chile.","Hi, my name is Ana. I am from Chile."]
-      : ["Olá! Eu me chamo Ana e sou do Chile.","Oi, meu nome é Ana. Eu sou do Chile."],
+      ? ["Good morning, I'm Ana and I'm from Chile.","Good morning. My name is Ana. I am from Chile."]
+      : ["Bom dia! Eu me chamo Ana e sou do Chile.","Bom dia. Meu nome é Ana. Sou do Chile."],
     explanation:"La actividad integra saludo, presentación y procedencia."
   };
   $("lesson-phase").textContent = "HITO INTEGRADOR";
@@ -924,10 +925,14 @@ function getTopicExercises() {
 }
 
 function chooseExercise() {
-  const exercises = getTopicExercises();
+  let exercises = getTopicExercises();
   const adaptation = getAdaptation(session);
   let candidates = exercises.filter(exercise => !session.answers.some(answer => answer.exerciseId === exercise.id));
-  if (!candidates.length) candidates = exercises;
+  if (!candidates.length) {
+    exercises = catalog.exercises;
+    candidates = exercises.filter(exercise => !session.answers.some(answer => answer.exerciseId === exercise.id));
+  }
+  if (!candidates.length) return null;
   if (adaptation.mode === "scaffold") {
     const easier = candidates.filter(exercise => exercise.level === "A1");
     if (easier.length) candidates = easier;
@@ -954,6 +959,7 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   reviewMode = false;
   const questionIndex = answered ? Math.max(0, session.turn - 1) : session.turn;
   currentExercise = exerciseOverride || chooseExercise();
+  if (!currentExercise) { finishSession(); return; }
   const adaptation = getAdaptation(session);
   $("lesson-phase").textContent = "CONVERSACIÓN GUIADA";
   $("turn-count").textContent = "Pregunta " + (questionIndex + 1) + " / " + session.config.duration;
@@ -1147,17 +1153,22 @@ function finishSession() {
   persistSession(progress, session, summary);
   saveProgress(progress);
   refreshDashboard();
-  const diagnosticText = "";
-  const aiLevelText = aiMode && session.config.estimatedLevel
-    ? '<li>Nivel estimado por el tutor IA: ' + escapeHTML(session.config.estimatedLevel) + '.</li>'
-    : "";
-  const focusItems = [...summary.recommendedFocus, ...(summary.reviewPatterns || [])];
-  const focus = focusItems.length ? focusItems.map(escapeHTML).join("; ") : "Mantener la práctica y ampliar vocabulario.";
   const summaryLocale = session.config.languageLocale || session.config.languageId;
+  const hits = session.answers.filter(item => item.correct).map(item => item.submitted).filter(Boolean);
+  const errors = summary.errors.map(item => '<li><span class="summary-submitted">' + escapeHTML(item.submitted) + '</span><span class="summary-arrow"> → </span><span class="summary-expected">' + escapeHTML(item.expected) + '</span></li>').join("");
   const vocabularyText = summary.vocabulary.map(item =>
-    escapeHTML(item.term) + speakerButton(item.term, summaryLocale) + " (" + escapeHTML(item.meaning) + ")"
-  ).join(", ") || "ninguno";
-  $("summary-content").innerHTML = (finalFeedback ? '<div class="feedback-note"><span>Última respuesta</span><p>' + escapeHTML(finalFeedback.text) + '</p><p class="model-answer">Respuesta modelo: ' + escapeHTML(finalFeedback.expected) + ' ' + speakerButton(finalFeedback.expected, summaryLocale) + '</p></div>' : '') + '<p class="intro">' + (session.config.routeMode ? "Completaste la unidad Fundamentos: diez preguntas de dominio y una actividad integradora." : "Completaste " + summary.turns + " preguntas de " + escapeHTML(session.config.language) + ".") + '</p><ul class="summary-list">' + diagnosticText + aiLevelText + '<li>Respuestas evaluadas como correctas: ' + summary.correct + '/' + summary.attempted + ' (' + summary.accuracy + '%).</li><li>Mejor racha: ' + summary.bestStreak + '.</li><li>Vocabulario aprendido: ' + vocabularyText + '.</li><li>Errores evaluados para reforzar: ' + summary.errors.length + '.</li><li>Focos y patrones recomendados: ' + focus + '.</li></ul>';
+    '<li>' + escapeHTML(item.term) + ' ' + speakerButton(item.term, summaryLocale) + '</li>'
+  ).join("");
+  const focusItems = [...new Set([topicLabels[session.config.topic], ...summary.recommendedFocus, ...(summary.reviewPatterns || [])].filter(Boolean))];
+  $("summary-content").innerHTML = '<h2 class="summary-title">Resumen</h2>' +
+    '<section class="summary-section"><h3 class="summary-success-title">Aciertos</h3><ul>' +
+    (hits.map(item => '<li>' + escapeHTML(item) + '</li>').join("") || '<li>Sin aciertos registrados</li>') + '</ul></section>' +
+    '<section class="summary-section"><h3 class="summary-error-title">Errores</h3><ul>' +
+    (errors || '<li>Sin errores</li>') + '</ul></section>' +
+    '<section class="summary-section"><h3>Vocabulario</h3><ul>' +
+    (vocabularyText || '<li>Sin palabras nuevas</li>') + '</ul></section>' +
+    '<section class="summary-section"><h3>Temas</h3><ul>' +
+    focusItems.map(item => '<li>' + escapeHTML(item) + '</li>').join("") + '</ul></section>';
   bindSpeakerButtons($("summary-content"));
   speech.speakSequence(summary.vocabulary.map(item => ({ text: item.term, locale: summaryLocale })), { automatic: true });
 }
