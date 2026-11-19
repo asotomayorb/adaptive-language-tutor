@@ -240,11 +240,21 @@ function getRouteDraftForLanguage(languageId) {
 }
 
 function refreshDashboard() {
-  const languageId = getSelectedCatalog()?.id;
-  const stats = getProgressStats(progress, languageId);
-  const due = getDueCards(progress, Date.now(), languageId).filter(card => card.cardType !== "pattern");
-  const progressDashboard = $("progress-dashboard");
-  if (progressDashboard) progressDashboard.replaceChildren();
+  const selectedId = getSelectedCatalog()?.id;
+  const languageIds = [...new Set([
+    ...progress.sessions.map(item => item.languageId).filter(Boolean),
+    ...progress.vocabulary.map(item => item.languageId).filter(Boolean),
+    selectedId
+  ].filter(Boolean))];
+  const entries = Object.entries(languageDefinitions);
+  const languages = languageIds.map(id => {
+    const definition = entries.find(([, value]) => value.id === id);
+    const sessionRecord = progress.sessions.find(item => item.languageId === id);
+    const wordRecord = progress.vocabulary.find(item => item.languageId === id);
+    return { id, label: definition?.[0] || sessionRecord?.language || wordRecord?.language || id,
+      flag: definition?.[1].flag || "🌐" };
+  });
+  const due = getDueCards(progress, Date.now(), selectedId).filter(card => card.cardType !== "pattern");
   const reviewCount = $("review-count");
   if (reviewCount) reviewCount.textContent = String(due.length);
   const reviewDashboard = $("review-dashboard");
@@ -252,18 +262,57 @@ function refreshDashboard() {
     ? "<strong>" + due.length + " errores pendientes.</strong><p>Este apartado contiene únicamente respuestas incorrectas registradas en sesiones anteriores.</p>"
     : "No tienes repasos pendientes. Los errores que cometas durante las sesiones aparecerán aquí.";
   const statsContent = $("statistics-content");
-  if (statsContent) {
-    const sessions = progress.sessions.filter(item => !languageId || item.languageId === languageId).slice(-8);
-    const bars = sessions.map((item, index) => '<div class="progress-bar-column"><span>' + item.accuracy + '%</span><i style="height:' + Math.max(5, item.accuracy) + '%"></i><small>' + (index + 1) + '</small></div>').join("");
-    statsContent.innerHTML =
-      '<div class="stat-card"><span>Sesiones completadas</span><strong>' + stats.sessions + '</strong></div>' +
-      '<div class="stat-card"><span>Palabras aprendidas</span><strong>' + stats.vocabulary + '</strong></div>' +
-      '<div class="stat-card"><span>Precisión media</span><strong>' + stats.averageAccuracy + '%</strong></div>' +
-      '<div class="stat-card"><span>Repasos pendientes</span><strong>' + due.length + '</strong></div>' +
-      '<section class="progress-chart-card"><h2>Avance por sesión</h2>' +
-      (bars ? '<div class="progress-chart" role="img" aria-label="Precisión de las últimas sesiones">' + bars + '</div><p>Precisión de cada sesión completada</p>' : '<p class="empty-chart">Completa tu primera sesión para ver aquí tu evolución.</p>') +
-      '</section>';
+  if (!statsContent) return;
+  const metrics = languages.map(language => {
+    const stats = getProgressStats(progress, language.id);
+    let routePercent = 0;
+    try {
+      if (localStorage.getItem("adaptive-language-tutor.route-completed:" + language.id) === "true") routePercent = 100;
+      else {
+        const draft = JSON.parse(localStorage.getItem(ROUTE_STORAGE_KEY + ":" + language.id) || "null");
+        routePercent = Math.min(100, Math.round(((draft?.session?.turn || 0) / 11) * 100));
+      }
+    } catch {}
+    return { ...language, sessions:stats.sessions, words:stats.vocabulary, accuracy:stats.averageAccuracy, routePercent };
+  });
+  const header = '<thead><tr><th>Indicador</th>' + metrics.map(item =>
+    '<th title="' + escapeHTML(item.label) + '">' + item.flag + '</th>').join("") + '</tr></thead>';
+  const rows = [["Sesiones","sessions"],["Palabras","words"],["Precisión","accuracy","%"],["Progreso de Ruta","routePercent","%"]];
+  const body = '<tbody>' + rows.map(([label,key,suffix=""]) =>
+    '<tr><th scope="row">' + label + '</th>' + metrics.map(item => '<td>' + item[key] + suffix + '</td>').join("") + '</tr>').join("") + '</tbody>';
+  const colors = ["#2878b8","#d97736","#26866a","#8b68b5","#c04d68","#718096","#b39a2f","#3d9ba5"];
+  const daily = new Map();
+  for (const item of progress.sessions) {
+    if (!item.completedAt || !item.languageId) continue;
+    const day = item.completedAt.slice(0,10);
+    if (!daily.has(day)) daily.set(day,new Map());
+    const byLanguage = daily.get(day);
+    if (!byLanguage.has(item.languageId)) byLanguage.set(item.languageId,[]);
+    byLanguage.get(item.languageId).push(Number(item.accuracy) || 0);
   }
+  const days = [...daily.keys()].sort();
+  const width=620,height=230,left=34,right=12,top=14,bottom=30;
+  const xAt = index => days.length <= 1 ? (left+width-right)/2 : left+index*(width-left-right)/(days.length-1);
+  const yAt = value => top+(100-value)*(height-top-bottom)/100;
+  const grid = [0,25,50,75,100].map(value =>
+    '<line x1="' + left + '" y1="' + yAt(value) + '" x2="' + (width-right) + '" y2="' + yAt(value) + '" class="chart-gridline"/><text x="3" y="' + (yAt(value)+4) + '" class="chart-axis-label">' + value + '%</text>'
+  ).join("");
+  const lines = metrics.map((language,index) => {
+    const values = days.map(day => {
+      const records=daily.get(day)?.get(language.id)||[];
+      return records.length ? records.reduce((sum,value)=>sum+value,0)/records.length : null;
+    });
+    const points=values.map((value,i)=>value===null?null:xAt(i)+","+yAt(value)).filter(Boolean);
+    return points.length ? '<polyline class="stats-line" stroke="' + colors[index%colors.length] + '" points="' + points.join(" ") + '"/>' +
+      values.map((value,i)=>value===null?"":'<circle cx="' + xAt(i) + '" cy="' + yAt(value) + '" r="3.5" fill="' + colors[index%colors.length] + '"/>').join("") : "";
+  }).join("");
+  const labels = days.length ? '<text x="' + left + '" y="' + (height-5) + '" class="chart-axis-label">' + days[0] + '</text>' +
+    (days.length>1?'<text x="' + (width-right) + '" y="' + (height-5) + '" text-anchor="end" class="chart-axis-label">' + days.at(-1) + '</text>':"") : "";
+  const legend = metrics.map((item,index)=>'<div class="stats-legend-item"><i style="background:' + colors[index%colors.length] + '"></i>' + item.flag + ' ' + escapeHTML(item.label) + '</div>').join("");
+  statsContent.innerHTML = '<section class="stats-table-card"><h2>Progreso por idioma</h2>' +
+    (metrics.length?'<div class="stats-table-wrap"><table class="stats-language-table">' + header + body + '</table></div>':'<p class="empty-chart">Aún no hay idiomas con actividad registrada.</p>') +
+    '</section><section class="progress-chart-card"><h2>Evolución diaria</h2>' +
+    (days.length?'<div class="stats-chart-layout"><div class="stats-chart-scroll"><svg class="stats-line-chart" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="Precisión diaria por idioma">' + grid + lines + labels + '</svg></div><div class="stats-legend">' + legend + '</div></div><p>Precisión media de las sesiones completadas cada día.</p>':'<p class="empty-chart">Completa una sesión para ver aquí tu evolución diaria.</p>') + '</section>';
 }
 $("language").addEventListener("change", () => {
   $("custom-language-fields").classList.toggle("hidden", $("language").value !== "other");
