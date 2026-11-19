@@ -265,3 +265,16 @@ Para cada escenario registrar:
 - [ ] Al finalizar una sesión, verificar Aciertos n/total y Errores n/total; los errores deben conservar respuesta y solución.
 - [ ] En Repaso, responder una palabra incorrectamente y salir/completar el repaso: debe seguir pendiente.
 - [ ] Responder correctamente esa palabra en otra sesión de repaso: debe dejar de aparecer como pendiente y pasar al siguiente intervalo.
+
+## Android — refinamiento de estadísticas, feedback y Ruta — 19-11-2026
+
+- [ ] En Estadísticas, abrir vista por idioma: el gráfico debe ocupar más espacio, con puntos y textos legibles; en móvil se puede desplazar horizontalmente sin encoger el contenido.
+- [ ] Confirmar que el eje horizontal muestra «Días» una sola vez y debajo solo 1, 2, 3… hasta 15.
+- [ ] En vista Global, comprobar que las barras y sus valores son claramente legibles y que la línea punteada del promedio no tapa los valores.
+- [ ] En Ejercicios IA, enviar una respuesta y comprobar que «Continuar» aparece inmediatamente; mientras el tutor prepara el siguiente turno permanece deshabilitado y luego se habilita.
+- [ ] Provocar una respuesta incorrecta y comprobar que el feedback permanece «Incorrecto», sin que un mensaje posterior muestre «¡Muy bien!» ni otro elogio incompatible.
+- [ ] Después de avanzar, confirmar que no aparece el bloque gris con el feedback/respuesta de la pregunta anterior encima de la nueva consigna.
+- [ ] En Ruta portugués, completar los diez ejercicios hasta el hito integrador y responder incorrectamente: debe conservar la misma pregunta y entregar pistas progresivas en español.
+- [ ] Repetir intentos: cada error debe ofrecer la pista siguiente, sin borrar la respuesta ni reiniciar el nivel de pista al cerrar y reanudar Ruta.
+- [ ] Confirmar que el icono de Ruta representa un mapa con recorrido punteado y destino marcado; comprobar su legibilidad en la barra inferior.
+- [ ] En Teoría, registrar idioma, categoría y tema de cada explicación incompleta para la siguiente auditoría pedagógica; comprobar reglas, excepciones, tablas, ejemplos traducidos y audio.
