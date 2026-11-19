@@ -570,3 +570,12 @@ Esta sección establece las decisiones vigentes y **prevalece sobre descripcione
 - Las unidades de portugués e inglés usan catálogos locales. Para otros idiomas, la ruta depende de que el tutor IA esté configurado y disponible.
 - El modo relato y las actividades de emparejar son mejoras futuras, no funcionalidades activas en esta iteración.
 - La prueba automatizada no sustituye la prueba humana en Android: revisar legibilidad, tamaño de barras, tarjetas, teclado, audio y diálogos en el dispositivo real.
+
+
+## Refinamiento UI y contenido — 19-11-2026 (última solicitud)
+
+- **Estadísticas globales:** barras más estrechas (ancho máximo 54 SVG px y 52% del espacio por idioma); se elimina por completo la línea segmentada y la leyenda del promedio global. Se mantiene la comparación de precisión por idioma y los gráficos individuales.
+- **Teoría:** las tablas quedan antes de las notas de uso/reglas/excepciones; los ejemplos trabajados se muestran después de las tablas. Reglas y excepciones se presentan en bloques diferenciados para facilitar lectura.
+- **Ejercicios:** se elimina el control obsoleto «Repasar error» de la pantalla de práctica; el repaso programado sigue disponible como modalidad independiente. El encabezado de tema/nivel se ubica a la izquierda del contador de preguntas; el pictograma conserva debajo su etiqueta breve.
+- **Audio manual:** los botones ▶ solo se generan para fragmentos cuyo locale coincide con el idioma objetivo activo. Las instrucciones y opciones en español no muestran botón de reproducción dentro de una práctica de otro idioma.
+- La comprobación automatizada debe cubrir ancho de barras, ausencia de promedio, jerarquía del encabezado, etiqueta bajo pictograma, ausencia de «Repasar error», audio manual solo en idioma objetivo y orden tabla → notas → ejemplos.
