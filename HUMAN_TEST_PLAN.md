@@ -246,3 +246,5 @@ Para cada escenario registrar:
 - [ ] Confirmar que una respuesta en idioma equivocado no se marca correcta aunque el proveedor IA devuelva estado correct.
 
 - [ ] Añadir más de ocho idiomas con actividad y comprobar que cada línea y entrada de leyenda mantiene un color distinto.
+
+- [ ] Verificar que la app inicia sin errores de navegador antes de probar el resto del flujo.
