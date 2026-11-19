@@ -524,3 +524,5 @@ Todo texto de aprendizaje debe ser original, de dominio público verificado o es
 - Render: [deploy LIVE dep-dbvihnafngtc73cctgr0](https://dashboard.render.com/web/srv-dbus3hnf3r2c739j9ir0/deploys/dep-dbvihnafngtc73cctgr0), commit 6857c44.
 - Preview: https://adaptive-language-tutor-preview-5b3d.onrender.com/
 - Pendiente: prueba humana en Android; la automatización no sustituye la revisión de pronunciación, legibilidad y calidad pedagógica.
+
+- El etiquetado de voz por segmento también se aplica al paquete local de inglés: consigna en español y frase objetivo en inglés (o español cuando el estímulo es una frase fuente).
