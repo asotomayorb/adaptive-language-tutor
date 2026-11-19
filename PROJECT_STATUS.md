@@ -607,3 +607,32 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] Browser E2E: [44570968307](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44570968307) — success.
 - [x] Render manual deploy LIVE: [dep-dbviiv60tbcc738k7o2g](https://dashboard.render.com/web/srv-dbus3hnf3r2c739j9ir0/deploys/dep-dbviiv60tbcc738k7o2g), commit d41a7cb532c02cb90153e41b877dfeaf5ba212e2.
 - [ ] Prueba humana Android y revisión de calidad pedagógica por idioma.
+
+
+## Iteración Ruta / Ejercicios / Estadísticas — 19-11-2026
+
+### Implementado en la rama activa
+- Ruta con cuatro unidades por tema: Fundamentos, Viajes y orientación, Comida y restaurantes, Trabajo y estudios.
+- Desbloqueo secuencial por finalización y estrellas de la unidad previa. Umbrales: unidad 2 = 3 estrellas en unidad 1; unidad 3 = 5 estrellas en unidad 2; unidad 4 = 4 estrellas en unidad 3.
+- Puntaje de 0–5 estrellas basado en precisión; resumen por unidad y persistencia por idioma. Se puede repetir una unidad para mejorar su puntaje.
+- Ruta organiza actividades en vocabulario/conjugaciones, contexto y frases completas. En catálogos locales, los temas se corresponden con los ejercicios disponibles; en idiomas con IA, el tutor genera contenido por tema.
+- Reinicio de Ruta con diálogo de confirmación; borra solo el progreso de Ruta del idioma activo.
+- Ejercicios: banner desplegable “Ejercicio” para duración/nivel/tema; “Repaso” inicia directamente.
+- Pistas de dos pasos solo para respuestas escritas: “Pista” → “Ver respuesta”. Repaso conserva el tipo de respuesta original y las mismas reglas.
+- Resumen centrado con porcentaje y mensaje de rendimiento; eliminado el subtítulo “Aciertos”.
+- Gráfico de barras global ampliado con menor separación; conserva adaptación móvil sin scroll horizontal.
+- Pictogramas SVG originales según el objeto/tema de cada actividad.
+
+### Decisiones y límites
+- El modo relato con personajes/escenas encadenadas y los ejercicios de emparejar vocabulario quedan en roadmap.
+- Los catálogos locales disponibles para Ruta son portugués brasileño e inglés. Los otros idiomas muestran las cuatro unidades si el tutor IA está configurado; sin IA quedan en preparación.
+- La prueba humana debe validar si los umbrales de estrellas y el tamaño de las unidades son pedagógicamente adecuados. No se considera finalizado hasta probar en Android.
+
+### Commits y CI
+- Cambios principales de Ruta: `81fc199`, `fb37fd2`.
+- Cambios de interacción y revisión: `d054c72`, `2af2271`, `570d419`, `8ecbf2e`.
+- Ajustes de visuales, fases y puntuación: `3e7c9cb`, `f43500d`, `7fa4a5b`, `a0eb84c`, `c52249b`, `e92f732`.
+- Tests unitarios del código más reciente: success en run [44592541104](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44592541104).
+- Browser E2E confirmado success en run [44592484301](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44592484301); la ejecución del commit `e92f732` estaba en curso al registrar esta actualización.
+- Preview todavía debe recibir un deploy manual de la rama actual. El deploy anterior LIVE no contiene estos cambios.
+- Prueba humana Android pendiente.
