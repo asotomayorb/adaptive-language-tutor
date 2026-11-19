@@ -388,3 +388,5 @@ Pendiente de esta revisión:
 - E2E actualizado para esperar la respuesta de traducción contextual y verificar la tabla/gráfico de Estadísticas.
 
 - En opciones de respuesta, tocar una palabra abre su traducción sin enviar accidentalmente la opción; tocar el área restante de la alternativa permite responder.
+
+- Las consignas locales marcadas como idioma objetivo también permiten consultar cada palabra; las instrucciones que siguen en español no se convierten en texto clicable.
