@@ -534,3 +534,5 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] E2E ampliado para probar traducción contextual por palabra y la vista de Estadísticas.
 
 - [x] La selección de palabras dentro de una alternativa no dispara la respuesta; el envío requiere tocar el área de la opción fuera de la palabra.
+
+- [x] El texto clicable distingue consignas marcadas en idioma objetivo de las instrucciones de apoyo en español.
