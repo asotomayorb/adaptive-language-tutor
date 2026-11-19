@@ -523,7 +523,8 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] Estadísticas comparativas por idioma y gráfico lineal de precisión diaria.
 - [x] Palabras de texto objetivo seleccionables con traducción cuando existe un término coincidente en el vocabulario disponible.
 - [x] README y plan de prueba humana actualizados en esta iteración.
-- [ ] Ampliar el contenido pedagógico de Teoría a todos los idiomas: las tablas más completas siguen siendo desiguales entre idiomas y el contenido de vocabulario/expresiones aún no es suficiente.
+- [x] Ampliar Teoría con artículos comparativos para inglés, portugués brasileño, francés y alemán; vocabulario y expresiones aplicados para inglés y portugués brasileño.
+- [ ] Completar la auditoría pedagógica de los demás idiomas: aún hay categorías de vocabulario/expresiones con contenido genérico y artículos sin suficiente detalle.
 - [ ] Ejecutar tests y Browser E2E sobre el commit final; no inferir aprobación por cambios de código.
 - [ ] Validar latencia, corrección y consulta de palabras en Android real.
 - [ ] Desplegar manualmente a Render tras aprobar CI y comprobar el estado Live.
