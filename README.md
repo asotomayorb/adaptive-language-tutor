@@ -402,3 +402,12 @@ Pendiente de esta revisión:
 - El gráfico genera un color distinto para cada idioma presente en la tabla, incluso cuando se estudian más de ocho idiomas.
 
 - Corrección de la paleta dinámica: las referencias de línea, puntos y leyenda usan ahora la misma función de color por idioma; E2E comprueba errores de inicialización antes de interactuar.
+
+## Preview desplegado — 18-11-2026
+
+- Rama: `feature/mobile-bottom-navigation`
+- Commit desplegado: `459e10c46861aa31a344db1e14b424bdfee2ccad`
+- Deploy Render: `dep-dbv59grl550s738ontg0` — estado `live`
+- Preview: https://adaptive-language-tutor-preview-5b3d.onrender.com/
+- Validación automatizada del commit: Tests y Browser E2E aprobados.
+- Pendiente: prueba humana en Android y completar teoría de los idiomas restantes.
