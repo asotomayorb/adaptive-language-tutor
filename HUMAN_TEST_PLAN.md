@@ -281,3 +281,5 @@ Para cada escenario registrar:
 
 - [ ] En el hito integrador de Ruta, probar tanto el botón «Pista» como los intentos incorrectos: ambos deben avanzar una sola vez por la secuencia 1/5…5/5.
 - [ ] Confirmar que la consigna del hito integrador se explica en español y no aparece en portugués como imperativo.
+
+- [ ] En una respuesta IA, tocar «Continuar» antes de que termine la preparación: el botón debe indicar que está continuando y la siguiente pregunta debe aparecer al completarse la solicitud, sin doble avance.
