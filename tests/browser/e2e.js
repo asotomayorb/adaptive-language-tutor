@@ -28,7 +28,7 @@ function tutorTurn({ turn = 0, start = false } = {}) {
     message: start ? "Elige la respuesta correcta." : "Revisemos tu respuesta y avancemos.",
     exercise: {
       type: "grammar",
-      prompt: `Pregunta de prueba ${turn + 1}: ¿Cuál es la forma adecuada?`,
+      prompt: "Choisissez la bonne forme.",
       expectedAnswer: "Bonjour",
       acceptedAnswers: ["Bonjour"],
       options: turn < 3 ? ["Bonjour", "Bonsoir", "Au revoir"] : [],
