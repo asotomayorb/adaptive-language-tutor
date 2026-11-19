@@ -240,3 +240,5 @@ Para cada escenario registrar:
 - [ ] Confirmar que cada acierto se resalta en verde y cada respuesta errónea en rojo, incluida la respuesta modelo.
 
 - [ ] Probar selección de palabras en chino, japonés o tailandés: cada unidad léxica debe ser seleccionable por separado y mostrar traducción contextual.
+
+- [ ] Confirmar que no aparece texto de estado adicional debajo del resumen; solo el contenido y el botón de navegación.
