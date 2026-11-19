@@ -25,7 +25,7 @@ async function waitForServer() {
 
 function tutorTurn({ turn = 0, start = false } = {}) {
   return {
-    message: start ? "Elige la respuesta correcta." : "Revisemos tu respuesta y avancemos.",
+    message: start ? "Elige la respuesta correcta." : turn === 4 ? "¡Muy bien! Esta es la siguiente actividad." : "Revisemos tu respuesta y avancemos.",
     exercise: {
       type: "grammar",
       prompt: "Choisissez la bonne forme.",
@@ -182,7 +182,9 @@ try {
   assert.equal(await page.locator("#stats-view-select option").first().innerText(), "🌐 Global");
   await page.locator("#stats-view-select").selectOption("pt-BR");
   assert.equal(await page.locator("#statistics-content .stats-language-chart").isVisible(), true, "a language view should show daily questions and accuracy");
-  assert.match(await page.locator("#statistics-content .stats-language-chart").textContent(), /Día 1/);
+  assert.equal(await page.locator("#statistics-content .stats-language-chart .chart-axis-title").textContent(), "Días");
+  assert.equal(await page.locator("#statistics-content .stats-language-chart text.chart-axis-label").last().textContent(), "1");
+  assert.match(await page.locator("#statistics-content .stats-language-chart").getAttribute("viewBox"), /760 340/);
   await page.locator("#stats-view-select").selectOption("global");
   const statsText = await page.locator("#statistics-content .stats-language-table").innerText();
   assert.ok(["Sesiones","Palabras","Precisión","Progreso de Ruta"].every(label => statsText.includes(label)));
@@ -294,6 +296,10 @@ try {
   await aiPage.locator("#feedback .answer-status.incorrect").waitFor({ state: "visible" });
   assert.equal(await aiPage.locator("#feedback .answer-status.correct").count(), 0, "a semantically incorrect answer must not be accepted just because the model labels it correct");
   assert.equal(await aiPage.locator("#submit-ai-answer").count(), 0, "written-answer submit button should disappear after sending");
+  assert.equal(await aiPage.locator("#continue-answer").isVisible(), true, "Continue should appear immediately while the next turn is being prepared");
+  await aiPage.locator("#continue-answer").click();
+  assert.notMatch(await aiPage.locator("#lesson-content .exercise-instruction").innerText(), /¡Muy bien!/i, "the next question must not repeat contradictory praise after an incorrect answer");
+  assert.equal(await aiPage.locator("#lesson-content .feedback-note").count(), 0, "previous-answer grey notes must not remain above the new question");
   assert.deepEqual(aiErrors, [], "AI browser flow should not report uncaught page errors");
 } finally {
   if (browser) await browser.close();
