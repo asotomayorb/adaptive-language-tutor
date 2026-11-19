@@ -578,3 +578,6 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [ ] Auditoría pedagógica completa de Teoría: siguen faltando explicaciones aplicadas en varios idiomas/temas; no marcar como resuelto.
 - [ ] CI unitario y Browser E2E de esta iteración.
 - [ ] Deploy manual Render y validación humana Android.
+
+- [x] Consigna del hito integrador formulada en español y pistas progresivas disponibles tanto tras un error como mediante el botón «Pista».
+- [x] Nivel de pista guardado en el borrador de Ruta para continuar tras recargar.
