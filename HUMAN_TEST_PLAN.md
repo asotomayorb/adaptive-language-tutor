@@ -248,3 +248,7 @@ Para cada escenario registrar:
 - [ ] Añadir más de ocho idiomas con actividad y comprobar que cada línea y entrada de leyenda mantiene un color distinto.
 
 - [ ] Verificar que la app inicia sin errores de navegador antes de probar el resto del flujo.
+
+**Preview disponible para prueba humana:** https://adaptive-language-tutor-preview-5b3d.onrender.com/  
+**Commit:** `459e10c46861aa31a344db1e14b424bdfee2ccad`  
+- [ ] Prueba humana Android de la iteración completa.
