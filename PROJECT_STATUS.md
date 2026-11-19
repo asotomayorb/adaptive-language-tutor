@@ -521,7 +521,7 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] Hito integrador local usa una tarea de traducción delimitada en lugar de una presentación abierta.
 - [x] Resumen reducido a Aciertos, Errores, Vocabulario y Temas.
 - [x] Estadísticas comparativas por idioma y gráfico lineal de precisión diaria.
-- [x] Palabras de texto objetivo seleccionables con traducción cuando existe un término coincidente en el vocabulario disponible.
+- [x] Palabras de texto objetivo seleccionables: se muestra la traducción registrada o se solicita una traducción contextual al tutor IA cuando hace falta.
 - [x] README y plan de prueba humana actualizados en esta iteración.
 - [x] Ampliar Teoría con artículos comparativos para inglés, portugués brasileño, francés y alemán; vocabulario y expresiones aplicados para inglés y portugués brasileño.
 - [ ] Completar la auditoría pedagógica de los demás idiomas: aún hay categorías de vocabulario/expresiones con contenido genérico y artículos sin suficiente detalle.
