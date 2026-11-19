@@ -636,3 +636,15 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - Browser E2E confirmado success en run [44592484301](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44592484301); la ejecución del commit `e92f732` estaba en curso al registrar esta actualización.
 - Preview todavía debe recibir un deploy manual de la rama actual. El deploy anterior LIVE no contiene estos cambios.
 - Prueba humana Android pendiente.
+
+
+### Despliegue verificado — 19-11-2026
+- Preview: https://adaptive-language-tutor-preview-5b3d.onrender.com/
+- Render service: `adaptive-language-tutor-preview-5b3d` (`srv-dbus3hnf3r2c739j9ir0`).
+- Deploy LIVE: `dep-dbvkclk0916s73bduoug`.
+- Commit desplegado: `23b814ad7278f474b75b0a39a747aac6cdb90381`.
+- Auto-deploy continúa desactivado; el despliegue se ejecutó manualmente tras validar la rama.
+- Runtime logs confirman `npm start`, `node server/index.js`, escucha en `0.0.0.0:10000` y mensaje de Render “Your service is live”.
+- Tests unitarios del HEAD desplegado: success [44592766530](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44592766530).
+- Browser E2E aprobado en el último commit de código `e92f732`: [44592540899](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44592540899). El run adicional del commit documental `23b814a` estaba todavía ejecutándose al registrar esta nota.
+- [ ] Prueba humana Android pendiente; no se declara cerrada la iteración hasta recibir ese resultado.
