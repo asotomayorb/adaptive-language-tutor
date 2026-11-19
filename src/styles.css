@@ -353,3 +353,5 @@
 #statistics-content{grid-template-columns:minmax(0,1fr)}
 
 .stats-chart-scroll{flex:1;min-width:0}
+
+.summary-hit{color:#267447;font-weight:650}
