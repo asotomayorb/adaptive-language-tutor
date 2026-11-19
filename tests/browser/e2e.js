@@ -136,6 +136,9 @@ try {
   await page.locator("#start-session").waitFor({ state: "attached" });
   await page.locator("#duration").selectOption("5");
   await page.locator("#start-session").click();
+  assert.equal(await page.locator("#lesson-content .exercise-instruction").innerText(), "Escucha la frase en portugués y elige su significado en español.");
+  assert.equal(await page.locator("#lesson-content h3").innerText(), "Bom dia", "target-language phrase should be separate from the source-language instruction");
+  assert.equal(await page.locator("#lesson-content .target-word-link").count(), 0, "exercise words should no longer open translation popups");
   assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "Bom dia" && item.lang === "pt-BR")), "audio should speak the complete target-language phrase");
   for (let turn = 0; turn < 3; turn += 1) {
     assert.equal(await page.locator("#answer-area [data-choice]").count(), 3, "first three questions should have three choices");
@@ -167,12 +170,20 @@ try {
   assert.equal(saved.sessions[0].attempted, 5);
   assert.equal(await page.locator("#summary-content h2").innerText(), "Resumen");
   assert.equal(await page.locator("#session-status").innerText(), "", "no redundant session status should appear below the summary");
-  assert.deepEqual(await page.locator("#summary-content h3").allInnerTexts(), ["Aciertos","Errores","Vocabulario","Temas"]);
+  const summaryHeadings = await page.locator("#summary-content h3").allInnerTexts();
+  assert.match(summaryHeadings[0], /^Aciertos \\d+\\/5$/);
+  assert.match(summaryHeadings[1], /^Errores \\d+\\/5$/);
+  assert.deepEqual(summaryHeadings.slice(2), ["Vocabulario","Temas"]);
   // Incomplete Exercises sessions are discarded; no partial session is persisted.
   await page.locator("#new-session").click();
   await page.locator('[data-screen="stats"]').click();
   assert.equal(await page.locator("#statistics-content .stats-language-table").isVisible(), true, "statistics should show the cross-language metrics table");
-  assert.equal(await page.locator("#statistics-content .stats-line-chart").isVisible(), true, "statistics should show the daily line chart");
+  assert.equal(await page.locator("#statistics-content .stats-bar-chart").isVisible(), true, "global statistics should compare language accuracy with bars");
+  assert.equal(await page.locator("#stats-view-select option").first().innerText(), "🌐 Global");
+  await page.locator("#stats-view-select").selectOption("pt-BR");
+  assert.equal(await page.locator("#statistics-content .stats-language-chart").isVisible(), true, "a language view should show daily questions and accuracy");
+  assert.match(await page.locator("#statistics-content .stats-language-chart").innerText(), /Día 1/);
+  await page.locator("#stats-view-select").selectOption("global");
   const statsText = await page.locator("#statistics-content .stats-language-table").innerText();
   assert.ok(["Sesiones","Palabras","Precisión","Progreso de Ruta"].every(label => statsText.includes(label)));
   await page.locator('[data-screen="exercises"]').click();
@@ -252,16 +263,12 @@ try {
   await aiPage.locator('[data-screen="route"]').click();
   await aiPage.locator("#route-start").click();
   await aiPage.locator("#answer-area [data-ai-choice]").first().waitFor();
-  await aiPage.locator("#lesson-content .target-word-link").first().click();
-  await aiPage.locator("#lesson-content .word-translation").waitFor({ state: "visible" });
-  await aiPage.waitForFunction(() => document.querySelector("#lesson-content .word-translation")?.textContent === "hola");
-  assert.equal(await aiPage.locator("#lesson-content .word-translation").innerText(), "hola", "selecting a target-language word should show its contextual translation");
+  assert.equal(await aiPage.locator("#lesson-content .exercise-instruction").innerText(), "Elige la respuesta correcta.");
+  assert.equal(await aiPage.locator("#lesson-content h3").innerText(), "Choisissez la bonne forme.");
+  assert.equal(await aiPage.locator("#lesson-content .target-word-link").count(), 0, "AI exercise text should not open word translations");
   await aiPage.waitForFunction(() => window.__spoken.some(item => item.text === "Bonjour" && item.lang === "fr-FR"));
   assert.equal(await aiPage.evaluate(() => window.__spoken.some(item => item.text.includes("Instrucción en español"))), false,
     "mixed AI speech must ignore source-language segments");
-  await aiPage.locator("#answer-area [data-ai-choice]").first().locator(".target-word-link").click();
-  await aiPage.locator("#answer-area .word-translation").waitFor({ state: "visible" });
-  assert.equal(await aiPage.locator("#feedback .answer-status").count(), 0, "word translation should not submit the answer choice");
   await aiPage.locator("#answer-area [data-ai-choice]").first().evaluate(button => button.click());
   await aiPage.locator("#feedback .answer-status.correct").waitFor({ state: "visible" });
   await aiPage.locator("#answer-area #continue-answer").waitFor({ state: "visible" });
