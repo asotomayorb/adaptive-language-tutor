@@ -272,7 +272,7 @@ function saveRouteProgressForLanguage(languageId, state) {
 }
 function getRouteUnitsForCatalog(selectedCatalog) {
   if (!selectedCatalog) return [];
-  if (!selectedCatalog.exercises?.length) return aiConfigured ? [{ ...ROUTE_UNIT_DEFINITIONS[0], questionCount:10, available:true }] : [];
+  if (!selectedCatalog.exercises?.length) return aiConfigured ? ROUTE_UNIT_DEFINITIONS.map(unit => ({ ...unit, questionCount:10, available:true })) : [];
   return ROUTE_UNIT_DEFINITIONS.map(unit => ({
     ...unit, questionCount:selectedCatalog.exercises.filter(exercise => exercise.topic === unit.topic).length,
     available:selectedCatalog.exercises.some(exercise => exercise.topic === unit.topic)
