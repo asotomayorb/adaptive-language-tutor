@@ -540,3 +540,5 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] Los aciertos se resaltan en verde en el resumen; las respuestas erróneas se marcan en rojo y muestran la solución.
 
 - [x] La selección de palabras utiliza segmentación por idioma y contempla sistemas de escritura sin espacios entre palabras.
+
+- [x] Se eliminó el texto de estado redundante que aparecía debajo del resumen.
