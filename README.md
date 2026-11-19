@@ -386,3 +386,5 @@ Pendiente de esta revisión:
 - El resumen no conserva el encabezado redundante «Sesión completada»: «Resumen» es el único título del contenido.
 - El flujo de traducción por palabra es bajo demanda y usa el contexto de la frase cuando no hay una traducción local.
 - E2E actualizado para esperar la respuesta de traducción contextual y verificar la tabla/gráfico de Estadísticas.
+
+- En opciones de respuesta, tocar una palabra abre su traducción sin enviar accidentalmente la opción; tocar el área restante de la alternativa permite responder.
