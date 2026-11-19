@@ -243,7 +243,7 @@ try {
     "mixed AI speech must ignore source-language segments");
   await aiPage.locator("#answer-area [data-ai-choice]").first().click();
   await aiPage.locator("#feedback .answer-status.correct").waitFor({ state: "visible" });
-  assert.equal(await aiPage.locator("#answer-area #continue-answer").isVisible(), true, "AI evaluation must wait for Continue");
+  await aiPage.locator("#answer-area #continue-answer").waitFor({ state: "visible" });
   await aiPage.locator("#session-close").click();
   assert.equal(await aiPage.locator("#route-resume").isVisible(), false, "AI-backed Route must use the same single banner");
   assert.match(await aiPage.locator("#route-start").innerText(), /Continuar recorrido/i);
@@ -255,7 +255,7 @@ try {
     assert.equal(await aiPage.locator("#answer-area [data-ai-choice]").count(), 3);
     await aiPage.locator("#answer-area [data-ai-choice]").first().click();
     await aiPage.locator("#feedback .answer-status.correct").waitFor({ state: "visible" });
-    assert.equal(await aiPage.locator("#answer-area #continue-answer").isVisible(), true);
+    await aiPage.locator("#answer-area #continue-answer").waitFor({ state: "visible" });
     assert.doesNotMatch(await aiPage.locator("#lesson-content").innerText(), /Pronunciación|Vocabulario/i, "answer-revealing labels should not be displayed");
     await aiPage.locator("#answer-area #continue-answer").click();
   }
