@@ -515,3 +515,5 @@ Todo texto de aprendizaje debe ser original, de dominio público verificado o es
 - **Práctica local prioritaria:** si el idioma ya tiene un paquete local con suficientes ejercicios para la cantidad elegida, la sesión utiliza el motor determinista y no llama al tutor IA en tiempo real. La IA queda como respaldo cuando falta contenido suficiente (por ejemplo, idiomas aún sin catálogo o sesiones más largas).
 
 - La teoría de portugués también distingue formas estándar y variación brasileña regional de `tu` (`tu falaste` / `tu vais falar` frente a usos coloquiales regionales), además de la construcción frecuente con `a gente`.
+
+- El control de pistas queda visible también en la práctica normal; las respuestas escritas permiten recorrer tres pistas progresivas.
