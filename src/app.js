@@ -1458,8 +1458,8 @@ function finishSession() {
   if (!session || sessionFinished) return;
   sessionFinished = true;
   if (routeMode && session.routeIntegrationComplete) {
-    const attempted = Math.max(1, session.answers.length || session.turn);
-    const correct = Number(session.correct) || 0;
+    const attempted = Math.max(1,routeQuestionCount);
+    const correct = Math.min(attempted,Math.max(0,(Number(session.correct)||0) - (aiMode ? 1 : 0)));
     const accuracy = Math.round(correct / attempted * 100);
     const stars = Math.min(5, Math.floor(accuracy / 20));
     const state = getRouteProgressForLanguage(session.config.languageId);
@@ -1486,8 +1486,10 @@ function finishSession() {
   saveProgress(progress);
   refreshDashboard();
   const summaryLocale = session.config.languageLocale || session.config.languageId;
-  const attemptedCount = Number(summary.attempted) || session.answers.length;
-  const correctCount = Number(summary.correct) || 0;
+  const attemptedCount = routeMode ? routeQuestionCount : Number(summary.attempted) || session.answers.length;
+  const correctCount = routeMode
+    ? Math.min(attemptedCount,Math.max(0,(Number(session.correct)||0) - (aiMode && session.routeIntegrationComplete ? 1 : 0)))
+    : Number(summary.correct) || 0;
   const accuracyPercent = attemptedCount ? Math.round(correctCount / attemptedCount * 100) : 0;
   const accuracyMessage = accuracyPercent === 100 ? "Perfecto" : accuracyPercent > 80 ? "Muy bien" : accuracyPercent > 60 ? "Bien" : accuracyPercent >= 40 ? "Vas progresando" : "Sigue practicando";
   const errorCount = summary.errors.length;
