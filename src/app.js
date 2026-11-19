@@ -428,6 +428,7 @@ checkTutorHealth().then(status => {
   aiReady = true;
   updateLanguageFlag();
   $("start-session").disabled = false;
+  $("ai-status").classList.remove("hidden");
 });
 
 function startSpacedReview() {
