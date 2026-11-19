@@ -221,3 +221,7 @@ Para cada escenario registrar:
 - [ ] El gráfico muestra evolución diaria (no por sesión), con una línea y color por idioma y leyenda lateral.
 - [ ] Probar estadísticas con varios idiomas, varios días, más de una sesión en un mismo día y días sin actividad.
 - [ ] En Android, comprobar que la tabla se puede desplazar horizontalmente sin deformar la pantalla y que la leyenda del gráfico sigue siendo legible.
+
+- [ ] Teoría inglés y portugués brasileño: comprobar las tablas de artículos y los cinco subtemas de vocabulario y expresiones, con traducción y audio.
+- [ ] Teoría francés y alemán: comprobar las tablas de artículos, ejemplos y reglas de uso.
+- [ ] Revisar uno por uno los idiomas restantes: ningún subtema debe quedarse en descripciones genéricas; cada uno debe mostrar contenido aplicado, traducción y contexto.
