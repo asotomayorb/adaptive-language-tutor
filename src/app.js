@@ -86,11 +86,21 @@ function renderVariantTerms(value) {
 function renderClickableTargetText(value) {
   const dictionary = [...(session?.vocabulary || []), ...(progress?.vocabulary || []),
     ...(catalog?.exercises || []).map(item => ({term:item.term,meaning:item.meaning}))];
-  return String(value || "").split(/([\p{L}\p{M}]+(?:['’][\p{L}\p{M}]+)?)/gu).map(part => {
-    if (!/^[\p{L}\p{M}]+(?:['’][\p{L}\p{M}]+)?$/u.test(part)) return escapeHTML(part);
-    const match = dictionary.find(item => item.term && item.term.toLocaleLowerCase() === part.toLocaleLowerCase());
-    return '<span class="target-word-link" role="button" tabindex="0" data-target-word="' + escapeHTML(part) +
-      '" data-context="' + escapeHTML(value || "") + '" data-translation="' + escapeHTML(match?.meaning || "Traducción no registrada") + '">' + escapeHTML(part) + '</span>';
+  const text = String(value || "");
+  const locale = session?.config.languageLocale || catalog?.locale || "es";
+  let segments;
+  if (typeof Intl !== "undefined" && typeof Intl.Segmenter === "function") {
+    segments = [...new Intl.Segmenter(locale, { granularity:"word" }).segment(text)]
+      .map(item => ({ text:item.segment, isWord:item.isWordLike }));
+  } else {
+    segments = text.split(/([\p{L}\p{M}]+(?:['’][\p{L}\p{M}]+)?)/gu)
+      .map(part => ({ text:part, isWord:/^[\p{L}\p{M}]+(?:['’][\p{L}\p{M}]+)?$/u.test(part) }));
+  }
+  return segments.map(item => {
+    if (!item.isWord) return escapeHTML(item.text);
+    const match = dictionary.find(entry => entry.term && entry.term.toLocaleLowerCase() === item.text.toLocaleLowerCase());
+    return '<span class="target-word-link" role="button" tabindex="0" data-target-word="' + escapeHTML(item.text) +
+      '" data-context="' + escapeHTML(text) + '" data-translation="' + escapeHTML(match?.meaning || "Traducción no registrada") + '">' + escapeHTML(item.text) + '</span>';
   }).join("");
 }
 function bindTargetWords(root) {
