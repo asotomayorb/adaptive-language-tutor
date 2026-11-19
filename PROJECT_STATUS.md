@@ -578,7 +578,8 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [ ] Auditoría pedagógica completa de Teoría: siguen faltando explicaciones aplicadas en varios idiomas/temas; no marcar como resuelto.
 - [x] Tests unitarios y comprobación estática: [GitHub Actions 44456571620](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44456571620).
 - [x] Browser E2E: [GitHub Actions 44456571650](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44456571650).
-- [ ] Deploy manual Render y validación humana Android.
+- [x] Deploy manual Render LIVE: [dep-dbv7ee3rjlhs73b4lr9g](https://dashboard.render.com/web/srv-dbus3hnf3r2c739j9ir0/deploys/dep-dbv7ee3rjlhs73b4lr9g), commit `33db475`.
+- [ ] Validación humana Android.
 
 - [x] Consigna del hito integrador formulada en español y pistas progresivas disponibles tanto tras un error como mediante el botón «Pista».
 - [x] Nivel de pista guardado en el borrador de Ruta para continuar tras recargar.
