@@ -36,6 +36,13 @@ test("each catalog covers all four practice topics and both initial levels", () 
   }
 });
 
+test("some exercise instructions are written in the target language", () => {
+  assert.match(ptBR.exercises[0].prompt, /^Ouça a frase em português/i);
+  assert.match(english.exercises[0].prompt, /^Listen to the phrase in English/i);
+  assert.match(ptBR.exercises[1].prompt, /^Complete a frase/i);
+  assert.match(english.exercises[1].prompt, /^Complete the sentence/i);
+});
+
 test("diagnostic has enough questions for its four-question flow", () => {
   for (const catalog of catalogs) {
     assert.ok(catalog.exercises.filter(item => item.level === "A1").length >= 3);
