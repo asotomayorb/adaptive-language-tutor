@@ -532,3 +532,5 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 **Riesgos conocidos:** la corrección inmediata de ejercicios IA utiliza la lista cerrada de respuestas aceptadas para evitar falsos positivos. Si el tutor no incluye una variante válida en `acceptedAnswers`, podría producir un falso negativo; por eso debe probarse con respuestas equivalentes reales y ampliar el conjunto de variantes donde corresponda.
 
 - [x] E2E ampliado para probar traducción contextual por palabra y la vista de Estadísticas.
+
+- [x] La selección de palabras dentro de una alternativa no dispara la respuesta; el envío requiere tocar el área de la opción fuera de la palabra.
