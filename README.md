@@ -372,7 +372,7 @@ Cambios incorporados en la rama de preview:
 - Hito integrador local: sustituye la presentación abierta por una traducción de respuesta delimitada, con variantes aceptadas y tolerancia tipográfica acotada.
 - Resumen: estructura simplificada con los apartados Aciertos, Errores, Vocabulario y Temas.
 - Estadísticas: tabla comparativa simultánea por idioma (sesiones, palabras, precisión y progreso de Ruta) y gráfico lineal de precisión diaria con leyenda lateral.
-- Texto objetivo: las palabras del enunciado, opciones, corrección y vocabulario pueden seleccionarse para consultar la traducción disponible en el vocabulario registrado.
+- Texto objetivo: las palabras del enunciado, opciones, corrección y vocabulario pueden seleccionarse para consultar la traducción registrada o solicitar una traducción contextual al tutor IA.
 
 Pendiente de esta revisión:
 - Completar la auditoría y corrección del contenido de Teoría para todos los idiomas. Se amplió el material aplicado de artículos, vocabulario y expresiones para inglés y portugués brasileño, además del bloque detallado de italiano; los otros idiomas aún requieren revisión.
@@ -380,3 +380,5 @@ Pendiente de esta revisión:
 - Confirmar la experiencia real en Android y comprobar latencia percibida con el proveedor IA.
 
 - Teoría: artículos con tablas comparativas para inglés, portugués brasileño, francés y alemán; vocabulario y expresiones aplicados para inglés y portugués brasileño.
+
+- La consulta por palabra incorpora traducción contextual bajo demanda cuando el proveedor IA está configurado; las traducciones locales registradas se muestran sin solicitud adicional.
