@@ -249,7 +249,7 @@ const ROUTE_UNIT_DEFINITIONS = [
   { id:"foundations", number:"01", title:"Fundamentos", topic:"daily", icon:"💬", requiredStars:0, description:"Vocabulario, conjugaciones y presentaciones." },
   { id:"travel", number:"02", title:"Viajes y orientación", topic:"travel", icon:"🧭", requiredStars:3, description:"Moverte, preguntar y resolver situaciones." },
   { id:"food", number:"03", title:"Comida y restaurantes", topic:"food", icon:"🍽️", requiredStars:5, description:"Pedir, elegir y expresar preferencias." },
-  { id:"work", number:"04", title:"Trabajo y estudios", topic:"work", icon:"💼", requiredStars:4, description:"Hablar de tareas, ocupaciones y ayuda." }
+  { id:"work", number:"04", title:"Trabajo y estudios", topic:"work", icon:"💼", requiredStars:3, description:"Hablar de tareas, ocupaciones y ayuda." }
 ];
 let selectedRouteUnitId = "foundations";
 let routeSelectionTouched = false;
