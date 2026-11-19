@@ -354,11 +354,11 @@ function refreshDashboard() {
     });
     const points=values.map((value,i)=>value===null?null:xAt(i)+","+yAt(value)).filter(Boolean);
     return points.length ? '<polyline class="stats-line" stroke="' + colorFor(index) + '" points="' + points.join(" ") + '"/>' +
-      values.map((value,i)=>value===null?"":'<circle cx="' + xAt(i) + '" cy="' + yAt(value) + '" r="3.5" fill="' + colors[index%colors.length] + '"/>').join("") : "";
+      values.map((value,i)=>value===null?"":'<circle cx="' + xAt(i) + '" cy="' + yAt(value) + '" r="3.5" fill="' + colorFor(index) + '"/>').join("") : "";
   }).join("");
   const labels = days.length ? '<text x="' + left + '" y="' + (height-5) + '" class="chart-axis-label">' + days[0] + '</text>' +
     (days.length>1?'<text x="' + (width-right) + '" y="' + (height-5) + '" text-anchor="end" class="chart-axis-label">' + days.at(-1) + '</text>':"") : "";
-  const legend = metrics.map((item,index)=>'<div class="stats-legend-item"><i style="background:' + colors[index%colors.length] + '"></i>' + item.flag + ' ' + escapeHTML(item.label) + '</div>').join("");
+  const legend = metrics.map((item,index)=>'<div class="stats-legend-item"><i style="background:' + colorFor(index) + '"></i>' + item.flag + ' ' + escapeHTML(item.label) + '</div>').join("");
   statsContent.innerHTML = '<section class="stats-table-card"><h2>Progreso por idioma</h2>' +
     (metrics.length?'<div class="stats-table-wrap"><table class="stats-language-table">' + header + body + '</table></div>':'<p class="empty-chart">Aún no hay idiomas con actividad registrada.</p>') +
     '</section><section class="progress-chart-card"><h2>Evolución diaria</h2>' +
