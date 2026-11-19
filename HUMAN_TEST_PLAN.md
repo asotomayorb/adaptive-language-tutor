@@ -285,3 +285,10 @@ Para cada escenario registrar:
 - [ ] En una respuesta IA, tocar «Continuar» antes de que termine la preparación: el botón debe indicar que está continuando y la siguiente pregunta debe aparecer al completarse la solicitud, sin doble avance.
 
 - [ ] En el hito integrador, confirmar que «Pista» está visible y operativo; no debe aparecer el control «Repasar error» en esa pantalla.
+
+
+## Preview desplegado — 19-11-2026
+
+- Preview: https://adaptive-language-tutor-preview-5b3d.onrender.com/
+- Deploy LIVE: `dep-dbv7ee3rjlhs73b4lr9g` — commit `33db475`.
+- La validación automatizada pasó; queda la comprobación humana en Android de los puntos listados arriba.
