@@ -89,18 +89,20 @@ function renderClickableTargetText(value) {
   return String(value || "").split(/([\p{L}\p{M}]+(?:['’][\p{L}\p{M}]+)?)/gu).map(part => {
     if (!/^[\p{L}\p{M}]+(?:['’][\p{L}\p{M}]+)?$/u.test(part)) return escapeHTML(part);
     const match = dictionary.find(item => item.term && item.term.toLocaleLowerCase() === part.toLocaleLowerCase());
-    return '<button class="target-word-link" type="button" data-target-word="' + escapeHTML(part) +
-      '" data-translation="' + escapeHTML(match?.meaning || "Traducción no registrada") + '">' + escapeHTML(part) + '</button>';
+    return '<span class="target-word-link" role="button" tabindex="0" data-target-word="' + escapeHTML(part) +
+      '" data-translation="' + escapeHTML(match?.meaning || "Traducción no registrada") + '">' + escapeHTML(part) + '</span>';
   }).join("");
 }
 function bindTargetWords(root) {
   root.querySelectorAll("[data-target-word]:not([data-word-bound])").forEach(button => {
     button.dataset.wordBound = "true";
-    button.addEventListener("click", () => {
+    const toggle = () => {
       const current = button.parentElement.querySelector(".word-translation");
       if (current) current.remove();
       else button.insertAdjacentHTML("afterend", '<span class="word-translation" role="status">' + escapeHTML(button.dataset.translation) + '</span>');
-    });
+    };
+    button.addEventListener("click", toggle);
+    button.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); toggle(); } });
   });
 }
 function bindVariantLinks(root) {
