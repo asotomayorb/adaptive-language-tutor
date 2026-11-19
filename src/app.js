@@ -242,6 +242,7 @@ let aiHintPending = false;
 let aiEvaluationPending = false;
 let aiContinueRequested = false;
 let routeIntegrationHintLevel = 0;
+let localHintLevel = 0;
 let sessionFinished = false;
 let selectedExerciseMode = "practice";
 let sessionAbortController = null;
@@ -724,7 +725,7 @@ async function submitAITutorAnswer(answer) {
         ? " Esta respuesta completa la comprobación de dominio de diez preguntas. La siguiente actividad debe ser una tarea integradora escrita que combine el tema completo; no incluyas alternativas."
         : session.turn + 1 < 3
           ? " La próxima actividad debe ser una pregunta de selección múltiple con tres alternativas plausibles en exercise.options."
-          : " Desde ahora la próxima actividad debe requerir que escriba la respuesta, sin alternativas.") + " Mantén las instrucciones en español (idioma origen) dentro de message y separa el texto a evaluar en exercise.prompt; nunca mezcles una orden en idioma objetivo con la frase preguntada."
+          : " Desde ahora la próxima actividad debe requerir que escriba la respuesta, sin alternativas.") + " Mantén las instrucciones en español (idioma origen) dentro de message y separa el texto a evaluar en exercise.prompt; nunca mezcles una orden en idioma objetivo con la frase preguntada. Incluye exactamente tres pistas progresivas y no redundantes en exercise.hints, sin revelar la respuesta antes de la tercera."
     }, undefined, { signal: sessionAbortController?.signal });
     if (session !== activeSession || sessionAbortController?.signal.aborted) return;
     aiHistory = [
@@ -777,7 +778,7 @@ async function submitAITutorAnswer(answer) {
 }
 
 async function requestAdaptiveHint() {
-  if (aiHintPending || !session || !aiLastResult) return;
+  if (aiHintPending || !session || !aiLastResult || aiHintLevel >= 3) return;
   const activeSession = session;
   const activeExercise = aiCurrentExercise;
   const button = $("hint-btn");
@@ -821,7 +822,8 @@ async function requestAdaptiveHint() {
     );
     appendSpeechButtons($("feedback"), segments);
     speech.speakSequence(segments, { automatic: true });
-    button.textContent = "Pedir otra pista";
+    button.textContent = aiHintLevel >= 3 ? "Pistas agotadas" : "Pedir otra pista";
+    if (aiHintLevel >= 3) button.hidden = true;
   } catch (error) {
     if (session === activeSession && aiCurrentExercise === activeExercise) {
       showFeedback("No se pudo obtener otra pista. Puedes intentarlo nuevamente. " + (error.message || ""), false);
@@ -1087,6 +1089,7 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   reviewMode = false;
   const questionIndex = answered ? Math.max(0, session.turn - 1) : session.turn;
   currentExercise = exerciseOverride || chooseExercise();
+  localHintLevel = 0;
   if (!currentExercise) { finishSession(); return; }
   const adaptation = getAdaptation(session);
   $("lesson-phase").textContent = "CONVERSACIÓN GUIADA";
@@ -1243,17 +1246,21 @@ function showFeedback(message, positive) {
 $("hint-btn").addEventListener("click", () => {
   speech.stop();
   if (aiMode) {
-    if (aiHintLevel === 0 && aiCurrentExercise?.hint) {
-      aiHintLevel = 1;
-      showFeedback("Pista: " + aiCurrentExercise.hint, true);
+    if (aiHintLevel >= 3) { $("hint-btn").hidden = true; return; }
+    const storedHints = Array.isArray(aiCurrentExercise?.hints) ? aiCurrentExercise.hints : [];
+    const hint = storedHints[aiHintLevel] || (aiHintLevel === 0 ? aiCurrentExercise?.hint : "");
+    if (typeof hint === "string" && hint.trim()) {
+      aiHintLevel += 1;
+      showFeedback("Pista " + aiHintLevel + "/3: " + hint.trim(), true);
       const hintSegments = (aiLastResult?.speechSegments || []).filter(item =>
         item && typeof item.text === "string" && item.text.trim() &&
         item.locale === (session.config.languageLocale || session.config.languageId) &&
-        aiCurrentExercise.hint.toLocaleLowerCase().includes(item.text.toLocaleLowerCase())
+        hint.toLocaleLowerCase().includes(item.text.toLocaleLowerCase())
       );
       appendSpeechButtons($("feedback"), hintSegments);
       speech.speakSequence(hintSegments, { automatic: true });
       $("hint-btn").textContent = "Pedir otra pista";
+      if (aiHintLevel >= 3) $("hint-btn").hidden = true;
       return;
     }
     requestAdaptiveHint();
@@ -1266,8 +1273,17 @@ $("hint-btn").addEventListener("click", () => {
     saveRouteDraft();
     return;
   }
-  showFeedback("Pista: " + currentExercise.hint, true);
+  const hints = Array.isArray(currentExercise.hints) && currentExercise.hints.length >= 3
+    ? currentExercise.hints.slice(0,3)
+    : [
+      currentExercise.hint || "Identifica primero qué información solicita la consigna.",
+      currentExercise.explanation || ("Piensa en el significado y la estructura de " + (currentExercise.term || "la expresión clave") + "."),
+      "Solución guiada: " + (currentExercise.target || "revisa la respuesta esperada en la corrección.")
+    ];
+  localHintLevel = Math.min(localHintLevel + 1, 3);
+  showFeedback("Pista " + localHintLevel + "/3: " + hints[localHintLevel-1], true);
   appendCatalogSpeech($("feedback"), currentExercise, "hintSpeechSegments");
+  if (localHintLevel >= 3) $("hint-btn").hidden = true;
 });
 
 $("review-btn").addEventListener("click", () => {
