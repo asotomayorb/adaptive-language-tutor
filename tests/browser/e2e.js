@@ -171,8 +171,8 @@ try {
   assert.equal(await page.locator("#summary-content h2").innerText(), "Resumen");
   assert.equal(await page.locator("#session-status").innerText(), "", "no redundant session status should appear below the summary");
   const summaryHeadings = await page.locator("#summary-content h3").allInnerTexts();
-  assert.match(summaryHeadings[0], /^Aciertos \\d+\\/5$/);
-  assert.match(summaryHeadings[1], /^Errores \\d+\\/5$/);
+  assert.match(summaryHeadings[0], /^Aciertos \d+\/5$/);
+  assert.match(summaryHeadings[1], /^Errores \d+\/5$/);
   assert.deepEqual(summaryHeadings.slice(2), ["Vocabulario","Temas"]);
   // Incomplete Exercises sessions are discarded; no partial session is persisted.
   await page.locator("#new-session").click();
@@ -182,7 +182,7 @@ try {
   assert.equal(await page.locator("#stats-view-select option").first().innerText(), "🌐 Global");
   await page.locator("#stats-view-select").selectOption("pt-BR");
   assert.equal(await page.locator("#statistics-content .stats-language-chart").isVisible(), true, "a language view should show daily questions and accuracy");
-  assert.match(await page.locator("#statistics-content .stats-language-chart").innerText(), /Día 1/);
+  assert.match(await page.locator("#statistics-content .stats-language-chart").textContent(), /Día 1/);
   await page.locator("#stats-view-select").selectOption("global");
   const statsText = await page.locator("#statistics-content .stats-language-table").innerText();
   assert.ok(["Sesiones","Palabras","Precisión","Progreso de Ruta"].every(label => statsText.includes(label)));
