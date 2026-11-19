@@ -242,3 +242,5 @@ Para cada escenario registrar:
 - [ ] Probar selección de palabras en chino, japonés o tailandés: cada unidad léxica debe ser seleccionable por separado y mostrar traducción contextual.
 
 - [ ] Confirmar que no aparece texto de estado adicional debajo del resumen; solo el contenido y el botón de navegación.
+
+- [ ] Confirmar que una respuesta en idioma equivocado no se marca correcta aunque el proveedor IA devuelva estado correct.
