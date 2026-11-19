@@ -231,6 +231,8 @@ let aiLastResult = null;
 let aiCurrentExercise = null;
 let aiHintLevel = 0;
 let aiHintPending = false;
+let aiEvaluationPending = false;
+let routeIntegrationHintLevel = 0;
 let sessionFinished = false;
 let selectedExerciseMode = "global";
 let sessionAbortController = null;
@@ -306,11 +308,11 @@ function refreshDashboard() {
     if (!metrics.length) {
       chartMarkup = '<p class="empty-chart">Completa una sesión para comparar la precisión entre idiomas.</p>';
     } else {
-      const width = Math.max(620, metrics.length * 58 + 70), height = 270;
-      const left = 42, right = 16, top = 20, bottom = 66;
+      const width = Math.max(720, metrics.length * 78 + 90), height = 340;
+      const left = 58, right = 24, top = 28, bottom = 82;
       const plotWidth = width-left-right, plotHeight = height-top-bottom;
       const yAt = value => top + (100-value)*plotHeight/100;
-      const slot = plotWidth/metrics.length, barWidth = Math.min(34,slot*0.62);
+      const slot = plotWidth/metrics.length, barWidth = Math.min(48,slot*0.66);
       const grid = [0,25,50,75,100].map(value =>
         '<line x1="' + left + '" y1="' + yAt(value) + '" x2="' + (width-right) + '" y2="' + yAt(value) + '" class="chart-gridline"/><text x="4" y="' + (yAt(value)+4) + '" class="chart-axis-label">' + value + '%</text>'
       ).join("");
@@ -342,7 +344,7 @@ function refreshDashboard() {
     if (!practicedDays.length) {
       chartMarkup = '<p class="empty-chart">Todavía no hay días de práctica registrados para ' + escapeHTML(language?.label || "") + '.</p>';
     } else {
-      const width = 620, height = 270, left = 46, right = 48, top = 20, bottom = 42;
+      const width = 760, height = 340, left = 66, right = 66, top = 28, bottom = 64;
       const plotWidth = width-left-right, plotHeight = height-top-bottom;
       const maxQuestions = Math.max(1,...practicedDays.map(([,item])=>item.attempted));
       const questionMax = Math.max(5,Math.ceil(maxQuestions/5)*5);
@@ -363,10 +365,10 @@ function refreshDashboard() {
         const accuracy = item.attempted ? item.correct/item.attempted*100 : 0;
         return '<circle cx="' + xAt(index) + '" cy="' + yQuestions(item.attempted) + '" r="4" class="stats-question-dot"><title>' + item.attempted + ' preguntas</title></circle>' +
           '<circle cx="' + xAt(index) + '" cy="' + yAccuracy(accuracy) + '" r="4" class="stats-accuracy-dot"><title>' + Math.round(accuracy) + '% precisión</title></circle>' +
-          '<text x="' + xAt(index) + '" y="' + (height-16) + '" text-anchor="middle" class="chart-axis-label">Día ' + (index+1) + '</text>';
+          '<text x="' + xAt(index) + '" y="' + (height-26) + '" text-anchor="middle" class="chart-axis-label">' + (index+1) + '</text>';
       }).join("");
       chartMarkup = '<div class="stats-chart-scroll"><svg class="stats-line-chart stats-language-chart" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="Preguntas respondidas y precisión por día practicado">' +
-        grid + '<polyline class="stats-question-line" points="' + countPoints + '"/><polyline class="stats-accuracy-line" points="' + accuracyPoints + '"/>' + dots + '</svg></div>' +
+        grid + '<polyline class="stats-question-line" points="' + countPoints + '"/><polyline class="stats-accuracy-line" points="' + accuracyPoints + '"/>' + dots + '<text x="' + (left+plotWidth/2) + '" y="' + (height-4) + '" text-anchor="middle" class="chart-axis-title">Días</text></svg></div>' +
         '<div class="stats-chart-legend"><span><i class="legend-question"></i>Preguntas respondidas</span><span><i class="legend-accuracy"></i>Precisión (%)</span></div>' +
         '<p class="chart-note">Últimos ' + practicedDays.length + ' días practicados · sin días de inactividad.</p>';
     }
@@ -585,6 +587,7 @@ function renderAITutorTurn(result) {
   aiCurrentExercise = result.exercise || {};
   aiHintLevel = 0;
   aiHintPending = false;
+  aiEvaluationPending = false;
   $("hint-btn").disabled = false;
   $("hint-btn").textContent = "Pista";
   $("review-btn").disabled = false;
@@ -597,7 +600,8 @@ function renderAITutorTurn(result) {
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
 
-  const instruction = String(result.message || "").trim();
+  let instruction = String(result.message || "").trim();
+  if (/^(¡?muy bien!?|¡?excelente!?|¡?correcto!?|¡?perfecto!?)[.!\\s]*$/i.test(instruction)) instruction = "Continuemos con la siguiente actividad.";
   const instructionMarkup = instruction
     ? '<p class="exercise-instruction">' + escapeHTML(instruction) + '</p>' : "";
   const prompt = aiCurrentExercise.prompt
@@ -672,6 +676,7 @@ async function submitAITutorAnswer(answer) {
       acceptedAnswers: evaluatedExercise.acceptedAnswers || [],
       allowTypo: true
     });
+    aiEvaluationPending = true;
     showAnswerFeedback({
       correct: locallyCorrect,
       expected: evaluatedExercise.expectedAnswer || "",
@@ -679,8 +684,10 @@ async function submitAITutorAnswer(answer) {
       selected: cleanAnswer,
       options: evaluatedExercise.options || [],
       correctOption: evaluatedExercise.expectedAnswer || "",
-      showContinue: false
+      showContinue: true
     });
+    $("continue-answer").disabled = true;
+    $("continue-answer").textContent = "Preparando siguiente pregunta…";
     const conversationHistory = [
       ...aiHistory,
       { role: "assistant", content: JSON.stringify(aiLastResult) }
@@ -718,7 +725,7 @@ async function submitAITutorAnswer(answer) {
     const modelEvaluation = result.evaluation || {};
     const evaluation = {
       ...modelEvaluation,
-      status: locallyCorrect ? "correct" : (modelEvaluation.status === "not_applicable" ? "not_applicable" : "incorrect"),
+      status: locallyCorrect ? "correct" : "incorrect",
       feedback: locallyCorrect ? "" : (modelEvaluation.feedback || "La respuesta debe coincidir con una solución válida de la actividad.")
     };
     recordTutorEvaluation(session, {
@@ -734,6 +741,7 @@ async function submitAITutorAnswer(answer) {
       result, evaluation, exercise: evaluatedExercise, answer: cleanAnswer,
       routeIntegrationQuestion: Boolean(routeMode && routeIntegration && session.turn >= 11)
     };
+    aiEvaluationPending = false;
     showAnswerFeedback({
       correct: evaluation.status === "correct",
       expected: evaluatedExercise.expectedAnswer || "",
@@ -748,6 +756,7 @@ async function submitAITutorAnswer(answer) {
     $("error-count").textContent = session.errors.length;
     if (routeMode) saveRouteDraft();
   } catch (error) {
+    aiEvaluationPending = false;
     if (session === activeSession && !sessionAbortController?.signal.aborted) showAITutorError(error, cleanAnswer);
   }
 }
@@ -852,6 +861,7 @@ function saveRouteDraft() {
     aiLastResult,
     aiCurrentExercise,
     aiPendingFeedback,
+    routeIntegrationHintLevel,
     failed: session.turn >= 10 && !routeIntegration && session.correct < 8
   };
   try { localStorage.setItem(ROUTE_STORAGE_KEY + ":" + session.config.languageId, JSON.stringify(routeDraft)); } catch {}
@@ -884,6 +894,7 @@ function startRouteSession(resume = false) {
     aiLastResult = routeDraft.aiLastResult || null;
     aiCurrentExercise = routeDraft.aiCurrentExercise || null;
     aiPendingFeedback = routeDraft.aiPendingFeedback || null;
+    routeIntegrationHintLevel = Number(routeDraft.routeIntegrationHintLevel || 0);
   } else {
     session = createSession({
       language:catalog.label, languageId:catalog.id, languageLocale:catalog.locale,
@@ -899,6 +910,7 @@ function startRouteSession(resume = false) {
     aiLastResult = null;
     aiCurrentExercise = null;
     aiPendingFeedback = null;
+    routeIntegrationHintLevel = 0;
   }
   routeMode = true;
   session.config.routeMode = true;
@@ -947,8 +959,8 @@ function renderRouteIntegration() {
   const prompt = catalog.id === "en"
     ? "Translate into English: “Buenos días, me llamo Ana y soy de Chile.”"
     : "Traduza para o português: “Buenos días, me llamo Ana y soy de Chile.”";
-  const previous = pendingFeedback;
   pendingFeedback = null;
+  routeIntegrationHintLevel = Number(routeIntegrationHintLevel || 0);
   currentExercise = {
     id:"route-integration-fundamentals", prompt,
     target: catalog.id === "en" ? "Good morning, my name is Ana and I am from Chile." : "Bom dia, meu nome é Ana e sou do Chile.",
@@ -961,7 +973,7 @@ function renderRouteIntegration() {
   $("lesson-phase").textContent = "HITO INTEGRADOR";
   $("turn-count").textContent = "Actividad final";
   $("progress-bar").style.width = "100%";
-  $("lesson-content").innerHTML = (previous ? '<div class="feedback-note"><span>Respuesta anterior</span><p>' + renderVariantTerms(previous.text) + '</p><p class="model-answer">Respuesta modelo: ' + renderVariantTerms(previous.expected) + ' ' + speakerButton(previous.expected, catalog.locale) + '</p></div>' : '') + '<p class="eyebrow">UNIDAD 01 · FUNDAMENTOS</p><h3>' + escapeHTML(prompt) + '</h3><p>Combina lo practicado en los diez ejercicios anteriores.</p>';
+  $("lesson-content").innerHTML = '<p class="eyebrow">UNIDAD 01 · FUNDAMENTOS</p><h3>' + escapeHTML(prompt) + '</h3><p>Combina lo practicado en los diez ejercicios anteriores.</p>';
   bindSpeakerButtons($("lesson-content"));
   $("answer-area").innerHTML = '<textarea id="route-integration-answer" class="answer-input" rows="3" placeholder="Escribe tu presentación…"></textarea><button id="route-integration-submit" class="primary" type="button">Comprobar actividad</button>';
   $("route-integration-submit").addEventListener("click", () => {
@@ -975,9 +987,13 @@ function renderRouteIntegration() {
       finishSession();
     } else {
       routeIntegrationAttempts += 1;
+      routeIntegrationHintLevel = Math.min(routeIntegrationHintLevel + 1, 5);
+      const clues = catalog.id === "en" ? ["La respuesta tiene tres partes: saludo, nombre y procedencia.","Empieza con «Good morning».","Para decir tu nombre, usa «my name is Ana».","Para indicar procedencia, usa «I am from Chile».","Une las tres partes en una sola presentación."] : ["La respuesta tiene tres partes: saludo, nombre y procedencia.","Empieza con «Bom dia».","Para decir tu nombre, usa «meu nome é Ana».","Para indicar procedencia, usa «sou do Chile».","Une las tres partes en una sola presentación."];
       saveRouteDraft();
-      $("lesson-content").innerHTML = '<div class="feedback-note"><span>Actividad integradora</span><p>La presentación todavía necesita ajustes. Incluye saludo, nombre y procedencia; puedes volver a intentarlo.</p></div><h3>' + escapeHTML(prompt) + '</h3>';
+      $("feedback").innerHTML = '<p class="answer-status incorrect">Todavía no coincide. Inténtalo otra vez.</p><p class="answer-explanation">Pista ' + routeIntegrationHintLevel + '/5: ' + clues[routeIntegrationHintLevel-1] + '</p>';
+      $("feedback").classList.remove("hidden","bad");
       $("route-integration-answer").value = answer;
+      $("route-integration-answer").focus();
     }
   });
 }
@@ -1142,6 +1158,7 @@ function showAnswerFeedback({ correct, expected, expectedLocale, explanation, se
   bindTargetWords($("feedback"));
 }
 function continueAfterAnswer() {
+  if (aiEvaluationPending) return;
   $("feedback").classList.add("hidden");
   if (aiMode && aiPendingTurn) {
     const pending = aiPendingTurn;
