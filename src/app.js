@@ -1207,12 +1207,12 @@ function finishSession() {
   const hits = session.answers.filter(item => item.correct).map(item => item.submitted).filter(Boolean);
   const errors = summary.errors.map(item => '<li><span class="summary-submitted">' + escapeHTML(item.submitted) + '</span><span class="summary-arrow"> → </span><span class="summary-expected">' + escapeHTML(item.expected) + '</span></li>').join("");
   const vocabularyText = summary.vocabulary.map(item =>
-    '<li>' + escapeHTML(item.term) + ' ' + speakerButton(item.term, summaryLocale) + '</li>'
+    '<li>' + renderClickableTargetText(item.term) + ' ' + speakerButton(item.term, summaryLocale) + '</li>'
   ).join("");
   const focusItems = [...new Set([topicLabels[session.config.topic], ...summary.recommendedFocus, ...(summary.reviewPatterns || [])].filter(Boolean))];
   $("summary-content").innerHTML = '<h2 class="summary-title">Resumen</h2>' +
     '<section class="summary-section"><h3 class="summary-success-title">Aciertos</h3><ul>' +
-    (hits.map(item => '<li>' + escapeHTML(item) + '</li>').join("") || '<li>Sin aciertos registrados</li>') + '</ul></section>' +
+    (hits.map(item => '<li>' + renderClickableTargetText(item) + '</li>').join("") || '<li>Sin aciertos registrados</li>') + '</ul></section>' +
     '<section class="summary-section"><h3 class="summary-error-title">Errores</h3><ul>' +
     (errors || '<li>Sin errores</li>') + '</ul></section>' +
     '<section class="summary-section"><h3>Vocabulario</h3><ul>' +
