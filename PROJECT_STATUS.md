@@ -603,7 +603,7 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 
 - [x] Se prioriza el motor local cuando el paquete del idioma contiene ejercicios suficientes para la sesión; la IA en tiempo real queda como respaldo para catálogos insuficientes.
 
-- [x] Tests unitarios y análisis estático: [44570456063](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44570456063) — success.
-- [x] Browser E2E: [44570456053](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44570456053) — success.
-- [x] Render manual deploy LIVE: [dep-dbvihnafngtc73cctgr0](https://dashboard.render.com/web/srv-dbus3hnf3r2c739j9ir0/deploys/dep-dbvihnafngtc73cctgr0), commit 6857c44.
+- [x] Tests unitarios y análisis estático: [44570968240](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44570968240) — success.
+- [x] Browser E2E: [44570968307](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44570968307) — success.
+- [x] Render manual deploy LIVE: [dep-dbviiv60tbcc738k7o2g](https://dashboard.render.com/web/srv-dbus3hnf3r2c739j9ir0/deploys/dep-dbviiv60tbcc738k7o2g), commit d41a7cb532c02cb90153e41b877dfeaf5ba212e2.
 - [ ] Prueba humana Android y revisión de calidad pedagógica por idioma.
