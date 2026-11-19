@@ -512,7 +512,7 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 
 ## Iteración funcional — 18-11-2026
 
-**Estado: implementación parcial; pendiente CI y prueba humana.**
+**Estado: implementación parcial; CI y Browser E2E aprobados; preview desplegado; prueba humana pendiente.**
 
 - [x] La evaluación local acepta `expectedAnswer` además de `target`, y admite tolerancia de un error tipográfico cuando el ejercicio lo habilita.
 - [x] La interfaz de ejercicios IA presenta feedback determinista inmediato antes de esperar la respuesta del tutor para preparar la siguiente actividad.
@@ -525,9 +525,10 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] README y plan de prueba humana actualizados en esta iteración.
 - [x] Ampliar Teoría con artículos comparativos para inglés, portugués brasileño, francés y alemán; vocabulario y expresiones aplicados para inglés y portugués brasileño.
 - [ ] Completar la auditoría pedagógica de los demás idiomas: aún hay categorías de vocabulario/expresiones con contenido genérico y artículos sin suficiente detalle.
-- [ ] Ejecutar tests y Browser E2E sobre el commit final; no inferir aprobación por cambios de código.
+- [x] Tests automatizados aprobados en el commit desplegado.
+- [x] Browser E2E aprobado en el commit desplegado.
 - [ ] Validar latencia, corrección y consulta de palabras en Android real.
-- [ ] Desplegar manualmente a Render tras aprobar CI y comprobar el estado Live.
+- [x] Desplegar manualmente a Render; deploy `dep-dbv59grl550s738ontg0` confirmado `live`.
 
 **Riesgos conocidos:** la corrección inmediata de ejercicios IA utiliza la lista cerrada de respuestas aceptadas para evitar falsos positivos. Si el tutor no incluye una variante válida en `acceptedAnswers`, podría producir un falso negativo; por eso debe probarse con respuestas equivalentes reales y ampliar el conjunto de variantes donde corresponda.
 
@@ -548,3 +549,7 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] La paleta del gráfico se genera por cantidad de idiomas, evitando repetir los ocho colores iniciales.
 
 - [x] Se corrigieron las referencias restantes a la paleta anterior en puntos y leyenda del gráfico.
+
+**Último commit desplegado:** `459e10c46861aa31a344db1e14b424bdfee2ccad`  
+**Preview:** https://adaptive-language-tutor-preview-5b3d.onrender.com/  
+**Siguiente validación:** prueba humana Android; completar Teoría en los idiomas restantes.
