@@ -21,7 +21,7 @@ test("optional typo tolerance accepts a single spelling slip only when enabled",
   const strictExercise = { target: "Buongiorno a tutti", acceptedAnswers: [] };
   assert.equal(evaluateAnswer("Buongiorno a titti", strictExercise), false);
   assert.equal(evaluateAnswer("Buongiorno a titti", { ...strictExercise, allowTypo: true }), true);
-  assert.equal(evaluateAnswer("Buongiorno a tittti", { ...strictExercise, allowTypo: true }), false);
+  assert.equal(evaluateAnswer("Buongiorno a tttta", { ...strictExercise, allowTypo: true }), false);
 });
 
 test("AI-style expectedAnswer is evaluated against its accepted answer set", () => {
