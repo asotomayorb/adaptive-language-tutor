@@ -56,10 +56,38 @@ export function createSession(config) {
   };
 }
 
+function oneTypoAway(left, right) {
+  const a = normalize(left), b = normalize(right);
+  if (!a || !b) return false;
+  const aWords = a.split(" "), bWords = b.split(" ");
+  if (aWords.length !== bWords.length) return false;
+  let changedWords = 0;
+  for (let index = 0; index < aWords.length; index += 1) {
+    const x = aWords[index], y = bWords[index];
+    if (x === y) continue;
+    if (++changedWords > 1 || Math.min(x.length, y.length) < 4 || Math.abs(x.length - y.length) > 1) return false;
+    let i = 0, j = 0, edits = 0;
+    while (i < x.length && j < y.length) {
+      if (x[i] === y[j]) { i += 1; j += 1; continue; }
+      if (++edits > 1) return false;
+      if (x.length === y.length) { i += 1; j += 1; }
+      else if (x.length > y.length) i += 1;
+      else j += 1;
+    }
+    if (i < x.length || j < y.length) edits += 1;
+    if (edits > 1) return false;
+  }
+  return changedWords === 1;
+}
+
 export function evaluateAnswer(rawAnswer, exercise) {
   const answer = normalize(rawAnswer);
-  const accepted = [exercise.target, ...(exercise.acceptedAnswers || [])].map(normalize);
-  return answer.length > 0 && accepted.includes(answer);
+  const accepted = [exercise.target ?? exercise.expectedAnswer, ...(exercise.acceptedAnswers || [])]
+    .filter(value => typeof value === "string" && value.trim())
+    .map(normalize);
+  if (!answer) return false;
+  if (accepted.includes(answer)) return true;
+  return exercise.allowTypo === true && accepted.some(expected => oneTypoAway(answer, expected));
 }
 
 export function recordAnswer(session, exercise, rawAnswer) {
