@@ -459,3 +459,14 @@
 }
 
 .exercise-illustration>svg{display:block;flex:0 0 48px;width:48px;height:48px;border-radius:12px}
+
+
+/* Refinamiento solicitado: gráficos, jerarquía de ejercicio y notas de teoría */
+.lesson-panel .lesson-meta{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.lesson-panel #lesson-phase{margin:0;font-size:11px;letter-spacing:.8px;color:#526b88}
+.lesson-panel #turn-count{margin-left:auto;text-align:right;font-size:12px;font-weight:750;color:#52657d;white-space:nowrap}
+.theory-note{margin:14px 0;padding:13px 15px;border-left:3px solid #9aafc7;border-radius:8px;background:#f5f7fa;color:#52657d}
+.theory-note>strong{display:block;margin-bottom:5px;font-size:11px;letter-spacing:.45px;text-transform:uppercase;color:#425b78}
+.theory-note>p{margin:0;font-size:13px;line-height:1.6}
+.theory-example{margin-top:16px}
+.theory-example>p{font-weight:650}
