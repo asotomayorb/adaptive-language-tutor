@@ -234,3 +234,5 @@ Para cada escenario registrar:
 - [ ] En Android, probar la consulta contextual por palabra y esperar la traducción final (no solo el indicador de carga).
 
 - [ ] Dentro de una alternativa, tocar una palabra muestra su traducción sin seleccionar la respuesta; tocar el resto de la tarjeta sí selecciona la alternativa.
+
+- [ ] En las consignas locales marcadas en idioma objetivo, seleccionar palabras muestra traducción; las consignas de apoyo en español no deben tratarse como texto objetivo.
