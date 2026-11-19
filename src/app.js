@@ -330,7 +330,7 @@ function refreshDashboard() {
   const rows = [["Sesiones","sessions"],["Palabras","words"],["Precisión","accuracy","%"],["Progreso de Ruta","routePercent","%"]];
   const body = '<tbody>' + rows.map(([label,key,suffix=""]) =>
     '<tr><th scope="row">' + label + '</th>' + metrics.map(item => '<td>' + item[key] + suffix + '</td>').join("") + '</tr>').join("") + '</tbody>';
-  const colors = ["#2878b8","#d97736","#26866a","#8b68b5","#c04d68","#718096","#b39a2f","#3d9ba5"];
+  const colorFor = index => "hsl(" + Math.round(index * 360 / Math.max(metrics.length, 1)) + " 62% 42%)";
   const daily = new Map();
   for (const item of progress.sessions) {
     if (!item.completedAt || !item.languageId) continue;
@@ -353,7 +353,7 @@ function refreshDashboard() {
       return records.length ? records.reduce((sum,value)=>sum+value,0)/records.length : null;
     });
     const points=values.map((value,i)=>value===null?null:xAt(i)+","+yAt(value)).filter(Boolean);
-    return points.length ? '<polyline class="stats-line" stroke="' + colors[index%colors.length] + '" points="' + points.join(" ") + '"/>' +
+    return points.length ? '<polyline class="stats-line" stroke="' + colorFor(index) + '" points="' + points.join(" ") + '"/>' +
       values.map((value,i)=>value===null?"":'<circle cx="' + xAt(i) + '" cy="' + yAt(value) + '" r="3.5" fill="' + colors[index%colors.length] + '"/>').join("") : "";
   }).join("");
   const labels = days.length ? '<text x="' + left + '" y="' + (height-5) + '" class="chart-axis-label">' + days[0] + '</text>' +
