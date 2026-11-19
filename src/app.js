@@ -232,6 +232,7 @@ let aiCurrentExercise = null;
 let aiHintLevel = 0;
 let aiHintPending = false;
 let aiEvaluationPending = false;
+let aiContinueRequested = false;
 let routeIntegrationHintLevel = 0;
 let sessionFinished = false;
 let selectedExerciseMode = "global";
@@ -588,6 +589,7 @@ function renderAITutorTurn(result) {
   aiHintLevel = 0;
   aiHintPending = false;
   aiEvaluationPending = false;
+  aiContinueRequested = false;
   $("hint-btn").disabled = false;
   $("hint-btn").textContent = "Pista";
   $("review-btn").disabled = false;
@@ -677,6 +679,7 @@ async function submitAITutorAnswer(answer) {
       allowTypo: true
     });
     aiEvaluationPending = true;
+    aiContinueRequested = false;
     showAnswerFeedback({
       correct: locallyCorrect,
       expected: evaluatedExercise.expectedAnswer || "",
@@ -686,8 +689,6 @@ async function submitAITutorAnswer(answer) {
       correctOption: evaluatedExercise.expectedAnswer || "",
       showContinue: true
     });
-    $("continue-answer").disabled = true;
-    $("continue-answer").textContent = "Preparando siguiente pregunta…";
     const conversationHistory = [
       ...aiHistory,
       { role: "assistant", content: JSON.stringify(aiLastResult) }
@@ -755,8 +756,13 @@ async function submitAITutorAnswer(answer) {
     $("word-count").textContent = session.vocabulary.length;
     $("error-count").textContent = session.errors.length;
     if (routeMode) saveRouteDraft();
+    if (aiContinueRequested) {
+      aiContinueRequested = false;
+      continueAfterAnswer();
+    }
   } catch (error) {
     aiEvaluationPending = false;
+    aiContinueRequested = false;
     if (session === activeSession && !sessionAbortController?.signal.aborted) showAITutorError(error, cleanAnswer);
   }
 }
@@ -1161,7 +1167,15 @@ function showAnswerFeedback({ correct, expected, expectedLocale, explanation, se
   bindTargetWords($("feedback"));
 }
 function continueAfterAnswer() {
-  if (aiEvaluationPending) return;
+  if (aiEvaluationPending) {
+    aiContinueRequested = true;
+    const button = $("continue-answer");
+    if (button) {
+      button.disabled = true;
+      button.textContent = "Continuando…";
+    }
+    return;
+  }
   $("feedback").classList.add("hidden");
   if (aiMode && aiPendingTurn) {
     const pending = aiPendingTurn;
