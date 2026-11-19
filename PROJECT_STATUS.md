@@ -583,3 +583,5 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] Nivel de pista guardado en el borrador de Ruta para continuar tras recargar.
 
 - [x] «Continuar» permanece habilitado mientras se prepara el siguiente turno; un toque anticipado se encola y avanza automáticamente al terminar la solicitud.
+
+- [x] El control «Pista» se muestra explícitamente durante el hito integrador de Ruta; las acciones auxiliares permanecen ocultas en el resto de la sesión.
