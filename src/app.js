@@ -36,7 +36,6 @@ const catalogs = Object.fromEntries(Object.entries(languageDefinitions).map(([na
 const speech = createSpeechController({ onStatus: updateAudioStatus });
 function updateAudioStatus(status) {
   const toggles = [document.getElementById("audio-toggle"), document.getElementById("session-audio-toggle")].filter(Boolean);
-  const label = document.getElementById("audio-status");
   toggles.forEach(toggle => {
     toggle.textContent = status.enabled ? "🔊" : "🔇";
     toggle.setAttribute("aria-pressed", String(status.enabled));
@@ -44,14 +43,8 @@ function updateAudioStatus(status) {
     toggle.title = status.enabled ? "Audio activado" : "Audio desactivado";
     toggle.classList.toggle("audio-off", !status.enabled);
   });
-  if (label) {
-    label.textContent = !status.supported
-      ? "Este navegador no ofrece lectura de voz; puedes continuar practicando por escrito."
-      : status.fallback
-        ? "No hay una voz instalada para " + status.locale + "; se usará la voz predeterminada del dispositivo."
-        : status.error ? "La voz seleccionada no pudo reproducir este fragmento." : "";
-  }
 }
+
 function toggleAudio() {
   const enabled = speech.setEnabled(!speech.enabled);
   if (enabled) {
@@ -235,7 +228,7 @@ let aiEvaluationPending = false;
 let aiContinueRequested = false;
 let routeIntegrationHintLevel = 0;
 let sessionFinished = false;
-let selectedExerciseMode = "global";
+let selectedExerciseMode = "practice";
 let sessionAbortController = null;
 let routeMode = false;
 let routeIntegration = false;
@@ -1339,8 +1332,10 @@ function showScreen(name) {
   if (name === "exercises") {
     $("exercise-choice-panel").classList.remove("hidden");
     $("review-exercises").classList.add("hidden");
-    selectedExerciseMode = "global";
-    document.querySelectorAll("[data-mode]").forEach(item => item.classList.toggle("selected", item.dataset.mode === "global"));
+    selectedExerciseMode = "practice";
+    document.querySelectorAll("[data-mode]").forEach(item => item.classList.toggle("selected", item.dataset.mode === "practice"));
+    $("screen-exercises").classList.remove("review-selected");
+    $("start-session").textContent = "Comenzar práctica";
     $("topic").disabled = false;
   }
   if (name === "stats") refreshDashboard();
@@ -1358,7 +1353,7 @@ function showSessionView(mode) {
   document.querySelectorAll(".app-screen").forEach(screen => screen.classList.add("hidden"));
   $("session-view").classList.remove("hidden");
   $("app-shell").classList.add("session-active");
-  $("session-mode-label").textContent = mode === "review" ? "Repaso" : "Global";
+  $("session-mode-label").textContent = mode === "review" ? "Repaso" : "Práctica";
   window.scrollTo(0, 0);
 }
 function closeSessionAndReturn() {
@@ -1394,7 +1389,10 @@ document.querySelectorAll("[data-mode]").forEach(button => button.addEventListen
   selectedExerciseMode = button.dataset.mode;
   document.querySelectorAll("[data-mode]").forEach(item => item.classList.toggle("selected", item === button));
   $("review-exercises").classList.toggle("hidden", selectedExerciseMode !== "review");
+  $("screen-exercises").classList.toggle("review-selected", selectedExerciseMode === "review");
   $("topic").disabled = selectedExerciseMode === "review";
+  $("start-session").textContent = selectedExerciseMode === "review" ? "Comenzar repaso" : "Comenzar práctica";
+  $("ai-status").classList.remove("hidden");
   if (selectedExerciseMode === "review") refreshDashboard();
 }));
 $("route-start-exercises")?.addEventListener("click", () => showScreen("exercises"));
