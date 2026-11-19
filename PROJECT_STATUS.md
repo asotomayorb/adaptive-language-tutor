@@ -519,7 +519,7 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] El prompt del tutor exige consignas en idioma objetivo y actividades integradoras cerradas.
 - [x] Ruta evita reutilizar ejercicios respondidos y busca ejercicios aún no usados en el catálogo completo antes de finalizar por agotamiento.
 - [x] Hito integrador local usa una tarea de traducción delimitada en lugar de una presentación abierta.
-- [x] Resumen reducido a Aciertos, Errores, Vocabulario y Temas.
+- [x] Resumen reducido a un único título (Resumen) y los apartados Aciertos, Errores, Vocabulario y Temas.
 - [x] Estadísticas comparativas por idioma y gráfico lineal de precisión diaria.
 - [x] Palabras de texto objetivo seleccionables: se muestra la traducción registrada o se solicita una traducción contextual al tutor IA cuando hace falta.
 - [x] README y plan de prueba humana actualizados en esta iteración.
@@ -530,3 +530,5 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [ ] Desplegar manualmente a Render tras aprobar CI y comprobar el estado Live.
 
 **Riesgos conocidos:** la corrección inmediata de ejercicios IA utiliza la lista cerrada de respuestas aceptadas para evitar falsos positivos. Si el tutor no incluye una variante válida en `acceptedAnswers`, podría producir un falso negativo; por eso debe probarse con respuestas equivalentes reales y ampliar el conjunto de variantes donde corresponda.
+
+- [x] E2E ampliado para probar traducción contextual por palabra y la vista de Estadísticas.
