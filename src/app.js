@@ -738,7 +738,7 @@ function renderAITutorTurn(result) {
   const aiOptions = Array.isArray(aiCurrentExercise.options) ? aiCurrentExercise.options : [];
   const aiShouldUseChoices = routeMode ? !routeIntegration && aiRoutePhase?.id !== "sentences" : session.turn < 3;
   const aiHasChoices = aiShouldUseChoices && aiOptions.length === 3 && aiOptions.some(option => String(option).trim().toLocaleLowerCase() === String(aiCurrentExercise.expectedAnswer || "").trim().toLocaleLowerCase());
-  $("hint-btn").hidden = aiHasChoices;
+  $("hint-btn").hidden = aiShouldUseChoices;
   $("hint-btn").textContent = "Pista";
   $("review-btn").hidden = true;
 
