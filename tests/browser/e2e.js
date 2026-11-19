@@ -257,6 +257,9 @@ try {
   await aiPage.waitForFunction(() => window.__spoken.some(item => item.text === "Bonjour" && item.lang === "fr-FR"));
   assert.equal(await aiPage.evaluate(() => window.__spoken.some(item => item.text.includes("Instrucción en español"))), false,
     "mixed AI speech must ignore source-language segments");
+  await aiPage.locator("#answer-area [data-ai-choice]").first().locator(".target-word-link").click();
+  await aiPage.locator("#answer-area .word-translation").waitFor({ state: "visible" });
+  assert.equal(await aiPage.locator("#feedback .answer-status").count(), 0, "word translation should not submit the answer choice");
   await aiPage.locator("#answer-area [data-ai-choice]").first().evaluate(button => button.click());
   await aiPage.locator("#feedback .answer-status.correct").waitFor({ state: "visible" });
   await aiPage.locator("#answer-area #continue-answer").waitFor({ state: "visible" });
