@@ -411,3 +411,38 @@ Pendiente de esta revisión:
 - Preview: https://adaptive-language-tutor-preview-5b3d.onrender.com/
 - Validación automatizada del commit: Tests y Browser E2E aprobados.
 - Pendiente: prueba humana en Android y completar teoría de los idiomas restantes.
+
+
+## Iteración UI y aprendizaje — estadísticas, consignas y repaso
+
+- **Estadísticas / selector de gráfico:** vista 🌐 Global con barras de precisión actual por idioma y línea horizontal punteada de promedio global; cada idioma tiene una vista propia con dos series (preguntas respondidas y precisión), agrupadas por día practicado y limitadas a los últimos 15 días activos. El eje X usa «Día 1…Día 15», sin fechas de calendario ni huecos por inactividad.
+- **Tabla de estadísticas:** conserva sesiones, palabras, precisión y progreso de Ruta por idioma.
+- **Ejercicios:** elimina las traducciones emergentes al pulsar palabras. La instrucción en español se muestra separada del texto o frase de la actividad en idioma objetivo. El tutor IA recibe la misma regla para sus siguientes actividades.
+- **Resumen:** Aciertos y Errores muestran su recuento sobre el total (p. ej. 3/5); la lista de errores conserva respuesta enviada y solución.
+- **Repaso:** una respuesta incorrecta deja la tarjeta vencida y pendiente; una respuesta correcta la programa para el siguiente intervalo.
+- **Pruebas:** E2E verifica el selector global/idioma, los gráficos, la separación de instrucciones y la ausencia de traducciones emergentes; tests de almacenamiento verifican que los errores sigan pendientes hasta corregirse.
+
+### Esquema de pantallas
+
+```text
+APP
+├── Ruta
+│   └── Unidad / progreso / continuar
+├── Ejercicios
+│   ├── Global
+│   │   └── configuración → pregunta → corrección → Resumen
+│   └── Repaso
+│       └── palabra pendiente → respuesta → intervalo (solo si acierta)
+├── 🌐 Selector de idioma
+├── Teoría
+│   ├── Gramática
+│   ├── Vocabulario
+│   └── Expresiones
+└── Estadísticas
+    ├── Tabla comparativa por idioma
+    └── Selector de gráfico
+        ├── 🌐 Global: barras + promedio punteado
+        └── Idioma: preguntas/día + precisión/día (últimos 15 días practicados)
+```
+
+La barra inferior mantiene cinco posiciones: Ruta · Ejercicios · Selector de idioma · Teoría · Estadísticas.
