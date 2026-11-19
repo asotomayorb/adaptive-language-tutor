@@ -382,3 +382,7 @@ Pendiente de esta revisión:
 - Teoría: artículos con tablas comparativas para inglés, portugués brasileño, francés y alemán; vocabulario y expresiones aplicados para inglés y portugués brasileño.
 
 - La consulta por palabra incorpora traducción contextual bajo demanda cuando el proveedor IA está configurado; las traducciones locales registradas se muestran sin solicitud adicional.
+
+- El resumen no conserva el encabezado redundante «Sesión completada»: «Resumen» es el único título del contenido.
+- El flujo de traducción por palabra es bajo demanda y usa el contexto de la frase cuando no hay una traducción local.
+- E2E actualizado para esperar la respuesta de traducción contextual y verificar la tabla/gráfico de Estadísticas.
