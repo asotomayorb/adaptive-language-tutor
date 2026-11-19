@@ -613,7 +613,7 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 
 ### Implementado en la rama activa
 - Ruta con cuatro unidades por tema: Fundamentos, Viajes y orientación, Comida y restaurantes, Trabajo y estudios.
-- Desbloqueo secuencial por finalización y estrellas de la unidad previa. Umbrales: unidad 2 = 3 estrellas en unidad 1; unidad 3 = 5 estrellas en unidad 2; unidad 4 = 4 estrellas en unidad 3.
+- Desbloqueo secuencial por finalización y estrellas de la unidad previa. Umbrales: unidad 2 = 3 estrellas en unidad 1; unidad 3 = 5 estrellas en unidad 2; unidad 4 = 3 estrellas en unidad 3 (umbral alcanzable con el conjunto actual de tres preguntas).
 - Puntaje de 0–5 estrellas basado en precisión; resumen por unidad y persistencia por idioma. Se conserva el mejor porcentaje/estrellas de cada unidad; repetirla con un resultado inferior no reduce el avance ni vuelve a bloquear unidades.
 - Ruta organiza actividades en vocabulario/conjugaciones, contexto y frases completas. En catálogos locales, los temas se corresponden con los ejercicios disponibles; en idiomas con IA, el tutor genera contenido por tema.
 - Reinicio de Ruta con diálogo de confirmación; borra solo el progreso de Ruta del idioma activo.
