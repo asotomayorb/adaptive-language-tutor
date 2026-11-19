@@ -702,11 +702,12 @@ function renderAITutorTurn(result) {
   $("hint-btn").disabled = false;
   $("hint-btn").textContent = "Pista";
   $("review-btn").disabled = false;
-  $("lesson-phase").textContent = routeMode && routeIntegration ? "HITO INTEGRADOR" : "TUTOR IA · CONVERSACIÓN";
+  const aiRoutePhase = routeMode && !routeIntegration ? getRoutePhase(Math.min(session.turn,routeQuestionCount-1),routeQuestionCount) : null;
+  $("lesson-phase").textContent = routeMode ? routeIntegration ? "HITO INTEGRADOR" : aiRoutePhase.label : "TUTOR IA · CONVERSACIÓN";
   $("turn-count").textContent = routeMode && routeIntegration
     ? "Actividad integradora"
-    : "Pregunta " + Math.min(session.turn + 1, session.config.duration) + " / " + session.config.duration;
-  $("progress-bar").style.width = (session.turn / session.config.duration * 100) + "%";
+    : "Pregunta " + Math.min(session.turn + 1, routeMode ? routeQuestionCount : session.config.duration) + " / " + (routeMode ? routeQuestionCount : session.config.duration);
+  $("progress-bar").style.width = (session.turn / (routeMode ? routeQuestionCount : session.config.duration) * 100) + "%";
   $("streak").textContent = session.streak;
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
@@ -735,7 +736,8 @@ function renderAITutorTurn(result) {
   autoSpeak(questionSpeech.text, questionSpeech.locale);
   $("feedback").classList.add("hidden");
   const aiOptions = Array.isArray(aiCurrentExercise.options) ? aiCurrentExercise.options : [];
-  const aiHasChoices = session.turn < 3 && aiOptions.length === 3 && aiOptions.some(option => String(option).trim().toLocaleLowerCase() === String(aiCurrentExercise.expectedAnswer || "").trim().toLocaleLowerCase());
+  const aiShouldUseChoices = routeMode ? aiRoutePhase.id !== "sentences" : session.turn < 3;
+  const aiHasChoices = aiShouldUseChoices && aiOptions.length === 3 && aiOptions.some(option => String(option).trim().toLocaleLowerCase() === String(aiCurrentExercise.expectedAnswer || "").trim().toLocaleLowerCase());
   $("hint-btn").hidden = aiHasChoices;
   $("hint-btn").textContent = "Pista";
   $("review-btn").hidden = true;
@@ -746,7 +748,7 @@ function renderAITutorTurn(result) {
     return;
   }
 
-  if (session.turn < 3) {
+  if (aiShouldUseChoices) {
     const options = Array.isArray(aiCurrentExercise.options) ? aiCurrentExercise.options : [];
     const validClosedChoice = Boolean(aiCurrentExercise.prompt && String(aiCurrentExercise.expectedAnswer || "").trim() &&
       options.length === 3 && options.some(option => String(option).trim().toLocaleLowerCase() === String(aiCurrentExercise.expectedAnswer).trim().toLocaleLowerCase()));
@@ -825,9 +827,9 @@ async function submitAITutorAnswer(answer) {
       history: conversationHistory,
       userMessage: cleanAnswer + (routeMode && session.turn + 1 === routeQuestionCount
         ? " Esta respuesta completa la unidad. La siguiente actividad debe ser una tarea integradora escrita que combine el tema completo; no incluyas alternativas."
-        : session.turn + 1 < 3
+        : (routeMode ? getRoutePhase(Math.min(session.turn + 1,routeQuestionCount-1),routeQuestionCount).id !== "sentences" : session.turn + 1 < 3)
           ? " La próxima actividad debe ser una pregunta de selección múltiple con tres alternativas plausibles en exercise.options."
-          : " Desde ahora la próxima actividad debe requerir que escriba la respuesta, sin alternativas.") + " Mantén las instrucciones en español (idioma origen) dentro de message y separa el texto a evaluar en exercise.prompt; nunca mezcles una orden en idioma objetivo con la frase preguntada. Incluye una pista breve y una respuesta esperada verificable; la interfaz revelará la solución como segunda ayuda."
+          : " La próxima actividad debe requerir que escriba la respuesta, sin alternativas.") + " Mantén las instrucciones en español (idioma origen) dentro de message y separa el texto a evaluar en exercise.prompt; nunca mezcles una orden en idioma objetivo con la frase preguntada. Incluye una pista breve y una respuesta esperada verificable; la interfaz revelará la solución como segunda ayuda."
     }, undefined, { signal: sessionAbortController?.signal });
     if (session !== activeSession || sessionAbortController?.signal.aborted) return;
     aiHistory = [
