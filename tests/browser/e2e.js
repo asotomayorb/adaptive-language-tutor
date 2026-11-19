@@ -142,6 +142,7 @@ try {
   await page.locator("#start-session").waitFor({ state: "attached" });
   await page.locator("#duration").selectOption("5");
   await page.locator("#start-session").click();
+  assert.equal(await page.locator("#session-status").innerText(), "Práctica local", "available local content should avoid a live AI round trip");
   assert.equal(await page.locator("#lesson-content .exercise-instruction").innerText(), "Escucha la frase en portugués y elige su significado en español.");
   assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text.startsWith("Escucha la frase") && item.lang === "es-CL")), "exercise instructions should be spoken in Spanish");
   assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "Bom dia" && item.lang === "pt-BR")), "the target phrase should be spoken in Portuguese");
