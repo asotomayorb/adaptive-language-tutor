@@ -325,6 +325,7 @@ Para cada escenario registrar:
 - [ ] Cerrar Ruta después de responder una pregunta, volver a abrir y confirmar que continúa en la misma unidad y turno.
 - [ ] Completar una unidad, revisar el porcentaje y las estrellas guardadas en su tarjeta.
 - [ ] Repetir una unidad completada y comprobar que se puede mejorar su puntaje.
+- [ ] Repetir una unidad con un resultado inferior y confirmar que conserva las estrellas del mejor intento y no vuelve a bloquear las unidades ya desbloqueadas.
 - [ ] Pulsar Reiniciar ruta: aparece confirmación. Cancelar conserva las estrellas; confirmar borra solo el avance de Ruta del idioma activo.
 - [ ] Tras reiniciar, confirmar que vuelve a quedar disponible solo la primera unidad y que el historial/estadísticas de Ejercicios se conserva.
 - [ ] En un idioma no local con tutor IA, comprobar que aparecen las cuatro unidades y que cada una genera contenido del tema correspondiente. Si IA no está configurada, la ruta debe indicar que está en preparación.
