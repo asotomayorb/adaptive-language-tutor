@@ -1,7 +1,7 @@
 # Registro de estado del proyecto — Adaptive Language Tutor
 
-**Última actualización:** 17-11-2026  
-**Rama:** `feature/ai-tutor-pedagogy`  
+**Última actualización:** 18-11-2026  
+**Rama activa de preview:** `feature/mobile-bottom-navigation`  
 **Pull request:** [#2 – Improve adaptive tutor pedagogy and AI integration](https://github.com/asotomayorb/adaptive-language-tutor/pull/2)  
 **Estado global:** sesiones reales Gemini aprobadas en `pt-BR` y `fr-FR` (3 turnos y 5 fragmentos de voz por idioma); una sesión real adicional de navegador en francés completó persistencia y exportación. Tests unitarios (71) y Browser E2E aprobados en el commit `2425e81` (runs [#44127681116](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44127681116) y [#44127681802](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44127681802)). Se añadió repaso espaciado de patrones lingüísticos mediante autoevaluación, incluyendo conversaciones libres sin respuesta única, y pistas adicionales generadas bajo demanda sin consumir turnos, con reproducción manual de sus fragmentos en el idioma objetivo. La comprobación inicial de salud tiene timeout de 5 s; se corrigió la exposición de archivos estáticos y se añadieron pruebas de rutas privadas y cabeceras de seguridad. Audio TTS está parcialmente implementado y probado en Chromium; la validación auditiva en dispositivos reales y la revisión de seguridad siguen pendientes. No declarar listo para prueba humana amplia ni desplegar públicamente todavía.
 
@@ -509,3 +509,23 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] Browser E2E aprobado en run `44424442327`, incluyendo banner único de Ruta, locución por locale, exclusión de fragmentos en español en el audio objetivo y desaparición del botón de envío de texto.
 - [x] Render preview `live` con código `32673f0`, deploy `dep-dbv3kuhsrm7s73bap9n0`.
 - [ ] Validación manual Android: comprobar voz real, pausas en huecos, apariencia y áreas táctiles.
+
+## Iteración funcional — 18-11-2026
+
+**Estado: implementación parcial; pendiente CI y prueba humana.**
+
+- [x] La evaluación local acepta `expectedAnswer` además de `target`, y admite tolerancia de un error tipográfico cuando el ejercicio lo habilita.
+- [x] La interfaz de ejercicios IA presenta feedback determinista inmediato antes de esperar la respuesta del tutor para preparar la siguiente actividad.
+- [x] El prompt del tutor exige consignas en idioma objetivo y actividades integradoras cerradas.
+- [x] Ruta evita reutilizar ejercicios respondidos y busca ejercicios aún no usados en el catálogo completo antes de finalizar por agotamiento.
+- [x] Hito integrador local usa una tarea de traducción delimitada en lugar de una presentación abierta.
+- [x] Resumen reducido a Aciertos, Errores, Vocabulario y Temas.
+- [x] Estadísticas comparativas por idioma y gráfico lineal de precisión diaria.
+- [x] Palabras de texto objetivo seleccionables con traducción cuando existe un término coincidente en el vocabulario disponible.
+- [x] README y plan de prueba humana actualizados en esta iteración.
+- [ ] Ampliar el contenido pedagógico de Teoría a todos los idiomas: las tablas más completas siguen siendo desiguales entre idiomas y el contenido de vocabulario/expresiones aún no es suficiente.
+- [ ] Ejecutar tests y Browser E2E sobre el commit final; no inferir aprobación por cambios de código.
+- [ ] Validar latencia, corrección y consulta de palabras en Android real.
+- [ ] Desplegar manualmente a Render tras aprobar CI y comprobar el estado Live.
+
+**Riesgos conocidos:** la corrección inmediata de ejercicios IA utiliza la lista cerrada de respuestas aceptadas para evitar falsos positivos. Si el tutor no incluye una variante válida en `acceptedAnswers`, podría producir un falso negativo; por eso debe probarse con respuestas equivalentes reales y ampliar el conjunto de variantes donde corresponda.
