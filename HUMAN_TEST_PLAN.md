@@ -238,3 +238,5 @@ Para cada escenario registrar:
 - [ ] En las consignas locales marcadas en idioma objetivo, seleccionar palabras muestra traducción; las consignas de apoyo en español no deben tratarse como texto objetivo.
 
 - [ ] Confirmar que cada acierto se resalta en verde y cada respuesta errónea en rojo, incluida la respuesta modelo.
+
+- [ ] Probar selección de palabras en chino, japonés o tailandés: cada unidad léxica debe ser seleccionable por separado y mostrar traducción contextual.
