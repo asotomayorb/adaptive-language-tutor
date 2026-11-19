@@ -222,6 +222,7 @@ let reviewMode = false;
 let progress = loadProgress();
 let dueReviewCards = [];
 let reviewIndex = 0;
+let reviewHintLevel = 0;
 let reviewProgressDraft = null;
 let aiConfigured = false;
 let aiReady = false;
@@ -361,11 +362,12 @@ function refreshDashboard() {
     const stats = getProgressStats(progress, language.id);
     let routePercent = 0;
     try {
-      if (localStorage.getItem("adaptive-language-tutor.route-completed:" + language.id) === "true") routePercent = 100;
-      else {
-        const draft = JSON.parse(localStorage.getItem(ROUTE_STORAGE_KEY + ":" + language.id) || "null");
-        routePercent = Math.min(100, Math.round(((draft?.session?.turn || 0) / 11) * 100));
-      }
+      const routeState = getRouteProgressForLanguage(language.id);
+      const routeUnits = getRouteUnitsForCatalog(languageDefinitions && Object.values(languageDefinitions).find(item => item.id === language.id)?.catalog || { exercises:[] });
+      const completedUnits = routeUnits.filter(unit => routeState.completedUnits?.[unit.id]?.completed).length;
+      routePercent = routeUnits.length ? Math.round(completedUnits / routeUnits.length * 100) : 0;
+      const draft = JSON.parse(localStorage.getItem(ROUTE_STORAGE_KEY + ":" + language.id) || "null");
+      if (draft?.session && !completedUnits) routePercent = Math.max(routePercent, Math.round((draft.session.turn / Math.max(1,draft.questionCount || 10))*100 / Math.max(routeUnits.length,1)));
     } catch {}
     return { ...language, sessions:stats.sessions, words:stats.vocabulary,
       accuracy:attempted ? Math.round(correct / attempted * 100) : stats.averageAccuracy,
@@ -1585,8 +1587,34 @@ document.querySelectorAll("[data-mode]").forEach(button => button.addEventListen
   $("ai-status").classList.remove("hidden");
 }));
 $("route-start-exercises")?.addEventListener("click", () => showScreen("exercises"));
-$("route-start").addEventListener("click", () => startRouteSession(localStorage.getItem("adaptive-language-tutor.route-started:" + (getSelectedCatalog()?.id || "")) === "true"));
+$("route-unit-list")?.addEventListener("click", event => {
+  const button = event.target.closest("[data-route-unit]");
+  if (!button || button.disabled) return;
+  selectedRouteUnitId = button.dataset.routeUnit;
+  routeSelectionTouched = true;
+  renderRouteDashboard();
+});
+$("route-start").addEventListener("click", () => startRouteSession(Boolean(routeDraft?.session && routeDraft.unitId === selectedRouteUnitId)));
 $("route-resume").addEventListener("click", () => startRouteSession(true));
+$("route-reset").addEventListener("click", () => $("route-reset-confirm").showModal());
+$("cancel-route-reset").addEventListener("click", () => $("route-reset-confirm").close());
+$("confirm-route-reset").addEventListener("click", () => {
+  $("route-reset-confirm").close();
+  const languageId = getSelectedCatalog()?.id;
+  if (!languageId) return;
+  try {
+    localStorage.removeItem(ROUTE_UNITS_KEY + ":" + languageId);
+    localStorage.removeItem(ROUTE_STORAGE_KEY + ":" + languageId);
+    localStorage.removeItem("adaptive-language-tutor.route-started:" + languageId);
+    localStorage.removeItem("adaptive-language-tutor.route-completed:" + languageId);
+  } catch {}
+  routeDraft = null;
+  activeRouteUnit = null;
+  selectedRouteUnitId = "foundations";
+  routeSelectionTouched = false;
+  routeMode = false;
+  renderRouteDashboard();
+});
 $("setup-back")?.addEventListener("click", () => showScreen("exercises"));
 $("session-close").addEventListener("click", () => {
   if (sessionFinished || routeMode) closeSessionAndReturn();
