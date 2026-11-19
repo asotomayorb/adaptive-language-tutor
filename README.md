@@ -475,3 +475,5 @@ RUTA
 ```
 
 - **Ruta / hito integrador:** la consigna de portugués e inglés está formulada en español. Las pistas también se pueden solicitar manualmente con el botón «Pista»; cada intento incorrecto avanza al siguiente nivel y la secuencia se guarda al reanudar.
+
+- **Continuar durante la latencia IA:** el botón queda disponible desde que aparece el feedback. Si se pulsa antes de que el tutor termine de preparar el siguiente turno, la acción queda en cola y la app avanza automáticamente cuando la respuesta está lista.
