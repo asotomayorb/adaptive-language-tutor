@@ -332,6 +332,7 @@ try {
   await routePage.locator("#hint-btn").click();
   assert.match(await routePage.locator("#feedback").innerText(), /Pista 2\/5/);
   await routePage.reload({ waitUntil: "networkidle" });
+  await routePage.locator("#welcome-start").click();
   await routePage.locator("#route-start").click();
   await routePage.locator("#hint-btn").click();
   assert.match(await routePage.locator("#feedback").innerText(), /Pista 3\/5/, "Route must resume the clue sequence instead of restarting it");
