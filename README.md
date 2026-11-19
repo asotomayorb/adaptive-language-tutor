@@ -517,3 +517,10 @@ Todo texto de aprendizaje debe ser original, de dominio público verificado o es
 - La teoría de portugués también distingue formas estándar y variación brasileña regional de `tu` (`tu falaste` / `tu vais falar` frente a usos coloquiales regionales), además de la construcción frecuente con `a gente`.
 
 - El control de pistas queda visible también en la práctica normal; las respuestas escritas permiten recorrer tres pistas progresivas.
+
+### Validación y Preview de esta iteración
+- Tests unitarios y análisis estático: [GitHub Actions 44570456063](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44570456063) — correcto.
+- Browser E2E: [GitHub Actions 44570456053](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44570456053) — correcto.
+- Render: [deploy LIVE dep-dbvihnafngtc73cctgr0](https://dashboard.render.com/web/srv-dbus3hnf3r2c739j9ir0/deploys/dep-dbvihnafngtc73cctgr0), commit 6857c44.
+- Preview: https://adaptive-language-tutor-preview-5b3d.onrender.com/
+- Pendiente: prueba humana en Android; la automatización no sustituye la revisión de pronunciación, legibilidad y calidad pedagógica.
