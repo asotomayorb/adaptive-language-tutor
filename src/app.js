@@ -900,8 +900,8 @@ function startRouteSession(resume = false) {
 function renderRouteIntegration() {
   speech.stop();
   const prompt = catalog.id === "en"
-    ? "Introduce yourself in one short message: say hello, give your name and say where you are from."
-    : "Preséntate en un solo mensaje: saluda, di tu nombre y de dónde eres.";
+    ? "Translate into English: “Buenos días, me llamo Ana y soy de Chile.”"
+    : "Traduza para o português: “Buenos días, me llamo Ana y soy de Chile.”";
   const previous = pendingFeedback;
   pendingFeedback = null;
   currentExercise = {
