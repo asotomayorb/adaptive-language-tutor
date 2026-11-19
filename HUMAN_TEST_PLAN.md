@@ -283,3 +283,5 @@ Para cada escenario registrar:
 - [ ] Confirmar que la consigna del hito integrador se explica en español y no aparece en portugués como imperativo.
 
 - [ ] En una respuesta IA, tocar «Continuar» antes de que termine la preparación: el botón debe indicar que está continuando y la siguiente pregunta debe aparecer al completarse la solicitud, sin doble avance.
+
+- [ ] En el hito integrador, confirmar que «Pista» está visible y operativo; no debe aparecer el control «Repasar error» en esa pantalla.
