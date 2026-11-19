@@ -225,3 +225,7 @@ Para cada escenario registrar:
 - [ ] Teoría inglés y portugués brasileño: comprobar las tablas de artículos y los cinco subtemas de vocabulario y expresiones, con traducción y audio.
 - [ ] Teoría francés y alemán: comprobar las tablas de artículos, ejemplos y reglas de uso.
 - [ ] Revisar uno por uno los idiomas restantes: ningún subtema debe quedarse en descripciones genéricas; cada uno debe mostrar contenido aplicado, traducción y contexto.
+
+- [ ] Seleccionar una palabra con traducción ya registrada: debe aparecer sin demora.
+- [ ] Seleccionar una palabra sin traducción registrada con IA configurada: debe mostrar el significado contextual y conservarlo mientras permanezca visible.
+- [ ] Probar la selección sin proveedor IA: la práctica no debe bloquearse y debe informar que la traducción no está disponible.
