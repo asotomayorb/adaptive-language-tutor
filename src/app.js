@@ -317,7 +317,7 @@ function refreshDashboard() {
     if (!metrics.length) {
       chartMarkup = '<p class="empty-chart">Completa una sesión para comparar la precisión entre idiomas.</p>';
     } else {
-      const width = Math.max(720, metrics.length * 78 + 90), height = 340;
+      const width = Math.max(300, Math.floor((statsContent.clientWidth || 760) - 52)), height = 340;
       const left = 58, right = 24, top = 28, bottom = 82;
       const plotWidth = width-left-right, plotHeight = height-top-bottom;
       const yAt = value => top + (100-value)*plotHeight/100;
@@ -353,7 +353,7 @@ function refreshDashboard() {
     if (!practicedDays.length) {
       chartMarkup = '<p class="empty-chart">Todavía no hay días de práctica registrados para ' + escapeHTML(language?.label || "") + '.</p>';
     } else {
-      const width = 760, height = 340, left = 66, right = 66, top = 28, bottom = 64;
+      const width = Math.max(300, Math.floor((statsContent.clientWidth || 760) - 52)), height = 340, left = 38, right = 38, top = 28, bottom = 64;
       const plotWidth = width-left-right, plotHeight = height-top-bottom;
       const maxQuestions = Math.max(1,...practicedDays.map(([,item])=>item.attempted));
       const questionMax = Math.max(5,Math.ceil(maxQuestions/5)*5);
