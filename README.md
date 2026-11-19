@@ -390,3 +390,5 @@ Pendiente de esta revisión:
 - En opciones de respuesta, tocar una palabra abre su traducción sin enviar accidentalmente la opción; tocar el área restante de la alternativa permite responder.
 
 - Las consignas locales marcadas como idioma objetivo también permiten consultar cada palabra; las instrucciones que siguen en español no se convierten en texto clicable.
+
+- En el resumen, los aciertos y errores se resaltan por separado (verde y rojo); la palabra de cada acierto sigue siendo seleccionable para traducirla.
