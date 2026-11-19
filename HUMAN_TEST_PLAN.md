@@ -311,3 +311,44 @@ Para cada escenario registrar:
 - Deploy LIVE: dep-dbviiv60tbcc738k7o2g.
 - Tests unitarios y Browser E2E aprobados: [44570968240](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44570968240) · [44570968307](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44570968307).
 - Completar los checks Android de arriba; prestar atención al tamaño real de los gráficos y la pronunciación del sistema del dispositivo.
+
+
+## Ruta por unidades y puntuación — prueba Android 19-11-2026
+
+- [ ] En portugués o inglés, abrir Ruta y comprobar las cuatro unidades: Fundamentos, Viajes y orientación, Comida y restaurantes, Trabajo y estudios.
+- [ ] Confirmar que solo Fundamentos está disponible al iniciar y que las unidades posteriores aparecen bloqueadas.
+- [ ] Completar Fundamentos con un resultado de al menos 3 estrellas y comprobar que se desbloquea Viajes y orientación.
+- [ ] Completar Viajes con menos de 5 estrellas y comprobar que Comida y restaurantes sigue bloqueada.
+- [ ] Repetir Viajes hasta obtener 5 estrellas y confirmar que Comida y restaurantes se desbloquea. Este requisito es deliberadamente más estricto.
+- [ ] Comprobar que Trabajo y estudios exige al menos 4 estrellas en Comida y restaurantes.
+- [ ] En cada unidad, verificar el orden: vocabulario/conjugaciones → aplicación en contexto → frases completas. Las primeras etapas usan alternativas; la etapa final exige escribir.
+- [ ] Cerrar Ruta después de responder una pregunta, volver a abrir y confirmar que continúa en la misma unidad y turno.
+- [ ] Completar una unidad, revisar el porcentaje y las estrellas guardadas en su tarjeta.
+- [ ] Repetir una unidad completada y comprobar que se puede mejorar su puntaje.
+- [ ] Pulsar Reiniciar ruta: aparece confirmación. Cancelar conserva las estrellas; confirmar borra solo el avance de Ruta del idioma activo.
+- [ ] Tras reiniciar, confirmar que vuelve a quedar disponible solo la primera unidad y que el historial/estadísticas de Ejercicios se conserva.
+- [ ] En un idioma no local con tutor IA, comprobar que aparecen las cuatro unidades y que cada una genera contenido del tema correspondiente. Si IA no está configurada, la ruta debe indicar que está en preparación.
+
+## Ejercicios y Repaso — prueba Android 19-11-2026
+
+- [ ] En Ejercicios, comprobar que el banner “Ejercicio” está cerrado inicialmente.
+- [ ] Pulsarlo y verificar que se despliegan duración, nivel y tema; pulsarlo otra vez debe cerrar la configuración.
+- [ ] Comprobar que “Repaso” está debajo y al tocarlo inicia inmediatamente, sin botón intermedio “Comenzar repaso”.
+- [ ] Si no hay tarjetas pendientes, comprobar que aparece un mensaje claro y que no se abre una sesión vacía.
+- [ ] En una pregunta de alternativas, verificar que no aparece el botón Pista.
+- [ ] En una respuesta escrita, comprobar que la primera pulsación muestra una pista y el botón pasa a “Ver respuesta”; la segunda muestra la solución y oculta el botón.
+- [ ] En Repaso, comprobar que una actividad originalmente de alternativas sigue usando alternativas y no muestra pistas.
+- [ ] En Repaso escrito, comprobar la misma secuencia Pista → Ver respuesta.
+- [ ] Comprobar que una respuesta errónea de Repaso sigue pendiente hasta responderla correctamente.
+
+## Resumen, gráficos e imágenes — prueba Android 19-11-2026
+
+- [ ] Al finalizar una sesión, comprobar que “Resumen” está centrado.
+- [ ] Debajo del título, comprobar porcentaje y mensaje: 100% Perfecto; más de 80% Muy bien; más de 60% Bien; 40–60% Vas progresando; menos de 40% Sigue practicando.
+- [ ] Confirmar que ya no aparece el subtítulo separado “Aciertos”; los errores, vocabulario y temas siguen disponibles.
+- [ ] En Estadísticas Global, comprobar que las barras son grandes y tienen menos espacio vacío entre sí.
+- [ ] Confirmar que el gráfico sigue cabiendo dentro de los márgenes de la pantalla sin scroll horizontal.
+- [ ] Abrir actividades de vocabulario, viaje, comida y trabajo: comprobar que cada una muestra un pictograma relacionado con el objeto/contexto y que no tapa la consigna ni las opciones.
+- [ ] Revisar los pictogramas en Android real: legibilidad, proporción y compatibilidad con la fuente emoji del dispositivo.
+
+**Nota:** el modo relato con personajes ficticios y las actividades de emparejar palabras quedan para una fase futura; no marcarlos como funcionalidades ya implementadas.
