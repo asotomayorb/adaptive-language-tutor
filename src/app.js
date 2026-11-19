@@ -206,15 +206,7 @@ function updateLanguageFlag() {
   if (typeof ROUTE_STORAGE_KEY !== "undefined") {
     const selectedCatalog = getSelectedCatalog();
     routeDraft = getRouteDraftForLanguage(selectedCatalog?.id);
-    $("route-resume").classList.add("hidden");
-    let completed = false, started = false;
-    try {
-      completed = Boolean(selectedCatalog && localStorage.getItem("adaptive-language-tutor.route-completed:" + selectedCatalog.id) === "true");
-      started = Boolean(selectedCatalog && localStorage.getItem("adaptive-language-tutor.route-started:" + selectedCatalog.id) === "true");
-    } catch {}
-    const routeAvailable = Boolean(selectedCatalog?.exercises?.length || aiConfigured);
-    $("route-start").textContent = completed ? "Unidad completada" : started ? "Continuar recorrido" : routeAvailable ? "Comenzar unidad" : "Ruta en preparación";
-    $("route-start").disabled = Boolean(completed || !routeAvailable);
+    renderRouteDashboard();
   }
 }
 let session = null;
@@ -251,10 +243,89 @@ let routeIntegration = false;
 let routeIntegrationAttempts = 0;
 let routeDraft = null;
 const ROUTE_STORAGE_KEY = "adaptive-language-tutor.route-progress";
+const ROUTE_UNITS_KEY = "adaptive-language-tutor.route-units";
+const ROUTE_UNIT_DEFINITIONS = [
+  { id:"foundations", number:"01", title:"Fundamentos", topic:"daily", icon:"💬", requiredStars:0, description:"Vocabulario, conjugaciones y presentaciones." },
+  { id:"travel", number:"02", title:"Viajes y orientación", topic:"travel", icon:"🧭", requiredStars:3, description:"Moverte, preguntar y resolver situaciones." },
+  { id:"food", number:"03", title:"Comida y restaurantes", topic:"food", icon:"🍽️", requiredStars:5, description:"Pedir, elegir y expresar preferencias." },
+  { id:"work", number:"04", title:"Trabajo y estudios", topic:"work", icon:"💼", requiredStars:4, description:"Hablar de tareas, ocupaciones y ayuda." }
+];
+let selectedRouteUnitId = "foundations";
+let activeRouteUnit = null;
+let routeQuestionCount = 10;
 function getRouteDraftForLanguage(languageId) {
   if (!languageId) return null;
   try { return JSON.parse(localStorage.getItem(ROUTE_STORAGE_KEY + ":" + languageId) || "null"); }
   catch { return null; }
+}
+function getRouteProgressForLanguage(languageId) {
+  if (!languageId) return { completedUnits:{} };
+  try {
+    const saved = JSON.parse(localStorage.getItem(ROUTE_UNITS_KEY + ":" + languageId) || "null");
+    return saved && typeof saved === "object" ? { completedUnits:{}, ...saved } : { completedUnits:{} };
+  } catch { return { completedUnits:{} }; }
+}
+function saveRouteProgressForLanguage(languageId, state) {
+  try { localStorage.setItem(ROUTE_UNITS_KEY + ":" + languageId, JSON.stringify(state)); } catch {}
+}
+function getRouteUnitsForCatalog(selectedCatalog) {
+  if (!selectedCatalog) return [];
+  if (!selectedCatalog.exercises?.length) return aiConfigured ? [{ ...ROUTE_UNIT_DEFINITIONS[0], questionCount:10, available:true }] : [];
+  return ROUTE_UNIT_DEFINITIONS.map(unit => ({
+    ...unit, questionCount:selectedCatalog.exercises.filter(exercise => exercise.topic === unit.topic).length,
+    available:selectedCatalog.exercises.some(exercise => exercise.topic === unit.topic)
+  })).filter(unit => unit.available);
+}
+function isRouteUnitUnlocked(units, index, state) {
+  if (index === 0) return true;
+  const record = state.completedUnits?.[units[index-1].id];
+  return Boolean(record?.completed && Number(record.stars) >= Number(units[index].requiredStars || 0));
+}
+function renderRouteDashboard() {
+  const list = $("route-unit-list"), start = $("route-start");
+  if (!list || !start) return;
+  const selectedCatalog = getSelectedCatalog(), units = getRouteUnitsForCatalog(selectedCatalog);
+  const state = getRouteProgressForLanguage(selectedCatalog?.id);
+  routeDraft = getRouteDraftForLanguage(selectedCatalog?.id);
+  if (routeDraft?.unitId && units.some(unit => unit.id === routeDraft.unitId)) selectedRouteUnitId = routeDraft.unitId;
+  else {
+    const next = units.find((unit,index) => !state.completedUnits?.[unit.id] && isRouteUnitUnlocked(units,index,state))
+      || units.find((unit,index) => state.completedUnits?.[unit.id] && units[index+1] && !isRouteUnitUnlocked(units,index+1,state))
+      || units[0];
+    selectedRouteUnitId = next?.id || "";
+  }
+  list.innerHTML = units.map((unit,index) => {
+    const record = state.completedUnits?.[unit.id], unlocked = isRouteUnitUnlocked(units,index,state);
+    const stars = record?.stars || 0, starMarkup = "★".repeat(stars) + "☆".repeat(5-stars);
+    const status = !unlocked ? "Bloqueada" : record?.completed ? "Completada" : unit.id === selectedRouteUnitId ? "Disponible" : "Desbloqueada";
+    const requirement = index ? '<small class="route-requirement">Requiere ' + unit.requiredStars + ' estrellas en la unidad anterior</small>' : "";
+    return '<button class="route-unit-card' + (unit.id === selectedRouteUnitId ? ' selected' : '') + (!unlocked ? ' locked' : '') + '" type="button" data-route-unit="' + unit.id + '"' + (!unlocked ? ' disabled' : '') + '>' +
+      '<span class="route-unit-icon" aria-hidden="true">' + unit.icon + '</span><span class="route-unit-copy"><span class="route-unit-kicker">UNIDAD ' + unit.number + ' · ' + status.toUpperCase() + '</span><strong>' + unit.title + '</strong><small>' + unit.description + '</small>' +
+      (record?.completed ? '<span class="route-stars" aria-label="' + stars + ' de 5 estrellas">' + starMarkup + ' · ' + record.accuracy + '%</span>' : requirement) +
+      '</span><span class="route-unit-chevron" aria-hidden="true">›</span></button>';
+  }).join("") || '<p class="muted">La ruta de este idioma se está preparando.</p>';
+  const selected = units.find(unit => unit.id === selectedRouteUnitId), index = units.findIndex(unit => unit.id === selectedRouteUnitId);
+  const record = state.completedUnits?.[selectedRouteUnitId];
+  const draft = Boolean(routeDraft?.session && routeDraft.unitId === selectedRouteUnitId);
+  start.textContent = draft ? "Continuar unidad" : record?.completed ? "Repetir unidad" : "Comenzar unidad";
+  start.disabled = !selected || !isRouteUnitUnlocked(units,index,state);
+  $("route-reset")?.toggleAttribute("disabled", !selectedCatalog);
+  $("route-resume")?.classList.add("hidden");
+}
+function getRoutePhase(index,total) {
+  const first = Math.max(1,Math.ceil(total/3)), second = Math.max(first+1,Math.ceil(total*2/3));
+  if (index < first) return { id:"vocabulary",label:"VOCABULARIO Y CONJUGACIONES" };
+  if (index < second) return { id:"context",label:"APLICACIÓN EN CONTEXTO" };
+  return { id:"sentences",label:"FRASES COMPLETAS" };
+}
+function getExerciseIllustration(exercise) {
+  const text = [exercise?.prompt,exercise?.term,exercise?.skill,exercise?.meaning].join(" ").toLocaleLowerCase();
+  const icon = /café|coffee|espresso/.test(text) ? "☕" : /baño|bathroom|banheiro/.test(text) ? "🚻"
+    : /pasaje|billete|ticket|passagem/.test(text) ? "🎫" : /restaurante|cuenta|bill|conta|cebolla|onion|comida/.test(text) ? "🍽️"
+    : /oficina|trabajo|office|work|ocupaci[oó]n/.test(text) ? "💼" : /viaje|tren|estaci[oó]n|travel|train|direcci[oó]n/.test(text) ? "🧭"
+    : /hora|ayer|mañana|yesterday|tomorrow|ontem/.test(text) ? "🕒" : "💬";
+  const label = topicLabels[exercise?.topic] || "situación cotidiana";
+  return '<div class="exercise-illustration" role="img" aria-label="Ilustración de ' + escapeHTML(label) + '"><span>' + icon + '</span><small>' + escapeHTML(label) + '</small></div>';
 }
 
 function refreshDashboard() {
@@ -723,11 +794,11 @@ async function submitAITutorAnswer(answer) {
         }
       },
       history: conversationHistory,
-      userMessage: cleanAnswer + (routeMode && session.turn + 1 === 10
-        ? " Esta respuesta completa la comprobación de dominio de diez preguntas. La siguiente actividad debe ser una tarea integradora escrita que combine el tema completo; no incluyas alternativas."
+      userMessage: cleanAnswer + (routeMode && session.turn + 1 === routeQuestionCount
+        ? " Esta respuesta completa la unidad. La siguiente actividad debe ser una tarea integradora escrita que combine el tema completo; no incluyas alternativas."
         : session.turn + 1 < 3
           ? " La próxima actividad debe ser una pregunta de selección múltiple con tres alternativas plausibles en exercise.options."
-          : " Desde ahora la próxima actividad debe requerir que escriba la respuesta, sin alternativas.") + " Mantén las instrucciones en español (idioma origen) dentro de message y separa el texto a evaluar en exercise.prompt; nunca mezcles una orden en idioma objetivo con la frase preguntada. Incluye exactamente tres pistas progresivas y no redundantes en exercise.hints, sin revelar la respuesta antes de la tercera."
+          : " Desde ahora la próxima actividad debe requerir que escriba la respuesta, sin alternativas.") + " Mantén las instrucciones en español (idioma origen) dentro de message y separa el texto a evaluar en exercise.prompt; nunca mezcles una orden en idioma objetivo con la frase preguntada. Incluye una pista breve y una respuesta esperada verificable; la interfaz revelará la solución como segunda ayuda."
     }, undefined, { signal: sessionAbortController?.signal });
     if (session !== activeSession || sessionAbortController?.signal.aborted) return;
     aiHistory = [
@@ -869,6 +940,8 @@ function saveRouteDraft() {
   if (!routeMode || !session) return;
   routeDraft = {
     languageId: session.config.languageId,
+    unitId: activeRouteUnit?.id || routeDraft?.unitId || "foundations",
+    questionCount: routeQuestionCount,
     session: JSON.parse(JSON.stringify(session)),
     integration: routeIntegration,
     integrationAttempts: routeIntegrationAttempts,
@@ -881,7 +954,7 @@ function saveRouteDraft() {
     aiCurrentExercise,
     aiPendingFeedback,
     routeIntegrationHintLevel,
-    failed: session.turn >= 10 && !routeIntegration && session.correct < 8
+    failed: session.turn >= routeQuestionCount && !routeIntegration
   };
   try { localStorage.setItem(ROUTE_STORAGE_KEY + ":" + session.config.languageId, JSON.stringify(routeDraft)); } catch {}
   $("route-resume").classList.add("hidden");
@@ -889,19 +962,23 @@ function saveRouteDraft() {
 function startRouteSession(resume = false) {
   catalog = getSelectedCatalog();
   if (!catalog) return;
-  const routeStartedKey = "adaptive-language-tutor.route-started:" + catalog.id;
-  const routeCompletedKey = "adaptive-language-tutor.route-completed:" + catalog.id;
-  const alreadyStarted = localStorage.getItem(routeStartedKey) === "true";
-  const completed = localStorage.getItem(routeCompletedKey) === "true";
-  if (completed) return;
-  resume = Boolean(resume || alreadyStarted);
   routeDraft = getRouteDraftForLanguage(catalog.id);
+  const units = getRouteUnitsForCatalog(catalog);
+  const requestedUnitId = resume && routeDraft?.unitId ? routeDraft.unitId : selectedRouteUnitId;
+  activeRouteUnit = units.find(unit => unit.id === requestedUnitId) || units[0];
+  if (!activeRouteUnit) return;
+  const unitIndex = units.findIndex(unit => unit.id === activeRouteUnit.id);
+  const routeProgress = getRouteProgressForLanguage(catalog.id);
+  if (!isRouteUnitUnlocked(units,unitIndex,routeProgress)) return;
   const useAI = !catalog.exercises.length;
+  routeQuestionCount = Number(routeDraft?.questionCount || activeRouteUnit.questionCount || 10);
+  const hasMatchingDraft = Boolean(routeDraft?.session && routeDraft.languageId === catalog.id && routeDraft.unitId === activeRouteUnit.id);
+  resume = Boolean(resume && hasMatchingDraft);
   if (useAI && !aiConfigured) {
     $("route-start").textContent = "Ruta en preparación";
     return;
   }
-  if (resume && routeDraft?.session && routeDraft.languageId === catalog.id) {
+  if (resume && hasMatchingDraft) {
     session = routeDraft.session;
     pendingFeedback = routeDraft.pendingFeedback || null;
     localPendingAnswer = routeDraft.localPendingAnswer || null;
@@ -915,9 +992,12 @@ function startRouteSession(resume = false) {
     aiPendingFeedback = routeDraft.aiPendingFeedback || null;
     routeIntegrationHintLevel = Number(routeDraft.routeIntegrationHintLevel || 0);
   } else {
+    routeQuestionCount = Number(activeRouteUnit.questionCount || 10);
     session = createSession({
       language:catalog.label, languageId:catalog.id, languageLocale:catalog.locale,
-      duration:useAI ? 11 : 10, questionCount:useAI ? 11 : 10, level:"zero", topic:"daily", routeMode:true
+      duration:useAI ? routeQuestionCount + 1 : routeQuestionCount,
+      questionCount:useAI ? routeQuestionCount + 1 : routeQuestionCount,
+      level:"zero", topic:activeRouteUnit.topic, routeMode:true, routeUnitId:activeRouteUnit.id
     });
     routeIntegration = false;
     routeIntegrationAttempts = 0;
@@ -933,12 +1013,8 @@ function startRouteSession(resume = false) {
   }
   routeMode = true;
   session.config.routeMode = true;
-  if (!alreadyStarted) {
-    localStorage.setItem(routeStartedKey, "true");
-    saveRouteDraft();
-    $("route-start").textContent = "Continuar recorrido";
-    $("route-resume").classList.add("hidden");
-  }
+  saveRouteDraft();
+  renderRouteDashboard();
   sessionAbortController?.abort();
   sessionAbortController = new AbortController();
   sessionFinished = false;
@@ -965,10 +1041,10 @@ function startRouteSession(resume = false) {
       selected: localPendingAnswer.selected, options: localPendingAnswer.options || [],
       correctOption: localPendingAnswer.expected
     });
-  } else if (session.turn >= 11) renderRouteAssessmentFailed();
+  } else if (session.turn > routeQuestionCount) renderRouteAssessmentFailed();
   else if (routeIntegration && aiMode && aiLastResult) renderAITutorTurn(aiLastResult);
   else if (routeIntegration) renderRouteIntegration();
-  else if (session.turn >= 10) renderRouteAssessmentFailed();
+  else if (session.turn >= routeQuestionCount) renderRouteIntegration();
   else if (aiMode && aiLastResult) renderAITutorTurn(aiLastResult);
   else if (aiMode) startAITutorSession(session.config);
   else renderLesson();
@@ -979,29 +1055,37 @@ function renderRouteIntegration() {
   $("hint-btn").disabled = false;
   $("hint-btn").textContent = "Pista";
   speech.stop();
-  const prompt = catalog.id === "en"
-    ? "Traduce al inglés: «Buenos días, me llamo Ana y soy de Chile»."
-    : "Traduce al portugués: «Buenos días, me llamo Ana y soy de Chile».";
+  const scenarios = {
+    daily: catalog.id === "en"
+      ? { prompt:"Escribe una presentación completa: saluda, di tu nombre y de dónde eres.", target:"Good morning, my name is Ana and I am from Chile.", accepted:["Good morning, I'm Ana and I'm from Chile.","Hello, my name is Ana and I am from Chile."], hints:["Incluye saludo, nombre y procedencia.","Empieza con «Good morning» y continúa con «my name is Ana»."] }
+      : { prompt:"Escribe una presentación completa: saluda, di tu nombre y de dónde eres.", target:"Bom dia, meu nome é Ana e sou do Chile.", accepted:["Bom dia! Eu me chamo Ana e sou do Chile.","Olá, meu nome é Ana e sou do Chile."], hints:["Incluye saludo, nombre y procedencia.","Empieza con «Bom dia» y continúa con «meu nome é Ana»."] },
+    travel: catalog.id === "en"
+      ? { prompt:"En una estación, escribe una frase completa para decir que quieres comprar un billete.", target:"I want to buy a ticket, please.", accepted:["I would like to buy a ticket, please.","I want to buy a ticket."], hints:["Incluye want (querer) y ticket (billete).","Empieza con «I want to buy…»."] }
+      : { prompt:"En una estación, escribe una frase completa para decir que quieres comprar un pasaje.", target:"Quero comprar uma passagem, por favor.", accepted:["Eu quero comprar uma passagem, por favor.","Quero comprar uma passagem."], hints:["Incluye quero (quiero), comprar y passagem (pasaje).","Empieza con «Quero comprar…»."] },
+    food: catalog.id === "en"
+      ? { prompt:"En un café, escribe una frase completa para pedir un café de forma cortés.", target:"I would like a coffee, please.", accepted:["I'd like a coffee, please.","Can I have a coffee, please?"], hints:["Usa una forma cortés de pedir y menciona coffee.","Empieza con «I would like…»."] }
+      : { prompt:"En un café, escribe una frase completa para pedir un café de forma cortés.", target:"Eu gostaria de um café, por favor.", accepted:["Gostaria de um café, por favor.","Queria um café, por favor."], hints:["Usa gostaria de para expresar «quisiera» y menciona café.","Empieza con «Eu gostaria de…»."] },
+    work: catalog.id === "en"
+      ? { prompt:"En una conversación, escribe una frase completa: trabajas en una oficina y necesitas ayuda.", target:"I work in an office and I need help.", accepted:["I work at an office and need help.","I work in an office. I need help."], hints:["Une trabajo y necesidad con and.","Empieza con «I work in an office…»."] }
+      : { prompt:"En una conversación, escribe una frase completa: trabajas en una oficina y necesitas ayuda.", target:"Eu trabalho em um escritório e preciso de ajuda.", accepted:["Trabalho em um escritório e preciso de ajuda.","Eu trabalho no escritório e preciso de ajuda."], hints:["Une trabajo y necesidad con e.","Empieza con «Eu trabalho em um escritório…»."] }
+  };
+  const scenario = scenarios[activeRouteUnit?.topic || "daily"] || scenarios.daily;
+  const prompt = scenario.prompt;
   pendingFeedback = null;
   routeIntegrationHintLevel = Number(routeIntegrationHintLevel || 0);
   currentExercise = {
-    id:"route-integration-fundamentals", prompt,
-    target: catalog.id === "en" ? "Good morning, my name is Ana and I am from Chile." : "Bom dia, meu nome é Ana e sou do Chile.",
-    allowTypo: true,
-    acceptedAnswers: catalog.id === "en"
-      ? ["Good morning, I'm Ana and I'm from Chile.","Good morning. My name is Ana. I am from Chile."]
-      : ["Bom dia! Eu me chamo Ana e sou do Chile.","Bom dia. Meu nome é Ana. Sou do Chile."],
-    hints: catalog.id === "en"
-      ? ["La respuesta tiene tres partes: saludo, nombre y procedencia.","Empieza con «Good morning».","Para decir tu nombre, usa «my name is Ana».","Para indicar procedencia, usa «I am from Chile».","Une las tres partes en una sola presentación."]
-      : ["La respuesta tiene tres partes: saludo, nombre y procedencia.","Empieza con «Bom dia».","Para decir tu nombre, usa «meu nome é Ana».","Para indicar procedencia, usa «sou do Chile».","Une las tres partes en una sola presentación."],
-    explanation:"La actividad integra saludo, presentación y procedencia."
+    id:"route-integration-" + (activeRouteUnit?.id || "foundations"), prompt,
+    target:scenario.target, allowTypo:true, acceptedAnswers:scenario.accepted,
+    hints:scenario.hints,
+    explanation:"Esta actividad integra el vocabulario y las estructuras de la unidad " + (activeRouteUnit?.title || "Fundamentos") + "."
   };
   $("lesson-phase").textContent = "HITO INTEGRADOR";
   $("turn-count").textContent = "Actividad final";
   $("progress-bar").style.width = "100%";
-  $("lesson-content").innerHTML = '<p class="eyebrow">UNIDAD 01 · FUNDAMENTOS</p><h3>' + escapeHTML(prompt) + '</h3><p>Combina lo practicado en los diez ejercicios anteriores.</p>';
+  $("hint-btn").textContent = "Pista";
+  $("lesson-content").innerHTML = getExerciseIllustration({ topic:activeRouteUnit?.topic, prompt }) + '<p class="eyebrow">UNIDAD ' + (activeRouteUnit?.number || "01") + ' · ' + escapeHTML(activeRouteUnit?.title || "FUNDAMENTOS").toUpperCase() + '</p><h3>' + escapeHTML(prompt) + '</h3><p>Combina lo practicado en las tres etapas anteriores.</p>';
   bindSpeakerButtons($("lesson-content"));
-  $("answer-area").innerHTML = '<textarea id="route-integration-answer" class="answer-input" rows="3" placeholder="Escribe tu presentación…"></textarea><button id="route-integration-submit" class="primary" type="button">Comprobar actividad</button>';
+  $("answer-area").innerHTML = '<textarea id="route-integration-answer" class="answer-input" rows="3" placeholder="Escribe tu respuesta completa…"></textarea><button id="route-integration-submit" class="primary" type="button">Comprobar actividad</button>';
   $("route-integration-submit").addEventListener("click", () => {
     const answer = $("route-integration-answer").value.trim();
     if (evaluateAnswer(answer, currentExercise)) {
@@ -1013,9 +1097,12 @@ function renderRouteIntegration() {
       finishSession();
     } else {
       routeIntegrationAttempts += 1;
-      routeIntegrationHintLevel = Math.min(routeIntegrationHintLevel + 1, 5);
+      routeIntegrationHintLevel = Math.min(routeIntegrationHintLevel + 1, 2);
       saveRouteDraft();
-      $("feedback").innerHTML = '<p class="answer-status incorrect">Todavía no coincide. Inténtalo otra vez.</p><p class="answer-explanation">Pista ' + routeIntegrationHintLevel + '/5: ' + currentExercise.hints[routeIntegrationHintLevel-1] + '</p>';
+      const helpText = routeIntegrationHintLevel === 1 ? currentExercise.hints[0] : "Respuesta de referencia: " + currentExercise.target;
+      $("feedback").innerHTML = '<p class="answer-status incorrect">Todavía no coincide. Inténtalo otra vez.</p><p class="answer-explanation">' + (routeIntegrationHintLevel === 1 ? "Pista: " : "Ver respuesta: ") + escapeHTML(helpText) + '</p>';
+      $("hint-btn").textContent = "Ver respuesta";
+      if (routeIntegrationHintLevel >= 2) $("hint-btn").hidden = true;
       $("feedback").classList.remove("hidden","bad");
       $("route-integration-answer").value = answer;
       $("route-integration-answer").focus();
@@ -1027,16 +1114,13 @@ function renderRouteAssessmentFailed() {
   pendingFeedback = null;
   saveRouteDraft();
   $("lesson-phase").textContent = "REFUERZO NECESARIO";
-  $("turn-count").textContent = session.correct + " / 10 correctas";
+  $("turn-count").textContent = session.correct + " / " + routeQuestionCount + " correctas";
   $("progress-bar").style.width = "100%";
-  const integrationFailed = routeIntegration && session.turn >= 11;
-  $("lesson-content").innerHTML = '<div class="feedback-note"><span>' + (integrationFailed ? "Actividad integradora pendiente" : "Unidad aún no superada") + '</span><p>' +
-    (integrationFailed ? "La actividad integradora necesita otra oportunidad. Repite la unidad para consolidar el contenido." : "Necesitas al menos 8 respuestas correctas de 10. Tu resultado fue " + session.correct + "/10. Puedes repetir la comprobación.") +
-    '</p></div>';
+  $("lesson-content").innerHTML = '<div class="feedback-note"><span>Actividad integradora pendiente</span><p>Completa la actividad integradora para registrar el puntaje de esta unidad.</p></div>';
   $("answer-area").innerHTML = '<button id="route-retry" class="primary" type="button">Repetir la unidad</button>';
   $("route-retry").addEventListener("click", () => {
     const useAI = !catalog.exercises.length;
-    session = createSession({ ...session.config, duration:useAI ? 11 : 10, questionCount:useAI ? 11 : 10 });
+    session = createSession({ ...session.config, duration:useAI ? routeQuestionCount + 1 : routeQuestionCount, questionCount:useAI ? routeQuestionCount + 1 : routeQuestionCount });
     routeIntegration = false;
     routeIntegrationAttempts = 0;
     pendingFeedback = null;
@@ -1059,7 +1143,7 @@ function chooseExercise() {
   let exercises = getTopicExercises();
   const adaptation = getAdaptation(session);
   let candidates = exercises.filter(exercise => !session.answers.some(answer => answer.exerciseId === exercise.id));
-  if (!candidates.length) {
+  if (!candidates.length && !routeMode) {
     exercises = catalog.exercises;
     candidates = exercises.filter(exercise => !session.answers.some(answer => answer.exerciseId === exercise.id));
   }
@@ -1209,8 +1293,7 @@ function continueAfterAnswer() {
       } else renderRouteAssessmentFailed();
       return;
     }
-    if (routeMode && session.turn === 10 && !routeIntegration) {
-      if (session.correct < 8) { renderRouteAssessmentFailed(); return; }
+    if (routeMode && session.turn === routeQuestionCount && !routeIntegration) {
       routeIntegration = true;
       if (pending.result?.exercise) pending.result.nextAction = "answer";
     }
@@ -1224,12 +1307,10 @@ function continueAfterAnswer() {
   }
   localPendingAnswer = null;
   if (routeMode) {
-    if (session.turn >= 10) {
-      if (session.correct >= 8) {
-        routeIntegration = true;
-        saveRouteDraft();
-        renderRouteIntegration();
-      } else renderRouteAssessmentFailed();
+    if (session.turn >= routeQuestionCount) {
+      routeIntegration = true;
+      saveRouteDraft();
+      renderRouteIntegration();
       return;
     }
     saveRouteDraft();
@@ -1311,12 +1392,20 @@ function finishSession() {
   if (!session || sessionFinished) return;
   sessionFinished = true;
   if (routeMode && session.routeIntegrationComplete) {
-    try { localStorage.removeItem(ROUTE_STORAGE_KEY); } catch {}
+    const attempted = Math.max(1, session.answers.length || session.turn);
+    const correct = Number(session.correct) || 0;
+    const accuracy = Math.round(correct / attempted * 100);
+    const stars = Math.min(5, Math.floor(accuracy / 20));
+    const state = getRouteProgressForLanguage(session.config.languageId);
+    state.completedUnits = state.completedUnits || {};
+    state.completedUnits[activeRouteUnit?.id || "foundations"] = { completed:true, stars, accuracy, correct, attempted, completedAt:new Date().toISOString() };
+    saveRouteProgressForLanguage(session.config.languageId,state);
+    try { localStorage.removeItem(ROUTE_STORAGE_KEY + ":" + session.config.languageId); } catch {}
+    try { localStorage.removeItem("adaptive-language-tutor.route-started:" + session.config.languageId); } catch {}
+    try { localStorage.removeItem("adaptive-language-tutor.route-completed:" + session.config.languageId); } catch {}
     routeDraft = null;
     $("route-resume").classList.add("hidden");
-    localStorage.setItem("adaptive-language-tutor.route-completed:" + session.config.languageId, "true");
-    $("route-start").textContent = "Unidad completada";
-    $("route-start").disabled = true;
+    renderRouteDashboard();
   }
   speech.stop();
   $("lesson-panel").classList.add("hidden");
@@ -1331,14 +1420,18 @@ function finishSession() {
   const summaryLocale = session.config.languageLocale || session.config.languageId;
   const attemptedCount = Number(summary.attempted) || session.answers.length;
   const correctCount = Number(summary.correct) || 0;
+  const accuracyPercent = attemptedCount ? Math.round(correctCount / attemptedCount * 100) : 0;
+  const accuracyMessage = accuracyPercent === 100 ? "Perfecto" : accuracyPercent > 80 ? "Muy bien" : accuracyPercent > 60 ? "Bien" : accuracyPercent >= 40 ? "Vas progresando" : "Sigue practicando";
   const errorCount = summary.errors.length;
   const errors = summary.errors.map(item => '<li><span class="summary-submitted">' + escapeHTML(item.submitted) + '</span><span class="summary-arrow"> → </span><span class="summary-expected">' + escapeHTML(item.expected) + '</span></li>').join("");
   const vocabularyText = summary.vocabulary.map(item =>
     '<li>' + renderClickableTargetText(item.term) + ' ' + speakerButton(item.term, summaryLocale) + '</li>'
   ).join("");
   const focusItems = [...new Set([topicLabels[session.config.topic], ...summary.recommendedFocus, ...(summary.reviewPatterns || [])].filter(Boolean))];
+  const routeScoreMarkup = routeMode && session.routeIntegrationComplete
+    ? '<p class="summary-route-score">' + (Math.min(5,Math.floor(accuracyPercent/20))) + '/5 estrellas en ' + escapeHTML(activeRouteUnit?.title || "la unidad") + '</p>' : "";
   $("summary-content").innerHTML = '<h2 class="summary-title">Resumen</h2>' +
-    '<section class="summary-section"><h3 class="summary-success-title">Aciertos ' + correctCount + '/' + attemptedCount + '</h3></section>' +
+    '<div class="summary-accuracy"><strong>' + accuracyPercent + '%</strong><span>' + accuracyMessage + '</span>' + routeScoreMarkup + '</div>' +
     '<section class="summary-section"><h3 class="summary-error-title">Errores ' + errorCount + '/' + attemptedCount + '</h3><ul>' +
     (errors || '<li>Sin errores</li>') + '</ul></section>' +
     '<section class="summary-section"><h3>Vocabulario</h3><ul>' +
