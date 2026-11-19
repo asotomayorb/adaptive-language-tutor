@@ -407,3 +407,53 @@
 .exercise-status{margin:14px 4px 0;text-align:center;font-size:12px;color:#78869a}
 
 .lesson-panel .lesson-actions{display:flex!important;align-items:center;gap:10px;flex-wrap:wrap}
+
+
+/* Unit progression, compact exercise choices and contextual illustrations — 19-11-2026 */
+.route-intro{margin-bottom:17px}
+.route-intro h2{font-size:24px;margin:0 0 7px}
+.route-intro p:not(.eyebrow){font-size:13px;line-height:1.6;color:#718096;margin:0 0 14px}
+.route-unit-list{display:grid;gap:10px}
+.route-unit-card{display:grid;grid-template-columns:48px minmax(0,1fr) 18px;align-items:center;gap:12px;width:100%;padding:13px 14px;border:1px solid #e1e7ef;border-radius:14px;background:#fff;color:#263c59;text-align:left;font:inherit;cursor:pointer;transition:border-color .15s,background .15s}
+.route-unit-card.selected{border-color:#6f94ba;background:#f3f7fb;box-shadow:inset 0 0 0 1px #6f94ba}
+.route-unit-card.locked{opacity:.52;cursor:not-allowed;background:#f7f8fa}
+.route-unit-icon{display:grid;place-items:center;width:46px;height:46px;border-radius:13px;background:#edf2f8;font-size:25px}
+.route-unit-copy{display:grid;gap:3px;min-width:0}
+.route-unit-kicker{font-size:9px;font-weight:850;letter-spacing:.9px;color:#70849c}
+.route-unit-copy strong{font-size:15px}
+.route-unit-copy>small{font-size:11px;line-height:1.35;color:#7b899b}
+.route-unit-chevron{font-size:24px;color:#8294a8}
+.route-requirement{color:#8a96a6!important}
+.route-stars{font-size:13px;font-weight:800;letter-spacing:1px;color:#b27a25;margin-top:4px}
+.route-start{margin-top:15px}
+.route-reset{display:block;margin:11px auto 0;font-size:12px}
+.route-reset:disabled{opacity:.4;cursor:not-allowed}
+.exercise-choices{grid-template-columns:1fr;gap:9px;margin-bottom:10px}
+.exercise-choices .choice-card{min-height:72px;padding:12px 14px}
+.exercise-choices .choice-card small{display:block;font-size:11px;color:#7b899b;line-height:1.35;margin-top:3px}
+.exercise-choices .choice-arrow{margin-left:auto;font-size:20px;color:#71869e}
+.exercise-choices .review-choice{background:#fbfcfe}
+#setup-panel{margin:0 0 12px;animation:exercise-panel-in .16s ease-out}
+@keyframes exercise-panel-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.exercise-illustration{display:flex;align-items:center;gap:12px;width:max-content;max-width:100%;margin:0 0 15px;padding:8px 13px 8px 9px;border:1px solid #e3eaf1;border-radius:14px;background:linear-gradient(110deg,#f3f7fb,#fff)}
+.exercise-illustration>span{display:grid;place-items:center;width:48px;height:48px;border-radius:12px;background:#e7eff7;font-size:29px}
+.exercise-illustration small{font-size:11px;font-weight:750;color:#667b93;text-transform:capitalize}
+.summary-title{text-align:center;margin:0 0 9px!important}
+.summary-accuracy{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:5px 0 16px;text-align:center}
+.summary-accuracy>strong{font-size:40px;line-height:1.1;letter-spacing:-1.2px;color:#183b66}
+.summary-accuracy>span{font-size:15px;font-weight:800;color:#476783}
+.summary-route-score{margin:4px 0 0;font-size:12px;font-weight:750;color:#9a6a20}
+.summary-section:has(.summary-error-title){background:#fff2f0}
+.stats-bar-chart{min-height:340px}
+.stats-bar{stroke-width:0}
+@media(max-width:620px){
+ .route-stage{padding:16px}
+ .route-unit-card{grid-template-columns:42px minmax(0,1fr) 14px;padding:11px 10px;gap:9px}
+ .route-unit-icon{width:40px;height:40px;font-size:22px}
+ .route-unit-copy strong{font-size:14px}
+ .route-unit-copy>small{font-size:10px}
+ .exercise-choices .choice-card{min-height:68px}
+ .exercise-illustration{margin-bottom:12px}
+ .summary-accuracy>strong{font-size:36px}
+ .stats-bar-chart{min-height:310px}
+}
