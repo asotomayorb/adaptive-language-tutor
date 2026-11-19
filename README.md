@@ -479,3 +479,9 @@ RUTA
 - **Continuar durante la latencia IA:** el botón queda disponible desde que aparece el feedback. Si se pulsa antes de que el tutor termine de preparar el siguiente turno, la acción queda en cola y la app avanza automáticamente cuando la respuesta está lista.
 
 - En el hito integrador, el botón «Pista» queda visible aunque las acciones auxiliares estén ocultas durante el resto de la sesión; la opción de repaso no aparece en esa actividad.
+
+### Validación automatizada — refinamiento 19-11-2026
+
+- Tests unitarios y comprobación estática: [GitHub Actions 44456571620](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44456571620) — correcto.
+- Browser E2E: [GitHub Actions 44456571650](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44456571650) — correcto.
+- Pendiente: deploy manual en Render y prueba humana en Android.
