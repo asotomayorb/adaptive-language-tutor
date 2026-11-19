@@ -70,6 +70,7 @@ try {
   });
 
   await page.goto(baseUrl, { waitUntil: "networkidle" });
+  assert.deepEqual(pageErrors, [], "the app should initialize without uncaught browser errors");
   assert.equal(await page.locator("#welcome-screen").isVisible(), true, "fresh users should see welcome");
   await page.locator("#welcome-start").click();
   assert.equal(await page.locator("#welcome-screen").isVisible(), true, "welcome must remain until the user presses Start");
