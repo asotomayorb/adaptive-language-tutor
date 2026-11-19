@@ -391,3 +391,5 @@
 .stats-chart-scroll{overflow-x:auto;overscroll-behavior-x:contain;padding:8px 2px 12px}.stats-bar-chart{min-width:680px}.stats-language-chart{min-width:760px}.stats-average-line{stroke-width:2.8;stroke-dasharray:8 6}
 
 .route-treasure-icon svg{display:block;width:34px;height:34px;filter:drop-shadow(0 1px 1px #5b452c30)}
+
+.lesson-panel.route-integration-active .lesson-actions{display:flex!important;margin-top:16px}.lesson-panel.route-integration-active #review-btn{display:none!important}
