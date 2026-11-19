@@ -292,3 +292,13 @@ Para cada escenario registrar:
 - Preview: https://adaptive-language-tutor-preview-5b3d.onrender.com/
 - Deploy LIVE: `dep-dbv7ee3rjlhs73b4lr9g` — commit `33db475`.
 - La validación automatizada pasó; queda la comprobación humana en Android de los puntos listados arriba.
+
+## Refinamiento UI/audio/teoría — prueba Android
+- [ ] Confirmar que ya no aparece el aviso «No hay una voz instalada…» y que la práctica no queda bloqueada si el dispositivo carece de una voz exacta.
+- [ ] Confirmar que el contenido sube, los títulos de sección quedan centrados y no se superponen con el control de audio.
+- [ ] Estadísticas globales y por idioma: comprobar que los gráficos caben dentro de los márgenes sin scroll lateral y conservan legibilidad.
+- [ ] Ejercicios: comprobar que el modo se llama «Práctica» y que en Repaso solo queda el control para comenzar; no deben aparecer nivel, cantidad ni tema.
+- [ ] En un ejercicio mixto, comprobar que la consigna se lee en español y la frase objetivo en el idioma estudiado.
+- [ ] En una respuesta escrita, solicitar las tres pistas y comprobar progresión; la tercera debe ofrecer una guía clara.
+- [ ] Portugués: revisar Pasado y Futuro, tablas para eu/tu/você/ele/ela/nós/a gente/vocês/eles/elas, ejemplos y excepciones.
+- [ ] Notar si alguna conjugación, traducción o ejemplo necesita corrección regional/contextual.
