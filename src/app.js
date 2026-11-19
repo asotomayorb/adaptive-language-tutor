@@ -327,7 +327,7 @@ function getExerciseIllustration(exercise) {
     : /oficina|trabajo|office|work|ocupaci[oó]n/.test(text) ? "💼" : /viaje|tren|estaci[oó]n|travel|train|direcci[oó]n/.test(text) ? "🧭"
     : /hora|ayer|mañana|yesterday|tomorrow|ontem/.test(text) ? "🕒" : "💬";
   const label = topicLabels[exercise?.topic] || "situación cotidiana";
-  return '<div class="exercise-illustration" role="img" aria-label="Ilustración de ' + escapeHTML(label) + '"><span>' + icon + '</span><small>' + escapeHTML(label) + '</small></div>';
+  return '<div class="exercise-illustration" role="img" aria-label="Ilustración de ' + escapeHTML(label) + '"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><rect x="3" y="3" width="58" height="58" rx="15" fill="#e7eff7"/><circle cx="48" cy="15" r="5" fill="#c6d6e7"/><text x="32" y="44" text-anchor="middle" font-size="31">' + icon + '</text></svg><small>' + escapeHTML(label) + '</small></div>';
 }
 
 function refreshDashboard() {
@@ -392,11 +392,11 @@ function refreshDashboard() {
     if (!metrics.length) {
       chartMarkup = '<p class="empty-chart">Completa una sesión para comparar la precisión entre idiomas.</p>';
     } else {
-      const width = Math.max(300, Math.floor((statsContent.clientWidth || 760) - 52)), height = 340;
+      const width = Math.max(320, Math.floor((statsContent.clientWidth || 760) - 24)), height = 390;
       const left = 58, right = 24, top = 28, bottom = 82;
       const plotWidth = width-left-right, plotHeight = height-top-bottom;
       const yAt = value => top + (100-value)*plotHeight/100;
-      const slot = plotWidth/metrics.length, barWidth = Math.min(48,slot*0.66);
+      const slot = plotWidth/metrics.length, barWidth = Math.min(88,slot*0.86);
       const grid = [0,25,50,75,100].map(value =>
         '<line x1="' + left + '" y1="' + yAt(value) + '" x2="' + (width-right) + '" y2="' + yAt(value) + '" class="chart-gridline"/><text x="4" y="' + (yAt(value)+4) + '" class="chart-axis-label">' + value + '%</text>'
       ).join("");
@@ -1207,9 +1207,10 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   localHintLevel = 0;
   if (!currentExercise) { finishSession(); return; }
   const adaptation = getAdaptation(session);
-  $("lesson-phase").textContent = "CONVERSACIÓN GUIADA";
-  $("turn-count").textContent = "Pregunta " + (questionIndex + 1) + " / " + session.config.duration;
-  $("progress-bar").style.width = (questionIndex / session.config.duration * 100) + "%";
+  const routePhase = routeMode ? getRoutePhase(questionIndex,routeQuestionCount) : null;
+  $("lesson-phase").textContent = routeMode ? routePhase.label : "CONVERSACIÓN GUIADA";
+  $("turn-count").textContent = "Pregunta " + (questionIndex + 1) + " / " + (routeMode ? routeQuestionCount : session.config.duration);
+  $("progress-bar").style.width = (questionIndex / (routeMode ? routeQuestionCount : session.config.duration) * 100) + "%";
   $("streak").textContent = session.streak;
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
