@@ -78,6 +78,9 @@ try {
   await page.locator('[data-language="Portugués brasileño"]').click();
   await page.locator("#screen-route").waitFor({ state: "visible" });
   assert.equal(await page.locator("#selected-language-flag").innerText(), "🇧🇷");
+  assert.equal(await page.locator("#route-unit-list [data-route-unit]").count(), 4, "Portuguese route should show four topic-based units");
+  assert.equal(await page.locator('[data-route-unit="travel"]').isDisabled(), true, "unit 2 should remain locked until unit 1 reaches its minimum score");
+  assert.equal(await page.locator('[data-route-unit="food"]').isDisabled(), true, "unit 3 should remain locked at the start");
 
   // Standard languages have flags and do not ask users to enter a locale.
   await page.locator("#open-language-picker").click();
@@ -130,14 +133,17 @@ try {
   assert.equal(await page.locator("#exercise-choice-panel").isVisible(), true, "Exercises navigation should return to its setup screen");
   await page.locator('[data-mode="review"]').click();
   assert.equal(await page.locator("#setup-form > label:visible").count(), 0, "review should hide practice-only level, duration and topic selectors");
-  assert.equal(await page.locator("#start-session").innerText(), "Comenzar repaso");
+  assert.equal(await page.locator("#review-exercises").isVisible(), true, "review should start immediately without a separate start button");
   await page.locator('[data-screen="theory"]').click();
   await page.locator('[data-screen="exercises"]').click();
   assert.equal(await page.locator('[data-mode="practice"]').getAttribute("class").then(value => value.includes("selected")), true, "Exercises should reset to Practice mode");
   assert.equal(await page.locator("#topic").isDisabled(), false, "the topic selector should be enabled again");
+  await page.locator("#practice-toggle").click();
+  assert.equal(await page.locator("#setup-panel").isVisible(), true, "the Exercise banner should expand its configuration");
 
   // Local exercise: first three questions are alternatives, then answers are written.
   await page.locator('[data-screen="exercises"]').click();
+  await page.locator("#practice-toggle").click();
   await page.locator("#start-session").waitFor({ state: "visible" });
   await page.locator("#start-session").waitFor({ state: "attached" });
   await page.locator("#duration").selectOption("5");
@@ -165,11 +171,12 @@ try {
     }
   }
   assert.equal(await page.locator("#answer-area #free-answer").isVisible(), true, "fourth question should require written input");
-  for (let hint = 1; hint <= 3; hint += 1) {
-    await page.locator("#hint-btn").click();
-    assert.match(await page.locator("#feedback").innerText(), new RegExp("Pista " + hint + "/3"));
-  }
-  assert.equal(await page.locator("#hint-btn").isHidden(), true, "text-answer questions should provide exactly three progressive hints");
+  await page.locator("#hint-btn").click();
+  assert.match(await page.locator("#feedback").innerText(), /Pista:/);
+  assert.equal(await page.locator("#hint-btn").innerText(), "Ver respuesta");
+  await page.locator("#hint-btn").click();
+  assert.match(await page.locator("#feedback").innerText(), /Respuesta:/);
+  assert.equal(await page.locator("#hint-btn").isHidden(), true, "written answers should offer one hint followed by the answer");
   for (let turn = 3; turn < 5; turn += 1) {
     await page.locator("#free-answer").fill("Bonjour");
     await page.locator("#submit-free").click();
@@ -185,9 +192,10 @@ try {
   assert.equal(await page.locator("#summary-content h2").innerText(), "Resumen");
   assert.equal(await page.locator("#session-status").innerText(), "", "no redundant session status should appear below the summary");
   const summaryHeadings = await page.locator("#summary-content h3").allInnerTexts();
-  assert.match(summaryHeadings[0], /^Aciertos \d+\/5$/);
-  assert.match(summaryHeadings[1], /^Errores \d+\/5$/);
-  assert.deepEqual(summaryHeadings.slice(2), ["Vocabulario","Temas"]);
+  assert.match(await page.locator("#summary-content .summary-accuracy strong").innerText(), /^\d+%$/);
+  assert.ok(await page.locator("#summary-content .summary-accuracy span").innerText(), "summary should show an accuracy assessment");
+  assert.match(summaryHeadings[0], /^Errores \d+\/5$/);
+  assert.deepEqual(summaryHeadings.slice(1), ["Vocabulario","Temas"]);
   // Incomplete Exercises sessions are discarded; no partial session is persisted.
   await page.locator("#new-session").click();
   await page.locator('[data-screen="stats"]').click();
@@ -203,6 +211,7 @@ try {
   const statsText = await page.locator("#statistics-content .stats-language-table").innerText();
   assert.ok(["Sesiones","Palabras","Precisión","Progreso de Ruta"].every(label => statsText.includes(label)));
   await page.locator('[data-screen="exercises"]').click();
+  await page.locator("#practice-toggle").click();
   await page.locator("#duration").selectOption("10");
   await page.locator("#start-session").click();
   await page.locator("#session-close").click();
@@ -226,9 +235,9 @@ try {
   await page.locator("#welcome-start").click();
   assert.equal(await page.locator("#welcome-screen").isVisible(), false, "Start should reveal the saved app");
   assert.equal(await page.locator("#route-resume").isVisible(), false, "Route should use a single resume banner");
-  assert.match(await page.locator("#route-start").innerText(), /Continuar recorrido/i, "the start banner should become Continue after the first start");
+  assert.match(await page.locator("#route-start").innerText(), /Continuar unidad/i, "the start banner should resume the active unit");
   await page.locator("#route-start").click();
-  assert.match(await page.locator("#turn-count").innerText(), /2 \/ 10/);
+  assert.match(await page.locator("#turn-count").innerText(), /2 \/ \d+/);
   assert.equal(await page.locator("#answer-area #continue-answer").isVisible(), true, "Route should restore the pending feedback and Continue action");
   assert.deepEqual(pageErrors, [], "browser should not report uncaught page errors");
 
@@ -291,8 +300,9 @@ try {
   await aiPage.locator("#answer-area #continue-answer").waitFor({ state: "visible" });
   await aiPage.locator("#session-close").click();
   assert.equal(await aiPage.locator("#route-resume").isVisible(), false, "AI-backed Route must use the same single banner");
-  assert.match(await aiPage.locator("#route-start").innerText(), /Continuar recorrido/i);
+  assert.match(await aiPage.locator("#route-start").innerText(), /Continuar unidad/i);
   await aiPage.locator('[data-screen="exercises"]').click();
+  await aiPage.locator("#practice-toggle").click();
   await aiPage.locator("#start-session").waitFor({ state: "visible" });
   await aiPage.locator("#start-session").click();
   await aiPage.locator("#answer-area [data-ai-choice]").first().waitFor();
@@ -330,13 +340,12 @@ try {
   await routePage.locator('[data-language="Portugués brasileño"]').click();
   await routePage.evaluate(() => {
     const session = {
-      config: { language:"Portugués", languageId:"pt-BR", languageLocale:"pt-BR", duration:11, topic:"daily", level:"zero", routeMode:true },
-      turn:10, correct:8, attempted:10, streak:0, bestStreak:0, consecutiveCorrect:0, consecutiveErrors:0,
-      errors:[], errorsToReview:[], vocabulary:[], reviewQueue:[], answers:[]
+      config: { language:"Portugués", languageId:"pt-BR", languageLocale:"pt-BR", duration:6, questionCount:6, topic:"daily", level:"zero", routeMode:true, routeUnitId:"foundations" },
+      turn:6, correct:5, attempted:6, streak:0, bestStreak:0, consecutiveCorrect:0, consecutiveErrors:0,
+      errors:[], errorsToReview:[], vocabulary:[], reviewQueue:[], answers:Array.from({length:6},(_,i)=>({exerciseId:"seed-"+i,status:"correct"}))
     };
-    localStorage.setItem("adaptive-language-tutor.route-started:pt-BR","true");
     localStorage.setItem("adaptive-language-tutor.route-progress:pt-BR",JSON.stringify({
-      languageId:"pt-BR",session,integration:true,integrationAttempts:0,routeIntegrationHintLevel:0,
+      languageId:"pt-BR",unitId:"foundations",questionCount:6,session,integration:true,integrationAttempts:0,routeIntegrationHintLevel:0,
       pendingFeedback:null,localPendingAnswer:null,aiPendingTurn:null,aiMode:false,aiHistory:[],
       aiLastResult:null,aiCurrentExercise:null,aiPendingFeedback:null
     }));
@@ -344,17 +353,16 @@ try {
   await routePage.reload({ waitUntil: "networkidle" });
   await routePage.locator("#welcome-start").click();
   await routePage.locator("#route-start").click();
-  assert.match(await routePage.locator("#lesson-content h3").innerText(), /Traduce al portugués/i);
+  assert.match(await routePage.locator("#lesson-content h3").innerText(), /presentación completa/i);
   await routePage.locator("#route-integration-answer").fill("ola");
   await routePage.locator("#route-integration-submit").click();
-  assert.match(await routePage.locator("#feedback").innerText(), /Pista 1\/5/);
-  await routePage.locator("#hint-btn").click();
-  assert.match(await routePage.locator("#feedback").innerText(), /Pista 2\/5/);
+  assert.match(await routePage.locator("#feedback").innerText(), /Pista:/);
   await routePage.reload({ waitUntil: "networkidle" });
   await routePage.locator("#welcome-start").click();
   await routePage.locator("#route-start").click();
+  assert.equal(await routePage.locator("#hint-btn").innerText(), "Ver respuesta", "the second help step should persist after reload");
   await routePage.locator("#hint-btn").click();
-  assert.match(await routePage.locator("#feedback").innerText(), /Pista 3\/5/, "Route must resume the clue sequence instead of restarting it");
+  assert.match(await routePage.locator("#feedback").innerText(), /Respuesta:/, "Route should restore the two-step hint sequence");
   assert.deepEqual(routeErrors, [], "Portuguese Route integration should not report browser errors");
 } finally {
   if (browser) await browser.close();
