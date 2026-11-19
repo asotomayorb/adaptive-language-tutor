@@ -1110,7 +1110,8 @@ function renderRouteIntegration() {
   $("lesson-phase").textContent = "HITO INTEGRADOR";
   $("turn-count").textContent = "Actividad final";
   $("progress-bar").style.width = "100%";
-  $("hint-btn").textContent = "Pista";
+  $("hint-btn").textContent = routeIntegrationHintLevel >= 1 ? "Ver respuesta" : "Pista";
+  $("hint-btn").hidden = routeIntegrationHintLevel >= 2;
   $("lesson-content").innerHTML = getExerciseIllustration({ topic:activeRouteUnit?.topic, prompt }) + '<p class="eyebrow">UNIDAD ' + (activeRouteUnit?.number || "01") + ' · ' + escapeHTML(activeRouteUnit?.title || "FUNDAMENTOS").toUpperCase() + '</p><h3>' + escapeHTML(prompt) + '</h3><p>Combina lo practicado en las tres etapas anteriores.</p>';
   bindSpeakerButtons($("lesson-content"));
   $("answer-area").innerHTML = '<textarea id="route-integration-answer" class="answer-input" rows="3" placeholder="Escribe tu respuesta completa…"></textarea><button id="route-integration-submit" class="primary" type="button">Comprobar actividad</button>';
@@ -1281,6 +1282,7 @@ function showAnswerFeedback({ correct, expected, expectedLocale, explanation, se
   $("feedback").innerHTML = (correct ? '<p class="answer-status correct">Correcto</p>' : '<p class="answer-status incorrect">Incorrecto</p>') + expectedText + explanationText;
   $("feedback").classList.remove("hidden","bad");
   $("hint-btn").disabled = true;
+  $("hint-btn").hidden = true;
   $("review-btn").disabled = true;
   $("answer-area").querySelectorAll("[data-choice],[data-ai-choice]").forEach(button => {
     const value = button.textContent.trim().toLocaleLowerCase();
