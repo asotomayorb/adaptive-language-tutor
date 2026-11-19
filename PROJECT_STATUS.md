@@ -576,7 +576,8 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] Hito integrador de Ruta: pistas progresivas para portugués e inglés y persistencia del nivel de pista.
 - [x] Icono de Ruta sustituido por un mapa del tesoro con línea segmentada y destino marcado.
 - [ ] Auditoría pedagógica completa de Teoría: siguen faltando explicaciones aplicadas en varios idiomas/temas; no marcar como resuelto.
-- [ ] CI unitario y Browser E2E de esta iteración.
+- [x] Tests unitarios y comprobación estática: [GitHub Actions 44456571620](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44456571620).
+- [x] Browser E2E: [GitHub Actions 44456571650](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44456571650).
 - [ ] Deploy manual Render y validación humana Android.
 
 - [x] Consigna del hito integrador formulada en español y pistas progresivas disponibles tanto tras un error como mediante el botón «Pista».
