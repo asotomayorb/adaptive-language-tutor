@@ -353,3 +353,14 @@ Para cada escenario registrar:
 - [ ] Revisar los pictogramas en Android real: legibilidad, proporción y compatibilidad con la fuente emoji del dispositivo.
 
 **Nota:** el modo relato con personajes ficticios y las actividades de emparejar palabras quedan para una fase futura; no marcarlos como funcionalidades ya implementadas.
+
+
+## Android — refinamiento de estadísticas, teoría y controles de práctica — 19-11-2026
+
+- [ ] Estadísticas Global: comprobar que las barras son visiblemente más estrechas y mantienen proporción legible.
+- [ ] Confirmar que no existe línea segmentada, etiqueta ni leyenda de promedio global.
+- [ ] Teoría de artículos, pasado y futuro: verificar que las tablas aparecen primero, las reglas/excepciones quedan agrupadas en notas legibles y los ejemplos completos aparecen debajo.
+- [ ] En Ejercicios, confirmar que desapareció «Repasar error» sin afectar la modalidad independiente Repaso.
+- [ ] Verificar que el encabezado de tema/nivel queda a la izquierda del contador «Pregunta n / total».
+- [ ] Confirmar que la etiqueta breve del tema sigue debajo del pictograma y que no se repite un segundo encabezado de tema/nivel debajo del icono.
+- [ ] En portugués e inglés, comprobar que cada botón ▶ reproduce solo palabras/frases del idioma objetivo; las instrucciones en español y opciones en español no deben ofrecer reproducción manual.
