@@ -305,6 +305,41 @@ try {
   assert.notMatch(await aiPage.locator("#lesson-content .exercise-instruction").innerText(), /¡Muy bien!/i, "the next question must not repeat contradictory praise after an incorrect answer");
   assert.equal(await aiPage.locator("#lesson-content .feedback-note").count(), 0, "previous-answer grey notes must not remain above the new question");
   assert.deepEqual(aiErrors, [], "AI browser flow should not report uncaught page errors");
+
+  // Route's Portuguese integration task must give progressive, resumable clues.
+  const routeContext = await browser.newContext();
+  const routePage = await routeContext.newPage();
+  const routeErrors = [];
+  routePage.on("pageerror", error => routeErrors.push(error.message));
+  await routePage.goto(baseUrl, { waitUntil: "networkidle" });
+  await routePage.locator("#welcome-start").click();
+  await routePage.locator('[data-language="Portugués brasileño"]').click();
+  await routePage.evaluate(() => {
+    const session = {
+      config: { language:"Portugués", languageId:"pt-BR", languageLocale:"pt-BR", duration:11, topic:"daily", level:"zero", routeMode:true },
+      turn:10, correct:8, attempted:10, streak:0, bestStreak:0, consecutiveCorrect:0, consecutiveErrors:0,
+      errors:[], errorsToReview:[], vocabulary:[], reviewQueue:[], answers:[]
+    };
+    localStorage.setItem("adaptive-language-tutor.route-started:pt-BR","true");
+    localStorage.setItem("adaptive-language-tutor.route-progress:pt-BR",JSON.stringify({
+      languageId:"pt-BR",session,integration:true,integrationAttempts:0,routeIntegrationHintLevel:0,
+      pendingFeedback:null,localPendingAnswer:null,aiPendingTurn:null,aiMode:false,aiHistory:[],
+      aiLastResult:null,aiCurrentExercise:null,aiPendingFeedback:null
+    }));
+  });
+  await routePage.reload({ waitUntil: "networkidle" });
+  await routePage.locator("#route-start").click();
+  assert.match(await routePage.locator("#lesson-content h3").innerText(), /Traduce al portugués/i);
+  await routePage.locator("#route-integration-answer").fill("ola");
+  await routePage.locator("#route-integration-submit").click();
+  assert.match(await routePage.locator("#feedback").innerText(), /Pista 1\/5/);
+  await routePage.locator("#hint-btn").click();
+  assert.match(await routePage.locator("#feedback").innerText(), /Pista 2\/5/);
+  await routePage.reload({ waitUntil: "networkidle" });
+  await routePage.locator("#route-start").click();
+  await routePage.locator("#hint-btn").click();
+  assert.match(await routePage.locator("#feedback").innerText(), /Pista 3\/5/, "Route must resume the clue sequence instead of restarting it");
+  assert.deepEqual(routeErrors, [], "Portuguese Route integration should not report browser errors");
 } finally {
   if (browser) await browser.close();
   server.kill("SIGTERM");
