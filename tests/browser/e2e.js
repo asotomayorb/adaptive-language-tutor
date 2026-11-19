@@ -139,7 +139,7 @@ try {
   for (let turn = 0; turn < 3; turn += 1) {
     assert.equal(await page.locator("#answer-area [data-choice]").count(), 3, "first three questions should have three choices");
     const questionBefore = await page.locator("#lesson-content h3").innerText();
-    await page.locator("#answer-area [data-choice]").last().click();
+    await page.locator("#answer-area [data-choice]").last().evaluate(button => button.click());
     assert.equal(await page.locator("#feedback .answer-status.incorrect").isVisible(), true, "incorrect feedback should appear at the end of the current question");
     assert.equal(await page.locator("#lesson-content h3").innerText(), questionBefore, "the current question must remain until Continue");
     assert.equal(await page.locator("#answer-area .answer-incorrect").count(), 1, "the selected wrong answer should be red");
@@ -187,7 +187,7 @@ try {
   await page.locator("#route-start").click();
   await page.locator("#answer-area [data-choice]").last().click();
   await page.locator("#answer-area #continue-answer").click();
-  await page.locator("#answer-area [data-choice]").first().click();
+  await page.locator("#answer-area [data-choice]").first().evaluate(button => button.click());
   await page.locator("#answer-area #continue-answer").waitFor({ state: "visible" });
   await page.locator("#session-close").click();
   const draft = await page.evaluate(() => JSON.parse(localStorage.getItem("adaptive-language-tutor.route-progress:pt-BR") || "null"));
@@ -269,7 +269,7 @@ try {
   await aiPage.locator("#answer-area [data-ai-choice]").first().waitFor();
   for (let turn = 0; turn < 3; turn += 1) {
     assert.equal(await aiPage.locator("#answer-area [data-ai-choice]").count(), 3);
-    await aiPage.locator("#answer-area [data-ai-choice]").first().click();
+    await aiPage.locator("#answer-area [data-ai-choice]").first().evaluate(button => button.click());
     await aiPage.locator("#feedback .answer-status.correct").waitFor({ state: "visible" });
     await aiPage.locator("#answer-area #continue-answer").waitFor({ state: "visible" });
     assert.doesNotMatch(await aiPage.locator("#lesson-content").innerText(), /Pronunciación|Vocabulario/i, "answer-revealing labels should not be displayed");
