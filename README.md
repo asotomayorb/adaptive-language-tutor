@@ -446,3 +446,30 @@ APP
 ```
 
 La barra inferior mantiene cinco posiciones: Ruta · Ejercicios · Selector de idioma · Teoría · Estadísticas.
+
+## Iteración de refinamiento — 19-11-2026
+
+- **Estadísticas:** gráficos con mayor área útil, barras y puntos más grandes, etiquetas y leyendas legibles; el gráfico diario numera los días como 1…15 y muestra «Días» una sola vez como título del eje horizontal. En pantallas estrechas se conserva el tamaño mediante desplazamiento horizontal del gráfico.
+- **Ejercicios IA:** el botón «Continuar» aparece junto al feedback inmediatamente después del envío; queda temporalmente deshabilitado mientras se calcula y registra la siguiente actividad. Una respuesta incorrecta conserva el estado incorrecto aunque el proveedor la elogie; los mensajes genéricos de elogio no se reutilizan como consigna de la pregunta siguiente.
+- **Feedback anterior:** se elimina el bloque gris de respuesta previa que se repetía encima del hito integrador.
+- **Ruta:** el hito integrador entrega pistas progresivas en español para la presentación en portugués o inglés, mantiene la pregunta y conserva el nivel de pista al reanudar. El icono de Ruta pasa a ser un mapa del tesoro con recorrido punteado y destino marcado.
+- **Teoría:** la estructura general y algunos temas tienen contenido aplicado, pero siguen existiendo explicaciones genéricas y cobertura desigual entre idiomas. No se considera terminada; requiere auditoría tema por tema y ampliación de ejemplos, conjugaciones, reglas y excepciones por idioma.
+
+### Esquema de las pantallas modificadas
+
+```text
+ESTADÍSTICAS
+└── Selector Global / Idioma
+    ├── Global: barras de precisión + promedio punteado
+    └── Idioma: preguntas ●──● + precisión ●──●
+        └── Eje X: Días | 1  2  3 ... 15
+
+EJERCICIOS IA
+└── Pregunta → Responder
+    ├── Feedback correcto/incorrecto inmediato
+    └── Continuar (visible al instante; se habilita al terminar el cálculo)
+
+RUTA
+└── Mapa del tesoro → unidad → preguntas → hito integrador
+    └── Respuesta libre incorrecta → pista 1 → pista 2 → ... → nuevo intento
+```
