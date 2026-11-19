@@ -283,7 +283,8 @@ try {
   assert.equal(await aiPage.locator("#ai-answer").isVisible(), true, "AI should switch to written answers after three questions");
   await aiPage.locator("#ai-answer").fill("Bom dia");
   await aiPage.locator("#submit-ai-answer").click();
-  await aiPage.locator("#feedback .answer-status.correct").waitFor({ state: "visible" });
+  await aiPage.locator("#feedback .answer-status.incorrect").waitFor({ state: "visible" });
+  assert.equal(await aiPage.locator("#feedback .answer-status.correct").count(), 0, "a semantically incorrect answer must not be accepted just because the model labels it correct");
   assert.equal(await aiPage.locator("#submit-ai-answer").count(), 0, "written-answer submit button should disappear after sending");
   assert.deepEqual(aiErrors, [], "AI browser flow should not report uncaught page errors");
 } finally {
