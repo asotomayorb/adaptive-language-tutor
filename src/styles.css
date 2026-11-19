@@ -457,3 +457,5 @@
  .summary-accuracy>strong{font-size:36px}
  .stats-bar-chart{min-height:310px}
 }
+
+.exercise-illustration>svg{display:block;flex:0 0 48px;width:48px;height:48px;border-radius:12px}
