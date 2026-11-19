@@ -302,3 +302,5 @@ Para cada escenario registrar:
 - [ ] En una respuesta escrita, solicitar las tres pistas y comprobar progresión; la tercera debe ofrecer una guía clara.
 - [ ] Portugués: revisar Pasado y Futuro, tablas para eu/tu/você/ele/ela/nós/a gente/vocês/eles/elas, ejemplos y excepciones.
 - [ ] Notar si alguna conjugación, traducción o ejemplo necesita corrección regional/contextual.
+
+- [ ] Con portugués o inglés y una sesión de 5/10 preguntas, comprobar que se inicia como «Práctica local» y que las respuestas no esperan una evaluación IA remota.
