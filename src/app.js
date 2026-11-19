@@ -583,6 +583,7 @@ async function startAITutorSession(config) {
 }
 
 function renderAITutorTurn(result) {
+  $("lesson-panel").classList.remove("route-integration-active");
   speech.stop();
   aiLastResult = result;
   aiCurrentExercise = result.exercise || {};
@@ -961,6 +962,10 @@ function startRouteSession(resume = false) {
   else renderLesson();
 }
 function renderRouteIntegration() {
+  $("lesson-panel").classList.add("route-integration-active");
+  $("hint-btn").hidden = false;
+  $("hint-btn").disabled = false;
+  $("hint-btn").textContent = "Pista";
   speech.stop();
   const prompt = catalog.id === "en"
     ? "Traduce al inglés: «Buenos días, me llamo Ana y soy de Chile»."
@@ -1006,6 +1011,7 @@ function renderRouteIntegration() {
   });
 }
 function renderRouteAssessmentFailed() {
+  $("lesson-panel").classList.remove("route-integration-active");
   pendingFeedback = null;
   saveRouteDraft();
   $("lesson-phase").textContent = "REFUERZO NECESARIO";
@@ -1068,6 +1074,7 @@ function levelLabel(level) {
 }
 
 function renderLesson({ exercise: exerciseOverride = null, answered = false } = {}) {
+  $("lesson-panel").classList.remove("route-integration-active");
   if (session.turn >= session.config.duration && !answered) { finishSession(); return; }
   reviewMode = false;
   const questionIndex = answered ? Math.max(0, session.turn - 1) : session.turn;
