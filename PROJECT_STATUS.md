@@ -536,3 +536,5 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] La selección de palabras dentro de una alternativa no dispara la respuesta; el envío requiere tocar el área de la opción fuera de la palabra.
 
 - [x] El texto clicable distingue consignas marcadas en idioma objetivo de las instrucciones de apoyo en español.
+
+- [x] Los aciertos se resaltan en verde en el resumen; las respuestas erróneas se marcan en rojo y muestran la solución.
