@@ -100,6 +100,23 @@ try {
   await page.reload({ waitUntil:"networkidle" });
   await page.locator("#welcome-start").click();
   assert.equal(await page.locator('[data-route-unit="food"]').isDisabled(), false, "unit 3 should unlock only after unit 2 reaches five stars");
+  await page.evaluate(() => {
+    const state = JSON.parse(localStorage.getItem("adaptive-language-tutor.route-units:pt-BR"));
+    state.completedUnits.food = {completed:true,stars:1,accuracy:33};
+    localStorage.setItem("adaptive-language-tutor.route-units:pt-BR",JSON.stringify(state));
+  });
+  await page.reload({ waitUntil:"networkidle" });
+  await page.locator("#welcome-start").click();
+  assert.equal(await page.locator('[data-route-unit="work"]').isDisabled(), true, "unit 4 should remain locked below three stars in unit 3");
+  await page.evaluate(() => {
+    const state = JSON.parse(localStorage.getItem("adaptive-language-tutor.route-units:pt-BR"));
+    state.completedUnits.food.stars = 3;
+    state.completedUnits.food.accuracy = 67;
+    localStorage.setItem("adaptive-language-tutor.route-units:pt-BR",JSON.stringify(state));
+  });
+  await page.reload({ waitUntil:"networkidle" });
+  await page.locator("#welcome-start").click();
+  assert.equal(await page.locator('[data-route-unit="work"]').isDisabled(), false, "unit 4 should unlock at three stars in unit 3");
   await page.locator("#route-reset").click();
   assert.equal(await page.locator("#route-reset-confirm").isVisible(), true, "route reset must request confirmation");
   await page.locator("#cancel-route-reset").click();
