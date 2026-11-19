@@ -164,6 +164,12 @@ try {
   const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("adaptive-language-tutor.progress") || "{}"));
   assert.equal(saved.sessions?.length, 1, "completed exercise session should be saved");
   assert.equal(saved.sessions[0].attempted, 5);
+  assert.equal(await page.locator("#summary-content h2").innerText(), "Resumen");
+  assert.deepEqual(await page.locator("#summary-content h3").allInnerTexts(), ["Aciertos","Errores","Vocabulario","Temas"]);
+  await page.locator('[data-screen="stats"]').click();
+  assert.equal(await page.locator("#statistics-content .stats-language-table").isVisible(), true, "statistics should show the cross-language metrics table");
+  assert.equal(await page.locator("#statistics-content .stats-line-chart").isVisible(), true, "statistics should show the daily line chart");
+  assert.match(await page.locator("#statistics-content .stats-language-table").innerText(), /Sesiones[\\s\\S]*Palabras[\\s\\S]*Precisión[\\s\\S]*Progreso de Ruta/);
 
   // Incomplete Exercises sessions are discarded; no partial session is persisted.
   await page.locator("#new-session").click();
