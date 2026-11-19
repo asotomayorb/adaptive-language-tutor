@@ -1229,7 +1229,7 @@ function finishSession() {
   speech.stop();
   $("lesson-panel").classList.add("hidden");
   $("summary-panel").classList.remove("hidden");
-  $("session-status").textContent = "Sesión finalizada";
+  $("session-status").textContent = "";
   const summary = buildSummary(session);
   const finalFeedback = pendingFeedback;
   pendingFeedback = null;
