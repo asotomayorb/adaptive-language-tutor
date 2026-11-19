@@ -473,3 +473,5 @@ RUTA
 └── Mapa del tesoro → unidad → preguntas → hito integrador
     └── Respuesta libre incorrecta → pista 1 → pista 2 → ... → nuevo intento
 ```
+
+- **Ruta / hito integrador:** la consigna de portugués e inglés está formulada en español. Las pistas también se pueden solicitar manualmente con el botón «Pista»; cada intento incorrecto avanza al siguiente nivel y la secuencia se guarda al reanudar.
