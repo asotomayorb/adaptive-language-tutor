@@ -57,6 +57,8 @@ function toggleAudio() {
 document.getElementById("audio-toggle")?.addEventListener("click", toggleAudio);
 document.getElementById("session-audio-toggle")?.addEventListener("click", toggleAudio);
 function speakerButton(text, locale) {
+  const targetLocale = session?.config?.languageLocale || session?.config?.languageId;
+  if (session && targetLocale && locale && locale !== targetLocale) return "";
   return '<button class="speak-button" type="button" data-speak="' + escapeHTML(text) + '" data-locale="' + escapeHTML(locale || "") + '" aria-label="Reproducir pronunciación" title="Escuchar">▶</button>';
 }
 const spellingVariants = {
@@ -385,10 +387,6 @@ function refreshDashboard() {
     ? previousStatsView : "global";
   let chartMarkup = "";
   if (selectedView === "global") {
-    const totalAttempted = metrics.reduce((sum,item) => sum + item.attempted,0);
-    const totalCorrect = metrics.reduce((sum,item) => sum + item.correct,0);
-    const average = totalAttempted ? Math.round(totalCorrect / totalAttempted * 100)
-      : (metrics.length ? Math.round(metrics.reduce((sum,item)=>sum+item.accuracy,0)/metrics.length) : 0);
     if (!metrics.length) {
       chartMarkup = '<p class="empty-chart">Completa una sesión para comparar la precisión entre idiomas.</p>';
     } else {
@@ -396,7 +394,7 @@ function refreshDashboard() {
       const left = 58, right = 24, top = 28, bottom = 82;
       const plotWidth = width-left-right, plotHeight = height-top-bottom;
       const yAt = value => top + (100-value)*plotHeight/100;
-      const slot = plotWidth/metrics.length, barWidth = Math.min(88,slot*0.86);
+      const slot = plotWidth/metrics.length, barWidth = Math.min(54,slot*0.52);
       const grid = [0,25,50,75,100].map(value =>
         '<line x1="' + left + '" y1="' + yAt(value) + '" x2="' + (width-right) + '" y2="' + yAt(value) + '" class="chart-gridline"/><text x="4" y="' + (yAt(value)+4) + '" class="chart-axis-label">' + value + '%</text>'
       ).join("");
@@ -408,10 +406,8 @@ function refreshDashboard() {
           '<text x="' + labelX + '" y="' + (height-42) + '" text-anchor="middle" class="chart-axis-label">' + item.flag + '</text>' +
           '<text x="' + labelX + '" y="' + (height-25) + '" text-anchor="middle" class="chart-axis-label">' + escapeHTML(item.label.length>12?item.label.slice(0,11)+"…":item.label) + '</text>';
       }).join("");
-      const averageLine = '<line x1="' + left + '" y1="' + yAt(average) + '" x2="' + (width-right) + '" y2="' + yAt(average) + '" class="stats-average-line"/>' +
-        '<text x="' + (width-right-2) + '" y="' + (yAt(average)-6) + '" text-anchor="end" class="chart-average-label">Promedio ' + average + '%</text>';
       chartMarkup = '<div class="stats-chart-scroll"><svg class="stats-bar-chart" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="Precisión actual comparada entre idiomas">' +
-        grid + bars + averageLine + '</svg></div><div class="stats-chart-legend"><span><i class="legend-bar"></i>Precisión actual</span><span><i class="legend-dashed"></i>Promedio global ' + average + '%</span></div>';
+        grid + bars + '</svg></div><div class="stats-chart-legend"><span><i class="legend-bar"></i>Precisión actual</span></div>';
     }
   } else {
     const language = metrics.find(item => item.id === selectedView);
@@ -529,7 +525,6 @@ function startSpacedReview() {
   $("stats").hidden = true;
   $("hint-btn").hidden = false;
   $("hint-btn").textContent = "Pista";
-  $("review-btn").hidden = true;
   renderSpacedReview();
 }
 
@@ -663,7 +658,6 @@ async function startAITutorSession(config) {
   aiCurrentExercise = null;
   $("stats").hidden = true;
   $("hint-btn").hidden = true;
-  $("review-btn").hidden = true;
   $("lesson-phase").textContent = "TUTOR IA · INICIO";
   $("turn-count").textContent = "Preparando tu sesión…";
   $("lesson-content").textContent = "El tutor está preparando una actividad adaptada a tu nivel.";
@@ -703,7 +697,7 @@ function renderAITutorTurn(result) {
   $("hint-btn").textContent = "Pista";
   $("review-btn").disabled = false;
   const aiRoutePhase = routeMode && !routeIntegration ? getRoutePhase(Math.min(session.turn,routeQuestionCount-1),routeQuestionCount) : null;
-  $("lesson-phase").textContent = routeMode ? routeIntegration ? "HITO INTEGRADOR" : aiRoutePhase.label : "TUTOR IA · CONVERSACIÓN";
+  $("lesson-phase").textContent = routeMode ? routeIntegration ? "HITO INTEGRADOR" : aiRoutePhase.label : topicLabels[session.config.topic].toUpperCase() + " · " + levelLabel(session.config.level).toUpperCase();
   $("turn-count").textContent = routeMode && routeIntegration
     ? "Actividad integradora"
     : "Pregunta " + Math.min(session.turn + 1, routeMode ? routeQuestionCount : session.config.duration) + " / " + (routeMode ? routeQuestionCount : session.config.duration);
@@ -726,7 +720,7 @@ function renderAITutorTurn(result) {
   const questionSpeech = targetSpeech.length
     ? { text: targetSpeech.map(item => item.text.trim()).join(" "), locale: targetLocale }
     : getExerciseSpeech(aiCurrentExercise);
-  const promptAudio = aiCurrentExercise.prompt
+  const promptAudio = aiCurrentExercise.prompt && questionSpeech.locale === targetLocale
     ? speakerButton(questionSpeech.text, questionSpeech.locale)
     : "";
   $("lesson-content").innerHTML = getExerciseIllustration(aiCurrentExercise) + instructionMarkup + prompt + promptAudio;
@@ -740,7 +734,6 @@ function renderAITutorTurn(result) {
   const aiHasChoices = aiShouldUseChoices && aiOptions.length === 3 && aiOptions.some(option => String(option).trim().toLocaleLowerCase() === String(aiCurrentExercise.expectedAnswer || "").trim().toLocaleLowerCase());
   $("hint-btn").hidden = aiShouldUseChoices;
   $("hint-btn").textContent = "Pista";
-  $("review-btn").hidden = true;
 
   if (result.nextAction === "finish" || session.turn >= session.config.duration) {
     $("answer-area").innerHTML = '<button id="finish-ai-session" class="primary" type="button">Ver resumen →</button>';
@@ -1210,7 +1203,7 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   if (!currentExercise) { finishSession(); return; }
   const adaptation = getAdaptation(session);
   const routePhase = routeMode ? getRoutePhase(questionIndex,routeQuestionCount) : null;
-  $("lesson-phase").textContent = routeMode ? routePhase.label : "CONVERSACIÓN GUIADA";
+  $("lesson-phase").textContent = routeMode ? routePhase.label : topicLabels[session.config.topic].toUpperCase() + " · " + levelLabel(session.config.level).toUpperCase();
   $("turn-count").textContent = "Pregunta " + (questionIndex + 1) + " / " + (routeMode ? routeQuestionCount : session.config.duration);
   $("progress-bar").style.width = (questionIndex / (routeMode ? routeQuestionCount : session.config.duration) * 100) + "%";
   $("streak").textContent = session.streak;
@@ -1223,8 +1216,9 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
     : renderVariantTerms(currentExercise.prompt);
   const instructionMarkup = currentExercise.instruction
     ? '<p class="exercise-instruction">' + escapeHTML(currentExercise.instruction) + '</p>' : "";
-  const questionAudioMarkup = questionSpeechSegments.map(item => speakerButton(item.text, item.locale)).join(" ");
-  $("lesson-content").innerHTML = getExerciseIllustration(currentExercise) + (routeMode ? '<p class="eyebrow">' + routePhase.label + '</p>' : '<p class="eyebrow">TEMA: ' + escapeHTML(topicLabels[session.config.topic].toUpperCase()) + ' · NIVEL ' + escapeHTML(levelLabel(session.config.level).toUpperCase()) + '</p>') + instructionMarkup + '<h3>' + promptMarkup + '</h3>' + questionAudioMarkup;
+  const targetLocale = session.config.languageLocale || session.config.languageId;
+  const questionAudioMarkup = questionSpeechSegments.filter(item => item.locale === targetLocale).map(item => speakerButton(item.text, item.locale)).join(" ");
+  $("lesson-content").innerHTML = getExerciseIllustration(currentExercise) + instructionMarkup + '<h3>' + promptMarkup + '</h3>' + questionAudioMarkup;
   bindVariantLinks($("lesson-content"));
   bindSpeakerButtons($("lesson-content"));
   bindTargetWords($("lesson-content"));
@@ -1248,8 +1242,6 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   $("hint-btn").disabled = false;
   $("hint-btn").hidden = routeMode ? routePhase.id !== "sentences" : questionIndex < 3;
   $("hint-btn").textContent = "Pista";
-  $("review-btn").disabled = false;
-  $("review-btn").hidden = false;
 }
 
 function submitAnswer(answer) {
@@ -1430,29 +1422,6 @@ $("hint-btn").addEventListener("click", () => {
   }
 });
 
-$("review-btn").addEventListener("click", () => {
-  const lastError = [...session.errors].reverse().find(error => error.exerciseId);
-  if (!lastError) { showFeedback("Todavía no hay errores registrados para repasar.", true); return; }
-  reviewExercise = catalog.exercises.find(exercise => exercise.id === lastError.exerciseId);
-  if (!reviewExercise) return;
-  reviewMode = true;
-  $("lesson-phase").textContent = "REPASO";
-  reviewHintLevel = 0;
-  $("hint-btn").hidden = false;
-  $("hint-btn").disabled = false;
-  $("hint-btn").textContent = "Pista";
-  speech.stop();
-  $("lesson-content").innerHTML = '<h3>Intenta reconstruir esta frase:</h3><p>' + escapeHTML(reviewExercise.prompt) + '</p><p>La respuesta se comprobará sin consumir un turno de la sesión.</p>';
-  $("answer-area").innerHTML = '<input id="review-answer" class="answer-input" placeholder="Escribe tu respuesta…"><button class="primary" id="check-review" type="button">Comprobar repaso</button>';
-  $("check-review").addEventListener("click", () => {
-    const ok = evaluateAnswer($("review-answer").value, reviewExercise);
-    $("hint-btn").hidden = true;
-    showFeedback(ok ? "Correcto. " + reviewExercise.explanation : "Respuesta de referencia: " + reviewExercise.target + ". " + reviewExercise.explanation, ok);
-    appendCatalogSpeech($("feedback"), reviewExercise, "explanationSpeechSegments", true);
-    $("answer-area").innerHTML = '<button class="secondary" id="back-to-practice" type="button">Volver a la práctica</button>';
-    $("back-to-practice").addEventListener("click", renderLesson);
-  });
-});
 
 function finishSession() {
   if (!session || sessionFinished) return;
@@ -1921,19 +1890,31 @@ function renderTenseLesson(languageName, topicIndex) {
   const isPast = topicIndex === 4;
   if (languageName === "Portugués brasileño" && (isPast || topicIndex === 5)) {
     const forms = isPast ? lesson.pastForms : lesson.futureForms;
-    const rows = forms.map(([person,form,targetExample,translation]) =>
-      '<tr><td><strong>' + escapeHTML(person) + '</strong></td><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td><td>' + escapeHTML(targetExample) + ' ' + speakerButton(targetExample,locale) + '</td><td>' + escapeHTML(translation) + '</td></tr>'
+    const rows = forms.map(([person,form,,translation]) =>
+      '<tr><td><strong>' + escapeHTML(person) + '</strong></td><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td><td>' + escapeHTML(translation) + '</td></tr>'
     ).join("");
-    const header = '<thead><tr><th>Pronombre</th><th>Forma verbal</th><th>Ejemplo en portugués</th><th>Español</th></tr></thead>';
+    const examples = forms.map(([, ,targetExample,translation]) =>
+      '<p class="theory-target-word">' + escapeHTML(targetExample) + ' ' + speakerButton(targetExample,locale) + '</p><p>' + escapeHTML(translation) + '</p>'
+    ).join("");
+    const header = '<thead><tr><th>Pronombre</th><th>Forma verbal</th><th>Español</th></tr></thead>';
     const simpleFuture = !isPast && lesson.futureSimpleForms
       ? '<h3>Futuro simple (más formal)</h3><table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>Forma</th></tr></thead><tbody>' + lesson.futureSimpleForms.map(([person,form]) => '<tr><td>' + escapeHTML(person) + '</td><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td></tr>').join("") + '</tbody></table>'
       : "";
-    return '<p class="theory-slide-text">' + escapeHTML(isPast ? "El pretérito perfeito se usa para acciones concluidas en un momento pasado. La terminación depende del infinitivo y del sujeto." : "Para hablar del futuro, el portugués brasileño suele usar ir conjugado + infinitivo. El futuro simple existe, pero es más formal.") + '</p><table class="theory-pronoun-table">' + header + '<tbody>' + rows + '</tbody></table><p class="theory-slide-text"><strong>Regla aplicada:</strong> ' + escapeHTML(isPast ? lesson.pastRule : lesson.futureRule) + '</p>' + simpleFuture + '<section class="theory-example"><span>Excepciones e irregulares</span><p>' + escapeHTML(lesson.exceptions) + '</p></section>';
+    const rule = isPast ? lesson.pastRule : lesson.futureRule;
+    const intro = isPast
+      ? "El pretérito perfeito se usa para acciones concluidas en un momento pasado. La terminación depende del infinitivo y del sujeto."
+      : "Para hablar del futuro, el portugués brasileño suele usar ir conjugado + infinitivo. El futuro simple existe, pero es más formal.";
+    return '<p class="theory-slide-text">' + escapeHTML(intro) + '</p><table class="theory-pronoun-table">' + header + '<tbody>' + rows + '</tbody></table>' + simpleFuture +
+      '<section class="theory-note"><strong>Regla aplicada</strong><p>' + escapeHTML(rule) + '</p></section>' +
+      '<section class="theory-note"><strong>Excepciones e irregulares</strong><p>' + escapeHTML(lesson.exceptions) + '</p></section>' +
+      '<section class="theory-example"><span>Ejemplos aplicados</span>' + examples + '</section>';
   }
   const example = isPast ? lesson.past : lesson.future;
   const translation = isPast ? lesson.pastEs : lesson.futureEs;
   const rule = isPast ? lesson.pastRule : lesson.futureRule;
-  return '<p class="theory-slide-text">' + (isPast ? "El pasado permite narrar acciones anteriores. Observa esta frase y la forma verbal utilizada:" : "El futuro expresa planes, predicciones e intenciones. Observa esta construcción:") + '</p><section class="theory-example"><span>' + (isPast ? "Ejemplo en pasado" : "Ejemplo en futuro") + '</span><p class="theory-target-word">' + escapeHTML(example) + ' ' + speakerButton(example, locale) + '</p><p>' + escapeHTML(translation) + '</p><p class="theory-slide-text">' + escapeHTML(rule) + '</p></section>';
+  return '<p class="theory-slide-text">' + (isPast ? "El pasado permite narrar acciones anteriores. Observa esta frase y la forma verbal utilizada:" : "El futuro expresa planes, predicciones e intenciones. Observa esta construcción:") + '</p>' +
+    '<section class="theory-note"><strong>Regla y uso</strong><p>' + escapeHTML(rule) + '</p></section>' +
+    '<section class="theory-example"><span>' + (isPast ? "Ejemplo en pasado" : "Ejemplo en futuro") + '</span><p class="theory-target-word">' + escapeHTML(example) + ' ' + speakerButton(example, locale) + '</p><p>' + escapeHTML(translation) + '</p></section>';
 }
 function renderPronounTable(sample, languageName, locale) {
   if (!sample?.pronouns) return "";
@@ -1956,7 +1937,7 @@ function renderVerbLesson(languageName) {
     }
     return '<tr><td>' + escapeHTML(row[0]) + '</td><td><strong class="theory-target-word">' + escapeHTML(row[1]) + '</strong> ' + speakerButton(row[1], locale) + '</td></tr>';
   }).join("");
-  return '<p class="theory-slide-text">' + escapeHTML(lesson.lead) + '</p><table class="theory-pronoun-table"><tbody>' + rows + '</tbody></table><section class="theory-example"><span>Ejemplos aplicados</span><p>' + escapeHTML(lesson.example) + '</p><p class="theory-slide-text">' + escapeHTML(lesson.rule) + '</p></section>';
+  return '<p class="theory-slide-text">' + escapeHTML(lesson.lead) + '</p><table class="theory-pronoun-table"><tbody>' + rows + '</tbody></table><section class="theory-note"><strong>Regla y excepciones</strong><p>' + escapeHTML(lesson.rule) + '</p></section><section class="theory-example"><span>Ejemplos aplicados</span><p>' + escapeHTML(lesson.example) + '</p></section>';
 }
 const appliedTheoryContent = {
   "Inglés": {
@@ -2028,10 +2009,13 @@ function renderAppliedLanguageTopic(languageName, category, index, locale) {
 function renderArticleLesson(languageName, locale) {
   const lesson = articleLessons[languageName];
   if (!lesson) return null;
-  const rows = lesson.rows.map(([form,meaning,usage,example]) =>
-    '<tr><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td><td>' + escapeHTML(meaning) + '</td><td>' + escapeHTML(usage) + '</td><td>' + escapeHTML(example) + '</td></tr>'
+  const rows = lesson.rows.map(([form,meaning,usage]) =>
+    '<tr><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td><td>' + escapeHTML(meaning) + '</td><td>' + escapeHTML(usage) + '</td></tr>'
   ).join("");
-  return '<p class="theory-slide-text">' + escapeHTML(lesson.intro) + '</p><table class="theory-pronoun-table"><thead><tr><th>Forma</th><th>Significado</th><th>Uso</th><th>Ejemplo</th></tr></thead><tbody>' + rows + '</tbody></table><p class="theory-slide-text"><strong>Regla práctica:</strong> ' + escapeHTML(lesson.rule) + '</p>';
+  const examples = lesson.rows.map(([form,,,example]) =>
+    '<p class="theory-target-word">' + escapeHTML(example) + ' ' + speakerButton(example,locale) + '</p><p>' + escapeHTML(form) + '</p>'
+  ).join("");
+  return '<p class="theory-slide-text">' + escapeHTML(lesson.intro) + '</p><table class="theory-pronoun-table"><thead><tr><th>Forma</th><th>Significado</th><th>Uso</th></tr></thead><tbody>' + rows + '</tbody></table><section class="theory-note"><strong>Regla práctica</strong><p>' + escapeHTML(lesson.rule) + '</p></section><section class="theory-example"><span>Ejemplos</span>' + examples + '</section>';
 }
 function renderItalianAppliedTopic(category, index, locale) {
   const rows = (items) => items.map(([term, meaning, note = ""]) =>
