@@ -1669,7 +1669,7 @@ function renderAppliedLanguageTopic(languageName, category, index, locale) {
   const firstHeader = languageName === "Inglés" ? "English" : "Português";
   const rows = items.map(([term,meaning,context=""]) =>
     '<tr><td><strong class="theory-target-word">' + escapeHTML(term) + '</strong> ' + speakerButton(term,locale) + '</td><td>' + escapeHTML(meaning) + '</td>' +
-    (context ? '<td>' + escapeHTML(context) + '</td>' : '') + '</tr>'
+    (items.some(item=>item[2]) ? '<td>' + escapeHTML(context) + '</td>' : '') + '</tr>'
   ).join("");
   return '<p class="theory-slide-text">' + (category === "Vocabulario" ? "Palabras útiles organizadas por situación. Aprende el término junto con su contexto." : "Frases listas para usar en situaciones cotidianas; observa el nivel de cortesía.") + '</p>' +
     '<table class="theory-pronoun-table"><thead><tr><th>' + firstHeader + '</th><th>Español</th>' + (items.some(item=>item[2])?'<th>Contexto</th>':'') + '</tr></thead><tbody>' + rows + '</tbody></table>';
