@@ -152,7 +152,10 @@ try {
   assert.ok(await page.locator("#theory-description [data-speak]").count() >= 5, "each pronoun should have pronunciation audio");
   await page.locator("#theory-next").click();
   assert.equal(await page.locator("#theory-title").innerText(), "Artículos");
-  assert.equal(await page.locator("#theory-description .theory-pronoun-table").first().evaluate((table,example) => Boolean(table.compareDocumentPosition(example) & Node.DOCUMENT_POSITION_FOLLOWING), await page.locator("#theory-description .theory-example").first().elementHandle()), true, "article examples should follow the comparison table");
+  assert.equal(await page.locator("#theory-description").evaluate(root => {
+    const table = root.querySelector(".theory-pronoun-table"), example = root.querySelector(".theory-example");
+    return Boolean(table && example && (table.compareDocumentPosition(example) & Node.DOCUMENT_POSITION_FOLLOWING));
+  }), true, "article examples should follow the comparison table");
   await page.locator("#theory-next").click();
   assert.match(await page.locator("#theory-description").innerText(), /Eu sou|SER|ESTAR/i, "verb theory should include applied conjugation");
   await page.locator("#theory-next").click();
@@ -160,7 +163,10 @@ try {
   assert.ok(await page.locator("#theory-description .theory-pronoun-table tbody tr").count() >= 4, "present tense should show conjugated forms");
   await page.locator("#theory-next").click();
   assert.equal(await page.locator("#theory-title").innerText(), "Pasado");
-  assert.equal(await page.locator("#theory-description .theory-pronoun-table").first().evaluate((table,example) => Boolean(table.compareDocumentPosition(example) & Node.DOCUMENT_POSITION_FOLLOWING), await page.locator("#theory-description .theory-example").first().elementHandle()), true, "past examples should follow the conjugation table");
+  assert.equal(await page.locator("#theory-description").evaluate(root => {
+    const table = root.querySelector(".theory-pronoun-table"), example = root.querySelector(".theory-example");
+    return Boolean(table && example && (table.compareDocumentPosition(example) & Node.DOCUMENT_POSITION_FOLLOWING));
+  }), true, "past examples should follow the conjugation table");
   assert.equal(await page.locator("#theory-description .theory-note").count(), 2, "past rules and irregularities should be grouped in separate note blocks");
   assert.match(await page.locator("#theory-description").innerText(), /Ayer/i, "past tense should include an applied example");
   assert.ok(await page.locator("#theory-description .theory-pronoun-table tbody tr").count() >= 6, "Portuguese past must conjugate for each subject pronoun");
