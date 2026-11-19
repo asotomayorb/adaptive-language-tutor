@@ -119,8 +119,8 @@ function bindTargetWords(root) {
         popup.textContent = "Traducción no disponible";
       }
     };
-    button.addEventListener("click", toggle);
-    button.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); toggle(); } });
+    button.addEventListener("click", event => { event.stopPropagation(); toggle(); });
+    button.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); event.stopPropagation(); toggle(); } });
   });
 }
 function bindVariantLinks(root) {
