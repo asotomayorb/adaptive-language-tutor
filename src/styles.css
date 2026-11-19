@@ -351,3 +351,5 @@
 .word-translation{display:inline-block;margin:2px 5px;padding:2px 7px;border-radius:6px;background:#edf3fa;color:#29425f;font-size:.82em;font-weight:650}
 
 #statistics-content{grid-template-columns:minmax(0,1fr)}
+
+.stats-chart-scroll{flex:1;min-width:0}
