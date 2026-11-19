@@ -90,16 +90,34 @@ function renderClickableTargetText(value) {
     if (!/^[\p{L}\p{M}]+(?:['’][\p{L}\p{M}]+)?$/u.test(part)) return escapeHTML(part);
     const match = dictionary.find(item => item.term && item.term.toLocaleLowerCase() === part.toLocaleLowerCase());
     return '<span class="target-word-link" role="button" tabindex="0" data-target-word="' + escapeHTML(part) +
-      '" data-translation="' + escapeHTML(match?.meaning || "Traducción no registrada") + '">' + escapeHTML(part) + '</span>';
+      '" data-context="' + escapeHTML(value || "") + '" data-translation="' + escapeHTML(match?.meaning || "Traducción no registrada") + '">' + escapeHTML(part) + '</span>';
   }).join("");
 }
 function bindTargetWords(root) {
   root.querySelectorAll("[data-target-word]:not([data-word-bound])").forEach(button => {
     button.dataset.wordBound = "true";
-    const toggle = () => {
+    const toggle = async () => {
       const current = button.parentElement.querySelector(".word-translation");
-      if (current) current.remove();
-      else button.insertAdjacentHTML("afterend", '<span class="word-translation" role="status">' + escapeHTML(button.dataset.translation) + '</span>');
+      if (current) { current.remove(); return; }
+      const popup = document.createElement("span");
+      popup.className = "word-translation";
+      popup.setAttribute("role","status");
+      popup.textContent = button.dataset.translation;
+      button.insertAdjacentElement("afterend",popup);
+      if (button.dataset.translation !== "Traducción no registrada" || !aiConfigured) return;
+      popup.textContent = "Traduciendo…";
+      try {
+        const result = await requestTutorTurn({
+          task:"translate_word",
+          learner:{ targetLanguageLabel:catalog?.label || session?.config.language, targetLanguageLocale:catalog?.locale || session?.config.languageLocale, nativeLanguage:"Español" },
+          session:{}, history:[],
+          userMessage: JSON.stringify({ word:button.dataset.targetWord, context:button.dataset.context })
+        });
+        popup.textContent = String(result.message || "Traducción no disponible").trim();
+        button.dataset.translation = popup.textContent;
+      } catch {
+        popup.textContent = "Traducción no disponible";
+      }
     };
     button.addEventListener("click", toggle);
     button.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); toggle(); } });
