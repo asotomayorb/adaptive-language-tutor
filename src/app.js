@@ -1588,6 +1588,81 @@ function renderVerbLesson(languageName) {
   }).join("");
   return '<p class="theory-slide-text">' + escapeHTML(lesson.lead) + '</p><table class="theory-pronoun-table"><tbody>' + rows + '</tbody></table><section class="theory-example"><span>Ejemplos aplicados</span><p>' + escapeHTML(lesson.example) + '</p><p class="theory-slide-text">' + escapeHTML(lesson.rule) + '</p></section>';
 }
+const appliedTheoryContent = {
+  "Inglés": {
+    "Vocabulario": [
+      [["hello","hola","neutral"],["good morning","buenos días","mañana"],["good evening","buenas tardes/noches","tarde/noche"],["goodbye","adiós","neutral"],["see you later","hasta luego","informal"]],
+      [["mother","madre"],["father","padre"],["brother","hermano"],["sister","hermana"],["parents","padres"]],
+      [["today","hoy"],["tomorrow","mañana"],["yesterday","ayer"],["Monday","lunes"],["at eight","a las ocho"]],
+      [["the bill","la cuenta"],["a table for two","una mesa para dos"],["still water","agua sin gas"],["the menu","el menú"],["without onions","sin cebolla"]],
+      [["ticket","billete / entrada"],["station","estación"],["platform","andén"],["on the right","a la derecha"],["how much is it?","¿cuánto cuesta?"]]
+    ],
+    "Expresiones": [
+      [["My name is…","Me llamo…"],["Nice to meet you.","Mucho gusto."],["I'm from Chile.","Soy de Chile."],["Where are you from?","¿De dónde eres?"]],
+      [["Could you help me?","¿Podría ayudarme?"],["Could you repeat that, please?","¿Podría repetirlo, por favor?"],["I don't understand.","No entiendo."],["Could you speak more slowly?","¿Podría hablar más despacio?"]],
+      [["I'd like a coffee, please.","Quisiera un café, por favor."],["Could I see the menu?","¿Podría ver el menú?"],["The bill, please.","La cuenta, por favor."],["Can I pay by card?","¿Puedo pagar con tarjeta?"]],
+      [["Where is the station?","¿Dónde está la estación?"],["What time does the train leave?","¿A qué hora sale el tren?"],["How much does it cost?","¿Cuánto cuesta?"],["Could you show me on the map?","¿Podría mostrármelo en el mapa?"]],
+      [["How are you?","¿Cómo estás?"],["I'm fine, thanks.","Estoy bien, gracias."],["What are you doing today?","¿Qué haces hoy?"],["See you tomorrow.","Nos vemos mañana."]]
+    ]
+  },
+  "Portugués brasileño": {
+    "Vocabulario": [
+      [["olá","hola","neutral"],["bom dia","buenos días","mañana"],["boa tarde","buenas tardes","tarde"],["boa noite","buenas noches","noche"],["até logo","hasta luego","neutral"]],
+      [["mãe","madre"],["pai","padre"],["irmão","hermano"],["irmã","hermana"],["pais","padres"]],
+      [["hoje","hoy"],["amanhã","mañana"],["ontem","ayer"],["segunda-feira","lunes"],["às oito","a las ocho"]],
+      [["a conta","la cuenta"],["uma mesa para dois","una mesa para dos"],["água sem gás","agua sin gas"],["o cardápio","el menú"],["sem cebola","sin cebolla"]],
+      [["a passagem","el pasaje"],["a estação","la estación"],["a plataforma","el andén"],["à direita","a la derecha"],["quanto custa?","¿cuánto cuesta?"]]
+    ],
+    "Expresiones": [
+      [["Meu nome é…","Me llamo…"],["Muito prazer!","¡Mucho gusto!"],["Sou do Chile.","Soy de Chile."],["De onde você é?","¿De dónde eres?"]],
+      [["Você pode me ajudar?","¿Puedes ayudarme?"],["Pode repetir, por favor?","¿Puede repetir, por favor?"],["Não entendi.","No entendí."],["Pode falar mais devagar?","¿Puede hablar más despacio?"]],
+      [["Eu gostaria de um café, por favor.","Quisiera un café, por favor."],["Posso ver o cardápio?","¿Puedo ver el menú?"],["A conta, por favor.","La cuenta, por favor."],["Posso pagar com cartão?","¿Puedo pagar con tarjeta?"]],
+      [["Onde fica a estação?","¿Dónde queda la estación?"],["A que horas o trem sai?","¿A qué hora sale el tren?"],["Quanto custa?","¿Cuánto cuesta?"],["Pode me mostrar no mapa?","¿Puede mostrármelo en el mapa?"]],
+      [["Tudo bem?","¿Todo bien?"],["Tudo bem, obrigado/a.","Todo bien, gracias."],["O que você vai fazer hoje?","¿Qué vas a hacer hoy?"],["Até amanhã.","Hasta mañana."]]
+    ]
+  }
+};
+const articleLessons = {
+  "Inglés": {
+    intro:"El inglés distingue artículo definido, indefinido y ausencia de artículo. La elección depende de si el referente es identificable y de si el sustantivo es contable.",
+    rows:[["the","el / la / los / las","referente específico o conocido","the book · el libro"],["a","un / una","sustantivo contable singular antes de sonido consonántico","a book · un libro"],["an","un / una","sustantivo contable singular antes de sonido vocálico","an apple · una manzana"],["—","sin artículo","plural o incontable en sentido general","Books are useful · Los libros son útiles"]],
+    rule:"Usa a/an según el sonido, no la letra: an hour, a university. No uses a/an con plurales ni incontables."
+  },
+  "Portugués brasileño": {
+    intro:"El artículo concuerda con género y número. En portugués brasileño es frecuente usar artículo definido delante de nombres propios y posesivos, aunque el uso varía por región.",
+    rows:[["o / a","el / la","masculino / femenino singular","o livro · el libro / a casa · la casa"],["os / as","los / las","masculino / femenino plural","os livros · los libros / as casas · las casas"],["um / uma","un / una","indefinido singular","um carro · un auto / uma mesa · una mesa"],["uns / umas","unos / unas","indefinido plural","uns amigos · unos amigos"]],
+    rule:"Aprende el sustantivo junto con su género. Las contracciones son frecuentes: de + o = do; em + a = na; a + a = à."
+  },
+  "Francés": {
+    intro:"El artículo francés concuerda en género y número. Ante vocal o h muda, le y la se contraen en l'.",
+    rows:[["le / la / l'","el / la","definido singular masculino / femenino","le livre · el libro / l'amie · la amiga"],["les","los / las","definido plural","les maisons · las casas"],["un / une","un / una","indefinido singular","un livre · un libro / une table · una mesa"],["des","unos / unas","indefinido plural","des amis · unos amigos"]],
+    rule:"Después de una negación, un artículo partitivo suele convertirse en de/d': Je ne bois pas de café. No traduzcas siempre el artículo español palabra por palabra."
+  },
+  "Alemán": {
+    intro:"El alemán distingue género gramatical (masculino, femenino y neutro), número y caso. El artículo cambia según la función del sustantivo.",
+    rows:[["der","el","masculino nominativo","der Mann · el hombre"],["die","la / las","femenino singular o plural nominativo","die Frau · la mujer / die Kinder · los niños"],["das","lo / el","neutro nominativo","das Kind · el niño"],["ein / eine","un / una","indefinido nominativo masculino/neutro y femenino","ein Tisch · una mesa / eine Lampe · una lámpara"]],
+    rule:"Memoriza cada sustantivo con su artículo. En acusativo masculino der cambia a den y ein cambia a einen; los artículos también cambian en dativo y genitivo."
+  }
+};
+function renderAppliedLanguageTopic(languageName, category, index, locale) {
+  const items = appliedTheoryContent[languageName]?.[category]?.[index];
+  if (!items) return null;
+  const firstHeader = languageName === "Inglés" ? "English" : "Português";
+  const rows = items.map(([term,meaning,context=""]) =>
+    '<tr><td><strong class="theory-target-word">' + escapeHTML(term) + '</strong> ' + speakerButton(term,locale) + '</td><td>' + escapeHTML(meaning) + '</td>' +
+    (context ? '<td>' + escapeHTML(context) + '</td>' : '') + '</tr>'
+  ).join("");
+  return '<p class="theory-slide-text">' + (category === "Vocabulario" ? "Palabras útiles organizadas por situación. Aprende el término junto con su contexto." : "Frases listas para usar en situaciones cotidianas; observa el nivel de cortesía.") + '</p>' +
+    '<table class="theory-pronoun-table"><thead><tr><th>' + firstHeader + '</th><th>Español</th>' + (items.some(item=>item[2])?'<th>Contexto</th>':'') + '</tr></thead><tbody>' + rows + '</tbody></table>';
+}
+function renderArticleLesson(languageName, locale) {
+  const lesson = articleLessons[languageName];
+  if (!lesson) return null;
+  const rows = lesson.rows.map(([form,meaning,usage,example]) =>
+    '<tr><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td><td>' + escapeHTML(meaning) + '</td><td>' + escapeHTML(usage) + '</td><td>' + escapeHTML(example) + '</td></tr>'
+  ).join("");
+  return '<p class="theory-slide-text">' + escapeHTML(lesson.intro) + '</p><table class="theory-pronoun-table"><thead><tr><th>Forma</th><th>Significado</th><th>Uso</th><th>Ejemplo</th></tr></thead><tbody>' + rows + '</tbody></table><p class="theory-slide-text"><strong>Regla práctica:</strong> ' + escapeHTML(lesson.rule) + '</p>';
+}
 function renderItalianAppliedTopic(category, index, locale) {
   const rows = (items) => items.map(([term, meaning, note = ""]) =>
     '<tr><td><strong class="theory-target-word">' + escapeHTML(term) + '</strong> ' + speakerButton(term, locale) + '</td><td>' + escapeHTML(meaning) + '</td>' + (note ? '<td>' + escapeHTML(note) + '</td>' : '') + '</tr>'
@@ -1661,8 +1736,13 @@ function openTheoryTopic(index) {
   const italianApplied = languageName === "Italiano"
     ? renderItalianAppliedTopic(activeTheoryCategory, activeTheoryIndex, locale)
     : null;
-  if (italianApplied) {
-    detailMarkup = italianApplied;
+  const appliedLanguage = renderAppliedLanguageTopic(languageName, activeTheoryCategory, activeTheoryIndex, locale);
+  const articleLesson = activeTheoryCategory === "Gramática" && activeTheoryIndex === 1
+    ? renderArticleLesson(languageName, locale) : null;
+  if (italianApplied || appliedLanguage) {
+    detailMarkup = italianApplied || appliedLanguage;
+  } else if (articleLesson) {
+    detailMarkup = articleLesson;
   } else if (activeTheoryCategory === "Gramática" && activeTheoryIndex === 0) {
     detailMarkup = '<p class="theory-slide-text">Los pronombres indican quién participa en la oración. Estas son las formas personales más habituales:</p>' + renderPronounTable(sample, languageName, locale);
   } else if (activeTheoryCategory === "Gramática" && activeTheoryIndex === 1 && sample?.articles) {
