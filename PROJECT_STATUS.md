@@ -587,3 +587,16 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] «Continuar» permanece habilitado mientras se prepara el siguiente turno; un toque anticipado se encola y avanza automáticamente al terminar la solicitud.
 
 - [x] El control «Pista» se muestra explícitamente durante el hito integrador de Ruta; las acciones auxiliares permanecen ocultas en el resto de la sesión.
+
+## Refinamiento 19-11-2026
+- [x] Aviso de voz fallback retirado de la interfaz; TTS continúa usando el locale pedido y fallback del navegador.
+- [x] Cabecera compactada y títulos de pantalla centrados.
+- [x] Gráficos limitados al ancho disponible, sin scroll horizontal.
+- [x] «Global» renombrado «Práctica»; controles de nivel/cantidad/tema ocultos en Repaso.
+- [x] Consigna y frase objetivo se pronuncian en segmentos con locale separado.
+- [x] Tres pistas progresivas para respuestas escritas.
+- [x] Portugués: pasado/futuro ampliados con formas por pronombre, ejemplos, regla y excepciones.
+- [ ] Ejecutar tests unitarios y Browser E2E de esta iteración; desplegar Preview y solicitar prueba humana Android.
+- [ ] Próxima fase: paquetes de contenido offline y motor local determinista para reducir llamadas IA en tiempo real.
+- [ ] Roadmap: módulo de comprensión lectora con textos originales/de dominio público/licencia abierta, y lecturas de noticias didácticas con fuentes.
+- [ ] Política obligatoria: registrar procedencia/licencia/atribución y verificar derechos antes de incluir cada texto.
