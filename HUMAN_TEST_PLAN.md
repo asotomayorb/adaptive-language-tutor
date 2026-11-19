@@ -229,3 +229,6 @@ Para cada escenario registrar:
 - [ ] Seleccionar una palabra con traducción ya registrada: debe aparecer sin demora.
 - [ ] Seleccionar una palabra sin traducción registrada con IA configurada: debe mostrar el significado contextual y conservarlo mientras permanezca visible.
 - [ ] Probar la selección sin proveedor IA: la práctica no debe bloquearse y debe informar que la traducción no está disponible.
+
+- [ ] Verificar que el resumen no muestre un encabezado adicional encima de «Resumen».
+- [ ] En Android, probar la consulta contextual por palabra y esperar la traducción final (no solo el indicador de carga).
