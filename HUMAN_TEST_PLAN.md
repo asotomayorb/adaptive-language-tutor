@@ -278,3 +278,6 @@ Para cada escenario registrar:
 - [ ] Repetir intentos: cada error debe ofrecer la pista siguiente, sin borrar la respuesta ni reiniciar el nivel de pista al cerrar y reanudar Ruta.
 - [ ] Confirmar que el icono de Ruta representa un mapa con recorrido punteado y destino marcado; comprobar su legibilidad en la barra inferior.
 - [ ] En Teoría, registrar idioma, categoría y tema de cada explicación incompleta para la siguiente auditoría pedagógica; comprobar reglas, excepciones, tablas, ejemplos traducidos y audio.
+
+- [ ] En el hito integrador de Ruta, probar tanto el botón «Pista» como los intentos incorrectos: ambos deben avanzar una sola vez por la secuencia 1/5…5/5.
+- [ ] Confirmar que la consigna del hito integrador se explica en español y no aparece en portugués como imperativo.
