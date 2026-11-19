@@ -81,6 +81,32 @@ try {
   assert.equal(await page.locator("#route-unit-list [data-route-unit]").count(), 4, "Portuguese route should show four topic-based units");
   assert.equal(await page.locator('[data-route-unit="travel"]').isDisabled(), true, "unit 2 should remain locked until unit 1 reaches its minimum score");
   assert.equal(await page.locator('[data-route-unit="food"]').isDisabled(), true, "unit 3 should remain locked at the start");
+  await page.evaluate(() => localStorage.setItem("adaptive-language-tutor.route-units:pt-BR",JSON.stringify({
+    completedUnits:{
+      foundations:{completed:true,stars:3,accuracy:60},
+      travel:{completed:true,stars:4,accuracy:80}
+    }
+  })));
+  await page.reload({ waitUntil:"networkidle" });
+  await page.locator("#welcome-start").click();
+  assert.equal(await page.locator('[data-route-unit="travel"]').isDisabled(), false, "unit 2 should unlock after unit 1 reaches three stars");
+  assert.equal(await page.locator('[data-route-unit="food"]').isDisabled(), true, "unit 3 must require five stars in unit 2");
+  await page.evaluate(() => {
+    const state = JSON.parse(localStorage.getItem("adaptive-language-tutor.route-units:pt-BR"));
+    state.completedUnits.travel.stars = 5;
+    state.completedUnits.travel.accuracy = 100;
+    localStorage.setItem("adaptive-language-tutor.route-units:pt-BR",JSON.stringify(state));
+  });
+  await page.reload({ waitUntil:"networkidle" });
+  await page.locator("#welcome-start").click();
+  assert.equal(await page.locator('[data-route-unit="food"]').isDisabled(), false, "unit 3 should unlock only after unit 2 reaches five stars");
+  await page.locator("#route-reset").click();
+  assert.equal(await page.locator("#route-reset-confirm").isVisible(), true, "route reset must request confirmation");
+  await page.locator("#cancel-route-reset").click();
+  assert.equal(await page.locator('[data-route-unit="food"]').isDisabled(), false, "cancel should preserve route progress");
+  await page.locator("#route-reset").click();
+  await page.locator("#confirm-route-reset").click();
+  assert.equal(await page.locator('[data-route-unit="travel"]').isDisabled(), true, "confirming reset should relock later units");
 
   // Standard languages have flags and do not ask users to enter a locale.
   await page.locator("#open-language-picker").click();
