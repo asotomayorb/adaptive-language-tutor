@@ -600,3 +600,5 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [ ] Próxima fase: paquetes de contenido offline y motor local determinista para reducir llamadas IA en tiempo real.
 - [ ] Roadmap: módulo de comprensión lectora con textos originales/de dominio público/licencia abierta, y lecturas de noticias didácticas con fuentes.
 - [ ] Política obligatoria: registrar procedencia/licencia/atribución y verificar derechos antes de incluir cada texto.
+
+- [x] Se prioriza el motor local cuando el paquete del idioma contiene ejercicios suficientes para la sesión; la IA en tiempo real queda como respaldo para catálogos insuficientes.
