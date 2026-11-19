@@ -1063,6 +1063,7 @@ function updateStats() {
   $("error-count").textContent = session.errors.length;
 }
 function showAnswerFeedback({ correct, expected, expectedLocale, explanation, selected, options = [], correctOption, showContinue = true }) {
+  $("answer-area").querySelector(".answer-waiting")?.remove();
   const expectedText = !correct && expected ? '<p class="answer-correct-text">Respuesta correcta: ' + renderClickableTargetText(expected) + ' ' + speakerButton(expected, expectedLocale || session?.config.languageLocale || catalog?.locale) + '</p>' : "";
   const explanationText = !correct && explanation ? '<p class="answer-explanation">' + renderVariantTerms(explanation) + '</p>' : "";
   $("feedback").innerHTML = (correct ? '<p class="answer-status correct">Correcto</p>' : '<p class="answer-status incorrect">Incorrecto</p>') + expectedText + explanationText;
