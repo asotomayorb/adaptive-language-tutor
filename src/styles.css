@@ -405,3 +405,5 @@
 .review-selected #setup-form>label{display:none}
 .review-selected #setup-panel{padding-bottom:18px}
 .exercise-status{margin:14px 4px 0;text-align:center;font-size:12px;color:#78869a}
+
+.lesson-panel .lesson-actions{display:flex!important;align-items:center;gap:10px;flex-wrap:wrap}
