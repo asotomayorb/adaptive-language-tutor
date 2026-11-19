@@ -648,3 +648,12 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - Tests unitarios del código desplegado: success [44593625853](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44593625853).
 - Browser E2E del HEAD desplegado: success [44593625642](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44593625642).
 - [ ] Prueba humana Android pendiente; no se declara cerrada la iteración hasta recibir ese resultado.
+
+
+## Iteración UI — 19-11-2026
+
+- Actualización en feature/mobile-bottom-navigation: barras del gráfico global afinadas y retirada la media global segmentada.
+- Teoría reorganizada para separar tablas, notas de reglas/excepciones y ejemplos posteriores.
+- Práctica: retirado el botón antiguo «Repasar error» (se conserva la modalidad independiente Repaso); encabezado de tema/nivel alineado con contador y etiqueta del pictograma mantenida debajo del icono.
+- Reproducción manual restringida al locale del idioma objetivo.
+- E2E ampliado para comprobar estos criterios. Pendiente confirmar los resultados de CI y revisar visual/auditivamente en Android real.
