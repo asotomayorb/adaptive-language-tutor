@@ -542,3 +542,5 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] La selección de palabras utiliza segmentación por idioma y contempla sistemas de escritura sin espacios entre palabras.
 
 - [x] Se eliminó el texto de estado redundante que aparecía debajo del resumen.
+
+- [x] Caso E2E de falso positivo añadido: una respuesta de otro idioma no se acepta aunque la evaluación simulada del tutor diga «correcta».
