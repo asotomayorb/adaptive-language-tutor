@@ -307,7 +307,7 @@ Para cada escenario registrar:
 
 ## Preview de esta iteración
 - URL: https://adaptive-language-tutor-preview-5b3d.onrender.com/
-- Commit desplegado: 6857c44bbf4d2446644e471b033ca322f8757933.
-- Deploy LIVE: dep-dbvihnafngtc73cctgr0.
-- Tests unitarios y Browser E2E aprobados: [44570456063](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44570456063) · [44570456053](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44570456053).
+- Commit desplegado: d41a7cb532c02cb90153e41b877dfeaf5ba212e2.
+- Deploy LIVE: dep-dbviiv60tbcc738k7o2g.
+- Tests unitarios y Browser E2E aprobados: [44570968240](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44570968240) · [44570968307](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44570968307).
 - Completar los checks Android de arriba; prestar atención al tamaño real de los gráficos y la pronunciación del sistema del dispositivo.
