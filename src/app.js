@@ -533,9 +533,10 @@ $("setup-form").addEventListener("submit", event => {
   reviewMode = false;
   $("summary-panel").classList.add("hidden");
   $("lesson-panel").classList.remove("hidden");
-  $("session-status").textContent = aiConfigured ? "Tutor IA en sesión" : "Sesión local";
+  const useLiveAI = aiConfigured && catalog.exercises.length < questionCount;
+  $("session-status").textContent = useLiveAI ? "Tutor IA en sesión" : "Práctica local";
   showSessionView(selectedExerciseMode);
-  if (aiConfigured) {
+  if (useLiveAI) {
     startAITutorSession(config);
   } else {
     aiMode = false;
