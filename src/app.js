@@ -58,7 +58,8 @@ document.getElementById("audio-toggle")?.addEventListener("click", toggleAudio);
 document.getElementById("session-audio-toggle")?.addEventListener("click", toggleAudio);
 function speakerButton(text, locale) {
   const targetLocale = session?.config?.languageLocale || session?.config?.languageId;
-  if (session && targetLocale && locale && locale !== targetLocale) return "";
+  const sessionViewActive = Boolean(document.getElementById("session-view") && !document.getElementById("session-view").classList.contains("hidden"));
+  if (sessionViewActive && targetLocale && locale && locale !== targetLocale) return "";
   return '<button class="speak-button" type="button" data-speak="' + escapeHTML(text) + '" data-locale="' + escapeHTML(locale || "") + '" aria-label="Reproducir pronunciación" title="Escuchar">▶</button>';
 }
 const spellingVariants = {
@@ -695,7 +696,6 @@ function renderAITutorTurn(result) {
   aiContinueRequested = false;
   $("hint-btn").disabled = false;
   $("hint-btn").textContent = "Pista";
-  $("review-btn").disabled = false;
   const aiRoutePhase = routeMode && !routeIntegration ? getRoutePhase(Math.min(session.turn,routeQuestionCount-1),routeQuestionCount) : null;
   $("lesson-phase").textContent = routeMode ? routeIntegration ? "HITO INTEGRADOR" : aiRoutePhase.label : topicLabels[session.config.topic].toUpperCase() + " · " + levelLabel(session.config.level).toUpperCase();
   $("turn-count").textContent = routeMode && routeIntegration
@@ -1278,7 +1278,6 @@ function showAnswerFeedback({ correct, expected, expectedLocale, explanation, se
   $("feedback").classList.remove("hidden","bad");
   $("hint-btn").disabled = true;
   $("hint-btn").hidden = true;
-  $("review-btn").disabled = true;
   $("answer-area").querySelectorAll("[data-choice],[data-ai-choice]").forEach(button => {
     const value = button.textContent.trim().toLocaleLowerCase();
     const correctValue = correct ? (selected || correctOption || expected) : (correctOption || expected);
