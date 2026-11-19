@@ -142,6 +142,21 @@ function getExerciseSpeech(exercise) {
       : "es-CL"
   };
 }
+function getExerciseSpeechSegments(exercise) {
+  if (Array.isArray(exercise?.speechSegments) && exercise.speechSegments.length) {
+    return exercise.speechSegments.filter(item => item?.text && item?.locale);
+  }
+  const segments = [];
+  if (exercise?.instruction) segments.push({ text: exercise.instruction, locale: "es-CL" });
+  const prompt = String(exercise?.prompt || "").trim();
+  if (prompt) {
+    const locale = exercise.promptLocale || (exercise.promptLanguage === "target"
+      ? (catalog?.locale || "und")
+      : (exercise.instruction ? (catalog?.locale || "und") : getExerciseSpeech(exercise).locale));
+    segments.push({ text: prompt, locale });
+  }
+  return segments.length ? segments : [getExerciseSpeech(exercise)];
+}
 function autoSpeak(text, locale = catalog?.locale) {
   if (text && speech.enabled) speech.speak(text, locale, { automatic: true });
 }
@@ -1081,19 +1096,19 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
   pendingFeedback = null;
-  const questionSpeech = getExerciseSpeech(currentExercise);
+  const questionSpeechSegments = getExerciseSpeechSegments(currentExercise);
   const promptMarkup = currentExercise.promptLanguage === "target"
     ? renderClickableTargetText(currentExercise.prompt)
     : renderVariantTerms(currentExercise.prompt);
   const instructionMarkup = currentExercise.instruction
     ? '<p class="exercise-instruction">' + escapeHTML(currentExercise.instruction) + '</p>' : "";
-  $("lesson-content").innerHTML = '<p class="eyebrow">TEMA: ' + escapeHTML(topicLabels[session.config.topic].toUpperCase()) + ' · NIVEL ' + escapeHTML(levelLabel(session.config.level).toUpperCase()) + '</p>' + instructionMarkup + '<h3>' + promptMarkup + '</h3>' +
-    speakerButton(questionSpeech.text, questionSpeech.locale);
+  const questionAudioMarkup = questionSpeechSegments.map(item => speakerButton(item.text, item.locale)).join(" ");
+  $("lesson-content").innerHTML = '<p class="eyebrow">TEMA: ' + escapeHTML(topicLabels[session.config.topic].toUpperCase()) + ' · NIVEL ' + escapeHTML(levelLabel(session.config.level).toUpperCase()) + '</p>' + instructionMarkup + '<h3>' + promptMarkup + '</h3>' + questionAudioMarkup;
   bindVariantLinks($("lesson-content"));
   bindSpeakerButtons($("lesson-content"));
   bindTargetWords($("lesson-content"));
   speech.stop();
-  autoSpeak(questionSpeech.text, questionSpeech.locale);
+  speech.speakSequence(questionSpeechSegments, { automatic: true });
   if (questionIndex < 3) {
     const options = currentExercise.options || [];
     $("answer-area").innerHTML = options.map((option,index) => '<div class="answer-option-row"><button class="answer-option" data-choice="' + index + '">' + renderClickableTargetText(option) + '</button>' + speakerButton(option, currentExercise.optionsLocale || (currentExercise.speechMode === "listening" ? "es-CL" : catalog.locale)) + '</div>').join("");
