@@ -320,7 +320,7 @@ Para cada escenario registrar:
 - [ ] Completar Fundamentos con un resultado de al menos 3 estrellas y comprobar que se desbloquea Viajes y orientación.
 - [ ] Completar Viajes con menos de 5 estrellas y comprobar que Comida y restaurantes sigue bloqueada.
 - [ ] Repetir Viajes hasta obtener 5 estrellas y confirmar que Comida y restaurantes se desbloquea. Este requisito es deliberadamente más estricto.
-- [ ] Comprobar que Trabajo y estudios exige al menos 4 estrellas en Comida y restaurantes.
+- [ ] Comprobar que Trabajo y estudios exige al menos 3 estrellas en Comida y restaurantes (el umbral debe ser alcanzable con las tres actividades actuales).
 - [ ] En cada unidad, verificar el orden: vocabulario/conjugaciones → aplicación en contexto → frases completas. Las primeras etapas usan alternativas; la etapa final exige escribir.
 - [ ] Cerrar Ruta después de responder una pregunta, volver a abrir y confirmar que continúa en la misma unidad y turno.
 - [ ] Completar una unidad, revisar el porcentaje y las estrellas guardadas en su tarjeta.
