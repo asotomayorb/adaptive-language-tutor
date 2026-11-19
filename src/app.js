@@ -363,8 +363,8 @@ function refreshDashboard() {
       }).join(" ");
       const dots = practicedDays.map(([,item],index)=>{
         const accuracy = item.attempted ? item.correct/item.attempted*100 : 0;
-        return '<circle cx="' + xAt(index) + '" cy="' + yQuestions(item.attempted) + '" r="4" class="stats-question-dot"><title>' + item.attempted + ' preguntas</title></circle>' +
-          '<circle cx="' + xAt(index) + '" cy="' + yAccuracy(accuracy) + '" r="4" class="stats-accuracy-dot"><title>' + Math.round(accuracy) + '% precisión</title></circle>' +
+        return '<circle cx="' + xAt(index) + '" cy="' + yQuestions(item.attempted) + '" r="7" class="stats-question-dot"><title>' + item.attempted + ' preguntas</title></circle>' +
+          '<circle cx="' + xAt(index) + '" cy="' + yAccuracy(accuracy) + '" r="7" class="stats-accuracy-dot"><title>' + Math.round(accuracy) + '% precisión</title></circle>' +
           '<text x="' + xAt(index) + '" y="' + (height-26) + '" text-anchor="middle" class="chart-axis-label">' + (index+1) + '</text>';
       }).join("");
       chartMarkup = '<div class="stats-chart-scroll"><svg class="stats-line-chart stats-language-chart" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="Preguntas respondidas y precisión por día practicado">' +
@@ -601,7 +601,7 @@ function renderAITutorTurn(result) {
   $("error-count").textContent = session.errors.length;
 
   let instruction = String(result.message || "").trim();
-  if (/^(¡?muy bien!?|¡?excelente!?|¡?correcto!?|¡?perfecto!?)[.!\\s]*$/i.test(instruction)) instruction = "Continuemos con la siguiente actividad.";
+  if (/^(?:¡?muy bien|¡?excelente|¡?correcto|¡?perfecto)/i.test(instruction)) instruction = "Continuemos con la siguiente actividad.";
   const instructionMarkup = instruction
     ? '<p class="exercise-instruction">' + escapeHTML(instruction) + '</p>' : "";
   const prompt = aiCurrentExercise.prompt
