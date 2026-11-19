@@ -486,3 +486,28 @@ RUTA
 - Browser E2E: [GitHub Actions 44456571650](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44456571650) — correcto.
 - Deploy manual Render: [LIVE, commit `33db475`](https://dashboard.render.com/web/srv-dbus3hnf3r2c739j9ir0/deploys/dep-dbv7ee3rjlhs73b4lr9g).
 - Pendiente: prueba humana en Android.
+
+## Refinamiento de interfaz, audio y contenido — 19-11-2026
+
+### Cambios de esta iteración
+- Se elimina el aviso visible de voz no instalada. La síntesis de voz sigue intentando usar la voz del dispositivo con el locale solicitado y no bloquea la práctica si no hay una voz exacta.
+- Se compacta la cabecera superior y se centran los títulos de sección.
+- Los gráficos de estadísticas usan el ancho disponible y no requieren desplazamiento horizontal.
+- El modo «Global» de Ejercicios se presenta como «Práctica». Repaso oculta nivel, cantidad de preguntas y tema; conserva únicamente el acceso para comenzar el repaso.
+- El estado del tutor queda al final del bloque de práctica.
+- La lectura en voz alta de ejercicios separa la consigna en español del texto objetivo, usando el locale correspondiente para cada segmento.
+- Las preguntas de respuesta escrita disponen de tres niveles de pista; la tercera ofrece una guía explícita de solución.
+- Portugués brasileño: Pasado y Futuro incorporan conjugación por pronombre, ejemplos traducidos, construcciones frecuentes e irregularidades.
+
+### Dirección de producto: contenido sin IA en tiempo real
+La siguiente evolución recomendada es preparar paquetes de contenido fuera de la sesión y guardarlos versionados en el repositorio. La aplicación debe ejecutar localmente la selección de ejercicios, validación de respuestas, normalización de tildes/variantes, pistas, puntuación, adaptación y repaso espaciado. TTS seguirá siendo del dispositivo/navegador. La IA quedaría como herramienta de autoría offline, revisión editorial y, opcionalmente, actualización de noticias; no debería evaluar cada respuesta en tiempo real.
+
+Antes de publicar un paquete generado con IA, debe pasar controles de nivel, precisión lingüística, traducciones, respuestas aceptadas, tres pistas progresivas, metadatos de idioma y revisión humana. Cada paquete debe registrar versión, autoría/procedencia y licencia.
+
+### Próximos módulos propuestos
+- **Comprensión lectora:** fragmentos breves originales o con licencia compatible, seguidos de preguntas literales, inferenciales y de vocabulario. El primer alcance debe usar textos originales creados para la app y textos de dominio público verificado o con licencia abierta compatible. No copiar libros, traducciones, artículos ni noticias protegidas.
+- **Noticias para lectura:** se podrán generar textos didácticos originales basados en hechos actuales, enlazando fuentes y conservando fecha de consulta; no reproducir artículos completos ni su redacción.
+- **Editoría visual:** comparar variantes de interfaz A/B en Preview antes de adoptar un diseño. Para prototipos externos se puede usar Figma o Penpot; la implementación final y la prueba funcional se mantienen en esta app.
+
+### Política de derechos de contenido
+Todo texto de aprendizaje debe ser original, de dominio público verificado o estar cubierto por una licencia que permita el uso previsto. Guardar fuente, autor, licencia, atribución requerida y fecha de verificación. No reutilizar material protegido solo porque sea accesible públicamente en internet.
