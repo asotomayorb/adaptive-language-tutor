@@ -957,8 +957,8 @@ function startRouteSession(resume = false) {
 function renderRouteIntegration() {
   speech.stop();
   const prompt = catalog.id === "en"
-    ? "Translate into English: “Buenos días, me llamo Ana y soy de Chile.”"
-    : "Traduza para o português: “Buenos días, me llamo Ana y soy de Chile.”";
+    ? "Traduce al inglés: «Buenos días, me llamo Ana y soy de Chile»."
+    : "Traduce al portugués: «Buenos días, me llamo Ana y soy de Chile».";
   pendingFeedback = null;
   routeIntegrationHintLevel = Number(routeIntegrationHintLevel || 0);
   currentExercise = {
@@ -968,6 +968,9 @@ function renderRouteIntegration() {
     acceptedAnswers: catalog.id === "en"
       ? ["Good morning, I'm Ana and I'm from Chile.","Good morning. My name is Ana. I am from Chile."]
       : ["Bom dia! Eu me chamo Ana e sou do Chile.","Bom dia. Meu nome é Ana. Sou do Chile."],
+    hints: catalog.id === "en"
+      ? ["La respuesta tiene tres partes: saludo, nombre y procedencia.","Empieza con «Good morning».","Para decir tu nombre, usa «my name is Ana».","Para indicar procedencia, usa «I am from Chile».","Une las tres partes en una sola presentación."]
+      : ["La respuesta tiene tres partes: saludo, nombre y procedencia.","Empieza con «Bom dia».","Para decir tu nombre, usa «meu nome é Ana».","Para indicar procedencia, usa «sou do Chile».","Une las tres partes en una sola presentación."],
     explanation:"La actividad integra saludo, presentación y procedencia."
   };
   $("lesson-phase").textContent = "HITO INTEGRADOR";
@@ -988,9 +991,8 @@ function renderRouteIntegration() {
     } else {
       routeIntegrationAttempts += 1;
       routeIntegrationHintLevel = Math.min(routeIntegrationHintLevel + 1, 5);
-      const clues = catalog.id === "en" ? ["La respuesta tiene tres partes: saludo, nombre y procedencia.","Empieza con «Good morning».","Para decir tu nombre, usa «my name is Ana».","Para indicar procedencia, usa «I am from Chile».","Une las tres partes en una sola presentación."] : ["La respuesta tiene tres partes: saludo, nombre y procedencia.","Empieza con «Bom dia».","Para decir tu nombre, usa «meu nome é Ana».","Para indicar procedencia, usa «sou do Chile».","Une las tres partes en una sola presentación."];
       saveRouteDraft();
-      $("feedback").innerHTML = '<p class="answer-status incorrect">Todavía no coincide. Inténtalo otra vez.</p><p class="answer-explanation">Pista ' + routeIntegrationHintLevel + '/5: ' + clues[routeIntegrationHintLevel-1] + '</p>';
+      $("feedback").innerHTML = '<p class="answer-status incorrect">Todavía no coincide. Inténtalo otra vez.</p><p class="answer-explanation">Pista ' + routeIntegrationHintLevel + '/5: ' + currentExercise.hints[routeIntegrationHintLevel-1] + '</p>';
       $("feedback").classList.remove("hidden","bad");
       $("route-integration-answer").value = answer;
       $("route-integration-answer").focus();
@@ -1229,6 +1231,12 @@ $("hint-btn").addEventListener("click", () => {
     return;
   }
   if (!currentExercise) return;
+  if (routeMode && routeIntegration && Array.isArray(currentExercise.hints)) {
+    routeIntegrationHintLevel = Math.min(routeIntegrationHintLevel + 1, currentExercise.hints.length);
+    showFeedback("Pista " + routeIntegrationHintLevel + "/" + currentExercise.hints.length + ": " + currentExercise.hints[routeIntegrationHintLevel-1], true);
+    saveRouteDraft();
+    return;
+  }
   showFeedback("Pista: " + currentExercise.hint, true);
   appendCatalogSpeech($("feedback"), currentExercise, "hintSpeechSegments");
 });
