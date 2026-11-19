@@ -553,3 +553,15 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 **Último commit desplegado:** `459e10c46861aa31a344db1e14b424bdfee2ccad`  
 **Preview:** https://adaptive-language-tutor-preview-5b3d.onrender.com/  
 **Siguiente validación:** prueba humana Android; completar Teoría en los idiomas restantes.
+
+
+## Iteración actual — 18/19-11-2026
+
+- [x] Selector de estadísticas: 🌐 Global e idioma individual.
+- [x] Comparación global mediante barras de precisión y línea punteada de promedio.
+- [x] Vista por idioma con preguntas respondidas y precisión por día practicado; máximo 15 días activos, numerados sin fechas.
+- [x] Eliminadas las traducciones emergentes al seleccionar palabras.
+- [x] Instrucciones en español separadas del texto a evaluar en los ejercicios locales y en la presentación del tutor IA.
+- [x] Resumen compacto: Aciertos y Errores con cifras sobre el total; se conserva el detalle de respuestas erróneas.
+- [x] Repaso: un error conserva la tarjeta vencida; solo un acierto la mueve al siguiente intervalo.
+- [ ] Validación humana Android de escalado del gráfico, legibilidad de etiquetas y flujo de repaso.
