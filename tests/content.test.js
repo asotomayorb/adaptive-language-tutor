@@ -36,13 +36,15 @@ test("each catalog covers all four practice topics and both initial levels", () 
   }
 });
 
-test("some exercise instructions are written in the target language", () => {
-  assert.match(ptBR.exercises[0].prompt, /^Ouça a frase em português/i);
-  assert.match(english.exercises[0].prompt, /^Listen to the phrase in English/i);
-  assert.match(ptBR.exercises[1].prompt, /^Complete a frase/i);
-  assert.match(english.exercises[1].prompt, /^Complete the sentence/i);
-  assert.equal(ptBR.exercises[0].promptLanguage, "target");
-  assert.equal(english.exercises[0].promptLanguage, "target");
+test("exercise instructions stay in Spanish and are separated from the phrase being evaluated", () => {
+  assert.match(ptBR.exercises[0].instruction, /^Escucha la frase en portugués/i);
+  assert.equal(ptBR.exercises[0].prompt, "Bom dia");
+  assert.match(english.exercises[0].instruction, /^Escucha la frase en inglés/i);
+  assert.equal(english.exercises[0].prompt, "Good morning");
+  assert.equal(ptBR.exercises[1].instruction, "Completa la frase:");
+  assert.equal(ptBR.exercises[1].prompt, "Eu ___ chileno.");
+  assert.equal(english.exercises[1].instruction, "Completa la frase:");
+  assert.equal(english.exercises[1].prompt, "I ___ from Chile.");
 });
 
 test("diagnostic has enough questions for its four-question flow", () => {
