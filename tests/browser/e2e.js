@@ -247,7 +247,7 @@ try {
     }
     if (input.task === "evaluate_and_continue") {
       const turn = input.session.turn;
-      await delay(350);
+      if (turn === 4) await delay(350);
       return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(tutorTurn({ turn })) });
     }
     if (input.task === "translate_word") {
