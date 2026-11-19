@@ -115,8 +115,9 @@ export function gradeReview(progress, key, correct, now = Date.now()) {
     card.repetitions = 0;
     card.intervalIndex = 0;
   }
-  const days = correct ? INTERVALS_DAYS[card.intervalIndex] : INTERVALS_DAYS[0];
+  const days = correct ? INTERVALS_DAYS[card.intervalIndex] : 0;
   card.lastReviewedAt = new Date(now).toISOString();
+  // An incorrect word stays due; only a correct answer moves it out of the pending queue.
   card.dueAt = new Date(now + days * 24 * 60 * 60 * 1000).toISOString();
   return { card, nextIntervalDays: days };
 }
