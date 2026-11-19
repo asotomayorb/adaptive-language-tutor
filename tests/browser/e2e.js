@@ -252,6 +252,7 @@ try {
   await aiPage.locator("#answer-area [data-ai-choice]").first().waitFor();
   await aiPage.locator("#lesson-content .target-word-link").first().click();
   await aiPage.locator("#lesson-content .word-translation").waitFor({ state: "visible" });
+  await aiPage.waitForFunction(() => document.querySelector("#lesson-content .word-translation")?.textContent === "hola");
   assert.equal(await aiPage.locator("#lesson-content .word-translation").innerText(), "hola", "selecting a target-language word should show its contextual translation");
   await aiPage.waitForFunction(() => window.__spoken.some(item => item.text === "Bonjour" && item.lang === "fr-FR"));
   assert.equal(await aiPage.evaluate(() => window.__spoken.some(item => item.text.includes("Instrucción en español"))), false,
