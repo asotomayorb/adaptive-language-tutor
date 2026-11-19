@@ -375,6 +375,8 @@ Cambios incorporados en la rama de preview:
 - Texto objetivo: las palabras del enunciado, opciones, corrección y vocabulario pueden seleccionarse para consultar la traducción disponible en el vocabulario registrado.
 
 Pendiente de esta revisión:
-- Completar la auditoría y corrección del contenido de Teoría para todos los idiomas. La implementación aplicada más extensa sigue concentrada en italiano; no declarar Teoría completada para el resto.
+- Completar la auditoría y corrección del contenido de Teoría para todos los idiomas. Se amplió el material aplicado de artículos, vocabulario y expresiones para inglés y portugués brasileño, además del bloque detallado de italiano; los otros idiomas aún requieren revisión.
 - Validar en E2E la corrección inmediata, tolerancia tipográfica, no repetición de Ruta, resumen, consulta por palabra y gráfico diario.
 - Confirmar la experiencia real en Android y comprobar latencia percibida con el proveedor IA.
+
+- Teoría: artículos con tablas comparativas para inglés, portugués brasileño, francés y alemán; vocabulario y expresiones aplicados para inglés y portugués brasileño.
