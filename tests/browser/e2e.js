@@ -234,6 +234,11 @@ try {
       const turn = input.session.turn;
       return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(tutorTurn({ turn })) });
     }
+    if (input.task === "translate_word") {
+      return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({
+        message:"hola", exercise:null, evaluation:null, learnerUpdate:null, speechSegments:[], nextAction:"continue"
+      }) });
+    }
     return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({
       message: "Pista.", exercise: { type:"grammar", prompt:"Pregunta", expectedAnswer:"Oui", acceptedAnswers:["Oui"], options:[], hint:"Piensa." },
       evaluation:null, learnerUpdate:null, speechSegments:[], nextAction:"answer"
@@ -245,6 +250,9 @@ try {
   await aiPage.locator('[data-screen="route"]').click();
   await aiPage.locator("#route-start").click();
   await aiPage.locator("#answer-area [data-ai-choice]").first().waitFor();
+  await aiPage.locator("#lesson-content .target-word-link").first().click();
+  await aiPage.locator("#lesson-content .word-translation").waitFor({ state: "visible" });
+  assert.equal(await aiPage.locator("#lesson-content .word-translation").innerText(), "hola", "selecting a target-language word should show its contextual translation");
   await aiPage.waitForFunction(() => window.__spoken.some(item => item.text === "Bonjour" && item.lang === "fr-FR"));
   assert.equal(await aiPage.evaluate(() => window.__spoken.some(item => item.text.includes("Instrucción en español"))), false,
     "mixed AI speech must ignore source-language segments");
