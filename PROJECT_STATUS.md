@@ -565,3 +565,16 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] Resumen compacto: Aciertos y Errores con cifras sobre el total; se conserva el detalle de respuestas erróneas.
 - [x] Repaso: un error conserva la tarjeta vencida; solo un acierto la mueve al siguiente intervalo.
 - [ ] Validación humana Android de escalado del gráfico, legibilidad de etiquetas y flujo de repaso.
+
+## Iteración de refinamiento — 19-11-2026
+
+- [x] Gráficos de estadísticas ampliados: barras/puntos, trazos, tipografía y leyendas; el tamaño se conserva en móvil con scroll horizontal.
+- [x] Eje horizontal de actividad diaria: título «Días» y marcas numéricas 1…15 sin repetir la palabra.
+- [x] Feedback de ejercicios IA: «Continuar» aparece inmediatamente y espera de forma segura al resultado de la siguiente actividad.
+- [x] Veredicto local determinista: el modelo no puede convertir una respuesta incorrecta en correcta ni provocar elogios contradictorios.
+- [x] Eliminado el bloque gris de respuesta anterior en el hito integrador.
+- [x] Hito integrador de Ruta: pistas progresivas para portugués e inglés y persistencia del nivel de pista.
+- [x] Icono de Ruta sustituido por un mapa del tesoro con línea segmentada y destino marcado.
+- [ ] Auditoría pedagógica completa de Teoría: siguen faltando explicaciones aplicadas en varios idiomas/temas; no marcar como resuelto.
+- [ ] CI unitario y Browser E2E de esta iteración.
+- [ ] Deploy manual Render y validación humana Android.
