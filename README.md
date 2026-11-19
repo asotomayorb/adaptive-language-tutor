@@ -400,3 +400,5 @@ Pendiente de esta revisión:
 - El test E2E incluye una respuesta deliberadamente incorrecta que el mock IA intenta marcar como correcta; la validación local debe rechazarla.
 
 - El gráfico genera un color distinto para cada idioma presente en la tabla, incluso cuando se estudian más de ocho idiomas.
+
+- Corrección de la paleta dinámica: las referencias de línea, puntos y leyenda usan ahora la misma función de color por idioma; E2E comprueba errores de inicialización antes de interactuar.
