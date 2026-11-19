@@ -1235,7 +1235,7 @@ function finishSession() {
   const focusItems = [...new Set([topicLabels[session.config.topic], ...summary.recommendedFocus, ...(summary.reviewPatterns || [])].filter(Boolean))];
   $("summary-content").innerHTML = '<h2 class="summary-title">Resumen</h2>' +
     '<section class="summary-section"><h3 class="summary-success-title">Aciertos</h3><ul>' +
-    (hits.map(item => '<li>' + renderClickableTargetText(item) + '</li>').join("") || '<li>Sin aciertos registrados</li>') + '</ul></section>' +
+    (hits.map(item => '<li><span class="summary-hit">' + renderClickableTargetText(item) + '</span></li>').join("") || '<li>Sin aciertos registrados</li>') + '</ul></section>' +
     '<section class="summary-section"><h3 class="summary-error-title">Errores</h3><ul>' +
     (errors || '<li>Sin errores</li>') + '</ul></section>' +
     '<section class="summary-section"><h3>Vocabulario</h3><ul>' +
