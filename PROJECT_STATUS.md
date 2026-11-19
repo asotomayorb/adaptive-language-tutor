@@ -581,3 +581,5 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 
 - [x] Consigna del hito integrador formulada en español y pistas progresivas disponibles tanto tras un error como mediante el botón «Pista».
 - [x] Nivel de pista guardado en el borrador de Ruta para continuar tras recargar.
+
+- [x] «Continuar» permanece habilitado mientras se prepara el siguiente turno; un toque anticipado se encola y avanza automáticamente al terminar la solicitud.
