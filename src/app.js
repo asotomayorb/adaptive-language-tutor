@@ -468,7 +468,7 @@ function renderSpacedReview() {
       const result = gradeReview(reviewProgressDraft || progress, card.key, recalled);
       showFeedback(recalled
         ? "Registrado. Próximo repaso en " + (result?.nextIntervalDays || 1) + " días."
-        : "Registrado. Volverá a aparecer mañana; intenta crear una frase nueva con este patrón.", recalled);
+        : "Sigue pendiente. Vuelve a intentarlo en otro repaso.", recalled);
       $("answer-area").innerHTML = '<button id="next-spaced" class="secondary" type="button">Siguiente →</button>';
       $("next-spaced").addEventListener("click", () => { reviewIndex += 1; renderSpacedReview(); });
     };
@@ -487,7 +487,7 @@ function renderSpacedReview() {
     const interval = result?.nextIntervalDays || 1;
     showFeedback(correct
       ? "Correcto. Próximo repaso en " + interval + " días."
-      : "Respuesta de referencia: " + expected + ". " + (exercise?.explanation || card.explanation) + " La tarjeta volverá mañana.", correct);
+      : "Respuesta de referencia: " + expected + ". " + (exercise?.explanation || card.explanation) + " La palabra seguirá pendiente hasta responderla correctamente.", correct);
     appendCatalogSpeech($("feedback"), exercise || { target: expected }, "explanationSpeechSegments", true);
     $("answer-area").innerHTML = '<button id="next-spaced" class="secondary" type="button">Siguiente →</button>';
     $("next-spaced").addEventListener("click", () => { reviewIndex += 1; renderSpacedReview(); });
