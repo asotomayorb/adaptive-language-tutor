@@ -1464,7 +1464,10 @@ function finishSession() {
     const stars = Math.min(5, Math.floor(accuracy / 20));
     const state = getRouteProgressForLanguage(session.config.languageId);
     state.completedUnits = state.completedUnits || {};
-    state.completedUnits[activeRouteUnit?.id || "foundations"] = { completed:true, stars, accuracy, correct, attempted, completedAt:new Date().toISOString() };
+    const unitId = activeRouteUnit?.id || "foundations";
+    const previousRecord = state.completedUnits[unitId];
+    const newRecord = { completed:true, stars, accuracy, correct, attempted, completedAt:new Date().toISOString() };
+    if (!previousRecord?.completed || accuracy > Number(previousRecord.accuracy || 0)) state.completedUnits[unitId] = newRecord;
     saveRouteProgressForLanguage(session.config.languageId,state);
     selectedRouteUnitId = activeRouteUnit?.id || "foundations";
     routeSelectionTouched = false;
