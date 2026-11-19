@@ -251,6 +251,7 @@ const ROUTE_UNIT_DEFINITIONS = [
   { id:"work", number:"04", title:"Trabajo y estudios", topic:"work", icon:"💼", requiredStars:4, description:"Hablar de tareas, ocupaciones y ayuda." }
 ];
 let selectedRouteUnitId = "foundations";
+let routeSelectionTouched = false;
 let activeRouteUnit = null;
 let routeQuestionCount = 10;
 function getRouteDraftForLanguage(languageId) {
@@ -288,7 +289,7 @@ function renderRouteDashboard() {
   const state = getRouteProgressForLanguage(selectedCatalog?.id);
   routeDraft = getRouteDraftForLanguage(selectedCatalog?.id);
   if (routeDraft?.unitId && units.some(unit => unit.id === routeDraft.unitId)) selectedRouteUnitId = routeDraft.unitId;
-  else {
+  else if (!routeSelectionTouched || !units.some(unit => unit.id === selectedRouteUnitId) || !isRouteUnitUnlocked(units,units.findIndex(unit => unit.id === selectedRouteUnitId),state)) {
     const next = units.find((unit,index) => !state.completedUnits?.[unit.id] && isRouteUnitUnlocked(units,index,state))
       || units.find((unit,index) => state.completedUnits?.[unit.id] && units[index+1] && !isRouteUnitUnlocked(units,index+1,state))
       || units[0];
@@ -509,7 +510,13 @@ function startSpacedReview() {
   dueReviewCards = getDueCards(progress, Date.now(), catalog.id).filter(card => card.cardType !== "pattern");
   reviewProgressDraft = JSON.parse(JSON.stringify(progress));
   reviewIndex = 0;
-  if (!dueReviewCards.length) { reviewProgressDraft = null; refreshDashboard(); return; }
+  if (!dueReviewCards.length) {
+    reviewProgressDraft = null;
+    $("review-exercises").classList.remove("hidden");
+    $("review-dashboard").innerHTML = "No tienes tarjetas pendientes. Los errores nuevos aparecerán aquí después de practicar.";
+    refreshDashboard();
+    return;
+  }
   sessionFinished = false;
   showSessionView("review");
   $("summary-panel").classList.add("hidden");
@@ -518,7 +525,8 @@ function startSpacedReview() {
   reviewMode = true;
   aiMode = false;
   $("stats").hidden = true;
-  $("hint-btn").hidden = true;
+  $("hint-btn").hidden = false;
+  $("hint-btn").textContent = "Pista";
   $("review-btn").hidden = true;
   renderSpacedReview();
 }
@@ -540,12 +548,15 @@ function renderSpacedReview() {
   const card = dueReviewCards[reviewIndex];
   const exercise = catalog.exercises.find(item => item.id === card.exerciseId);
   const expected = exercise?.target || card.expected;
+  reviewExercise = exercise || { target:expected, hint:card.hint, explanation:card.explanation };
+  reviewHintLevel = 0;
   $("lesson-phase").textContent = "REPETICIÓN ESPACIADA";
   $("turn-count").textContent = "Tarjeta " + (reviewIndex + 1) + " / " + dueReviewCards.length;
   $("progress-bar").style.width = (reviewIndex / dueReviewCards.length * 100) + "%";
   $("feedback").classList.add("hidden");
 
   if (card.cardType === "pattern") {
+    $("hint-btn").hidden = true;
     $("lesson-content").innerHTML = '<p class="eyebrow">REPASO DE PATRÓN</p><h3>' + escapeHTML(card.pattern) + '</h3><p>Intenta recordar una frase propia que aplique este patrón. Este repaso no consume turnos de práctica.</p>';
     $("answer-area").innerHTML = '<p class="muted">¿Pudiste recordar y aplicar el patrón?</p><button id="pattern-recalled" class="primary" type="button">Lo recordé</button><button id="pattern-practice" class="secondary" type="button">Necesito practicarlo</button>';
     const gradePattern = recalled => {
@@ -561,7 +572,10 @@ function renderSpacedReview() {
     return;
   }
 
-  $("lesson-content").innerHTML = '<p class="eyebrow">REPASO PROGRAMADO</p><h3>' + escapeHTML(exercise?.prompt || card.prompt || "") + '</h3><p>Escribe la respuesta sin mirar la solución. Este repaso no consume turnos de práctica.</p>';
+  $("hint-btn").hidden = false;
+  $("hint-btn").disabled = false;
+  $("hint-btn").textContent = "Pista";
+  $("lesson-content").innerHTML = getExerciseIllustration(exercise || { topic:card.topic, prompt:card.prompt }) + '<p class="eyebrow">REPASO PROGRAMADO</p><h3>' + escapeHTML(exercise?.prompt || card.prompt || "") + '</h3><p>Escribe la respuesta sin mirar la solución. Este repaso no consume turnos de práctica.</p>';
   $("answer-area").innerHTML = '<input id="spaced-answer" class="answer-input" placeholder="Escribe tu respuesta…"><button id="check-spaced" class="primary" type="button">Comprobar respuesta</button>';
   $("check-spaced").addEventListener("click", () => {
     const answer = $("spaced-answer").value;
@@ -569,6 +583,7 @@ function renderSpacedReview() {
     const correct = evaluateAnswer(answer, checkExercise);
     const result = gradeReview(reviewProgressDraft || progress, card.key, correct);
     const interval = result?.nextIntervalDays || 1;
+    $("hint-btn").hidden = true;
     showFeedback(correct
       ? "Correcto. Próximo repaso en " + interval + " días."
       : "Respuesta de referencia: " + expected + ". " + (exercise?.explanation || card.explanation) + " La palabra seguirá pendiente hasta responderla correctamente.", correct);
@@ -702,13 +717,16 @@ function renderAITutorTurn(result) {
   const promptAudio = aiCurrentExercise.prompt
     ? speakerButton(questionSpeech.text, questionSpeech.locale)
     : "";
-  $("lesson-content").innerHTML = instructionMarkup + prompt + promptAudio;
+  $("lesson-content").innerHTML = getExerciseIllustration(aiCurrentExercise) + instructionMarkup + prompt + promptAudio;
   bindSpeakerButtons($("lesson-content"));
   bindVariantLinks($("lesson-content"));
   bindTargetWords($("lesson-content"));
   autoSpeak(questionSpeech.text, questionSpeech.locale);
   $("feedback").classList.add("hidden");
-  $("hint-btn").hidden = false;
+  const aiOptions = Array.isArray(aiCurrentExercise.options) ? aiCurrentExercise.options : [];
+  const aiHasChoices = session.turn < 3 && aiOptions.length === 3 && aiOptions.some(option => String(option).trim().toLocaleLowerCase() === String(aiCurrentExercise.expectedAnswer || "").trim().toLocaleLowerCase());
+  $("hint-btn").hidden = aiHasChoices;
+  $("hint-btn").textContent = "Pista";
   $("review-btn").hidden = true;
 
   if (result.nextAction === "finish" || session.turn >= session.config.duration) {
@@ -851,7 +869,7 @@ async function submitAITutorAnswer(answer) {
 }
 
 async function requestAdaptiveHint() {
-  if (aiHintPending || !session || !aiLastResult || aiHintLevel >= 3) return;
+  if (aiHintPending || !session || !aiLastResult || aiHintLevel >= 1) return;
   const activeSession = session;
   const activeExercise = aiCurrentExercise;
   const button = $("hint-btn");
@@ -887,16 +905,15 @@ async function requestAdaptiveHint() {
     if (typeof hint !== "string" || !hint.trim()) {
       throw new Error("El tutor no generó una pista adicional.");
     }
-    aiHintLevel += 1;
-    showFeedback("Pista adicional: " + hint.trim(), true);
+    aiHintLevel = 1;
+    showFeedback("Pista: " + hint.trim(), true);
     const segments = (result.speechSegments || []).filter(item =>
       item && typeof item.text === "string" && item.text.trim() &&
       item.locale === (session.config.languageLocale || session.config.languageId)
     );
     appendSpeechButtons($("feedback"), segments);
     speech.speakSequence(segments, { automatic: true });
-    button.textContent = aiHintLevel >= 3 ? "Pistas agotadas" : "Pedir otra pista";
-    if (aiHintLevel >= 3) button.hidden = true;
+    button.textContent = "Ver respuesta";
   } catch (error) {
     if (session === activeSession && aiCurrentExercise === activeExercise) {
       showFeedback("No se pudo obtener otra pista. Puedes intentarlo nuevamente. " + (error.message || ""), false);
@@ -971,8 +988,8 @@ function startRouteSession(resume = false) {
   const routeProgress = getRouteProgressForLanguage(catalog.id);
   if (!isRouteUnitUnlocked(units,unitIndex,routeProgress)) return;
   const useAI = !catalog.exercises.length;
-  routeQuestionCount = Number(routeDraft?.questionCount || activeRouteUnit.questionCount || 10);
   const hasMatchingDraft = Boolean(routeDraft?.session && routeDraft.languageId === catalog.id && routeDraft.unitId === activeRouteUnit.id);
+  routeQuestionCount = Number(hasMatchingDraft ? routeDraft.questionCount : activeRouteUnit.questionCount || 10);
   resume = Boolean(resume && hasMatchingDraft);
   if (useAI && !aiConfigured) {
     $("route-start").textContent = "Ruta en preparación";
@@ -1192,13 +1209,16 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   const instructionMarkup = currentExercise.instruction
     ? '<p class="exercise-instruction">' + escapeHTML(currentExercise.instruction) + '</p>' : "";
   const questionAudioMarkup = questionSpeechSegments.map(item => speakerButton(item.text, item.locale)).join(" ");
-  $("lesson-content").innerHTML = '<p class="eyebrow">TEMA: ' + escapeHTML(topicLabels[session.config.topic].toUpperCase()) + ' · NIVEL ' + escapeHTML(levelLabel(session.config.level).toUpperCase()) + '</p>' + instructionMarkup + '<h3>' + promptMarkup + '</h3>' + questionAudioMarkup;
+  $("lesson-content").innerHTML = getExerciseIllustration(currentExercise) + (routeMode ? '<p class="eyebrow">' + routePhase.label + '</p>' : '<p class="eyebrow">TEMA: ' + escapeHTML(topicLabels[session.config.topic].toUpperCase()) + ' · NIVEL ' + escapeHTML(levelLabel(session.config.level).toUpperCase()) + '</p>') + instructionMarkup + '<h3>' + promptMarkup + '</h3>' + questionAudioMarkup;
   bindVariantLinks($("lesson-content"));
   bindSpeakerButtons($("lesson-content"));
   bindTargetWords($("lesson-content"));
   speech.stop();
   speech.speakSequence(questionSpeechSegments, { automatic: true });
-  if (questionIndex < 3) {
+  const useMultipleChoice = routeMode
+    ? routePhase.id !== "sentences" && Array.isArray(currentExercise.options) && currentExercise.options.length >= 2
+    : questionIndex < 3;
+  if (useMultipleChoice) {
     const options = currentExercise.options || [];
     $("answer-area").innerHTML = options.map((option,index) => '<div class="answer-option-row"><button class="answer-option" data-choice="' + index + '">' + renderClickableTargetText(option) + '</button>' + speakerButton(option, currentExercise.optionsLocale || (currentExercise.speechMode === "listening" ? "es-CL" : catalog.locale)) + '</div>').join("");
     $("answer-area").querySelectorAll("[data-choice]").forEach(button => button.addEventListener("click", () => submitAnswer(options[Number(button.dataset.choice)])));
@@ -1211,7 +1231,8 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   }
   $("feedback").classList.add("hidden");
   $("hint-btn").disabled = false;
-  $("hint-btn").hidden = false;
+  $("hint-btn").hidden = routeMode ? routePhase.id !== "sentences" : questionIndex < 3;
+  $("hint-btn").textContent = "Pista";
   $("review-btn").disabled = false;
   $("review-btn").hidden = false;
 }
@@ -1328,13 +1349,31 @@ function showFeedback(message, positive) {
 
 $("hint-btn").addEventListener("click", () => {
   speech.stop();
+  if (reviewMode && reviewExercise) {
+    if (reviewHintLevel === 0) {
+      reviewHintLevel = 1;
+      showFeedback("Pista: " + (reviewExercise.hint || reviewExercise.explanation || "Identifica la palabra clave de la consigna."), true);
+      $("hint-btn").textContent = "Ver respuesta";
+    } else {
+      reviewHintLevel = 2;
+      showFeedback("Respuesta: " + reviewExercise.target, true);
+      $("hint-btn").hidden = true;
+    }
+    return;
+  }
   if (aiMode) {
-    if (aiHintLevel >= 3) { $("hint-btn").hidden = true; return; }
+    if (aiHintLevel >= 2) { $("hint-btn").hidden = true; return; }
+    if (aiHintLevel === 1) {
+      aiHintLevel = 2;
+      showFeedback("Respuesta: " + (aiCurrentExercise?.expectedAnswer || "Consulta la corrección al responder."), true);
+      $("hint-btn").hidden = true;
+      return;
+    }
     const storedHints = Array.isArray(aiCurrentExercise?.hints) ? aiCurrentExercise.hints : [];
-    const hint = storedHints[aiHintLevel] || (aiHintLevel === 0 ? aiCurrentExercise?.hint : "");
+    const hint = storedHints[0] || aiCurrentExercise?.hint;
     if (typeof hint === "string" && hint.trim()) {
-      aiHintLevel += 1;
-      showFeedback("Pista " + aiHintLevel + "/3: " + hint.trim(), true);
+      aiHintLevel = 1;
+      showFeedback("Pista: " + hint.trim(), true);
       const hintSegments = (aiLastResult?.speechSegments || []).filter(item =>
         item && typeof item.text === "string" && item.text.trim() &&
         item.locale === (session.config.languageLocale || session.config.languageId) &&
@@ -1342,8 +1381,7 @@ $("hint-btn").addEventListener("click", () => {
       );
       appendSpeechButtons($("feedback"), hintSegments);
       speech.speakSequence(hintSegments, { automatic: true });
-      $("hint-btn").textContent = "Pedir otra pista";
-      if (aiHintLevel >= 3) $("hint-btn").hidden = true;
+      $("hint-btn").textContent = "Ver respuesta";
       return;
     }
     requestAdaptiveHint();
@@ -1351,22 +1389,29 @@ $("hint-btn").addEventListener("click", () => {
   }
   if (!currentExercise) return;
   if (routeMode && routeIntegration && Array.isArray(currentExercise.hints)) {
-    routeIntegrationHintLevel = Math.min(routeIntegrationHintLevel + 1, currentExercise.hints.length);
-    showFeedback("Pista " + routeIntegrationHintLevel + "/" + currentExercise.hints.length + ": " + currentExercise.hints[routeIntegrationHintLevel-1], true);
+    if (routeIntegrationHintLevel === 0) {
+      routeIntegrationHintLevel = 1;
+      showFeedback("Pista: " + currentExercise.hints[0], true);
+      $("hint-btn").textContent = "Ver respuesta";
+    } else {
+      routeIntegrationHintLevel = 2;
+      showFeedback("Respuesta: " + currentExercise.target, true);
+      $("hint-btn").hidden = true;
+    }
     saveRouteDraft();
     return;
   }
-  const hints = Array.isArray(currentExercise.hints) && currentExercise.hints.length >= 3
-    ? currentExercise.hints.slice(0,3)
-    : [
-      currentExercise.hint || "Identifica primero qué información solicita la consigna.",
-      currentExercise.explanation || ("Piensa en el significado y la estructura de " + (currentExercise.term || "la expresión clave") + "."),
-      "Solución guiada: " + (currentExercise.target || "revisa la respuesta esperada en la corrección.")
-    ];
-  localHintLevel = Math.min(localHintLevel + 1, 3);
-  showFeedback("Pista " + localHintLevel + "/3: " + hints[localHintLevel-1], true);
-  appendCatalogSpeech($("feedback"), currentExercise, "hintSpeechSegments");
-  if (localHintLevel >= 3) $("hint-btn").hidden = true;
+  if (!currentExercise) return;
+  if (localHintLevel === 0) {
+    localHintLevel = 1;
+    showFeedback("Pista: " + (currentExercise.hint || currentExercise.explanation || "Identifica primero la palabra clave de la consigna."), true);
+    appendCatalogSpeech($("feedback"), currentExercise, "hintSpeechSegments");
+    $("hint-btn").textContent = "Ver respuesta";
+  } else {
+    localHintLevel = 2;
+    showFeedback("Respuesta: " + currentExercise.target, true);
+    $("hint-btn").hidden = true;
+  }
 });
 
 $("review-btn").addEventListener("click", () => {
@@ -1376,11 +1421,16 @@ $("review-btn").addEventListener("click", () => {
   if (!reviewExercise) return;
   reviewMode = true;
   $("lesson-phase").textContent = "REPASO";
+  reviewHintLevel = 0;
+  $("hint-btn").hidden = false;
+  $("hint-btn").disabled = false;
+  $("hint-btn").textContent = "Pista";
   speech.stop();
   $("lesson-content").innerHTML = '<h3>Intenta reconstruir esta frase:</h3><p>' + escapeHTML(reviewExercise.prompt) + '</p><p>La respuesta se comprobará sin consumir un turno de la sesión.</p>';
   $("answer-area").innerHTML = '<input id="review-answer" class="answer-input" placeholder="Escribe tu respuesta…"><button class="primary" id="check-review" type="button">Comprobar repaso</button>';
   $("check-review").addEventListener("click", () => {
     const ok = evaluateAnswer($("review-answer").value, reviewExercise);
+    $("hint-btn").hidden = true;
     showFeedback(ok ? "Correcto. " + reviewExercise.explanation : "Respuesta de referencia: " + reviewExercise.target + ". " + reviewExercise.explanation, ok);
     appendCatalogSpeech($("feedback"), reviewExercise, "explanationSpeechSegments", true);
     $("answer-area").innerHTML = '<button class="secondary" id="back-to-practice" type="button">Volver a la práctica</button>';
@@ -1400,6 +1450,8 @@ function finishSession() {
     state.completedUnits = state.completedUnits || {};
     state.completedUnits[activeRouteUnit?.id || "foundations"] = { completed:true, stars, accuracy, correct, attempted, completedAt:new Date().toISOString() };
     saveRouteProgressForLanguage(session.config.languageId,state);
+    selectedRouteUnitId = activeRouteUnit?.id || "foundations";
+    routeSelectionTouched = false;
     try { localStorage.removeItem(ROUTE_STORAGE_KEY + ":" + session.config.languageId); } catch {}
     try { localStorage.removeItem("adaptive-language-tutor.route-started:" + session.config.languageId); } catch {}
     try { localStorage.removeItem("adaptive-language-tutor.route-completed:" + session.config.languageId); } catch {}
@@ -1461,9 +1513,12 @@ function showScreen(name) {
     selectedExerciseMode = "practice";
     document.querySelectorAll("[data-mode]").forEach(item => item.classList.toggle("selected", item.dataset.mode === "practice"));
     $("screen-exercises").classList.remove("review-selected");
+    $("setup-panel").classList.add("hidden");
+    $("practice-toggle")?.setAttribute("aria-expanded","false");
     $("start-session").textContent = "Comenzar práctica";
     $("topic").disabled = false;
   }
+  if (name === "route") renderRouteDashboard();
   if (name === "stats") refreshDashboard();
   document.querySelectorAll(".app-screen").forEach(screen => screen.classList.toggle("hidden", screen.id !== "screen-" + name));
   $("app-shell").classList.remove("session-active");
@@ -1514,12 +1569,20 @@ function closeSessionAndReturn() {
 document.querySelectorAll("[data-mode]").forEach(button => button.addEventListener("click", () => {
   selectedExerciseMode = button.dataset.mode;
   document.querySelectorAll("[data-mode]").forEach(item => item.classList.toggle("selected", item === button));
-  $("review-exercises").classList.toggle("hidden", selectedExerciseMode !== "review");
-  $("screen-exercises").classList.toggle("review-selected", selectedExerciseMode === "review");
-  $("topic").disabled = selectedExerciseMode === "review";
-  $("start-session").textContent = selectedExerciseMode === "review" ? "Comenzar repaso" : "Comenzar práctica";
+  if (selectedExerciseMode === "review") {
+    $("setup-panel").classList.add("hidden");
+    $("practice-toggle")?.setAttribute("aria-expanded","false");
+    $("screen-exercises").classList.add("review-selected");
+    startSpacedReview();
+    return;
+  }
+  $("screen-exercises").classList.remove("review-selected");
+  $("review-exercises").classList.add("hidden");
+  $("setup-panel").classList.toggle("hidden");
+  $("practice-toggle")?.setAttribute("aria-expanded",String(!$("setup-panel").classList.contains("hidden")));
+  $("topic").disabled = false;
+  $("start-session").textContent = "Comenzar práctica";
   $("ai-status").classList.remove("hidden");
-  if (selectedExerciseMode === "review") refreshDashboard();
 }));
 $("route-start-exercises")?.addEventListener("click", () => showScreen("exercises"));
 $("route-start").addEventListener("click", () => startRouteSession(localStorage.getItem("adaptive-language-tutor.route-started:" + (getSelectedCatalog()?.id || "")) === "true"));
