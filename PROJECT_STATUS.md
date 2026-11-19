@@ -546,3 +546,5 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] Caso E2E de falso positivo añadido: una respuesta de otro idioma no se acepta aunque la evaluación simulada del tutor diga «correcta».
 
 - [x] La paleta del gráfico se genera por cantidad de idiomas, evitando repetir los ocho colores iniciales.
+
+- [x] Se corrigieron las referencias restantes a la paleta anterior en puntos y leyenda del gráfico.
