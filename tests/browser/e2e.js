@@ -195,6 +195,8 @@ try {
   assert.equal(await page.locator("#lesson-content .exercise-instruction").innerText(), "Escucha la frase en portugués y elige su significado en español.");
   assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text.startsWith("Escucha la frase") && item.lang === "es-CL")), "exercise instructions should be spoken in Spanish");
   assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "Bom dia" && item.lang === "pt-BR")), "the target phrase should be spoken in Portuguese");
+  assert.equal(await page.locator("#lesson-content [data-speak]").evaluateAll(nodes => nodes.every(node => node.dataset.locale === "pt-BR")), true, "manual play controls should only be offered for target-language speech");
+  assert.equal(await page.locator("#review-btn").count(), 0, "the obsolete Repasar error action should not be rendered");
   assert.equal(await page.locator("#lesson-content h3").innerText(), "Bom dia", "target-language phrase should be separate from the source-language instruction");
   assert.equal(await page.locator("#lesson-content .target-word-link").count(), 0, "exercise words should no longer open translation popups");
   assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "Bom dia" && item.lang === "pt-BR")), "audio should speak the complete target-language phrase");
@@ -244,6 +246,10 @@ try {
   await page.locator('[data-screen="stats"]').click();
   assert.equal(await page.locator("#statistics-content .stats-language-table").isVisible(), true, "statistics should show the cross-language metrics table");
   assert.equal(await page.locator("#statistics-content .stats-bar-chart").isVisible(), true, "global statistics should compare language accuracy with bars");
+  assert.equal(await page.locator("#statistics-content .stats-average-line").count(), 0, "global average line should be removed");
+  assert.doesNotMatch(await page.locator("#statistics-content .stats-chart-legend").innerText(), /promedio/i, "global average legend should be removed");
+  const globalBarWidths = await page.locator("#statistics-content .stats-bar-chart rect.stats-bar").evaluateAll(nodes => nodes.map(node => Number(node.getAttribute("width"))));
+  assert.ok(globalBarWidths.every(width => width > 0 && width <= 54), "global chart bars should be thinner");
   assert.equal(await page.locator("#stats-view-select option").first().innerText(), "🌐 Global");
   await page.locator("#stats-view-select").selectOption("pt-BR");
   assert.equal(await page.locator("#statistics-content .stats-language-chart").isVisible(), true, "a language view should show daily questions and accuracy");
