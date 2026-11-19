@@ -244,3 +244,5 @@ Para cada escenario registrar:
 - [ ] Confirmar que no aparece texto de estado adicional debajo del resumen; solo el contenido y el botón de navegación.
 
 - [ ] Confirmar que una respuesta en idioma equivocado no se marca correcta aunque el proveedor IA devuelva estado correct.
+
+- [ ] Añadir más de ocho idiomas con actividad y comprobar que cada línea y entrada de leyenda mantiene un color distinto.
