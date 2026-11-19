@@ -4,7 +4,7 @@
 
 ## 1. Preparación
 
-1. Clonar el repositorio y usar la rama `feature/ai-tutor-pedagogy`.
+1. Clonar el repositorio y usar la rama `feature/mobile-bottom-navigation`.
 2. Ejecutar `npm ci` y `npm run check`.
 3. Para probar el modo local, iniciar con `npm run dev` sin credenciales IA.
 4. Para probar el tutor real, configurar un archivo local `.env` con `AI_PROVIDER`, `AI_API_KEY` y `AI_MODEL`; no subirlo a Git.
@@ -202,3 +202,22 @@ Para cada escenario registrar:
 - [x] Browser E2E: GitHub Actions run [44424442327](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44424442327).
 - [x] Preview Render: deploy `dep-dbv3kuhsrm7s73bap9n0`, estado `live`, código `32673f0`.
 - [ ] Prueba auditiva y visual en Android real; confirmar voces disponibles, pronunciación mixta y pausas en los huecos.
+
+## 14. Validación de la iteración funcional — 18-11-2026
+
+- [ ] En ejercicios IA, al enviar una respuesta aparece feedback antes de que termine de generarse la siguiente pregunta.
+- [ ] Una respuesta exacta o incluida en `acceptedAnswers` se marca correcta.
+- [ ] Una respuesta con un error tipográfico de un carácter en un término de al menos cuatro letras se acepta solo cuando el ejercicio habilita esa tolerancia.
+- [ ] Una respuesta semánticamente incorrecta no se marca correcta por ser una frase gramatical.
+- [ ] Probar variantes válidas no incluidas inicialmente en `acceptedAnswers`; registrar cualquier falso negativo para ampliar las variantes de forma explícita.
+- [ ] Comprobar que algunas consignas de inglés y portugués están formuladas en el idioma objetivo y se entienden por el nivel.
+- [ ] En Ruta, seleccionar un tema con pocas preguntas y completar suficientes turnos: no debe repetirse ninguna pregunta ya respondida; al agotarse el catálogo, debe finalizar sin repetir.
+- [ ] El hito integrador solicita traducir una frase delimitada y acepta las variantes válidas y errores tipográficos pequeños, sin permitir respuestas abiertas.
+- [ ] El resumen presenta únicamente el título Resumen y los subtítulos Aciertos, Errores, Vocabulario y Temas.
+- [ ] Aciertos aparece en verde y errores en rojo; los errores muestran respuesta enviada y solución esperada.
+- [ ] Vocabulario muestra solo palabras en el idioma objetivo, sin traducciones en línea.
+- [ ] En una consigna, alternativa, corrección y vocabulario, tocar una palabra muestra su traducción cuando está registrada.
+- [ ] Estadísticas integra todos los idiomas con actividad en una tabla: sesiones, palabras, precisión y progreso de Ruta.
+- [ ] El gráfico muestra evolución diaria (no por sesión), con una línea y color por idioma y leyenda lateral.
+- [ ] Probar estadísticas con varios idiomas, varios días, más de una sesión en un mismo día y días sin actividad.
+- [ ] En Android, comprobar que la tabla se puede desplazar horizontalmente sin deformar la pantalla y que la leyenda del gráfico sigue siendo legible.
