@@ -574,25 +574,34 @@ function renderSpacedReview() {
     return;
   }
 
-  $("hint-btn").hidden = false;
+  const hasOptions = Array.isArray(exercise?.options) && exercise.options.length >= 2;
+  $("hint-btn").hidden = hasOptions;
   $("hint-btn").disabled = false;
   $("hint-btn").textContent = "Pista";
-  $("lesson-content").innerHTML = getExerciseIllustration(exercise || { topic:card.topic, prompt:card.prompt }) + '<p class="eyebrow">REPASO PROGRAMADO</p><h3>' + escapeHTML(exercise?.prompt || card.prompt || "") + '</h3><p>Escribe la respuesta sin mirar la solución. Este repaso no consume turnos de práctica.</p>';
-  $("answer-area").innerHTML = '<input id="spaced-answer" class="answer-input" placeholder="Escribe tu respuesta…"><button id="check-spaced" class="primary" type="button">Comprobar respuesta</button>';
-  $("check-spaced").addEventListener("click", () => {
-    const answer = $("spaced-answer").value;
-    const checkExercise = exercise || { target: expected, acceptedAnswers: [] };
-    const correct = evaluateAnswer(answer, checkExercise);
-    const result = gradeReview(reviewProgressDraft || progress, card.key, correct);
+  $("lesson-content").innerHTML = getExerciseIllustration(exercise || { topic:card.topic, prompt:card.prompt }) + '<p class="eyebrow">REPASO PROGRAMADO</p><h3>' + escapeHTML(exercise?.prompt || card.prompt || "") + '</h3><p>' + (hasOptions ? "Elige la respuesta correcta. Este repaso no consume turnos de práctica." : "Escribe la respuesta sin mirar la solución. Este repaso no consume turnos de práctica.") + '</p>';
+  const submitReviewAnswer = answer => {
+    const checkExercise = exercise || { target:expected, acceptedAnswers:[] };
+    const correct = evaluateAnswer(answer,checkExercise);
+    const result = gradeReview(reviewProgressDraft || progress,card.key,correct);
     const interval = result?.nextIntervalDays || 1;
     $("hint-btn").hidden = true;
     showFeedback(correct
       ? "Correcto. Próximo repaso en " + interval + " días."
-      : "Respuesta de referencia: " + expected + ". " + (exercise?.explanation || card.explanation) + " La palabra seguirá pendiente hasta responderla correctamente.", correct);
-    appendCatalogSpeech($("feedback"), exercise || { target: expected }, "explanationSpeechSegments", true);
+      : "Respuesta de referencia: " + expected + ". " + (exercise?.explanation || card.explanation) + " La palabra seguirá pendiente hasta responderla correctamente.",correct);
+    appendCatalogSpeech($("feedback"),exercise || { target:expected },"explanationSpeechSegments",true);
     $("answer-area").innerHTML = '<button id="next-spaced" class="secondary" type="button">Siguiente →</button>';
-    $("next-spaced").addEventListener("click", () => { reviewIndex += 1; renderSpacedReview(); });
-  });
+    $("next-spaced").addEventListener("click",() => { reviewIndex += 1; renderSpacedReview(); });
+  };
+  if (hasOptions) {
+    $("answer-area").innerHTML = exercise.options.map((option,index) => '<button class="answer-option" type="button" data-review-choice="' + index + '">' + escapeHTML(option) + '</button>').join("");
+    $("answer-area").querySelectorAll("[data-review-choice]").forEach(button => button.addEventListener("click",() => {
+      $("answer-area").querySelectorAll("[data-review-choice]").forEach(item => item.disabled = true);
+      submitReviewAnswer(exercise.options[Number(button.dataset.reviewChoice)]);
+    }));
+  } else {
+    $("answer-area").innerHTML = '<input id="spaced-answer" class="answer-input" placeholder="Escribe tu respuesta…"><button id="check-spaced" class="primary" type="button">Comprobar respuesta</button>';
+    $("check-spaced").addEventListener("click",() => submitReviewAnswer($("spaced-answer").value));
+  }
 }
 
 $("setup-form").addEventListener("submit", event => {
