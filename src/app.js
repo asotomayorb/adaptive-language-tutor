@@ -1031,10 +1031,14 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   $("error-count").textContent = session.errors.length;
   pendingFeedback = null;
   const questionSpeech = getExerciseSpeech(currentExercise);
-  $("lesson-content").innerHTML = '<p class="eyebrow">TEMA: ' + escapeHTML(topicLabels[session.config.topic].toUpperCase()) + ' · NIVEL ' + escapeHTML(levelLabel(session.config.level).toUpperCase()) + '</p><h3>' + renderVariantTerms(currentExercise.prompt) + '</h3>' +
+  const promptMarkup = currentExercise.promptLanguage === "target"
+    ? renderClickableTargetText(currentExercise.prompt)
+    : renderVariantTerms(currentExercise.prompt);
+  $("lesson-content").innerHTML = '<p class="eyebrow">TEMA: ' + escapeHTML(topicLabels[session.config.topic].toUpperCase()) + ' · NIVEL ' + escapeHTML(levelLabel(session.config.level).toUpperCase()) + '</p><h3>' + promptMarkup + '</h3>' +
     speakerButton(questionSpeech.text, questionSpeech.locale);
   bindVariantLinks($("lesson-content"));
   bindSpeakerButtons($("lesson-content"));
+  bindTargetWords($("lesson-content"));
   speech.stop();
   autoSpeak(questionSpeech.text, questionSpeech.locale);
   if (questionIndex < 3) {
