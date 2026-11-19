@@ -304,3 +304,10 @@ Para cada escenario registrar:
 - [ ] Notar si alguna conjugación, traducción o ejemplo necesita corrección regional/contextual.
 
 - [ ] Con portugués o inglés y una sesión de 5/10 preguntas, comprobar que se inicia como «Práctica local» y que las respuestas no esperan una evaluación IA remota.
+
+## Preview de esta iteración
+- URL: https://adaptive-language-tutor-preview-5b3d.onrender.com/
+- Commit desplegado: 6857c44bbf4d2446644e471b033ca322f8757933.
+- Deploy LIVE: dep-dbvihnafngtc73cctgr0.
+- Tests unitarios y Browser E2E aprobados: [44570456063](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44570456063) · [44570456053](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44570456053).
+- Completar los checks Android de arriba; prestar atención al tamaño real de los gráficos y la pronunciación del sistema del dispositivo.
