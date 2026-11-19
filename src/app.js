@@ -598,6 +598,20 @@ async function submitAITutorAnswer(answer) {
   $("answer-area").querySelectorAll("[data-ai-choice]").forEach(button => { button.disabled = true; });
   try {
     const evaluatedExercise = aiCurrentExercise;
+    const locallyCorrect = evaluateAnswer(cleanAnswer, {
+      target: evaluatedExercise.expectedAnswer || "",
+      acceptedAnswers: evaluatedExercise.acceptedAnswers || [],
+      allowTypo: true
+    });
+    showAnswerFeedback({
+      correct: locallyCorrect,
+      expected: evaluatedExercise.expectedAnswer || "",
+      explanation: locallyCorrect ? "" : "La respuesta no coincide con la solución esperada.",
+      selected: cleanAnswer,
+      options: evaluatedExercise.options || [],
+      correctOption: evaluatedExercise.expectedAnswer || "",
+      showContinue: false
+    });
     const conversationHistory = [
       ...aiHistory,
       { role: "assistant", content: JSON.stringify(aiLastResult) }
@@ -632,7 +646,12 @@ async function submitAITutorAnswer(answer) {
       { role: "user", content: cleanAnswer }
     ];
     applyLearnerUpdate(session, result.learnerUpdate);
-    const evaluation = result.evaluation || {};
+    const modelEvaluation = result.evaluation || {};
+    const evaluation = {
+      ...modelEvaluation,
+      status: locallyCorrect ? "correct" : (modelEvaluation.status === "not_applicable" ? "not_applicable" : "incorrect"),
+      feedback: locallyCorrect ? "" : (modelEvaluation.feedback || "La respuesta debe coincidir con una solución válida de la actividad.")
+    };
     recordTutorEvaluation(session, {
       exerciseId: "ai-turn-" + (session.turn + 1),
       prompt: evaluatedExercise.prompt || aiLastResult.message,
@@ -652,7 +671,8 @@ async function submitAITutorAnswer(answer) {
       explanation: evaluation.status === "correct" ? "" : evaluation.feedback || "Revisa la estructura y vuelve a intentarlo.",
       selected: cleanAnswer,
       options: evaluatedExercise.options || [],
-      correctOption: evaluatedExercise.expectedAnswer || ""
+      correctOption: evaluatedExercise.expectedAnswer || "",
+      showContinue: true
     });
     $("streak").textContent = session.streak;
     $("word-count").textContent = session.vocabulary.length;
@@ -1017,7 +1037,7 @@ function updateStats() {
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
 }
-function showAnswerFeedback({ correct, expected, expectedLocale, explanation, selected, options = [], correctOption }) {
+function showAnswerFeedback({ correct, expected, expectedLocale, explanation, selected, options = [], correctOption, showContinue = true }) {
   const expectedText = !correct && expected ? '<p class="answer-correct-text">Respuesta correcta: ' + renderVariantTerms(expected) + ' ' + speakerButton(expected, expectedLocale || session?.config.languageLocale || catalog?.locale) + '</p>' : "";
   const explanationText = !correct && explanation ? '<p class="answer-explanation">' + renderVariantTerms(explanation) + '</p>' : "";
   $("feedback").innerHTML = (correct ? '<p class="answer-status correct">Correcto</p>' : '<p class="answer-status incorrect">Incorrecto</p>') + expectedText + explanationText;
@@ -1035,9 +1055,13 @@ function showAnswerFeedback({ correct, expected, expectedLocale, explanation, se
   });
   $("answer-area").querySelectorAll("input").forEach(input => { input.disabled = true; });
   $("answer-area").querySelectorAll("button:not([data-choice]):not([data-ai-choice]):not([data-speak])").forEach(button => { button.disabled = true; });
-  $("answer-area").insertAdjacentHTML("beforeend", '<button id="continue-answer" class="primary answer-continue" type="button">Continuar →</button>');
+  if (showContinue) {
+    $("answer-area").insertAdjacentHTML("beforeend", '<button id="continue-answer" class="primary answer-continue" type="button">Continuar →</button>');
+    $("continue-answer").addEventListener("click", continueAfterAnswer);
+  } else {
+    $("answer-area").insertAdjacentHTML("beforeend", '<p class="muted answer-waiting">Preparando la siguiente pregunta…</p>');
+  }
   bindSpeakerButtons($("feedback"));
-  $("continue-answer").addEventListener("click", continueAfterAnswer);
 }
 function continueAfterAnswer() {
   $("feedback").classList.add("hidden");
