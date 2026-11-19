@@ -361,3 +361,20 @@ No implementado todavía. Diseñar como un modo independiente:
 - [x] Browser E2E aprobado (run [44424442327](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44424442327)).
 - [x] Render preview desplegado y `live` para el código `32673f0` (deploy `dep-dbv3kuhsrm7s73bap9n0`).
 - [ ] Prueba visual y auditiva en Android real; CI no puede verificar la calidad de las voces instaladas ni la interacción táctil del dispositivo.
+
+## 14. Iteración funcional — 18-11-2026
+
+Cambios incorporados en la rama de preview:
+
+- Ejercicios IA: mostrar una corrección determinista inmediata contra `expectedAnswer` y `acceptedAnswers` mientras se prepara la siguiente actividad. La respuesta solo se considera correcta si coincide con la solución modelo o una variante aceptada; la tolerancia opcional admite un único error ortográfico pequeño.
+- Ejercicios: algunas consignas de inglés y portugués brasileño están redactadas directamente en el idioma objetivo.
+- Ruta: agotar las preguntas del tema lleva a preguntas no usadas del catálogo completo; no se reciclan preguntas respondidas. Si el catálogo se agota, la sesión termina sin repetir.
+- Hito integrador local: sustituye la presentación abierta por una traducción de respuesta delimitada, con variantes aceptadas y tolerancia tipográfica acotada.
+- Resumen: estructura simplificada con los apartados Aciertos, Errores, Vocabulario y Temas.
+- Estadísticas: tabla comparativa simultánea por idioma (sesiones, palabras, precisión y progreso de Ruta) y gráfico lineal de precisión diaria con leyenda lateral.
+- Texto objetivo: las palabras del enunciado, opciones, corrección y vocabulario pueden seleccionarse para consultar la traducción disponible en el vocabulario registrado.
+
+Pendiente de esta revisión:
+- Completar la auditoría y corrección del contenido de Teoría para todos los idiomas. La implementación aplicada más extensa sigue concentrada en italiano; no declarar Teoría completada para el resto.
+- Validar en E2E la corrección inmediata, tolerancia tipográfica, no repetición de Ruta, resumen, consulta por palabra y gráfico diario.
+- Confirmar la experiencia real en Android y comprobar latencia percibida con el proveedor IA.
