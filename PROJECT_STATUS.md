@@ -596,7 +596,7 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [x] Consigna y frase objetivo se pronuncian en segmentos con locale separado.
 - [x] Tres pistas progresivas para respuestas escritas.
 - [x] Portugués: pasado/futuro ampliados con formas por pronombre, ejemplos, regla y excepciones.
-- [ ] Ejecutar tests unitarios y Browser E2E de esta iteración; desplegar Preview y solicitar prueba humana Android.
+- [x] Tests unitarios y Browser E2E aprobados; Preview desplegado en Render. [ ] Solicitar y completar prueba humana Android.
 - [ ] Próxima fase: paquetes de contenido offline y motor local determinista para reducir llamadas IA en tiempo real.
 - [ ] Roadmap: módulo de comprensión lectora con textos originales/de dominio público/licencia abierta, y lecturas de noticias didácticas con fuentes.
 - [ ] Política obligatoria: registrar procedencia/licencia/atribución y verificar derechos antes de incluir cada texto.
