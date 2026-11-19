@@ -236,3 +236,5 @@ Para cada escenario registrar:
 - [ ] Dentro de una alternativa, tocar una palabra muestra su traducción sin seleccionar la respuesta; tocar el resto de la tarjeta sí selecciona la alternativa.
 
 - [ ] En las consignas locales marcadas en idioma objetivo, seleccionar palabras muestra traducción; las consignas de apoyo en español no deben tratarse como texto objetivo.
+
+- [ ] Confirmar que cada acierto se resalta en verde y cada respuesta errónea en rojo, incluida la respuesta modelo.
