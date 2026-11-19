@@ -41,6 +41,8 @@ test("some exercise instructions are written in the target language", () => {
   assert.match(english.exercises[0].prompt, /^Listen to the phrase in English/i);
   assert.match(ptBR.exercises[1].prompt, /^Complete a frase/i);
   assert.match(english.exercises[1].prompt, /^Complete the sentence/i);
+  assert.equal(ptBR.exercises[0].promptLanguage, "target");
+  assert.equal(english.exercises[0].promptLanguage, "target");
 });
 
 test("diagnostic has enough questions for its four-question flow", () => {
