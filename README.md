@@ -398,3 +398,5 @@ Pendiente de esta revisión:
 - Elimina también el estado «Sesión finalizada» bajo el resumen para mantener la pantalla limitada al contenido solicitado y su acción de navegación.
 
 - El test E2E incluye una respuesta deliberadamente incorrecta que el mock IA intenta marcar como correcta; la validación local debe rechazarla.
+
+- El gráfico genera un color distinto para cada idioma presente en la tabla, incluso cuando se estudian más de ocho idiomas.
