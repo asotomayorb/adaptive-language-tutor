@@ -114,9 +114,13 @@ try {
   await page.locator("#theory-next").click();
   assert.equal(await page.locator("#theory-title").innerText(), "Pasado");
   assert.match(await page.locator("#theory-description").innerText(), /Ayer/i, "past tense should include an applied example");
+  assert.ok(await page.locator("#theory-description .theory-pronoun-table tbody tr").count() >= 6, "Portuguese past must conjugate for each subject pronoun");
+  assert.match(await page.locator("#theory-description").innerText(), /fui|tive|fiz|disse/i, "Portuguese past must explain irregular verbs");
   await page.locator("#theory-next").click();
   assert.equal(await page.locator("#theory-title").innerText(), "Futuro");
   assert.match(await page.locator("#theory-description").innerText(), /Mañana/i, "future tense should include an applied example");
+  assert.ok(await page.locator("#theory-description .theory-pronoun-table tbody tr").count() >= 6, "Portuguese future must conjugate for each subject pronoun");
+  assert.match(await page.locator("#theory-description").innerText(), /vou falar|vai falar|vão falar/i, "Portuguese future must show the common ir + infinitive construction");
   await page.locator("#theory-close").click();
   // Switching away and back resets Theory to its category start.
   await page.locator('[data-screen="exercises"]').click();
@@ -125,9 +129,11 @@ try {
   await page.locator('[data-screen="exercises"]').click();
   assert.equal(await page.locator("#exercise-choice-panel").isVisible(), true, "Exercises navigation should return to its setup screen");
   await page.locator('[data-mode="review"]').click();
+  assert.equal(await page.locator("#setup-form > label:visible").count(), 0, "review should hide practice-only level, duration and topic selectors");
+  assert.equal(await page.locator("#start-session").innerText(), "Comenzar repaso");
   await page.locator('[data-screen="theory"]').click();
   await page.locator('[data-screen="exercises"]').click();
-  assert.equal(await page.locator('[data-mode="global"]').getAttribute("class").then(value => value.includes("selected")), true, "Exercises should reset to Global mode");
+  assert.equal(await page.locator('[data-mode="practice"]').getAttribute("class").then(value => value.includes("selected")), true, "Exercises should reset to Practice mode");
   assert.equal(await page.locator("#topic").isDisabled(), false, "the topic selector should be enabled again");
 
   // Local exercise: first three questions are alternatives, then answers are written.
@@ -137,6 +143,8 @@ try {
   await page.locator("#duration").selectOption("5");
   await page.locator("#start-session").click();
   assert.equal(await page.locator("#lesson-content .exercise-instruction").innerText(), "Escucha la frase en portugués y elige su significado en español.");
+  assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text.startsWith("Escucha la frase") && item.lang === "es-CL")), "exercise instructions should be spoken in Spanish");
+  assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "Bom dia" && item.lang === "pt-BR")), "the target phrase should be spoken in Portuguese");
   assert.equal(await page.locator("#lesson-content h3").innerText(), "Bom dia", "target-language phrase should be separate from the source-language instruction");
   assert.equal(await page.locator("#lesson-content .target-word-link").count(), 0, "exercise words should no longer open translation popups");
   assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "Bom dia" && item.lang === "pt-BR")), "audio should speak the complete target-language phrase");
@@ -156,6 +164,11 @@ try {
     }
   }
   assert.equal(await page.locator("#answer-area #free-answer").isVisible(), true, "fourth question should require written input");
+  for (let hint = 1; hint <= 3; hint += 1) {
+    await page.locator("#hint-btn").click();
+    assert.match(await page.locator("#feedback").innerText(), new RegExp("Pista " + hint + "/3"));
+  }
+  assert.equal(await page.locator("#hint-btn").isHidden(), true, "text-answer questions should provide exactly three progressive hints");
   for (let turn = 3; turn < 5; turn += 1) {
     await page.locator("#free-answer").fill("Bonjour");
     await page.locator("#submit-free").click();
@@ -184,7 +197,7 @@ try {
   assert.equal(await page.locator("#statistics-content .stats-language-chart").isVisible(), true, "a language view should show daily questions and accuracy");
   assert.equal(await page.locator("#statistics-content .stats-language-chart .chart-axis-title").textContent(), "Días");
   assert.equal(await page.locator("#statistics-content .stats-language-chart text.chart-axis-label").last().textContent(), "1");
-  assert.match(await page.locator("#statistics-content .stats-language-chart").getAttribute("viewBox"), /760 340/);
+  assert.equal(await page.locator("#statistics-content .stats-chart-scroll").evaluate(node => node.scrollWidth <= node.clientWidth + 1), true, "charts must fit the horizontal card margins without lateral scrolling");
   await page.locator("#stats-view-select").selectOption("global");
   const statsText = await page.locator("#statistics-content .stats-language-table").innerText();
   assert.ok(["Sesiones","Palabras","Precisión","Progreso de Ruta"].every(label => statsText.includes(label)));
