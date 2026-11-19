@@ -80,7 +80,7 @@ test("AI errors without an expected answer are not made into ungradable review c
   assert.equal(progress.reviewCards.length, 0);
 });
 
-test("successful spaced reviews advance 3, 7 and 14 day intervals; failure resets to one day", () => {
+test("successful spaced reviews advance 3, 7 and 14 day intervals; failure stays due until corrected", () => {
   const now = Date.parse("2026-01-01T12:00:00.000Z");
   const progress = persistSession(loadProgress(null), baseSession(), {
     attempted: 1, correct: 0, accuracy: 0
@@ -89,8 +89,13 @@ test("successful spaced reviews advance 3, 7 and 14 day intervals; failure reset
   assert.equal(gradeReview(progress, key, true, now).nextIntervalDays, 3);
   assert.equal(gradeReview(progress, key, true, now).nextIntervalDays, 7);
   assert.equal(gradeReview(progress, key, true, now).nextIntervalDays, 14);
-  assert.equal(gradeReview(progress, key, false, now).nextIntervalDays, 1);
+  assert.equal(gradeReview(progress, key, false, now).nextIntervalDays, 0);
   assert.equal(progress.reviewCards[0].repetitions, 0);
+  assert.equal(getDueCards(progress, now).some(card => card.key === key), true,
+    "an incorrect answer must leave the word in the pending review queue");
+  gradeReview(progress, key, true, now);
+  assert.equal(getDueCards(progress, now).some(card => card.key === key), false,
+    "a correct answer moves the word out of the pending queue");
 });
 
 test("progress statistics can be filtered by language", () => {
