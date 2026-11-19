@@ -394,3 +394,5 @@ Pendiente de esta revisión:
 - En el resumen, los aciertos y errores se resaltan por separado (verde y rojo); la palabra de cada acierto sigue siendo seleccionable para traducirla.
 
 - La segmentación de palabras usa límites lingüísticos del navegador cuando están disponibles, para que los idiomas con escritura continua (p. ej. chino, japonés o tailandés) no se traten como una única palabra.
+
+- Elimina también el estado «Sesión finalizada» bajo el resumen para mantener la pantalla limitada al contenido solicitado y su acción de navegación.
