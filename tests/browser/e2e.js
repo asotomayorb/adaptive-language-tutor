@@ -247,6 +247,7 @@ try {
     }
     if (input.task === "evaluate_and_continue") {
       const turn = input.session.turn;
+      await delay(350);
       return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(tutorTurn({ turn })) });
     }
     if (input.task === "translate_word") {
@@ -297,7 +298,10 @@ try {
   assert.equal(await aiPage.locator("#feedback .answer-status.correct").count(), 0, "a semantically incorrect answer must not be accepted just because the model labels it correct");
   assert.equal(await aiPage.locator("#submit-ai-answer").count(), 0, "written-answer submit button should disappear after sending");
   assert.equal(await aiPage.locator("#continue-answer").isVisible(), true, "Continue should appear immediately while the next turn is being prepared");
+  assert.equal(await aiPage.locator("#continue-answer").isEnabled(), true, "Continue should be clickable while the next turn is loading");
   await aiPage.locator("#continue-answer").click();
+  assert.equal(await aiPage.locator("#continue-answer").isDisabled(), true, "an early Continue tap should queue safely while the tutor responds");
+  await aiPage.waitForFunction(() => document.querySelector("#turn-count")?.textContent.includes("5 / 10"));
   assert.doesNotMatch(await aiPage.locator("#lesson-content .exercise-instruction").innerText(), /¡Muy bien!/i, "the next question must not repeat contradictory praise after an incorrect answer");
   assert.equal(await aiPage.locator("#lesson-content .feedback-note").count(), 0, "previous-answer grey notes must not remain above the new question");
   assert.deepEqual(aiErrors, [], "AI browser flow should not report uncaught page errors");
