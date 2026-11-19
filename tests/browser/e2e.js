@@ -328,6 +328,7 @@ try {
     }));
   });
   await routePage.reload({ waitUntil: "networkidle" });
+  await routePage.locator("#welcome-start").click();
   await routePage.locator("#route-start").click();
   assert.match(await routePage.locator("#lesson-content h3").innerText(), /Traduce al portugués/i);
   await routePage.locator("#route-integration-answer").fill("ola");
