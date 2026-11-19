@@ -252,3 +252,16 @@ Para cada escenario registrar:
 **Preview disponible para prueba humana:** https://adaptive-language-tutor-preview-5b3d.onrender.com/  
 **Commit:** `459e10c46861aa31a344db1e14b424bdfee2ccad`  
 - [ ] Prueba humana Android de la iteración completa.
+
+
+## Android — iteración de estadísticas, ejercicios y repaso
+
+- [ ] En Estadísticas, abrir el selector y comprobar 🌐 Global con barras por idioma y línea punteada de precisión promedio.
+- [ ] Elegir cada idioma y comprobar dos series: preguntas respondidas y precisión por día practicado.
+- [ ] Confirmar que el eje horizontal muestra Día 1…Día 15, solo días practicados, sin fechas.
+- [ ] Comprobar que la tabla comparativa sigue mostrando sesiones, palabras, precisión y progreso de Ruta.
+- [ ] En Ejercicios, comprobar que la instrucción está en español y separada de la frase/pregunta que se evalúa.
+- [ ] Pulsar palabras en consignas, opciones, correcciones y vocabulario: no debe aparecer una traducción emergente.
+- [ ] Al finalizar una sesión, verificar Aciertos n/total y Errores n/total; los errores deben conservar respuesta y solución.
+- [ ] En Repaso, responder una palabra incorrectamente y salir/completar el repaso: debe seguir pendiente.
+- [ ] Responder correctamente esa palabra en otra sesión de repaso: debe dejar de aparecer como pendiente y pasar al siguiente intervalo.
