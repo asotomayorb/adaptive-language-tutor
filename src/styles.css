@@ -349,3 +349,5 @@
 .target-word-link{display:inline;padding:0;border:0;border-bottom:1px dotted #6684a8;background:transparent;color:inherit;font:inherit;cursor:pointer}
 .target-word-link:focus-visible{outline:2px solid #6684a8;outline-offset:2px;border-radius:3px}
 .word-translation{display:inline-block;margin:2px 5px;padding:2px 7px;border-radius:6px;background:#edf3fa;color:#29425f;font-size:.82em;font-weight:650}
+
+#statistics-content{grid-template-columns:minmax(0,1fr)}
