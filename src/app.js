@@ -43,6 +43,13 @@ function updateAudioStatus(status) {
     toggle.title = status.enabled ? "Audio activado" : "Audio desactivado";
     toggle.classList.toggle("audio-off", !status.enabled);
   });
+  const passageToggle = document.getElementById("reading-tts-toggle");
+  if (passageToggle) {
+    const paused = Boolean(status.paused);
+    passageToggle.textContent = paused ? "Continuar lectura" : "Pausar lectura";
+    passageToggle.setAttribute("aria-label", paused ? "Continuar lectura" : "Pausar lectura");
+    passageToggle.disabled = !status.speaking && !paused;
+  }
 }
 
 function toggleAudio() {
@@ -96,6 +103,15 @@ function bindVariantLinks(root) {
       $("variant-dialog").showModal();
     });
   });
+}
+
+function togglePassageSpeech() {
+  const button = $("reading-tts-toggle");
+  if (!button) return;
+  if (speech.paused) { speech.resume(); return; }
+  if (speech.speaking) { speech.pause(); return; }
+  const passage = currentExercise?.passage;
+  if (passage) speech.speak(passage, session?.config?.languageLocale || catalog?.locale);
 }
 
 function bindSpeakerButtons(root) {
@@ -1079,17 +1095,17 @@ function renderRouteIntegration() {
   speech.stop();
   const scenarios = {
     daily: catalog.id === "en"
-      ? { prompt:"Escribe una presentación completa: saluda, di tu nombre y de dónde eres.", target:"Good morning, my name is Ana and I am from Chile.", accepted:["Good morning, I'm Ana and I'm from Chile.","Hello, my name is Ana and I am from Chile."], hints:["Incluye saludo, nombre y procedencia.","Empieza con «Good morning» y continúa con «my name is Ana»."] }
-      : { prompt:"Escribe una presentación completa: saluda, di tu nombre y de dónde eres.", target:"Bom dia, meu nome é Ana e sou do Chile.", accepted:["Bom dia! Eu me chamo Ana e sou do Chile.","Olá, meu nome é Ana e sou do Chile."], hints:["Incluye saludo, nombre y procedencia.","Empieza con «Bom dia» y continúa con «meu nome é Ana»."] },
+      ? { prompt:"Traduce al inglés esta frase concreta: «Mañana estudio en casa».", target:"Tomorrow I study at home.", accepted:["Tomorrow, I study at home."], hints:["Traduce mañana, estudiar y en casa.","Empieza con «Tomorrow…»."] }
+      : { prompt:"Traduce al portugués esta frase concreta: «Mañana estudio en casa».", target:"Amanhã estudo em casa.", accepted:["Amanhã eu estudo em casa."], hints:["Traduce mañana, estudiar y en casa.","Empieza con «Amanhã…»."] },
     travel: catalog.id === "en"
-      ? { prompt:"En una estación, escribe una frase completa para decir que quieres comprar un billete.", target:"I want to buy a ticket, please.", accepted:["I would like to buy a ticket, please.","I want to buy a ticket."], hints:["Incluye want (querer) y ticket (billete).","Empieza con «I want to buy…»."] }
-      : { prompt:"En una estación, escribe una frase completa para decir que quieres comprar un pasaje.", target:"Quero comprar uma passagem, por favor.", accepted:["Eu quero comprar uma passagem, por favor.","Quero comprar uma passagem."], hints:["Incluye quero (quiero), comprar y passagem (pasaje).","Empieza con «Quero comprar…»."] },
+      ? { prompt:"Traduce al inglés esta frase concreta: «Quiero comprar un billete».", target:"I want to buy a ticket.", accepted:["I want to buy a ticket, please."], hints:["Traduce quiero, comprar y billete.","Empieza con «I want to buy…»."] }
+      : { prompt:"Traduce al portugués esta frase concreta: «Quiero comprar un pasaje».", target:"Quero comprar uma passagem.", accepted:["Eu quero comprar uma passagem."], hints:["Traduce quiero, comprar y pasaje.","Empieza con «Quero comprar…»."] },
     food: catalog.id === "en"
-      ? { prompt:"En un café, escribe una frase completa para pedir un café de forma cortés.", target:"I would like a coffee, please.", accepted:["I'd like a coffee, please.","Can I have a coffee, please?"], hints:["Usa una forma cortés de pedir y menciona coffee.","Empieza con «I would like…»."] }
-      : { prompt:"En un café, escribe una frase completa para pedir un café de forma cortés.", target:"Eu gostaria de um café, por favor.", accepted:["Gostaria de um café, por favor.","Queria um café, por favor."], hints:["Usa gostaria de para expresar «quisiera» y menciona café.","Empieza con «Eu gostaria de…»."] },
+      ? { prompt:"Traduce al inglés esta frase concreta: «Quisiera un café, por favor».", target:"I would like a coffee, please.", accepted:["I'd like a coffee, please."], hints:["Usa una petición cortés.","Empieza con «I would like…»."] }
+      : { prompt:"Traduce al portugués esta frase concreta: «Quisiera un café, por favor».", target:"Eu gostaria de um café, por favor.", accepted:["Gostaria de um café, por favor."], hints:["Usa gostaria de para expresar quisiera.","Empieza con «Eu gostaria de…»."] },
     work: catalog.id === "en"
-      ? { prompt:"En una conversación, escribe una frase completa: trabajas en una oficina y necesitas ayuda.", target:"I work in an office and I need help.", accepted:["I work at an office and need help.","I work in an office. I need help."], hints:["Une trabajo y necesidad con and.","Empieza con «I work in an office…»."] }
-      : { prompt:"En una conversación, escribe una frase completa: trabajas en una oficina y necesitas ayuda.", target:"Eu trabalho em um escritório e preciso de ajuda.", accepted:["Trabalho em um escritório e preciso de ajuda.","Eu trabalho no escritório e preciso de ajuda."], hints:["Une trabajo y necesidad con e.","Empieza con «Eu trabalho em um escritório…»."] }
+      ? { prompt:"Traduce al inglés esta frase concreta: «Trabajo en una oficina».", target:"I work in an office.", accepted:["I work at an office."], hints:["Traduce trabajo y oficina.","Empieza con «I work…»."] }
+      : { prompt:"Traduce al portugués esta frase concreta: «Trabajo en una oficina».", target:"Trabalho em um escritório.", accepted:["Eu trabalho em um escritório."], hints:["Traduce trabajo y oficina.","Empieza con «Trabalho…»."] }
   };
   const scenario = scenarios[activeRouteUnit?.topic || "daily"] || scenarios.daily;
   const prompt = scenario.prompt;
@@ -1165,8 +1181,23 @@ function getTopicExercises() {
 function chooseExercise() {
   let exercises = getTopicExercises();
   const adaptation = getAdaptation(session);
-  let candidates = exercises.filter(exercise => !session.answers.some(answer => answer.exerciseId === exercise.id));
-  if (!candidates.length && !routeMode) {
+  let candidates;
+  if (session.config.topic === "reading") {
+    const answeredIds = new Set(session.answers.map(answer => answer.exerciseId));
+    const reading = catalog.exercises.filter(exercise => exercise.type === "reading" && !answeredIds.has(exercise.id));
+    if (reading.length) {
+      const preferredLevel = session.config.level === "advanced" ? "A2" : "A1";
+      const levelRank = exercise => exercise.level === preferredLevel ? 0 : 1;
+      reading.sort((a,b) => levelRank(a)-levelRank(b) || String(a.passage || "").trim().split(/\\s+/).length-String(b.passage || "").trim().split(/\\s+/).length);
+      candidates = [reading[0]];
+    } else {
+      exercises = catalog.exercises.filter(exercise => exercise.type !== "reading");
+      candidates = exercises.filter(exercise => !answeredIds.has(exercise.id));
+    }
+  } else {
+    candidates = exercises.filter(exercise => !session.answers.some(answer => answer.exerciseId === exercise.id));
+  }
+  if (!candidates.length && !routeMode && session.config.topic !== "reading") {
     exercises = catalog.exercises;
     candidates = exercises.filter(exercise => !session.answers.some(answer => answer.exerciseId === exercise.id));
   }
@@ -1202,7 +1233,9 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   if (!currentExercise) { finishSession(); return; }
   const adaptation = getAdaptation(session);
   const routePhase = routeMode ? getRoutePhase(questionIndex,routeQuestionCount) : null;
-  $("lesson-phase").textContent = routeMode ? routePhase.label : topicLabels[session.config.topic].toUpperCase() + " · " + levelLabel(session.config.level).toUpperCase();
+  $("lesson-phase").textContent = routeMode ? routePhase.label : session.config.topic === "reading"
+    ? (currentExercise.type === "reading" ? "COMPRENSIÓN DEL TEXTO" : "PRÁCTICA GENERAL")
+    : topicLabels[session.config.topic].toUpperCase() + " · " + levelLabel(session.config.level).toUpperCase();
   $("turn-count").textContent = "Pregunta " + (questionIndex + 1) + " / " + (routeMode ? routeQuestionCount : session.config.duration);
   $("progress-bar").style.width = (questionIndex / (routeMode ? routeQuestionCount : session.config.duration) * 100) + "%";
   $("streak").textContent = session.streak;
@@ -1218,9 +1251,12 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   const targetLocale = session.config.languageLocale || session.config.languageId;
   const questionAudioMarkup = questionSpeechSegments.filter(item => item.locale === targetLocale).map(item => speakerButton(item.text, item.locale)).join(" ");
   const readingMarkup = currentExercise.passage
-    ? '<section class="reading-passage"><span class="reading-passage-kicker">Texto de lectura</span><h3>' + escapeHTML(currentExercise.passageTitle || "Lectura") + '</h3><p>' + escapeHTML(currentExercise.passage) + '</p></section>'
+    ? '<section class="reading-passage"><span class="reading-passage-kicker">Texto de lectura</span><h3>' + escapeHTML(currentExercise.passageTitle || "Lectura") + '</h3><p>' + escapeHTML(currentExercise.passage) + '</p><button id="reading-tts-toggle" class="secondary reading-tts-toggle" type="button" disabled>Reproducir lectura</button></section>'
     : "";
-  $("lesson-content").innerHTML = readingMarkup + getExerciseIllustration(currentExercise) + instructionMarkup + '<h3>' + promptMarkup + '</h3>' + questionAudioMarkup;
+  const readingQuestionType = session.config.topic === "reading"
+    ? '<p class="reading-question-type">' + (currentExercise.type === "reading" ? "Comprensión del texto" : "Práctica general") + '</p>' : "";
+  $("lesson-content").innerHTML = readingMarkup + readingQuestionType + getExerciseIllustration(currentExercise) + instructionMarkup + '<h3>' + promptMarkup + '</h3>' + questionAudioMarkup;
+  $("reading-tts-toggle")?.addEventListener("click", togglePassageSpeech);
   bindVariantLinks($("lesson-content"));
   bindSpeakerButtons($("lesson-content"));
   bindTargetWords($("lesson-content"));
@@ -1530,7 +1566,7 @@ function showScreen(name) {
     $("screen-exercises").classList.remove("review-selected");
     $("setup-panel").classList.add("hidden");
     $("practice-toggle")?.setAttribute("aria-expanded","false");
-    $("start-session").textContent = "Comenzar práctica";
+    $("start-session").textContent = "Comenzar entrenamiento";
     $("topic").disabled = false;
     $("topic").value = "daily";
   }
@@ -1550,7 +1586,7 @@ function showSessionView(mode) {
   document.querySelectorAll(".app-screen").forEach(screen => screen.classList.add("hidden"));
   $("session-view").classList.remove("hidden");
   $("app-shell").classList.add("session-active");
-  $("session-mode-label").textContent = mode === "review" ? "Repaso" : mode === "reading" ? "Comprensión lectora" : "Práctica";
+  $("session-mode-label").textContent = mode === "review" ? "Repaso" : mode === "reading" ? "Comprensión lectora" : "Entrenamiento";
   window.scrollTo(0, 0);
 }
 function closeSessionAndReturn() {
@@ -1598,7 +1634,7 @@ document.querySelectorAll("[data-mode]").forEach(button => button.addEventListen
   $("practice-toggle")?.setAttribute("aria-expanded",String(!$("setup-panel").classList.contains("hidden")));
   $("topic").disabled = selectedExerciseMode === "reading";
   $("topic").value = selectedExerciseMode === "reading" ? "reading" : "daily";
-  $("start-session").textContent = selectedExerciseMode === "reading" ? "Comenzar lectura" : "Comenzar práctica";
+  $("start-session").textContent = selectedExerciseMode === "reading" ? "Comenzar lectura" : "Comenzar entrenamiento";
   $("ai-status").classList.remove("hidden");
 }));
 $("route-start-exercises")?.addEventListener("click", () => showScreen("exercises"));
@@ -1930,12 +1966,13 @@ function renderTenseLesson(languageName, topicIndex) {
       ? '<h3>Futuro simple (más formal)</h3><table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>Forma</th></tr></thead><tbody>' + lesson.futureSimpleForms.map(([person,form]) => '<tr><td>' + escapeHTML(person) + '</td><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td></tr>').join("") + '</tbody></table>'
       : "";
     const rule = isPast ? lesson.pastRule : lesson.futureRule;
+    const renderRulePoints = value => '<ul class="theory-rule-list">' + String(value || "").split(/(?<=[.!?])\\s+/).filter(Boolean).map(point => '<li>' + escapeHTML(point.trim()) + '</li>').join("") + '</ul>';
     const intro = isPast
       ? "El pretérito perfeito se usa para acciones concluidas en un momento pasado. La terminación depende del infinitivo y del sujeto."
       : "Para hablar del futuro, el portugués brasileño suele usar ir conjugado + infinitivo. El futuro simple existe, pero es más formal.";
     return '<p class="theory-slide-text">' + escapeHTML(intro) + '</p><table class="theory-pronoun-table">' + header + '<tbody>' + rows + '</tbody></table>' + simpleFuture +
-      '<section class="theory-note"><strong>Regla aplicada</strong><p>' + escapeHTML(rule) + '</p></section>' +
-      '<section class="theory-note"><strong>Excepciones e irregulares</strong><p>' + escapeHTML(lesson.exceptions) + '</p></section>' +
+      '<section class="theory-note"><strong>Reglas de formación y uso</strong>' + renderRulePoints(rule) + '</section>' +
+      '<section class="theory-note"><strong>Excepciones e irregulares</strong>' + renderRulePoints(lesson.exceptions) + '</section>' +
       '<section class="theory-example"><span>Ejemplos aplicados</span>' + examples + '</section>';
   }
   const example = isPast ? lesson.past : lesson.future;
