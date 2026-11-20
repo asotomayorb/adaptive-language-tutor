@@ -684,3 +684,34 @@ Esta sección prevalece sobre instrucciones anteriores que permitan cambiar el i
 - Render Preview: **LIVE**, deploy `dep-dc03b03m8hqs739dqns0`, mismo commit de código.
 - La lectura mantiene el criterio de no repetir preguntas dentro de una misma sesión; si se agota el banco antes de la cantidad solicitada, finaliza sin reciclar preguntas.
 - Pendiente de prueba humana: voces reales Android, navegación táctil, legibilidad móvil, barra/progreso/seek del reproductor y recorrido completo de las cuatro unidades.
+
+
+## 21. Corrección de progresión, jerarquía y navegación — 20-11-2026
+
+### Ruta
+- El resumen de cada unidad debe mostrar siempre una calificación visible: 0–5 estrellas y una valoración cualitativa coherente con el porcentaje de respuestas puntuables (Perfecto, Muy bien, Bien, Vas progresando o Sigue practicando). El porcentaje no reemplaza las estrellas.
+- El conjunto puntuable debe ser idéntico para el resumen y el cálculo de estrellas/desbloqueo. Los turnos IA no evaluables y la actividad integradora no se suman al denominador.
+- Si se desbloquea la unidad siguiente, el botón del resumen la inicia y la nueva sesión debe identificarse inequívocamente con el ID de esa unidad.
+- Si faltan estrellas, el resumen debe indicar cuántas se necesitan y permitir repetir la unidad. Si la ruta terminó, debe permitir volver al mapa. No debe existir un resumen sin una acción funcional.
+- Si por un fallo se llega al resumen sin actividad integradora completada, mostrar la calificación disponible y ofrecer repetir la unidad; no registrar la unidad como completada ni desbloquear la siguiente.
+- «Reforzar:» reúne habilidades, palabras y patrones vinculados a respuestas incorrectas; si no hay ninguno, indicarlo explícitamente.
+
+### Teoría
+- Las reglas y excepciones deben representar relaciones conceptuales, no solo una lista plana. Estructura visual requerida: categoría/regla principal y, debajo, subreglas o casos dependientes con sangría; las excepciones forman un bloque separado con su propia categoría y subelementos.
+- Una regla independiente permanece como elemento de primer nivel. Los casos que explican o ejemplifican una regla se anidan como subelementos.
+- Las tablas preceden a las reglas y los ejemplos permanecen al final. No mezclar reglas de pasado y futuro.
+
+### Navegación
+- Toda pantalla secundaria o detalle utiliza la misma flecha icon-only (←) en la esquina superior izquierda para volver al nivel anterior. Se elimina «Volver», «← Categorías» y otros formatos textuales alternativos.
+- En sesiones a pantalla completa, la flecha sustituye la X visual, pero mantiene la confirmación de descarte en Entrenamiento y vuelve al mapa cuando se está en Ruta.
+- No mantener reproducción de audio de una pantalla después de retroceder o cambiar de sección.
+
+### Audio del idioma objetivo
+- El contenido objetivo debe tener reproducción automática cuando el audio automático está activado y control manual cuando el contenido lo permite.
+- Cada fragmento conserva su locale objetivo explícito; no debe usar la voz española como sustitución.
+- En Android/Chrome, si `speechSynthesis.getVoices()` todavía está vacío, esperar al evento `voiceschanged` y volver a intentar. Si la lista ya está disponible pero no incluye una voz compatible, no sustituirla por la voz origen.
+- Al detener audio o cambiar de pantalla, cancelar también las reproducciones pendientes de carga de voces.
+
+### Esquema visual de referencia
+En las respuestas de avance se muestran pantallas esquemáticas con componentes, tarjetas, botones, jerarquía y espacios similares al preview web/móvil; no usar diagramas ASCII ni generar imágenes.
+
