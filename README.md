@@ -715,3 +715,13 @@ Esta sección prevalece sobre instrucciones anteriores que permitan cambiar el i
 ### Esquema visual de referencia
 En las respuestas de avance se muestran pantallas esquemáticas con componentes, tarjetas, botones, jerarquía y espacios similares al preview web/móvil; no usar diagramas ASCII ni generar imágenes.
 
+
+
+## 22. Validación final de esta corrección — 20-11-2026
+
+- Commit desplegado: `6b1f36fe463fdcff284b5101c0a18793d4476b97`.
+- `npm run check` y `npm test`: aprobados en GitHub Actions run [44771349574](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44771349574).
+- `npm run test:e2e`: aprobado en run [44771349707](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44771349707), incluyendo el caso de última unidad que debe volver al mapa sin reiniciarse.
+- Render Preview: **LIVE**, deploy `dep-dc0749ss728c73clirf0`.
+- La validación de navegador cubre resumen con estrellas y valoración, inicio de la unidad siguiente, retorno desde la última unidad, reglas anidadas, flecha común y audio objetivo automático/manual.
+- Pendiente: validación auditiva y visual humana en Android; en particular, comprobar `voiceschanged` en el dispositivo y la disponibilidad real de voces objetivo.
