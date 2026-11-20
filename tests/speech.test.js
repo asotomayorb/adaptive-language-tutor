@@ -5,8 +5,11 @@ import { createSpeechController, findVoiceForLocale } from "../src/core/speech.j
 function speechMock(voices = []) {
   const spoken = [];
   let cancelled = 0;
+  const listeners = new Map();
   const api = {
     getVoices: () => voices,
+    addEventListener: (name, callback) => listeners.set(name, callback),
+    emit: name => listeners.get(name)?.(),
     speak: utterance => spoken.push(utterance),
     cancel: () => { cancelled += 1; },
     pause: () => { api.paused = true; },
@@ -162,4 +165,24 @@ test("speech sequence omits fragments without an exact language-family voice", (
   ]);
   assert.equal(result.count,2);
   assert.deepEqual(mock.spoken.map(item=>item.voice.lang),["es-CL","pt-BR"]);
+});
+
+
+test("speech waits for Android voiceschanged before giving up on the target voice", () => {
+  const mock = speechMock([]);
+  const controller = createSpeechController({
+    synthesis:mock.api,
+    Utterance:MockUtterance,
+    storage:{getItem:()=>null,setItem:()=>{}}
+  });
+  const result = controller.speak("Bom dia","pt-BR",{automatic:true});
+  assert.equal(result.spoken,true);
+  assert.equal(result.pending,true);
+  assert.equal(mock.spoken.length,0);
+  mock.api.getVoices = () => [{name:"Brazilian Portuguese",lang:"pt-BR"}];
+  mock.api.emit("voiceschanged");
+  assert.equal(mock.spoken.length,1);
+  assert.equal(mock.spoken[0].text,"Bom dia");
+  assert.equal(mock.spoken[0].lang,"pt-BR");
+  assert.equal(mock.spoken[0].voice.name,"Brazilian Portuguese");
 });
