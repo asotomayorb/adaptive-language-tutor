@@ -2220,8 +2220,8 @@ function renderPronounTable(sample, languageName, locale) {
   return '<table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>Significado</th></tr></thead><tbody>' + rows + '</tbody></table><p class="theory-footnote">Pulsa el icono para escuchar cada forma. El significado puede variar según el contexto y el grado de formalidad.</p>';
 }
 function getTheoryExamplePronoun(example) {
-  const text = String(example || "").trim().replace(/^(?:yesterday|tomorrow|ayer|mañana|ontem|amanhã|ieri|domani|gestern|morgen|hier|demain|明日|昨日|昨天|어제|내일)\\s*,?\\s*/i,"");
-  const match = text.match(/^(a gente|você|vocês|eu|tu|nós|vós|ele|ela|eles|elas|i|you|he|she|it|we|they|je|j['’]|il|elle|on|nous|vous|ils|elles|ich|du|er|sie|es|wir|ihr|io|lui|lei|noi|voi|loro|я|ты|он|она|мы|вы|они|私|我|你|他|她|我们|저는|너는|그는|그녀는|우리는|أنا|أنت|هو|هي|نحن|मैं|तुम|वह|हम)\\b/i);
+  const text = String(example || "").trim().replace(/^(?:yesterday|tomorrow|ayer|mañana|ontem|amanhã|ieri|domani|gestern|morgen|hier|demain|明日|昨日|昨天|어제|내일)\s*,?\s*/i,"");
+  const match = text.match(/^(a gente|você|vocês|eu|tu|nós|vós|ele|ela|eles|elas|i|you|he|she|it|we|they|je|j['’]|il|elle|on|nous|vous|ils|elles|ich|du|er|sie|es|wir|ihr|io|lui|lei|noi|voi|loro|я|ты|он|она|мы|вы|они|私|我|你|他|她|我们|저는|너는|그는|그녀는|우리는|أنا|أنت|هو|هي|نحن|मैं|तुम|वह|हम)\b/i);
   return match ? match[0] : "—";
 }
 function renderTheoryExampleTable(example, translation, locale, languageName = "") {
@@ -2230,9 +2230,9 @@ function renderTheoryExampleTable(example, translation, locale, languageName = "
     "Hoje estou cansada.":"Hoy estoy cansada.",
     "Estamos em casa.":"Estamos en casa."
   } : {};
-  const rows = String(example || "").split(/\\s+\\/\\s+/).map(raw => {
+  const rows = String(example || "").split(/\s+\/\s+/).map(raw => {
     const item = raw.trim();
-    const translated = item.match(/^(.*?)\\s*\\(([^()]*)\\)\\s*$/);
+    const translated = item.match(/^(.*?)\s*\(([^()]*)\)\s*$/);
     const target = translated ? translated[1].trim() : item;
     const meaning = translated ? translated[2].trim() : knownTranslations[target] || translation || "";
     return '<tr><td>' + escapeHTML(getTheoryExamplePronoun(target)) + '</td><td><span class="theory-target-word">' + escapeHTML(target) + '</span> ' + speakerButton(target,locale) +
