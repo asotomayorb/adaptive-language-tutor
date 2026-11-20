@@ -886,7 +886,7 @@ function renderAITutorTurn(result) {
   $("hint-btn").textContent = "Pista";
   const aiRoutePhase = routeMode && !routeIntegration ? getRoutePhase(Math.min(session.turn,routeQuestionCount-1),routeQuestionCount) : null;
   $("lesson-phase").textContent = routeMode ? routeIntegration ? "HITO INTEGRADOR" : aiRoutePhase.label : topicLabels[session.config.topic].toUpperCase() + " · " + levelLabel(session.config.level).toUpperCase();
-  const activityTotal = routeMode ? routeQuestionCount : session.config.duration;
+  const activityTotal = routeMode ? routeQuestionCount + 1 : session.config.duration;
   $("turn-count").textContent = Math.min(session.turn + 1, activityTotal) + " / " + activityTotal;
   $("progress-bar").style.width = (Math.min(session.turn + 1, activityTotal) / activityTotal * 100) + "%";
   $("progress-bar").parentElement.setAttribute("aria-valuenow",String(Math.round(Math.min(session.turn + 1, activityTotal) / activityTotal * 100)));
