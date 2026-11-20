@@ -428,7 +428,7 @@ try {
   await page.locator("#route-start").click();
   assert.equal(await page.locator("#lesson-content .exercise-illustration").count(),1,"every activity must show its topic icon");
   assert.equal(await page.locator("#lesson-content").locator(":scope > :first-child").getAttribute("class"),"exercise-illustration","the topic icon must follow the question counter directly");
-  assert.equal((await page.locator("#turn-count").innerText()).trim(),"1 / 6");
+  assert.equal((await page.locator("#turn-count").innerText()).trim(),"1 / 7","Route progress should include its final integration question");
   await page.locator("#answer-area [data-choice]").last().click();
   await page.locator("#answer-area #continue-answer").click();
   await page.locator("#answer-area [data-choice]").first().evaluate(button => button.click());
@@ -616,7 +616,7 @@ try {
   await chapterPage.locator("#route-start").click();
   assert.match(await chapterPage.locator("#lesson-content .activity-phase").innerText(),/CAPÍTULO 1 · VOCABULARIO Y REGLAS/);
   assert.match(await chapterPage.locator("#lesson-content h3").innerText(),/¿Qué significa «Bom dia»\?/);
-  assert.equal((await chapterPage.locator("#turn-count").innerText()).trim(),"1 / 6");
+  assert.equal((await chapterPage.locator("#turn-count").innerText()).trim(),"1 / 7");
   await chapterContext.close();
 
   const thresholdContext = await browser.newContext();
