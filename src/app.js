@@ -1087,6 +1087,7 @@ function startRouteSession(resume = false) {
   }
   routeMode = true;
   session.config.routeMode = true;
+  $("lesson-panel").dataset.routeUnit = activeRouteUnit.id;
   saveRouteDraft();
   renderRouteDashboard();
   sessionAbortController?.abort();
