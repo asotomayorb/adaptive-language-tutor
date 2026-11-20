@@ -708,3 +708,20 @@ Implementación en curso en `feature/mobile-bottom-navigation`:
 
 
 **Despliegue de la iteración móvil:** Render Preview confirmado `live` en `dep-dbvt4mqjnfac738bvpqg`, commit `a94588dc58f940027b7d17742e7d6c4908652e57`. Render reportó build exitoso y proceso Node iniciado. No se pudo confirmar el resultado de GitHub Actions desde el estado de checks consultado; no declarar CI/E2E aprobados hasta revisar sus runs. Validación Android manual sigue pendiente.
+
+
+## Actualización 20-11-2026 — regresiones reportadas
+
+**Cambios aplicados en la rama de trabajo:**
+- El selector de comprensión lectora deja de reciclar preguntas ya contestadas; si se agota el banco, termina la sesión en lugar de reiniciar el índice.
+- Los fragmentos de voz de preguntas locales se filtran por el locale objetivo; las instrucciones y preguntas en español permanecen visibles pero no se reproducen con la voz portuguesa/inglesa.
+- La vista IA ya no usa como fallback una pregunta de idioma origen para TTS del idioma objetivo.
+- Los botones de audio de opciones y respuestas de referencia se limitan al locale objetivo.
+- La lectura incorpora controles de reproducción/pausa, reinicio y barra de desplazamiento basada en SpeechSynthesisUtterance.onboundary.
+- Los sonidos de acierto/error se aplican también al repaso y a la evaluación integradora de Ruta.
+
+**Pendiente de validar antes de declarar corregido:**
+- Reproducir la evaluación final de Ruta y comprobar registro/desbloqueo real de unidades; el flujo necesita una prueba funcional completa y no debe darse por resuelto solo por el cambio de sonido.
+- Verificar TTS en Android real, ya que la disponibilidad de voces exactas y los eventos de progreso dependen del navegador/dispositivo.
+- Confirmar que la barra de lectura avanza y permite saltar a otra posición con las voces instaladas.
+- Ejecutar npm run check, npm test y Browser E2E después de los cambios.
