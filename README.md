@@ -622,3 +622,5 @@ Este registro define los criterios de aceptación de la próxima iteración; los
 - La progresión del piloto combina nivel del pasaje (A1/A2), profundidad temática y extensión. Los textos A1 son breves; A2 incluye más contexto, conectores y detalles y puede requerir scroll vertical. El nivel no se determina solo por cantidad de palabras.
 - El hito final de Ruta ahora solicita traducir una frase específica por unidad; se conserva una lista explícita y pequeña de variantes equivalentes aceptadas.
 - En Teoría, las reglas y excepciones de pasado/futuro se muestran como elementos independientes, uno por línea, antes de los ejemplos.
+
+- En las sesiones de Entrenamiento (incluida la fase de práctica general posterior a lectura), la última pregunta local se reserva para una traducción concreta por tema. Cada una de las cuatro áreas tiene un ejercicio final marcado y variantes equivalentes declaradas; se evita una consigna abierta con una sola cadena aceptada.
