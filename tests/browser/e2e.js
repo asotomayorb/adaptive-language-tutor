@@ -185,6 +185,7 @@ try {
   assert.ok(await page.locator("#theory-description .theory-pronoun-table tbody tr").count() >= 6, "Portuguese past must conjugate for each subject pronoun");
   assert.deepEqual(await page.locator("#theory-description .theory-pronoun-table thead th").evaluateAll(nodes => nodes.map(node => node.textContent.trim())), ["Pronombre","Forma verbal"], "past conjugation table should not repeat Spanish example translations in a third column");
   assert.match(await page.locator("#theory-description").innerText(), /fui|tive|fiz|disse/i, "Portuguese past must explain irregular verbs");
+  assert.ok(await page.locator("#theory-description .theory-exceptions .theory-rule-list > li > .theory-rule-children li").count() >= 8,"past irregular verbs should be nested under one parent category, not flattened into peer bullets");
   assert.doesNotMatch(await page.locator("#theory-description").innerText(), /En futuro simple|direi|farei/i, "past theory must not contain future exceptions");
   await page.locator("#theory-next").click();
   assert.equal(await page.locator("#theory-title").innerText(), "Futuro");
@@ -193,6 +194,7 @@ try {
   assert.match(await page.locator("#theory-description").innerText(), /vou falar|vai falar|vão falar/i, "Portuguese future must show the common ir + infinitive construction");
   assert.deepEqual(await page.locator("#theory-description .theory-pronoun-table").first().locator("thead th").evaluateAll(nodes => nodes.map(node => node.textContent.trim())), ["Pronombre","Forma verbal"], "future conjugation table should only show pronoun and verb form");
   assert.match(await page.locator("#theory-description").innerText(), /En futuro simple/i, "future irregularities should be grouped with future rules");
+  assert.ok(await page.locator("#theory-description .theory-exceptions .theory-rule-list > li > .theory-rule-children li").count() >= 5,"future irregular roots should be nested under the future-specific exception category");
   assert.doesNotMatch(await page.locator("#theory-description").innerText(), /pretérito perfeito|fui, estar|ter → tive/i, "future theory must not contain past exceptions");
   assert.deepEqual(await page.locator("#theory-description .theory-pronoun-table").last().locator("thead th").evaluateAll(nodes => nodes.map(node => node.textContent.trim())), ["Pronombre","Forma verbal"], "future simple table must use the same headings");
   await page.locator("#theory-back").click();
@@ -443,6 +445,10 @@ try {
     "AI source instructions should use the Spanish voice");
   assert.equal(await aiPage.evaluate(() => window.__spoken.some(item => item.text === "Bonjour" && item.lang === "fr-FR")), true,
     "AI target content should use the target-language voice");
+  assert.ok(await aiPage.locator("#lesson-content [data-speak][data-locale='fr-FR']").count() > 0,"target-language AI text should expose manual pronunciation");
+  const aiSpeechCount = await aiPage.evaluate(() => window.__spoken.length);
+  await aiPage.locator("#lesson-content [data-speak][data-locale='fr-FR']").first().click();
+  assert.equal(await aiPage.evaluate(() => window.__spoken.length),aiSpeechCount + 1,"manual target-language playback should trigger the selected locale");
   await aiPage.locator("#answer-area [data-ai-choice]").first().evaluate(button => button.click());
   await aiPage.locator("#feedback .answer-status.correct").waitFor({ state: "visible" });
   await aiPage.locator("#answer-area #continue-answer").waitFor({ state: "visible" });
@@ -501,6 +507,7 @@ try {
   await routePage.reload({ waitUntil: "networkidle" });
   await routePage.locator("#welcome-start").click();
   await routePage.locator("#route-start").click();
+  assert.equal(await routePage.locator("#session-close").innerText(),"←","active sessions should use the shared top-left back arrow");
   assert.match(await routePage.locator("#lesson-content h3").innerText(), /Traduce al portugués esta frase concreta: «Mañana estudio en casa»/i, "the route milestone should request one specific translation");
   await routePage.locator("#route-integration-answer").fill("ola");
   await routePage.locator("#route-integration-submit").click();
