@@ -70,7 +70,8 @@ export const ptBR = {
         "level": "A2",
         "topic": "travel",
         "skill": "Alojamiento",
-        "prompt": "Traduce: “Necesito una habitación para dos personas.”",
+        "finalPractice": true,
+        "prompt": "Traduce al portugués esta frase concreta: «Necesito una habitación para dos personas».",
         "target": "Preciso de um quarto para duas pessoas",
         "acceptedAnswers": [
           "Eu preciso de um quarto para duas pessoas"
@@ -107,7 +108,8 @@ export const ptBR = {
         "level": "A2",
         "topic": "food",
         "skill": "Preferencias alimentarias",
-        "prompt": "Traduce: “Sin cebolla, por favor.”",
+        "finalPractice": true,
+        "prompt": "Traduce al portugués esta frase concreta: «Sin cebolla, por favor».",
         "target": "Sem cebola, por favor",
         "term": "sem cebola",
         "meaning": "sin cebolla",
@@ -141,7 +143,8 @@ export const ptBR = {
         "level": "A2",
         "topic": "work",
         "skill": "Pedir aclaraciones",
-        "prompt": "¿Cómo dices “¿Puede repetir, por favor?” de forma cortés?",
+        "finalPractice": true,
+        "prompt": "Traduce al portugués esta frase concreta: «¿Puede repetir, por favor?».",
         "target": "Pode repetir, por favor?",
         "acceptedAnswers": [
           "Você pode repetir, por favor?"
@@ -160,15 +163,17 @@ export const ptBR = {
         "id": "pt-daily-04",
         "level": "A2",
         "topic": "daily",
-        "skill": "Pasado simple",
-        "prompt": "Completa: Ontem eu ___ ao mercado. (Ayer fui al mercado.)",
-        "target": "fui",
+        "skill": "Traducción de frase en pasado",
+        "prompt": "Traduce al portugués esta frase concreta: «Ayer fui al mercado».",
+        "target": "Ontem fui ao mercado.",
+        "acceptedAnswers": ["Ontem eu fui ao mercado."],
+        "finalPractice": true,
         "term": "ontem",
         "meaning": "ayer",
         "options": [
-          "fui",
-          "vou",
-          "irei"
+          "Ontem fui ao mercado.",
+          "Ontem vou ao mercado.",
+          "Amanhã irei ao mercado."
         ],
         "hint": "La frase habla de ontem (ayer), así que necesita pasado.",
         hintSpeechSegments:["ontem"], explanationSpeechSegments:["Fui","Vou","irei"], "explanation": "Fui es el pasado de ir para eu. Vou es presente y irei es futuro."
