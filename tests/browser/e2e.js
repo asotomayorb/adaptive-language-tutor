@@ -314,11 +314,11 @@ try {
   await page.locator("#session-close").click();
   await page.locator("#session-confirm").waitFor({state:"visible"});
   await page.locator("#confirm-session-close").click();
-  // A 10-question reading session stays exclusively within the reading passages.
+  // Reading never repeats a question within one session; the current unique bank has six questions.
   await page.locator('[data-mode="reading"]').click();
   await page.locator("#duration").selectOption("10");
   await page.locator("#start-session").click();
-  const correctReadingChoices = [0,0,0,0,1,0,0,0,0,0];
+  const correctReadingChoices = [0,0,0,0,1,0];
   for (const choiceIndex of correctReadingChoices) {
     assert.equal(await page.locator("#lesson-content .reading-question-type").evaluate(node => node.textContent.trim()),"Comprensión del texto");
     assert.equal(await page.locator("#lesson-content .reading-passage").count(),1,"every reading question must retain its source passage");
@@ -327,7 +327,7 @@ try {
   }
   await page.locator("#summary-panel").waitFor({state:"visible"});
   assert.equal(await page.locator("#summary-content h2").innerText(),"Resumen");
-  assert.equal(await page.locator("#summary-content .summary-accuracy strong").innerText(),"100%","all ten reading questions should be scored without inserting general practice");
+  assert.equal(await page.locator("#summary-content .summary-accuracy strong").innerText(),"100%","all six unique reading questions should be scored without inserting general practice or recycling questions");
   // The completed reading session is persisted as a full reading-only session.
   // Incomplete Exercises sessions are discarded; no partial session is persisted.
   await page.setViewportSize({width:390,height:844});
