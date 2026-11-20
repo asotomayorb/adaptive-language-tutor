@@ -137,13 +137,12 @@ function getExerciseSpeech(exercise) {
   const sentence = afterInstruction.replace(/\([^)]*\)/g, "").trim();
   const hasGap = /_{1,}|＿+/u.test(sentence);
   const spoken = sentence.replace(/_{1,}|＿+/gu, "…").replace(/[“”]/g, "").trim();
-  const sourceInstruction = /^(?:¿?cómo dices|traduce|completa|elige|selecciona|responde|corrige|escucha|marca)\b/i.test(sentence);
-  return {
-    text: spoken || prompt,
-    locale: prompt.includes(":") || hasGap || !sourceInstruction
-      ? (exercise?.speechLocale || catalog?.locale || "und")
-      : "es-CL"
-  };
+  const spanishSource = /[¿¡áéíóúñ]/i.test(sentence) ||
+    /\b(cómo|qué|cuál|cuáles|dónde|cuándo|por qué|para qué|significa|responde|responder|completa|elige|selecciona|traduce|corrige|escucha|marca|escribe|relaciona|ordena|conjuga|transforma|forma|pasa|di|dime|pregunta|frase|palabra|oración|en español)\b/i.test(sentence);
+  const locale = exercise?.speechLocale || (exercise?.promptLanguage === "source" || exercise?.promptLanguage === "native"
+    ? "es-CL" : exercise?.promptLanguage === "target" ? (catalog?.locale || "und")
+    : spanishSource ? "es-CL" : (catalog?.locale || "und"));
+  return { text: spoken || prompt, locale };
 }
 function getExerciseSpeechSegments(exercise) {
   if (Array.isArray(exercise?.speechSegments) && exercise.speechSegments.length) {
@@ -153,9 +152,7 @@ function getExerciseSpeechSegments(exercise) {
   if (exercise?.instruction) segments.push({ text: exercise.instruction, locale: "es-CL" });
   const prompt = String(exercise?.prompt || "").trim();
   if (prompt) {
-    const locale = exercise.promptLocale || (exercise.promptLanguage === "target"
-      ? (catalog?.locale || "und")
-      : (exercise.instruction ? (catalog?.locale || "und") : getExerciseSpeech(exercise).locale));
+    const locale = exercise.promptLocale || getExerciseSpeech(exercise).locale;
     segments.push({ text: prompt, locale });
   }
   return segments.length ? segments : [getExerciseSpeech(exercise)];
@@ -391,11 +388,11 @@ function refreshDashboard() {
     if (!metrics.length) {
       chartMarkup = '<p class="empty-chart">Completa una sesión para comparar la precisión entre idiomas.</p>';
     } else {
-      const width = Math.max(320, Math.floor((statsContent.clientWidth || 760) - 24)), height = 390;
-      const left = 58, right = 24, top = 28, bottom = 82;
+      const width = Math.max(480, Math.floor((statsContent.clientWidth || 760) - 24)), height = 330;
+      const left = 44, right = 18, top = 26, bottom = 58;
       const plotWidth = width-left-right, plotHeight = height-top-bottom;
       const yAt = value => top + (100-value)*plotHeight/100;
-      const slot = plotWidth/metrics.length, barWidth = Math.min(54,slot*0.52);
+      const slot = plotWidth/metrics.length, barWidth = Math.min(68,Math.max(18,slot*0.78));
       const grid = [0,25,50,75,100].map(value =>
         '<line x1="' + left + '" y1="' + yAt(value) + '" x2="' + (width-right) + '" y2="' + yAt(value) + '" class="chart-gridline"/><text x="4" y="' + (yAt(value)+4) + '" class="chart-axis-label">' + value + '%</text>'
       ).join("");
@@ -404,8 +401,7 @@ function refreshDashboard() {
         const labelX = left + slot*(index+0.5);
         return '<rect class="stats-bar" x="' + x + '" y="' + y + '" width="' + barWidth + '" height="' + h + '" rx="5" fill="' + colorFor(index) + '"><title>' + escapeHTML(item.label) + ': ' + item.accuracy + '%</title></rect>' +
           '<text x="' + labelX + '" y="' + (y-7) + '" text-anchor="middle" class="chart-value-label">' + item.accuracy + '%</text>' +
-          '<text x="' + labelX + '" y="' + (height-42) + '" text-anchor="middle" class="chart-axis-label">' + item.flag + '</text>' +
-          '<text x="' + labelX + '" y="' + (height-25) + '" text-anchor="middle" class="chart-axis-label">' + escapeHTML(item.label.length>12?item.label.slice(0,11)+"…":item.label) + '</text>';
+          '<text x="' + labelX + '" y="' + (height-25) + '" text-anchor="middle" class="stats-flag-label" aria-label="' + escapeHTML(item.label) + '">' + item.flag + '</text>';
       }).join("");
       chartMarkup = '<div class="stats-chart-scroll"><svg class="stats-bar-chart" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="Precisión actual comparada entre idiomas">' +
         grid + bars + '</svg></div><div class="stats-chart-legend"><span><i class="legend-bar"></i>Precisión actual</span></div>';
@@ -675,7 +671,7 @@ async function startAITutorSession(config) {
         performance: { streak: 0, consecutiveCorrect: 0, consecutiveErrors: 0 }
       },
       history: [],
-      userMessage: "Inicia directamente con una actividad concreta adecuada al nivel y tema seleccionados. No hagas diagnóstico, no estimes mi nivel ni hagas preguntas abiertas para evaluarlo. No presentes una prueba inicial. Escribe las instrucciones e imperativos siempre en español (idioma origen), en message. Mantén exercise.prompt separado como texto o frase que se debe evaluar; no mezcles la orden con ese texto. Explícame brevemente la tarea y espera mi respuesta."
+      userMessage: "Inicia directamente con una actividad concreta, objetiva y adecuada al nivel y tema seleccionados. No hagas diagnóstico ni preguntas abiertas o subjetivas. Cada pregunta debe tener una única respuesta verificable: prioriza traducción concreta, completar una forma gramatical, identificar una opción o transformar una frase con contexto suficiente. Evita preguntas como «¿cómo responderías?» o «¿qué dirías?» si admiten múltiples respuestas naturales. Para respuestas escritas, define expectedAnswer como solución canónica y acceptedAnswers con todas las variantes lingüísticas correctas razonables; nunca marques como incorrecta una variante equivalente que hayas incluido. Si no puedes definir las variantes válidas de antemano, convierte la actividad en selección múltiple con una sola opción correcta. Escribe las instrucciones siempre en español dentro de message y mantén exercise.prompt separado como texto que se evalúa."
     }, undefined, { signal: sessionAbortController?.signal });
     if (session !== activeSession || sessionAbortController?.signal.aborted) return;
     applyLearnerUpdate(session, result.learnerUpdate);
@@ -822,7 +818,7 @@ async function submitAITutorAnswer(answer) {
         ? " Esta respuesta completa la unidad. La siguiente actividad debe ser una tarea integradora escrita que combine el tema completo; no incluyas alternativas."
         : (routeMode ? getRoutePhase(Math.min(session.turn + 1,routeQuestionCount-1),routeQuestionCount).id !== "sentences" : session.turn + 1 < 3)
           ? " La próxima actividad debe ser una pregunta de selección múltiple con tres alternativas plausibles en exercise.options."
-          : " La próxima actividad debe requerir que escriba la respuesta, sin alternativas.") + " Mantén las instrucciones en español (idioma origen) dentro de message y separa el texto a evaluar en exercise.prompt; nunca mezcles una orden en idioma objetivo con la frase preguntada. Incluye una pista breve y una respuesta esperada verificable; la interfaz revelará la solución como segunda ayuda."
+          : " La próxima actividad debe requerir que escriba la respuesta, sin alternativas.") + " Mantén las instrucciones en español dentro de message y separa el texto evaluado en exercise.prompt. La pregunta debe ser objetiva, no abierta ni subjetiva, y tener una única respuesta verificable. Para respuestas escritas, proporciona expectedAnswer canónica y acceptedAnswers con todas las variantes naturales correctas; si no puedes enumerarlas, cambia a selección múltiple con una única opción correcta. No uses preguntas del tipo «¿cómo responderías?» o «¿qué dirías?» sin contexto que determine una sola respuesta. Incluye una pista breve."
     }, undefined, { signal: sessionAbortController?.signal });
     if (session !== activeSession || sessionAbortController?.signal.aborted) return;
     aiHistory = [
@@ -1269,7 +1265,29 @@ function updateStats() {
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
 }
+function playAnswerFeedbackSound(correct) {
+  try {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+    const context = new AudioContextClass();
+    const now = context.currentTime;
+    const notes = correct ? [660, 880] : [260, 190];
+    notes.forEach((frequency,index) => {
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = correct ? "sine" : "triangle";
+      oscillator.frequency.value = frequency;
+      gain.gain.setValueAtTime(0.0001, now + index * 0.13);
+      gain.gain.exponentialRampToValueAtTime(0.12, now + index * 0.13 + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + index * 0.13 + 0.11);
+      oscillator.connect(gain); gain.connect(context.destination);
+      oscillator.start(now + index * 0.13); oscillator.stop(now + index * 0.13 + 0.12);
+    });
+    window.setTimeout(() => context.close().catch(() => {}), 650);
+  } catch {}
+}
 function showAnswerFeedback({ correct, expected, expectedLocale, explanation, selected, options = [], correctOption, showContinue = true }) {
+  playAnswerFeedbackSound(Boolean(correct));
   $("answer-area").querySelector(".answer-waiting")?.remove();
   $("answer-area").querySelector("#continue-answer")?.remove();
   const expectedText = !correct && expected ? '<p class="answer-correct-text">Respuesta correcta: ' + renderClickableTargetText(expected) + ' ' + speakerButton(expected, expectedLocale || session?.config.languageLocale || catalog?.locale) + '</p>' : "";
