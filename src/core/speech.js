@@ -18,6 +18,9 @@ export function createSpeechController({
   preferenceKey = DEFAULT_PREFERENCE_KEY
 } = {}) {
   const supported = Boolean(synthesis && typeof synthesis.speak === "function" && Utterance);
+  const findVoice = locale => {
+    try { return findVoiceForLocale(synthesis?.getVoices?.() || [], locale); } catch { return null; }
+  };
   let enabled = true;
   try { enabled = storage?.getItem(preferenceKey) !== "false"; } catch {}
 
