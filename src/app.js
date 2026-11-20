@@ -575,6 +575,7 @@ function renderSpacedReview() {
     $("lesson-content").innerHTML = '<p class="eyebrow">REPASO DE PATRÓN</p><h3>' + escapeHTML(card.pattern) + '</h3><p>Intenta recordar una frase propia que aplique este patrón. Este repaso no consume turnos de práctica.</p>';
     $("answer-area").innerHTML = '<p class="muted">¿Pudiste recordar y aplicar el patrón?</p><button id="pattern-recalled" class="primary" type="button">Lo recordé</button><button id="pattern-practice" class="secondary" type="button">Necesito practicarlo</button>';
     const gradePattern = recalled => {
+      playAnswerFeedbackSound(Boolean(recalled));
       const result = gradeReview(reviewProgressDraft || progress, card.key, recalled);
       showFeedback(recalled
         ? "Registrado. Próximo repaso en " + (result?.nextIntervalDays || 1) + " días."
@@ -595,6 +596,7 @@ function renderSpacedReview() {
   const submitReviewAnswer = answer => {
     const checkExercise = exercise || { target:expected, acceptedAnswers:[] };
     const correct = evaluateAnswer(answer,checkExercise);
+    playAnswerFeedbackSound(correct);
     const result = gradeReview(reviewProgressDraft || progress,card.key,correct);
     const interval = result?.nextIntervalDays || 1;
     $("hint-btn").hidden = true;
