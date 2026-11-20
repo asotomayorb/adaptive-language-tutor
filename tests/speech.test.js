@@ -246,3 +246,18 @@ test("stopping a single utterance suppresses its stale completion callback", () 
   mock.spoken[0].onend?.();
   assert.equal(ended,false,"a stopped passage must not report completion after navigation");
 });
+
+
+test("first playback does not cancel an idle TTS engine", () => {
+  const mock = speechMock([{name:"Portuguese",lang:"pt-BR"}]);
+  const controller = createSpeechController({
+    synthesis:mock.api,
+    Utterance:MockUtterance,
+    storage:{getItem:()=>null,setItem:()=>{}}
+  });
+  controller.speak("Bom dia","pt-BR");
+  assert.equal(mock.cancelled,0,"calling cancel on an idle Android engine can suppress its first utterance");
+  mock.api.speaking = true;
+  controller.speak("Boa tarde","pt-BR");
+  assert.equal(mock.cancelled,1,"an active utterance should be canceled before it is replaced");
+});
