@@ -117,7 +117,7 @@ export function recordAnswer(session, exercise, rawAnswer) {
     session.streak = 0;
     session.consecutiveErrors += 1;
     session.consecutiveCorrect = 0;
-    session.errors.push({ ...attempt, term: exercise.term || exercise.target, meaning: exercise.meaning || "", explanation: exercise.explanation, skill: exercise.skill });
+    session.errors.push({ ...attempt, term: exercise.term || exercise.target, meaning: exercise.meaning || "", promptLocale:exercise.promptLocale || "es-CL", explanation: exercise.explanation, skill: exercise.skill });
     session.reviewQueue.push({ exerciseId: exercise.id, dueAfter: session.turn + 2, attempts: 0 });
   }
 
@@ -160,7 +160,7 @@ export function normalizeForComparison(value) {
 
 
 export function recordTutorEvaluation(session, {
-  exerciseId, prompt, submitted, expected = "", term = "", meaning = "", status = "not_applicable",
+  exerciseId, prompt, submitted, expected = "", term = "", meaning = "", promptLocale = "es-CL", status = "not_applicable",
   feedback = "", skill = "Producción"
 }) {
   const evaluated = ["correct", "partially_correct", "incorrect"].includes(status);
@@ -196,6 +196,7 @@ export function recordTutorEvaluation(session, {
         ...attempt,
         term:term || expected,
         meaning:meaning || "",
+        promptLocale:promptLocale || "es-CL",
         explanation: feedback || "",
         skill: skill || "Producción"
       });
