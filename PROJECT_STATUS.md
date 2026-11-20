@@ -851,3 +851,10 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - No extender contenido ni reglas específicas de PT-BR al resto de idiomas hasta que el usuario dé por afinado el flujo portugués.
 - Repetir después la validación de TTS y de interfaces con voces y contenidos propios de cada idioma.
 
+### Despliegue final
+- [x] Render Preview LIVE: https://adaptive-language-tutor-preview-5b3d.onrender.com/
+- [x] Deploy: dep-dc0c80k0916s73db0ftg; commit desplegado: 94aa33457e7d244f7679ae72186ad2916b5623e9.
+- [x] Build exitoso y servicio iniciado; auto-deploy desactivado.
+- [x] Replit permanece intacto; solo se trabajó en feature/mobile-bottom-navigation.
+- [ ] La prueba audible real en Android sigue pendiente.
+
