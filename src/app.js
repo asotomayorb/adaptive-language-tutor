@@ -1160,12 +1160,13 @@ function renderRouteIntegration() {
     hints:scenario.hints,
     explanation:"Esta actividad integra el vocabulario y las estructuras de la unidad " + (activeRouteUnit?.title || "Fundamentos") + "."
   };
-  $("lesson-phase").textContent = "HITO INTEGRADOR";
-  $("turn-count").textContent = "Actividad final";
+  $("lesson-phase").textContent = "CAPÍTULO 2 · ACTIVIDAD INTEGRADORA";
+  $("turn-count").textContent = (routeQuestionCount + 1) + " / " + (routeQuestionCount + 1);
   $("progress-bar").style.width = "100%";
+  $("progress-bar").parentElement.setAttribute("aria-valuenow","100");
   $("hint-btn").textContent = routeIntegrationHintLevel >= 1 ? "Ver respuesta" : "Pista";
   $("hint-btn").hidden = routeIntegrationHintLevel >= 2;
-  $("lesson-content").innerHTML = getExerciseIllustration({ topic:activeRouteUnit?.topic, prompt }) + '<p class="eyebrow">UNIDAD ' + (activeRouteUnit?.number || "01") + ' · ' + escapeHTML(activeRouteUnit?.title || "FUNDAMENTOS").toUpperCase() + '</p><h3>' + escapeHTML(prompt) + '</h3><p>Combina lo practicado en las tres etapas anteriores.</p>';
+  $("lesson-content").innerHTML = getExerciseIllustration({ topic:activeRouteUnit?.topic, prompt }) + '<div class="activity-phase">CAPÍTULO 2 · ACTIVIDAD INTEGRADORA</div><p class="eyebrow">UNIDAD ' + (activeRouteUnit?.number || "01") + ' · ' + escapeHTML(activeRouteUnit?.title || "INICIO DEL VIAJE").toUpperCase() + '</p><h3>' + escapeHTML(prompt) + '</h3><p>Combina lo practicado en los capítulos anteriores.</p>';
   bindSpeakerButtons($("lesson-content"));
   $("answer-area").innerHTML = '<textarea id="route-integration-answer" class="answer-input" rows="3" placeholder="Escribe tu respuesta completa…"></textarea><button id="route-integration-submit" class="primary" type="button">Comprobar actividad</button>';
   $("route-integration-submit").addEventListener("click", () => {
