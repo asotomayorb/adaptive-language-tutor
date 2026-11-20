@@ -1029,6 +1029,9 @@ async function submitAITutorAnswer(answer) {
       prompt: evaluatedExercise.prompt || aiLastResult.message,
       submitted: cleanAnswer,
       expected: evaluatedExercise.expectedAnswer || "",
+      term:evaluatedExercise.term || evaluatedExercise.expectedAnswer || "",
+      meaning:evaluatedExercise.meaning || evaluatedExercise.translation || "",
+      promptLocale:evaluatedExercise.promptLocale || "es-CL",
       status: evaluation.status || "not_applicable",
       feedback: evaluation.feedback || "",
       skill: evaluation.skill || "Producción"
