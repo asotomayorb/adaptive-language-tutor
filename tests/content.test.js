@@ -60,6 +60,6 @@ test("reading comprehension passages progress in length from A1 to A2", () => {
     const a1 = catalog.exercises.find(item => item.type === "reading" && item.level === "A1");
     const a2 = catalog.exercises.find(item => item.type === "reading" && item.level === "A2");
     assert.ok(a1 && a2, catalog.id + " should include A1 and A2 reading passages");
-    assert.ok(a2.passage.trim().split(/\\s+/).length > a1.passage.trim().split(/\\s+/).length, catalog.id + " A2 passage should be longer than A1");
+    assert.ok(a2.passage.trim().split(/\s+/).length > a1.passage.trim().split(/\s+/).length, catalog.id + " A2 passage should be longer than A1");
   }
 });
