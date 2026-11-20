@@ -260,6 +260,7 @@ try {
   assert.match(await page.locator("#feedback").innerText(), /Respuesta:/);
   assert.equal(await page.locator("#hint-btn").isHidden(), true, "written answers should offer one hint followed by the answer");
   for (let turn = 3; turn < 5; turn += 1) {
+    if (turn === 4) assert.match(await page.locator("#lesson-content").innerText(),/Traduce al portugués esta frase concreta: «Ayer fui al mercado»/,"the final training question should request one specific translation");
     await page.locator("#free-answer").fill("Bonjour");
     await page.locator("#submit-free").click();
     assert.equal(await page.locator("#answer-area #continue-answer").isVisible(), true, "written answers also require Continue");
