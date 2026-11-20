@@ -655,9 +655,9 @@ function startSpacedReview() {
     sessionFinished = true;
     $("session-view").classList.add("hidden");
     $("app-shell").classList.remove("session-active");
+    showScreen("exercises");
     $("summary-panel").classList.add("hidden");
     $("lesson-panel").classList.remove("hidden");
-    $("exercise-choice-panel").classList.add("hidden");
     $("review-exercises").classList.remove("hidden");
     $("review-dashboard").innerHTML = "No tienes palabras o frases pendientes.";
     refreshDashboard();
@@ -688,6 +688,7 @@ function renderSpacedReview() {
     $("summary-panel").classList.remove("hidden");
     $("summary-content").innerHTML = '<h2 class="summary-title">Repaso finalizado</h2>';
     $("session-status").textContent = "";
+    currentActivitySpeechSegments = [];
     renderSummaryActions({ origin:"exercises", mode:"review", canNext:false });
     return;
   }
