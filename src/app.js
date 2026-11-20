@@ -98,12 +98,43 @@ function bindVariantLinks(root) {
 
 let readingPassageActive = false;
 let readingPassagePaused = false;
+let readingPassageOffset = 0;
+let readingPassageProgress = 0;
 function updateReadingPassageControl() {
   const button = $("reading-tts-toggle");
-  if (!button) return;
-  button.disabled = !speech.supported;
-  button.textContent = !readingPassageActive ? "Reproducir lectura" : readingPassagePaused ? "Continuar lectura" : "Pausar lectura";
-  button.setAttribute("aria-label", button.textContent);
+  const slider = $("reading-tts-progress");
+  const restart = $("reading-tts-restart");
+  if (button) {
+    button.disabled = !speech.supported;
+    button.textContent = readingPassageActive && !readingPassagePaused ? "Ⅱ" : "▶";
+    button.setAttribute("aria-label", readingPassageActive && !readingPassagePaused ? "Pausar lectura" : "Reproducir lectura");
+  }
+  if (slider) slider.value = String(readingPassageProgress);
+  if (restart) restart.disabled = !speech.supported;
+}
+function startPassageSpeech(fromOffset = 0) {
+  const passage = currentExercise?.passage || "";
+  if (!passage || !speech.supported) return;
+  readingPassageOffset = Math.max(0, Math.min(passage.length, fromOffset));
+  readingPassageActive = true;
+  readingPassagePaused = false;
+  const result = speech.speak(passage.slice(readingPassageOffset), session?.config?.languageLocale || catalog?.locale, {
+    onBoundary: event => {
+      if (Number.isFinite(event?.charIndex)) {
+        readingPassageProgress = Math.min(100, Math.round((readingPassageOffset + event.charIndex) / passage.length * 100));
+        updateReadingPassageControl();
+      }
+    },
+    onEnd: () => {
+      readingPassageActive = false;
+      readingPassagePaused = false;
+      readingPassageOffset = 0;
+      readingPassageProgress = 100;
+      updateReadingPassageControl();
+    }
+  });
+  if (!result.spoken) readingPassageActive = false;
+  updateReadingPassageControl();
 }
 function togglePassageSpeech() {
   const passage = currentExercise?.passage;
@@ -113,16 +144,33 @@ function togglePassageSpeech() {
   } else if (readingPassageActive) {
     readingPassagePaused = speech.pause();
   } else {
-    readingPassageActive = true;
-    readingPassagePaused = false;
-    const result = speech.speak(passage, session?.config?.languageLocale || catalog?.locale, {
-      onEnd: () => { readingPassageActive = false; readingPassagePaused = false; updateReadingPassageControl(); }
-    });
-    if (!result.spoken) readingPassageActive = false;
+    const offset = readingPassageProgress >= 100 ? 0 : readingPassageOffset;
+    startPassageSpeech(offset);
   }
   updateReadingPassageControl();
 }
-
+function restartPassageSpeech() {
+  if (!currentExercise?.passage) return;
+  speech.stop();
+  readingPassageActive = false;
+  readingPassagePaused = false;
+  readingPassageOffset = 0;
+  readingPassageProgress = 0;
+  startPassageSpeech(0);
+}
+function seekPassageSpeech(value) {
+  const passage = currentExercise?.passage || "";
+  if (!passage) return;
+  const wasPlaying = readingPassageActive && !readingPassagePaused;
+  const offset = Math.floor(passage.length * Math.max(0, Math.min(100, Number(value) || 0)) / 100);
+  speech.stop();
+  readingPassageOffset = offset;
+  readingPassageProgress = Math.round(offset / passage.length * 100);
+  readingPassageActive = false;
+  readingPassagePaused = false;
+  if (wasPlaying) startPassageSpeech(offset);
+  else updateReadingPassageControl();
+}
 function bindSpeakerButtons(root) {
   root.querySelectorAll("[data-speak]:not([data-speech-bound])").forEach(button => {
     button.dataset.speechBound = "true";
@@ -1266,19 +1314,23 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
     ? '<p class="exercise-instruction">' + escapeHTML(currentExercise.instruction) + '</p>' : "";
   const questionAudioMarkup = questionSpeechSegments.map(item => speakerButton(item.text, item.locale)).join(" ");
   const readingMarkup = currentExercise.passage
-    ? '<section class="reading-passage"><span class="reading-passage-kicker">Texto de lectura</span><h3>' + escapeHTML(currentExercise.passageTitle || "Lectura") + '</h3><p>' + escapeHTML(currentExercise.passage) + '</p><button id="reading-tts-toggle" class="secondary reading-tts-toggle" type="button">Reproducir lectura</button></section>'
+    ? '<section class="reading-passage"><span class="reading-passage-kicker">Texto de lectura</span><h3>' + escapeHTML(currentExercise.passageTitle || "Lectura") + '</h3><p>' + escapeHTML(currentExercise.passage) + '</p><div class="reading-player"><button id="reading-tts-toggle" class="reading-player-play" type="button" aria-label="Reproducir lectura">▶</button><input id="reading-tts-progress" class="reading-player-progress" type="range" min="0" max="100" value="0" aria-label="Posición de lectura"><button id="reading-tts-restart" class="reading-player-restart" type="button" aria-label="Reiniciar lectura">↻</button></div></section>'
     : "";
   const readingQuestionType = session.config.topic === "reading"
     ? '<p class="reading-question-type">' + (currentExercise.type === "reading" ? "Comprensión del texto" : "Práctica general") + '</p>' : "";
   $("lesson-content").innerHTML = readingQuestionType + instructionMarkup + getExerciseIllustration(currentExercise) + readingMarkup + '<h3>' + promptMarkup + '</h3>' + questionAudioMarkup;
   updateReadingPassageControl();
   $("reading-tts-toggle")?.addEventListener("click", togglePassageSpeech);
+  $("reading-tts-restart")?.addEventListener("click", restartPassageSpeech);
+  $("reading-tts-progress")?.addEventListener("change", event => seekPassageSpeech(event.target.value));
   bindVariantLinks($("lesson-content"));
   bindSpeakerButtons($("lesson-content"));
   bindTargetWords($("lesson-content"));
   speech.stop();
   readingPassageActive = false;
   readingPassagePaused = false;
+  readingPassageOffset = 0;
+  readingPassageProgress = 0;
   updateReadingPassageControl();
   speech.speakSequence(questionSpeechSegments, { automatic: true });
   const useMultipleChoice = currentExercise.type === "reading"
