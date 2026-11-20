@@ -490,7 +490,7 @@ try {
   await routePage.reload({ waitUntil: "networkidle" });
   await routePage.locator("#welcome-start").click();
   await routePage.locator("#route-start").click();
-  assert.match(await routePage.locator("#lesson-content h3").innerText(), /presentación completa/i);
+  assert.match(await routePage.locator("#lesson-content h3").innerText(), /Traduce al portugués esta frase concreta: «Mañana estudio en casa»/i, "the route milestone should request one specific translation");
   await routePage.locator("#route-integration-answer").fill("ola");
   await routePage.locator("#route-integration-submit").click();
   assert.match(await routePage.locator("#feedback").innerText(), /Pista:/);
