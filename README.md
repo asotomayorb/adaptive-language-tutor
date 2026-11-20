@@ -637,7 +637,7 @@ Este registro define los criterios de aceptación de la próxima iteración; los
 - TTS: cada fragmento conserva su locale explícito; los controles manuales identifican el idioma reproducido. Se priorizan `speechLocale` y `promptLocale` sobre cualquier inferencia heurística.
 - Gramática: el renderizador común separa reglas y excepciones en listas legibles, también en los temas de artículos, pasado y futuro con contenido aplicado.
 
-**Despliegue de esta iteración:** Render Preview live en `dep-dbvt4mqjnfac738bvpqg`, commit `a94588dc58f940027b7d17742e7d6c4908652e57`. Render confirmó build y arranque correctos. Las pruebas E2E se actualizaron, pero su resultado automático aún no está verificado; la validación auditiva y visual en Android sigue pendiente.
+**Despliegue de esta iteración:** Render Preview live en `dep-dbvt4mqjnfac738bvpqg`, commit `a94588dc58f940027b7d17742e7d6c4908652e57`. Render confirmó build y arranque correctos. La automatización E2E quedó aprobada en la iteración posterior del 20-11-2026; la validación auditiva y visual en Android sigue pendiente.
 
 ## 19. Decisiones vigentes — TTS, Ruta y consistencia visual (20-11-2026)
 
@@ -673,3 +673,14 @@ Esta sección prevalece sobre instrucciones anteriores que permitan cambiar el i
 - Si se presentan alternativas A/B, representar visualmente ambas variantes de la misma pantalla. Cada decisión se recoge con una selección única; el resumen de elecciones se devuelve en orden, por ejemplo: **A · A · B · A**.
 - Al cerrar cada iteración, actualizar README, PROJECT_STATUS y HUMAN_TEST_PLAN con cambios, pruebas y pendientes reales. No confundir build exitoso con validación funcional ni con prueba humana en Android.
 - Mantener GitHub/Render como entorno de trabajo; Replit permanece intacto.
+
+
+## 20. Validación y despliegue — 20-11-2026
+
+- HEAD de código validado: `1c7a68490cf9eb2e54a1b8a3efd20ac9ed3ddee7` en `feature/mobile-bottom-navigation`.
+- `npm run check`: aprobado en GitHub Actions.
+- `npm test`: aprobado en GitHub Actions run [44731566557](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44731566557).
+- `npm run test:e2e`: aprobado en GitHub Actions run [44731566605](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44731566605).
+- Render Preview: **LIVE**, deploy `dep-dc03b03m8hqs739dqns0`, mismo commit de código.
+- La lectura mantiene el criterio de no repetir preguntas dentro de una misma sesión; si se agota el banco antes de la cantidad solicitada, finaliza sin reciclar preguntas.
+- Pendiente de prueba humana: voces reales Android, navegación táctil, legibilidad móvil, barra/progreso/seek del reproductor y recorrido completo de las cuatro unidades.
