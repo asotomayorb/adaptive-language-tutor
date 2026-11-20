@@ -378,7 +378,7 @@ try {
   await page.locator('[data-screen="exercises"]').click();
   await page.locator('[data-mode="review"]').click();
   assert.equal(await page.locator("#turn-count").innerText(),"2 / 5","Review should resume at the first uncompleted card after reload");
-  while (await page.locator("#session-view").isVisible()) {
+  while (!(await page.locator("#summary-panel").isVisible())) {
     const choices = page.locator("#answer-area [data-review-choice]");
     if (await choices.count()) await choices.first().click();
     else {
