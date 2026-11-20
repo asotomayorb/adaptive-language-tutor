@@ -603,12 +603,12 @@ Esta sección establece las decisiones vigentes y **prevalece sobre descripcione
 - Antes de implementar un rediseño, usar estos esquemas para validar la estructura visual cuando el usuario los haya solicitado. Si no se solicitó un esquema, no introducir mockups innecesarios.
 
 ### Registro de feedback — 20-11-2026
-- [ ] Teoría: separar visualmente reglas y excepciones en líneas/listas/tablas.
-- [ ] Comprensión lectora: TTS del pasaje con pausa.
-- [ ] Sesión de 10 preguntas: diferenciar comprensión del texto y práctica general.
-- [ ] Evaluar progresión de lectura por profundidad y extensión razonable del pasaje.
-- [ ] Renombrar «Ejercicios» como «Entrenamiento» en navegación, títulos y textos visibles.
-- [ ] Ruta/entrenamiento: última pregunta de respuesta única, con consigna específica y evaluación coherente.
+- [x] Teoría: separar visualmente reglas y excepciones en líneas/listas/tablas.
+- [x] Comprensión lectora: TTS del pasaje con pausa y continuación.
+- [x] Sesión de 10 preguntas: diferenciar comprensión del texto y práctica general.
+- [x] Progresión piloto de lectura por nivel, profundidad y extensión razonable del pasaje.
+- [x] Renombrar «Ejercicios» como «Entrenamiento» en navegación, títulos y textos visibles.
+- [x] Ruta/entrenamiento: última pregunta de respuesta única, con consigna específica y evaluación coherente.
 - [x] Documentar el criterio de esquemas visuales por pantalla/sección/subsección y alternativas A/B sin tablas comparativas.
 
 Este registro define los criterios de aceptación de la próxima iteración; los puntos marcados pendientes no deben describirse como implementados hasta que el código y las pruebas lo confirmen.
@@ -624,3 +624,6 @@ Este registro define los criterios de aceptación de la próxima iteración; los
 - En Teoría, las reglas y excepciones de pasado/futuro se muestran como elementos independientes, uno por línea, antes de los ejemplos.
 
 - En las sesiones de Entrenamiento (incluida la fase de práctica general posterior a lectura), la última pregunta local se reserva para una traducción concreta por tema. Cada una de las cuatro áreas tiene un ejercicio final marcado y variantes equivalentes declaradas; se evita una consigna abierta con una sola cadena aceptada.
+
+
+**Validación de implementación — 20-11-2026:** `npm run check` y `npm test` aprobados en GitHub Actions run [44673507639](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44673507639); Browser E2E aprobado en run [44673507580](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44673507580). Preview Render desplegado y live en `dep-dbvsjg59fdbs73bthtvg` (commit de código `f4db84d`). La validación auditiva real y Android siguen pendientes.
