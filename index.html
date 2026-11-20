@@ -36,7 +36,7 @@
   </section>
 
   <section id="screen-exercises" class="app-screen hidden">
-    <div class="screen-heading"><h1>Ejercicios</h1></div>
+    <div class="screen-heading"><h1>Entrenamiento</h1></div>
     <div id="exercise-choice-panel" class="exercise-choices">
       <button id="practice-toggle" class="choice-card selected" type="button" data-mode="practice" aria-expanded="false" aria-controls="setup-panel"><span class="choice-icon">◎</span><span><strong>Ejercicio</strong><small>Elegir duración, nivel y tema</small></span><span class="choice-arrow">⌄</span></button>
       <button class="choice-card review-choice" type="button" data-mode="review"><span class="choice-icon">↻</span><span><strong>Repaso</strong><small>Repetir respuestas que necesitas reforzar</small><em id="review-count" class="tab-count">0</em></span><span class="choice-arrow">›</span></button>
@@ -89,13 +89,13 @@
       <div class="lesson-actions"><button id="hint-btn" class="secondary" type="button">Pista</button></div>
       <div id="feedback" class="feedback hidden"></div>
     </section>
-    <section id="summary-panel" class="panel hidden" aria-live="polite"><div id="summary-content"></div><button id="new-session" class="primary" type="button">Volver a ejercicios</button></section>
+    <section id="summary-panel" class="panel hidden" aria-live="polite"><div id="summary-content"></div><button id="new-session" class="primary" type="button">Volver a entrenamiento</button></section>
   </section>
 
   <footer class="app-footer hidden"><span id="session-status"></span></footer>
   <nav class="bottom-nav" aria-label="Navegación principal">
     <button class="nav-item active" type="button" data-screen="route" aria-label="Ruta" aria-current="page"><span class="nav-icon route-treasure-icon"><svg viewBox="0 0 40 40" role="img" aria-label="Mapa del tesoro"><path d="M5 9 14 5l12 4 9-4v26l-9 4-12-4-9 4Z" fill="#e6c98a" stroke="#755b32" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 5v26M26 9v26" fill="none" stroke="#9a7846" stroke-width="1.5"/><path d="M8 25c4-8 8 5 12-3s7 2 10-7" fill="none" stroke="#8c542c" stroke-width="2" stroke-dasharray="2.5 2.5" stroke-linecap="round"/><path d="m26 12 4 3-1-5Z" fill="#8c542c"/><path d="m30 5 1.5 3 3 .4-2.2 2.1.5 3-2.8-1.5-2.7 1.5.5-3-2.2-2.1 3-.4Z" fill="#c54c37" stroke="#8b3529" stroke-width=".7"/></svg></span></button>
-    <button class="nav-item" type="button" data-screen="exercises" aria-label="Ejercicios"><span class="nav-icon">🏋️</span></button>
+    <button class="nav-item" type="button" data-screen="exercises" aria-label="Entrenamiento"><span class="nav-icon">🏋️</span></button>
     <button class="nav-language" id="open-language-picker" type="button" aria-label="Cambiar idioma objetivo"><span class="language-globe">🌐</span><span id="selected-language-flag" class="selected-language-flag">🇧🇷</span></button>
     <button class="nav-item" type="button" data-screen="theory" aria-label="Teoría"><span class="nav-icon">📖</span></button>
     <button class="nav-item" type="button" data-screen="stats" aria-label="Estadísticas"><span class="nav-icon">📊</span></button>
