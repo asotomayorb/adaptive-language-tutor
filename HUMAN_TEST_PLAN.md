@@ -372,8 +372,7 @@ Para cada escenario registrar:
 - [ ] Teoría: ejemplos aparecen debajo de la tabla y solo ilustran algunas personas.
 - [ ] Vocabulario: revisar días, meses, estaciones, partes del día y expresiones temporales.
 - [ ] Vocabulario: revisar cardinales, ordinales y reglas de género/composición.
-- [ ] Estadísticas: barras globales forman un grupo compacto y centrado.
-- [ ] Estadísticas: altura del área del gráfico no cambia al alternar Global y un idioma.
+- [ ] Estadísticas: en móvil vertical (390 px de ancho aprox.), cada idioma tiene una barra horizontal de ancho completo, con nombre y porcentaje legibles, sin scroll horizontal.
 - [ ] Comprensión lectora: probar texto A1, responder las tres preguntas y comprobar que el texto sigue visible.
 - [ ] Comprensión lectora: probar texto A2, inferencia y vocabulario contextual.
 - [ ] Repetir las pruebas de teoría y estadísticas en portugués; después realizar regresión en inglés.
@@ -384,9 +383,20 @@ Para cada escenario registrar:
 - [ ] La sección y su navegación muestran «Entrenamiento» (sin cambiar el comportamiento de Ruta, Teoría o Estadísticas).
 - [ ] El TTS del pasaje reproduce en el locale objetivo, permite pausar y continuar desde el punto pausado.
 - [ ] Si TTS no está soportado, el botón se deshabilita y la lectura/ejercicio sigue siendo utilizable.
-- [ ] En una sesión de 10 preguntas se distinguen las preguntas de comprensión y las de práctica general; después de las seis preguntas lectoras del catálogo piloto, las siguientes no muestran el pasaje ni se presentan como dependientes de él.
+- [ ] En una sesión de 10 preguntas de Comprensión lectora, las diez preguntas siguen basándose exclusivamente en los pasajes; si se agotan las preguntas únicas, el banco lector se repite sin introducir práctica general.
 - [ ] A1 usa un texto breve; A2 presenta mayor profundidad y extensión razonable. Revisar scroll, legibilidad y que los controles no queden ocultos en Android.
 - [ ] La última actividad de cada unidad de Ruta pide traducir una frase concreta; probar la respuesta canónica y cada variante declarada como aceptada.
-- [ ] Pasado/futuro: las reglas y excepciones aparecen en líneas independientes, legibles en móvil, y los ejemplos siguen debajo de las tablas/notas.
+- [ ] Gramática: en todos los temas que contienen reglas y excepciones, ambas aparecen en secciones separadas, con un punto por línea; los ejemplos siguen debajo de tablas/notas.
 
 - [ ] En Entrenamiento normal, y en la última pregunta de práctica general tras una sesión lectora de 10 preguntas, la consigna final pide traducir una frase específica y reconoce las variantes declaradas para ese ejercicio.
+
+
+## Regresión de correcciones móviles — 20-11-2026
+
+- [ ] Ruta: completar la primera unidad con todas las respuestas correctas y verificar 100%, 5 estrellas y desbloqueo de la segunda unidad.
+- [ ] Ruta: comprobar que el hito integrador no altera el denominador ni resta un acierto a la puntuación de las preguntas de la unidad.
+- [ ] Estadísticas: comprobar barras globales en teléfono vertical; nombres largos, porcentajes y barras deben caber sin que el gráfico quede diminuto.
+- [ ] Comprensión lectora: completar 10 preguntas y verificar que ninguna se convierte en práctica general ni pierde su pasaje asociado.
+- [ ] TTS: reproducir manualmente una instrucción en español y un texto objetivo en portugués; confirmar que se usan voces/idiomas distintos y correctos en cada control.
+- [ ] TTS: revisar audio automático, lectura del pasaje y botones de pronunciación en Ruta, Teoría y Entrenamiento.
+- [ ] Teoría: revisar artículos, ser/estar, presente, pasado y futuro; reglas/excepciones deben quedar separadas y legibles en pantalla vertical.
