@@ -592,7 +592,8 @@ function renderSpacedReview() {
   reviewHintLevel = 0;
   $("lesson-phase").textContent = "REPETICIÓN ESPACIADA";
   $("turn-count").textContent = "Tarjeta " + (reviewIndex + 1) + " / " + dueReviewCards.length;
-  $("progress-bar").style.width = (reviewIndex / dueReviewCards.length * 100) + "%";
+  $("progress-bar").style.width = ((reviewIndex + 1) / dueReviewCards.length * 100) + "%";
+  $("progress-bar").parentElement.setAttribute("aria-valuenow",String(Math.round((reviewIndex + 1) / dueReviewCards.length * 100)));
   $("feedback").classList.add("hidden");
 
   if (card.cardType === "pattern") {
@@ -1288,6 +1289,7 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
     : topicLabels[session.config.topic].toUpperCase() + " · " + levelLabel(session.config.level).toUpperCase();
   $("turn-count").textContent = (questionIndex + 1) + " / " + (routeMode ? routeQuestionCount : session.config.duration);
   $("progress-bar").style.width = ((questionIndex + 1) / (routeMode ? routeQuestionCount : session.config.duration) * 100) + "%";
+  $("progress-bar").parentElement.setAttribute("aria-valuenow",String(Math.round((questionIndex + 1) / (routeMode ? routeQuestionCount : session.config.duration) * 100)));
   $("streak").textContent = session.streak;
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
