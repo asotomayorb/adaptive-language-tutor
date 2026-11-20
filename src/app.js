@@ -1967,8 +1967,8 @@ const tenseLessons = {
   "Tailandés":{present:[["ฉัน","พูด"],["คุณ","พูด"],["เขา","พูด"],["เรา","พูด"],["พวกเขา","พูด"]],past:"เมื่อวานฉันพูดภาษาไทยแล้ว",pastEs:"Ayer hablé tailandés.",pastRule:"El verbo no se conjuga por persona. Marcadores como แล้ว y expresiones temporales indican acción completada.",future:"พรุ่งนี้ฉันจะพูดภาษาไทย",futureEs:"Mañana hablaré tailandés.",futureRule:"จะ (jà) delante del verbo marca futuro o intención; el verbo no cambia."}
 };
 function renderGrammarRuleSections(rules, exceptions = "") {
-  const splitPoints = value => String(value || "").replace(/:\\s*/g, ". ")
-    .split(/(?<=[.!?])\\s+|;\\s+|,\\s+(?=[^,;]+?\\s*→)/)
+  const splitPoints = value => String(value || "").replace(/:\s*/g, ". ")
+    .split(/(?<=[.!?])\s+|;\s+|,\s+(?=[^,;]+?\s*→)/)
     .map(point => point.trim()).filter(Boolean);
   const renderList = points => '<ul class="theory-rule-list">' + points.map(point => '<li>' + escapeHTML(point) + '</li>').join("") + '</ul>';
   const rulePoints = splitPoints(rules), exceptionPoints = splitPoints(exceptions);
