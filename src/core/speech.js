@@ -47,6 +47,12 @@ export function createSpeechController({
   function speak(text, locale, { automatic = false, onEnd, onBoundary } = {}) {
     const phrase = String(text || "").trim();
     if (!phrase || !supported || (automatic && !enabled)) return { spoken: false, reason: "unavailable" };
+    // Never let the browser silently substitute its default (often source-language)
+    // voice when the requested target-language voice is not installed.
+    if (locale && !findVoice(locale)) {
+      onStatus({ enabled, supported, speaking:false, paused:false, missingVoice:true, locale });
+      return { spoken:false, reason:"voice-unavailable" };
+    }
     try {
       synthesis.cancel?.();
       synthesis.speak(createUtterance(phrase, locale, onEnd, onBoundary));
@@ -59,9 +65,13 @@ export function createSpeechController({
   }
 
   function speakSequence(segments, { automatic = false } = {}) {
-    const valid = (Array.isArray(segments) ? segments : [])
-      .filter(item => item && String(item.text || "").trim());
-    if (!valid.length || !supported || (automatic && !enabled)) return { spoken: false, reason: "unavailable" };
+    const requested = (Array.isArray(segments) ? segments : [])
+      .filter(item => item && String(item.text || "").trim() && item.locale);
+    const valid = requested.filter(item => findVoice(item.locale));
+    if (!valid.length || !supported || (automatic && !enabled)) {
+      if (requested.length && !valid.length) onStatus({ enabled, supported, speaking:false, paused:false, missingVoice:true, locale:requested[0].locale });
+      return { spoken:false, reason:requested.length ? "voice-unavailable" : "unavailable" };
+    }
     try {
       synthesis.cancel?.();
       valid.forEach(item => synthesis.speak(createUtterance(item.text, item.locale)));
