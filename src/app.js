@@ -54,7 +54,7 @@ function toggleAudio() {
     updateReadingPassageControl();
     return;
   }
-  if (currentExercise?.passage) {
+  if (currentExercise?.passage && !sessionFinished) {
     startPassageSpeech(0, { automatic:true, onEnd:() => {
       const remaining = currentActivitySpeechSegments.filter(item => item.role !== "passage");
       speech.speakSequence(remaining, { automatic:true });
@@ -1322,7 +1322,8 @@ function renderRouteIntegration() {
       routeIntegrationHintLevel = Math.min(routeIntegrationHintLevel + 1, 2);
       saveRouteDraft();
       const helpText = routeIntegrationHintLevel === 1 ? currentExercise.hints[0] : "Respuesta de referencia: " + currentExercise.target;
-      $("feedback").innerHTML = '<p class="answer-status incorrect">Todavía no coincide. Inténtalo otra vez.</p><p class="answer-explanation">' + (routeIntegrationHintLevel === 1 ? "Pista: " : "Ver respuesta: ") + escapeHTML(helpText) + '</p>';
+      const revealedAudio = routeIntegrationHintLevel >= 2 ? " " + speakerButton(currentExercise.target,session.config.languageLocale) : "";
+      $("feedback").innerHTML = '<p class="answer-status incorrect">Todavía no coincide. Inténtalo otra vez.</p><p class="answer-explanation">' + (routeIntegrationHintLevel === 1 ? "Pista: " : "Ver respuesta: ") + escapeHTML(helpText) + revealedAudio + '</p>';
       $("hint-btn").textContent = "Ver respuesta";
       if (routeIntegrationHintLevel >= 2) $("hint-btn").hidden = true;
       $("feedback").classList.remove("hidden","bad");
@@ -1736,6 +1737,8 @@ $("hint-btn").addEventListener("click", () => {
     } else {
       routeIntegrationHintLevel = 2;
       showFeedback("Respuesta: " + currentExercise.target, true);
+      appendSpeechButtons($("feedback"),[{text:currentExercise.target,locale:session.config.languageLocale}]);
+      speech.speak(currentExercise.target,session.config.languageLocale,{automatic:true});
       $("hint-btn").hidden = true;
     }
     saveRouteDraft();
