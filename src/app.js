@@ -57,10 +57,8 @@ function toggleAudio() {
 document.getElementById("audio-toggle")?.addEventListener("click", toggleAudio);
 document.getElementById("session-audio-toggle")?.addEventListener("click", toggleAudio);
 function speakerButton(text, locale) {
-  const targetLocale = session?.config?.languageLocale || session?.config?.languageId;
-  const sessionViewActive = Boolean(document.getElementById("session-view") && !document.getElementById("session-view").classList.contains("hidden"));
-  if (sessionViewActive && targetLocale && locale && locale !== targetLocale) return "";
-  return '<button class="speak-button" type="button" data-speak="' + escapeHTML(text) + '" data-locale="' + escapeHTML(locale || "") + '" aria-label="Reproducir pronunciación" title="Escuchar">▶</button>';
+  const spokenLocale = locale || session?.config?.languageLocale || catalog?.locale || "und";
+  return '<button class="speak-button" type="button" data-speak="' + escapeHTML(text) + '" data-locale="' + escapeHTML(spokenLocale) + '" aria-label="Escuchar en ' + escapeHTML(spokenLocale) + '" title="Escuchar (' + escapeHTML(spokenLocale) + ')">▶</button>';
 }
 const spellingVariants = {
   color:["colour","En inglés estadounidense se escribe color; en inglés británico, colour."],
@@ -166,7 +164,7 @@ function getExerciseSpeech(exercise) {
   const spoken = sentence.replace(/_{1,}|＿+/gu, "…").replace(/[“”]/g, "").trim();
   const spanishSource = /[¿¡]/.test(sentence) ||
     /\b(respondes|responderias|dirias|dices|elige|selecciona|traduce|corrige|escucha|marca|escribe|relaciona|ordena|conjuga|transforma|oracion|frase|palabra|pregunta|espanol|significa|donde|cuando|cual|cuales|por que|para que)\b/i.test(sentence);
-  const locale = exercise?.speechLocale || (exercise?.promptLanguage === "source" || exercise?.promptLanguage === "native"
+  const locale = exercise?.speechLocale || exercise?.promptLocale || (exercise?.promptLanguage === "source" || exercise?.promptLanguage === "native"
     ? "es-CL" : exercise?.promptLanguage === "target" ? (catalog?.locale || "und")
     : spanishSource ? "es-CL" : (catalog?.locale || "und"));
   return { text: spoken || prompt, locale };
@@ -293,7 +291,14 @@ function getRouteProgressForLanguage(languageId) {
   if (!languageId) return { completedUnits:{} };
   try {
     const saved = JSON.parse(localStorage.getItem(ROUTE_UNITS_KEY + ":" + languageId) || "null");
-    return saved && typeof saved === "object" ? { completedUnits:{}, ...saved } : { completedUnits:{} };
+    if (!saved || typeof saved !== "object") return { completedUnits:{} };
+    const completedUnits = Object.fromEntries(Object.entries(saved.completedUnits || {}).map(([unitId,record]) => {
+      if (!record || !record.completed) return [unitId,record];
+      const accuracy = Math.max(0,Math.min(100,Number(record.accuracy) || 0));
+      const derivedStars = Math.min(5,Math.floor(accuracy / 20));
+      return [unitId,{ ...record, stars:Math.max(Number(record.stars) || 0,derivedStars) }];
+    }));
+    return { ...saved, completedUnits };
   } catch { return { completedUnits:{} }; }
 }
 function saveRouteProgressForLanguage(languageId, state) {
@@ -1203,12 +1208,10 @@ function chooseExercise() {
       reading.sort((a,b) => levelRank(a)-levelRank(b) || String(a.passage || "").trim().split(/\s+/).length-String(b.passage || "").trim().split(/\s+/).length);
       candidates = [reading[0]];
     } else {
-      exercises = catalog.exercises.filter(exercise => exercise.type !== "reading");
-      candidates = exercises.filter(exercise => !answeredIds.has(exercise.id) && (finalTurn || !exercise.finalPractice));
-      if (finalTurn) {
-        const finalExercises = candidates.filter(exercise => exercise.finalPractice);
-        if (finalExercises.length) candidates = finalExercises;
-      }
+      // Reading sessions must never fall through into general exercises.
+      const allReading = catalog.exercises.filter(exercise => exercise.type === "reading");
+      if (!allReading.length) return null;
+      candidates = [allReading[session.turn % allReading.length]];
     }
   } else {
     candidates = exercises.filter(exercise => !session.answers.some(answer => answer.exerciseId === exercise.id) && (finalTurn || !exercise.finalPractice));
@@ -1269,7 +1272,7 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   const instructionMarkup = currentExercise.instruction
     ? '<p class="exercise-instruction">' + escapeHTML(currentExercise.instruction) + '</p>' : "";
   const targetLocale = session.config.languageLocale || session.config.languageId;
-  const questionAudioMarkup = questionSpeechSegments.filter(item => item.locale === targetLocale).map(item => speakerButton(item.text, item.locale)).join(" ");
+  const questionAudioMarkup = questionSpeechSegments.map(item => speakerButton(item.text, item.locale)).join(" ");
   const readingMarkup = currentExercise.passage
     ? '<section class="reading-passage"><span class="reading-passage-kicker">Texto de lectura</span><h3>' + escapeHTML(currentExercise.passageTitle || "Lectura") + '</h3><p>' + escapeHTML(currentExercise.passage) + '</p><button id="reading-tts-toggle" class="secondary reading-tts-toggle" type="button">Reproducir lectura</button></section>'
     : "";
@@ -1508,12 +1511,18 @@ $("hint-btn").addEventListener("click", () => {
 });
 
 
+function getRouteAssessmentScore() {
+  const scoredAnswers = (session?.answers || []).slice(0,routeQuestionCount);
+  const correct = scoredAnswers.filter(answer => answer.correct === true).length;
+  return { attempted:Math.max(1,routeQuestionCount), correct:Math.min(routeQuestionCount,correct) };
+}
 function finishSession() {
   if (!session || sessionFinished) return;
   sessionFinished = true;
+  const routeScore = routeMode ? getRouteAssessmentScore() : null;
   if (routeMode && session.routeIntegrationComplete) {
-    const attempted = Math.max(1,routeQuestionCount);
-    const correct = Math.min(attempted,Math.max(0,(Number(session.correct)||0) - (aiMode ? 1 : 0)));
+    const attempted = routeScore.attempted;
+    const correct = routeScore.correct;
     const accuracy = Math.round(correct / attempted * 100);
     const stars = Math.min(5, Math.floor(accuracy / 20));
     const state = getRouteProgressForLanguage(session.config.languageId);
@@ -1537,16 +1546,20 @@ function finishSession() {
   $("summary-panel").classList.remove("hidden");
   $("session-status").textContent = "";
   const summary = buildSummary(session);
+  if (routeMode && routeScore) {
+    summary.attempted = routeScore.attempted;
+    summary.correct = routeScore.correct;
+    summary.accuracy = Math.round(routeScore.correct / routeScore.attempted * 100);
+    summary.errors = summary.errors.filter(item => !String(item.exerciseId || "").startsWith("route-integration-"));
+  }
   const finalFeedback = pendingFeedback;
   pendingFeedback = null;
   persistSession(progress, session, summary);
   saveProgress(progress);
   refreshDashboard();
   const summaryLocale = session.config.languageLocale || session.config.languageId;
-  const attemptedCount = routeMode ? routeQuestionCount : Number(summary.attempted) || session.answers.length;
-  const correctCount = routeMode
-    ? Math.min(attemptedCount,Math.max(0,(Number(session.correct)||0) - (aiMode && session.routeIntegrationComplete ? 1 : 0)))
-    : Number(summary.correct) || 0;
+  const attemptedCount = routeMode ? routeScore.attempted : Number(summary.attempted) || session.answers.length;
+  const correctCount = routeMode ? routeScore.correct : Number(summary.correct) || 0;
   const accuracyPercent = attemptedCount ? Math.round(correctCount / attemptedCount * 100) : 0;
   const accuracyMessage = accuracyPercent === 100 ? "Perfecto" : accuracyPercent > 80 ? "Muy bien" : accuracyPercent > 60 ? "Bien" : accuracyPercent >= 40 ? "Vas progresando" : "Sigue practicando";
   const errorCount = summary.errors.length;
@@ -1967,6 +1980,15 @@ const tenseLessons = {
   "Indonesio":{present:[["saya","berbicara"],["kamu","berbicara"],["dia","berbicara"],["kami / kita","berbicara"],["mereka","berbicara"]],past:"Kemarin saya sudah berbicara bahasa Indonesia.",pastEs:"Ayer hablé indonesio.",pastRule:"El verbo no cambia por persona. Sudah indica que algo ya ocurrió o está completado.",future:"Besok saya akan berbicara bahasa Indonesia.",futureEs:"Mañana hablaré indonesio.",futureRule:"Akan marca futuro y va antes del verbo; no se modifica el verbo."},
   "Tailandés":{present:[["ฉัน","พูด"],["คุณ","พูด"],["เขา","พูด"],["เรา","พูด"],["พวกเขา","พูด"]],past:"เมื่อวานฉันพูดภาษาไทยแล้ว",pastEs:"Ayer hablé tailandés.",pastRule:"El verbo no se conjuga por persona. Marcadores como แล้ว y expresiones temporales indican acción completada.",future:"พรุ่งนี้ฉันจะพูดภาษาไทย",futureEs:"Mañana hablaré tailandés.",futureRule:"จะ (jà) delante del verbo marca futuro o intención; el verbo no cambia."}
 };
+function renderGrammarRuleSections(rules, exceptions = "") {
+  const splitPoints = value => String(value || "").replace(/:\\s*/g, ". ")
+    .split(/(?<=[.!?])\\s+|;\\s+|,\\s+(?=[^,;]+?\\s*→)/)
+    .map(point => point.trim()).filter(Boolean);
+  const renderList = points => '<ul class="theory-rule-list">' + points.map(point => '<li>' + escapeHTML(point) + '</li>').join("") + '</ul>';
+  const rulePoints = splitPoints(rules), exceptionPoints = splitPoints(exceptions);
+  return (rulePoints.length ? '<section class="theory-note"><strong>Reglas y usos</strong>' + renderList(rulePoints) + '</section>' : "") +
+    (exceptionPoints.length ? '<section class="theory-note"><strong>Excepciones e irregulares</strong>' + renderList(exceptionPoints) + '</section>' : "");
+}
 function renderTenseLesson(languageName, topicIndex) {
   const lesson = tenseLessons[languageName];
   if (!lesson) return '<p class="theory-slide-text">Revisa la forma verbal dentro de una frase completa y compara cómo cambia según el tiempo, la persona y el aspecto.</p>';
@@ -1990,20 +2012,18 @@ function renderTenseLesson(languageName, topicIndex) {
       ? '<h3>Futuro simple (más formal)</h3><table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>Forma</th></tr></thead><tbody>' + lesson.futureSimpleForms.map(([person,form]) => '<tr><td>' + escapeHTML(person) + '</td><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td></tr>').join("") + '</tbody></table>'
       : "";
     const rule = isPast ? lesson.pastRule : lesson.futureRule;
-    const renderRulePoints = value => '<ul class="theory-rule-list">' + String(value || "").replace(/:\s*/g, ". ").split(/(?<=[.!?])\s+|;\s+|,\s+(?=[^,;]+?\s*→)/).filter(Boolean).map(point => '<li>' + escapeHTML(point.trim()) + '</li>').join("") + '</ul>';
     const intro = isPast
       ? "El pretérito perfeito se usa para acciones concluidas en un momento pasado. La terminación depende del infinitivo y del sujeto."
       : "Para hablar del futuro, el portugués brasileño suele usar ir conjugado + infinitivo. El futuro simple existe, pero es más formal.";
     return '<p class="theory-slide-text">' + escapeHTML(intro) + '</p><table class="theory-pronoun-table">' + header + '<tbody>' + rows + '</tbody></table>' + simpleFuture +
-      '<section class="theory-note"><strong>Reglas de formación y uso</strong>' + renderRulePoints(rule) + '</section>' +
-      '<section class="theory-note"><strong>Excepciones e irregulares</strong>' + renderRulePoints(lesson.exceptions) + '</section>' +
+      renderGrammarRuleSections(rule,lesson.exceptions) +
       '<section class="theory-example"><span>Ejemplos aplicados</span>' + examples + '</section>';
   }
   const example = isPast ? lesson.past : lesson.future;
   const translation = isPast ? lesson.pastEs : lesson.futureEs;
   const rule = isPast ? lesson.pastRule : lesson.futureRule;
   return '<p class="theory-slide-text">' + (isPast ? "El pasado permite narrar acciones anteriores. Observa esta frase y la forma verbal utilizada:" : "El futuro expresa planes, predicciones e intenciones. Observa esta construcción:") + '</p>' +
-    '<section class="theory-note"><strong>Regla y uso</strong><p>' + escapeHTML(rule) + '</p></section>' +
+    renderGrammarRuleSections(rule,lesson.exceptions) +
     '<section class="theory-example"><span>' + (isPast ? "Ejemplo en pasado" : "Ejemplo en futuro") + '</span><p class="theory-target-word">' + escapeHTML(example) + ' ' + speakerButton(example, locale) + '</p><p>' + escapeHTML(translation) + '</p></section>';
 }
 function renderPronounTable(sample, languageName, locale) {
@@ -2129,7 +2149,7 @@ function renderArticleLesson(languageName, locale) {
   const examples = lesson.rows.map(([form,,,example]) =>
     '<p class="theory-target-word">' + escapeHTML(example) + ' ' + speakerButton(example,locale) + '</p><p>' + escapeHTML(form) + '</p>'
   ).join("");
-  return '<p class="theory-slide-text">' + escapeHTML(lesson.intro) + '</p><table class="theory-pronoun-table"><thead><tr><th>Forma</th><th>Significado</th><th>Uso</th></tr></thead><tbody>' + rows + '</tbody></table><section class="theory-note"><strong>Regla práctica</strong><p>' + escapeHTML(lesson.rule) + '</p></section><section class="theory-example"><span>Ejemplos</span>' + examples + '</section>';
+  return '<p class="theory-slide-text">' + escapeHTML(lesson.intro) + '</p><table class="theory-pronoun-table"><thead><tr><th>Forma</th><th>Significado</th><th>Uso</th></tr></thead><tbody>' + rows + '</tbody></table>' + renderGrammarRuleSections(lesson.rule,lesson.exceptions) + '<section class="theory-example"><span>Ejemplos</span>' + examples + '</section>';
 }
 function renderItalianAppliedTopic(category, index, locale) {
   const rows = (items) => items.map(([term, meaning, note = ""]) =>
