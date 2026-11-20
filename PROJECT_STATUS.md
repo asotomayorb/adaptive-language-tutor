@@ -826,3 +826,28 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - [ ] Audio audible en Android real: pendiente de comprobación manual; las pruebas de navegador no demuestran reproducción física.
 - [ ] Revisar visualmente tablas y navegación en Android real.
 - [ ] Confirmar con una sesión real que la unidad siguiente aparece desbloqueada tras obtener 3 estrellas y sobrevive a una recarga.
+
+## Iteración 20-11-2026 — Audio PT-BR, actividades comunes y Repaso recuperable
+
+### Implementado
+- [x] Se leyó README al inicio de la iteración y se registran aquí las reglas nuevas; esta sección supersede requisitos previos en conflicto.
+- [x] Afinamiento de contenido y locales centrado en portugués brasileño (pt-BR). No se han actualizado otros catálogos de idioma.
+- [x] Audio en Ejercicios, Ruta, integración, Comprensión lectora, Repaso y expresiones erradas del resumen. Cada fragmento conserva locale; secuencia normal origen → objetivo y lectura pasaje → pregunta.
+- [x] Catálogo PT-BR: locales explícitos para consignas y separación de consignas mixtas donde era necesario.
+- [x] Cabecera/contador/progreso/icono/etiqueta temática comunes. Ruta cuenta también la integración (7 preguntas en la unidad de prueba); lectura limita el total a la duración seleccionada y al banco único disponible.
+- [x] Entrenamiento ordenado: Ejercicios → Comprensión lectora → Repaso.
+- [x] Resumen: solo expresiones incorrectas con audio y traducción; omite «Reforzar» vacío; acciones centradas de volver, reiniciar y siguiente; Ruta solo muestra siguiente unidad cuando se desbloquea.
+- [x] Repaso: cola de todas las palabras/frases pendientes; persiste cada calificación; cierre/recarga conserva tarjetas restantes y contador; reanuda la primera no completada. Las tarjetas falladas quedan pendientes para otra pasada.
+- [x] Renderización de estado vacío de Repaso y limpieza de audio anterior al navegar.
+
+### Validación automatizada
+- [x] Tests y check: https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44825579828
+- [x] Browser E2E: https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44825579907
+- [x] E2E cubre secuencia de voces, controles manuales, lectura automática, Ruta integración, progreso y contador, resumen enfocado y reanudación de Repaso tras cierre/recarga.
+- [ ] Audio audible en Android real: pendiente; el navegador automatizado solo valida llamadas/orden y controles, no que el teléfono emita sonido.
+- [ ] Revisión visual final en Android real: espaciado, legibilidad y botones de resumen.
+
+### Alcance pendiente
+- No extender contenido ni reglas específicas de PT-BR al resto de idiomas hasta que el usuario dé por afinado el flujo portugués.
+- Repetir después la validación de TTS y de interfaces con voces y contenidos propios de cada idioma.
+
