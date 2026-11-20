@@ -51,7 +51,7 @@ test("speech uses the requested locale and matching voice", () => {
 });
 
 test("automatic speech respects saved preference but manual playback remains available", () => {
-  const mock = speechMock();
+  const mock = speechMock([{ name:"English", lang:"en-US" }]);
   const saved = new Map([["adaptive-language-tutor.audio.auto", "false"]]);
   const controller = createSpeechController({
     synthesis: mock.api,
@@ -106,7 +106,7 @@ test("disabling audio cancels current speech and unsupported browsers degrade sa
 });
 
 test("speech preference storage failures do not break the tutor", () => {
-  const mock = speechMock();
+  const mock = speechMock([{ name:"Portuguese", lang:"pt-BR" }]);
   const controller = createSpeechController({
     synthesis: mock.api,
     Utterance: MockUtterance,
@@ -121,7 +121,7 @@ test("speech preference storage failures do not break the tutor", () => {
 
 
 test("speech controller can pause and resume a passage", () => {
-  const mock = speechMock();
+  const mock = speechMock([{ name:"Portuguese", lang:"pt-BR" }]);
   mock.api.paused = false;
   const controller = createSpeechController({
     synthesis: mock.api,
@@ -133,4 +133,33 @@ test("speech controller can pause and resume a passage", () => {
   assert.equal(controller.paused, true);
   assert.equal(controller.resume(), true);
   assert.equal(controller.paused, false);
+});
+
+
+test("speech refuses to use a default source-language voice when the target voice is missing", () => {
+  const mock = speechMock([{ name:"Spanish", lang:"es-CL" }]);
+  const controller = createSpeechController({
+    synthesis:mock.api,
+    Utterance:MockUtterance,
+    storage:{getItem:()=>null,setItem:()=>{}}
+  });
+  const result = controller.speak("Bom dia","pt-BR");
+  assert.equal(result.spoken,false);
+  assert.equal(result.reason,"voice-unavailable");
+  assert.equal(mock.spoken.length,0);
+});
+
+test("speech sequence omits fragments without an exact language-family voice", () => {
+  const mock = speechMock([{name:"Spanish",lang:"es-CL"},{name:"Portuguese",lang:"pt-BR"}]);
+  const controller = createSpeechController({
+    synthesis:mock.api,
+    Utterance:MockUtterance,
+    storage:{getItem:()=>null,setItem:()=>{}}
+  });
+  const result = controller.speakSequence([
+    {text:"Instrucción en español",locale:"es-CL"},
+    {text:"Bom dia",locale:"pt-BR"}
+  ]);
+  assert.equal(result.count,2);
+  assert.deepEqual(mock.spoken.map(item=>item.voice.lang),["es-CL","pt-BR"]);
 });
