@@ -1990,7 +1990,7 @@ function renderTenseLesson(languageName, topicIndex) {
       ? '<h3>Futuro simple (más formal)</h3><table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>Forma</th></tr></thead><tbody>' + lesson.futureSimpleForms.map(([person,form]) => '<tr><td>' + escapeHTML(person) + '</td><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td></tr>').join("") + '</tbody></table>'
       : "";
     const rule = isPast ? lesson.pastRule : lesson.futureRule;
-    const renderRulePoints = value => '<ul class="theory-rule-list">' + String(value || "").split(/(?<=[.!?])\s+/).filter(Boolean).map(point => '<li>' + escapeHTML(point.trim()) + '</li>').join("") + '</ul>';
+    const renderRulePoints = value => '<ul class="theory-rule-list">' + String(value || "").replace(/:\s*/g, ". ").split(/(?<=[.!?])\s+|;\s+|,\s+(?=[^,;]+?\s*→)/).filter(Boolean).map(point => '<li>' + escapeHTML(point.trim()) + '</li>').join("") + '</ul>';
     const intro = isPast
       ? "El pretérito perfeito se usa para acciones concluidas en un momento pasado. La terminación depende del infinitivo y del sujeto."
       : "Para hablar del futuro, el portugués brasileño suele usar ir conjugado + infinitivo. El futuro simple existe, pero es más formal.";
