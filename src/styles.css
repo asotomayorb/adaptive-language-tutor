@@ -470,3 +470,16 @@
 .theory-note>p{margin:0;font-size:13px;line-height:1.6}
 .theory-example{margin-top:16px}
 .theory-example>p{font-weight:650}
+
+/* Reading comprehension: legible passages, explicit task type and speech control. */
+.reading-passage{padding:18px 18px 16px;margin:0 0 18px;border:1px solid #dce5ef;border-radius:14px;background:#f8fbff}
+.reading-passage-kicker,.reading-question-type{display:block;margin:0 0 8px;color:#56769b;font-size:10px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase}
+.reading-passage h3{margin:0 0 10px;font-size:19px}
+.reading-passage p{margin:0 0 14px;color:#34465e;line-height:1.75;font-size:15px;white-space:normal}
+.reading-tts-toggle{min-height:40px}
+.reading-question-type{margin:10px 0 14px;color:#476b92}
+.theory-note{margin:18px 0;padding:16px 18px;border:1px solid #e2e8f0;border-radius:12px;background:#fbfcfe}
+.theory-note>strong{display:block;margin-bottom:10px;color:#263c59}
+.theory-rule-list{display:grid;gap:9px;margin:0;padding-left:20px;color:#52657d;line-height:1.6;font-size:14px}
+.theory-rule-list li{padding-left:3px}
+@media(max-width:620px){.reading-passage{padding:15px}.reading-passage p{font-size:14px;line-height:1.7}}
