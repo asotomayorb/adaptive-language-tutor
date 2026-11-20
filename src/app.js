@@ -1224,6 +1224,31 @@ function getTopicExercises() {
 }
 
 function chooseExercise() {
+  if (routeMode && getRoutePhase(session.turn,routeQuestionCount).id === "discovery") {
+    const discoveryItems = catalog.exercises.filter(item =>
+      item.topic === session.config.topic && item.term && item.meaning && item.type !== "reading"
+    );
+    const source = discoveryItems[session.turn] || discoveryItems[0];
+    if (source) {
+      const grammarItem = /verbo|conjug|gram[aá]t|tiempo verbal/i.test(String(source.skill || ""));
+      if (grammarItem) return source;
+      const distractors = [...new Set(discoveryItems
+        .filter(item => item.id !== source.id)
+        .map(item => String(item.meaning).trim())
+        .filter(Boolean))];
+      const options = [...new Set([String(source.meaning).trim(), ...distractors])].slice(0,3);
+      return {
+        id:"route-discovery-" + (activeRouteUnit?.id || session.config.topic) + "-" + source.id,
+        level:"A1", topic:session.config.topic, type:"vocabulary", skill:"Vocabulario esencial",
+        prompt:"¿Qué significa «" + source.term + "»?",
+        promptLocale:"es-CL", promptLanguage:"source", target:source.meaning,
+        options:options.length >= 2 ? options : undefined, optionsLocale:"es-CL",
+        term:source.term, meaning:source.meaning, speechText:source.term,
+        speechLocale:catalog.locale, hint:"Recuerda el significado de esta palabra en el idioma que estás aprendiendo.",
+        explanation:source.term + " significa " + source.meaning + "."
+      };
+    }
+  }
   let exercises = getTopicExercises();
   const adaptation = getAdaptation(session);
   let candidates;
