@@ -184,6 +184,7 @@ try {
   assert.match(await page.locator("#theory-description").innerText(), /vou falar|vai falar|vão falar/i, "Portuguese future must show the common ir + infinitive construction");
   assert.deepEqual(await page.locator("#theory-description .theory-pronoun-table").first().locator("thead th").evaluateAll(nodes => nodes.map(node => node.textContent.trim())), ["Pronombre","Forma verbal"], "future conjugation table should only show pronoun and verb form");
   await page.locator("#theory-close").click();
+  await page.locator("#theory-list-back").click();
   await page.locator('[data-theory="vocabulary"]').click();
   const vocabularyRows = page.locator("#theory-list-items [data-theory-topic]");
   await vocabularyRows.nth(2).click();
