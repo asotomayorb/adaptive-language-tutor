@@ -800,7 +800,9 @@ $("setup-form").addEventListener("submit", event => {
     startSpacedReview();
     return;
   }
-  const questionCount = Number($("duration").value);
+  const requestedQuestionCount = Number($("duration").value);
+  const readingBankSize = catalog.exercises.filter(exercise => exercise.type === "reading").length;
+  const questionCount = selectedExerciseMode === "reading" && readingBankSize ? Math.min(requestedQuestionCount,readingBankSize) : requestedQuestionCount;
   const config = { language:catalog.label, languageId:catalog.id, languageLocale:catalog.locale || catalog.id, duration:questionCount, questionCount, level:$("level").value, topic:selectedExerciseMode === "reading" ? "reading" : $("topic").value };
   lastActivityConfig = { ...config };
   lastActivityMode = selectedExerciseMode;
