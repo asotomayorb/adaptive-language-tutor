@@ -43,13 +43,6 @@ function updateAudioStatus(status) {
     toggle.title = status.enabled ? "Audio activado" : "Audio desactivado";
     toggle.classList.toggle("audio-off", !status.enabled);
   });
-  const passageToggle = document.getElementById("reading-tts-toggle");
-  if (passageToggle) {
-    const paused = Boolean(status.paused);
-    passageToggle.textContent = paused ? "Continuar lectura" : status.speaking ? "Pausar lectura" : "Reproducir lectura";
-    passageToggle.setAttribute("aria-label", passageToggle.textContent);
-    passageToggle.disabled = !status.supported;
-  }
 }
 
 function toggleAudio() {
@@ -105,13 +98,31 @@ function bindVariantLinks(root) {
   });
 }
 
-function togglePassageSpeech() {
+let readingPassageActive = false;
+let readingPassagePaused = false;
+function updateReadingPassageControl() {
   const button = $("reading-tts-toggle");
   if (!button) return;
-  if (speech.paused) { speech.resume(); return; }
-  if (speech.speaking) { speech.pause(); return; }
+  button.disabled = !speech.supported;
+  button.textContent = !readingPassageActive ? "Reproducir lectura" : readingPassagePaused ? "Continuar lectura" : "Pausar lectura";
+  button.setAttribute("aria-label", button.textContent);
+}
+function togglePassageSpeech() {
   const passage = currentExercise?.passage;
-  if (passage) speech.speak(passage, session?.config?.languageLocale || catalog?.locale);
+  if (!passage) return;
+  if (readingPassageActive && readingPassagePaused) {
+    readingPassagePaused = !speech.resume();
+  } else if (readingPassageActive) {
+    readingPassagePaused = speech.pause();
+  } else {
+    readingPassageActive = true;
+    readingPassagePaused = false;
+    const result = speech.speak(passage, session?.config?.languageLocale || catalog?.locale, {
+      onEnd: () => { readingPassageActive = false; readingPassagePaused = false; updateReadingPassageControl(); }
+    });
+    if (!result.spoken) readingPassageActive = false;
+  }
+  updateReadingPassageControl();
 }
 
 function bindSpeakerButtons(root) {
@@ -1188,7 +1199,7 @@ function chooseExercise() {
     if (reading.length) {
       const preferredLevel = session.config.level === "advanced" ? "A2" : "A1";
       const levelRank = exercise => exercise.level === preferredLevel ? 0 : 1;
-      reading.sort((a,b) => levelRank(a)-levelRank(b) || String(a.passage || "").trim().split(/\\s+/).length-String(b.passage || "").trim().split(/\\s+/).length);
+      reading.sort((a,b) => levelRank(a)-levelRank(b) || String(a.passage || "").trim().split(/\s+/).length-String(b.passage || "").trim().split(/\s+/).length);
       candidates = [reading[0]];
     } else {
       exercises = catalog.exercises.filter(exercise => exercise.type !== "reading");
@@ -1256,13 +1267,15 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   const readingQuestionType = session.config.topic === "reading"
     ? '<p class="reading-question-type">' + (currentExercise.type === "reading" ? "Comprensión del texto" : "Práctica general") + '</p>' : "";
   $("lesson-content").innerHTML = readingMarkup + readingQuestionType + getExerciseIllustration(currentExercise) + instructionMarkup + '<h3>' + promptMarkup + '</h3>' + questionAudioMarkup;
-  const readingTtsToggle = $("reading-tts-toggle");
-  if (readingTtsToggle) readingTtsToggle.disabled = !speech.supported;
-  readingTtsToggle?.addEventListener("click", togglePassageSpeech);
+  updateReadingPassageControl();
+  $("reading-tts-toggle")?.addEventListener("click", togglePassageSpeech);
   bindVariantLinks($("lesson-content"));
   bindSpeakerButtons($("lesson-content"));
   bindTargetWords($("lesson-content"));
   speech.stop();
+  readingPassageActive = false;
+  readingPassagePaused = false;
+  updateReadingPassageControl();
   speech.speakSequence(questionSpeechSegments, { automatic: true });
   const useMultipleChoice = currentExercise.type === "reading"
     ? Array.isArray(currentExercise.options) && currentExercise.options.length >= 2
@@ -1968,7 +1981,7 @@ function renderTenseLesson(languageName, topicIndex) {
       ? '<h3>Futuro simple (más formal)</h3><table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>Forma</th></tr></thead><tbody>' + lesson.futureSimpleForms.map(([person,form]) => '<tr><td>' + escapeHTML(person) + '</td><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td></tr>').join("") + '</tbody></table>'
       : "";
     const rule = isPast ? lesson.pastRule : lesson.futureRule;
-    const renderRulePoints = value => '<ul class="theory-rule-list">' + String(value || "").split(/(?<=[.!?])\\s+/).filter(Boolean).map(point => '<li>' + escapeHTML(point.trim()) + '</li>').join("") + '</ul>';
+    const renderRulePoints = value => '<ul class="theory-rule-list">' + String(value || "").split(/(?<=[.!?])\s+/).filter(Boolean).map(point => '<li>' + escapeHTML(point.trim()) + '</li>').join("") + '</ul>';
     const intro = isPast
       ? "El pretérito perfeito se usa para acciones concluidas en un momento pasado. La terminación depende del infinitivo y del sujeto."
       : "Para hablar del futuro, el portugués brasileño suele usar ir conjugado + infinitivo. El futuro simple existe, pero es más formal.";
