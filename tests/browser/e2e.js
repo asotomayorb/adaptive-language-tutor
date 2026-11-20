@@ -535,6 +535,36 @@ try {
   assert.equal(await routePage.locator("#session-mode-label").innerText(),"Entrenamiento");
   assert.equal(await routePage.locator('#route-unit-list [data-route-unit="travel"]').evaluate(node => node.classList.contains("selected")),true,"continuation should select the next unlocked Route unit");
   assert.deepEqual(routeErrors, [], "Portuguese Route integration should not report browser errors");
+
+  const lastRouteContext = await browser.newContext();
+  const lastRoutePage = await lastRouteContext.newPage();
+  await lastRoutePage.goto(baseUrl, { waitUntil:"networkidle" });
+  await lastRoutePage.locator("#welcome-start").click();
+  await lastRoutePage.locator('[data-language="Portugués brasileño"]').click();
+  await lastRoutePage.evaluate(() => {
+    const completedUnits = Object.fromEntries(["foundations","travel","food","work"].map(id => [id,{completed:true,stars:5,accuracy:100,correct:6,attempted:6}]));
+    const session = {
+      config:{language:"Portugués",languageId:"pt-BR",languageLocale:"pt-BR",duration:6,questionCount:6,topic:"work",level:"zero",routeMode:true,routeUnitId:"work"},
+      turn:6,correct:6,attempted:6,streak:0,bestStreak:0,consecutiveCorrect:0,consecutiveErrors:0,
+      errors:[],errorsToReview:[],vocabulary:[],reviewQueue:[],answers:Array.from({length:6},(_,i)=>({exerciseId:"work-"+i,correct:true,status:"correct"}))
+    };
+    localStorage.setItem("adaptive-language-tutor.route-units:pt-BR",JSON.stringify({completedUnits}));
+    localStorage.setItem("adaptive-language-tutor.route-progress:pt-BR",JSON.stringify({
+      languageId:"pt-BR",unitId:"work",questionCount:6,session,integration:true,integrationAttempts:0,routeIntegrationHintLevel:0,
+      pendingFeedback:null,localPendingAnswer:null,aiPendingTurn:null,aiMode:false,aiHistory:[],aiLastResult:null,aiCurrentExercise:null,aiPendingFeedback:null
+    }));
+  });
+  await lastRoutePage.reload({waitUntil:"networkidle"});
+  await lastRoutePage.locator("#welcome-start").click();
+  await lastRoutePage.locator("#route-start").click();
+  await lastRoutePage.locator("#route-integration-answer").fill("Trabalho em um escritório.");
+  await lastRoutePage.locator("#route-integration-submit").click();
+  await lastRoutePage.locator("#summary-panel").waitFor({state:"visible"});
+  assert.equal(await lastRoutePage.locator("#route-summary-next").innerText(),"Volver a Ruta","the final unit should offer a return to the map, not a replay");
+  await lastRoutePage.locator("#route-summary-next").click();
+  assert.equal(await lastRoutePage.locator("#screen-route").isVisible(),true,"the final unit action should return to the Route map");
+  assert.equal(await lastRoutePage.locator("#session-view").isVisible(),false,"the final unit should not reopen itself when the user selects return to Route");
+  await lastRouteContext.close();
 } finally {
   if (browser) await browser.close();
   server.kill("SIGTERM");
