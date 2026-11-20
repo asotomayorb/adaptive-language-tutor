@@ -281,6 +281,7 @@ try {
   assert.equal(await page.locator("#lesson-content .reading-passage").isVisible(),true,"reading mode should show a passage before its question");
   assert.match(await page.locator("#lesson-content .reading-passage").innerText(),/João Pessoa/);
   assert.equal(await page.locator("#answer-area [data-choice]").count(),3,"reading questions should always use objective multiple-choice answers");
+  assert.equal(await page.locator("#answer-area [data-speak]").count(),0,"source-language reading options should not show target-language audio controls");
   await page.locator("#answer-area [data-choice]").first().click();
   assert.equal(await page.locator("#feedback .answer-status.correct").isVisible(),true,"the reading answer should be evaluated against its canonical answer");
   await page.locator("#answer-area #continue-answer").click();
