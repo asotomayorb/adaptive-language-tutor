@@ -2196,10 +2196,6 @@ function renderTenseLesson(languageName, topicIndex) {
       [['eu','direi','farei','trarei','porei','terei','virei','serei'],['tu','dirás','farás','trarás','porás','terás','virás','serás'],['você / ele / ela','dirá','fará','trará','porá','terá','virá','será'],['nós','diremos','faremos','traremos','poremos','teremos','viremos','seremos'],['a gente','dirá','fará','trará','porá','terá','virá','será'],['vocês / eles / elas','dirão','farão','trarão','porão','terão','virão','serão']].map(row => '<tr>' + row.map((cell,index) => '<td>' + (index ? '<strong class="theory-target-word">' + cell + '</strong> ' + speakerButton(cell,locale) : '<strong>' + cell + '</strong>') + '</td>').join('') + '</tr>').join('') +
       '</tbody></table></div></section>' : '';
     const rule = isPast ? lesson.pastRule : lesson.futureRule;
-    const exceptionText = String(lesson.exceptions || "");
-    const pastExceptionEnd = exceptionText.search(/\bEn futuro simple\b/i);
-    const pastExceptions = isPast ? (pastExceptionEnd >= 0 ? exceptionText.slice(0,pastExceptionEnd).trim() : exceptionText) : "";
-    const futureExceptions = !isPast ? (pastExceptionEnd >= 0 ? exceptionText.slice(pastExceptionEnd).trim() : "") : "";
     const intro = isPast
       ? "El pretérito perfeito expresa acciones concluidas en el pasado. Primero identifica el infinitivo y después aplica la terminación correspondiente a la persona."
       : "En portugués brasileño, el futuro próximo se forma con ir en presente + infinitivo. El futuro simple es correcto, pero tiene un uso más formal.";
