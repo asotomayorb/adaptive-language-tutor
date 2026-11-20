@@ -2189,6 +2189,9 @@ function renderTenseLesson(languageName, topicIndex) {
     const pastIrregularTable = isPast ? '<section class="theory-table-block"><h3>Excepciones: verbos irregulares</h3><div class="theory-table-scroll"><table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>ser / ir</th><th>estar</th><th>ter</th><th>fazer</th></tr></thead><tbody>' +
       [['eu','fui','estive','tive','fiz'],['tu','foste','estiveste','tiveste','fizeste'],['você / ele / ela','foi','esteve','teve','fez'],['nós','fomos','estivemos','tivemos','fizemos'],['a gente','foi','esteve','teve','fez'],['vocês / eles / elas','foram','estiveram','tiveram','fizeram']].map(row => '<tr>' + row.map((cell,index) => '<td>' + (index ? '<strong class="theory-target-word">' + cell + '</strong> ' + speakerButton(cell,locale) : '<strong>' + cell + '</strong>') + '</td>').join('') + '</tr>').join('') +
       '</tbody></table></div></section>' : '';
+    const pastIrregularTableTwo = isPast ? '<section class="theory-table-block"><h3>Más verbos irregulares</h3><div class="theory-table-scroll"><table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>dizer</th><th>trazer</th><th>pôr</th><th>ver</th><th>vir</th></tr></thead><tbody>' +
+      [['eu','disse','trouxe','pus','vi','vim'],['tu','disseste','trouxeste','puseste','viste','vieste'],['você / ele / ela','disse','trouxe','pôs','viu','veio'],['nós','dissemos','trouxemos','pusemos','vimos','viemos'],['a gente','disse','trouxe','pôs','viu','veio'],['vocês / eles / elas','disseram','trouxeram','puseram','viram','vieram']].map(row => '<tr>' + row.map((cell,index) => '<td>' + (index ? '<strong class="theory-target-word">' + cell + '</strong> ' + speakerButton(cell,locale) : '<strong>' + cell + '</strong>') + '</td>').join('') + '</tr>').join('') +
+      '</tbody></table></div></section>' : '';
     const simpleFuture = !isPast && lesson.futureSimpleForms
       ? '<section class="theory-table-block"><h3>Futuro simple (más formal)</h3><div class="theory-table-scroll"><table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>Forma verbal</th></tr></thead><tbody>' + lesson.futureSimpleForms.map(([person,form]) => '<tr><td>' + escapeHTML(person) + '</td><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td></tr>').join("") + '</tbody></table></div></section>'
       : "";
@@ -2201,7 +2204,7 @@ function renderTenseLesson(languageName, topicIndex) {
       : "En portugués brasileño, el futuro próximo se forma con ir en presente + infinitivo. El futuro simple es correcto, pero tiene un uso más formal.";
     return '<p class="theory-slide-text">' + escapeHTML(intro) + '</p>' + regularPastTable +
       '<section class="theory-table-block"><h3>Conjugación de ejemplo: ' + (isPast ? 'falar en pasado' : 'ir + infinitivo') + '</h3><div class="theory-table-scroll"><table class="theory-pronoun-table">' + header + '<tbody>' + rows + '</tbody></table></div></section>' +
-      pastIrregularTable + simpleFuture + futureIrregularTable +
+      pastIrregularTable + pastIrregularTableTwo + simpleFuture + futureIrregularTable +
       renderGrammarRuleSections(rule,"") +
       '<section class="theory-example"><span>Ejemplos aplicados</span><div class="theory-table-scroll"><table class="theory-example-table"><thead><tr><th>Pronombre</th><th>Ejemplo aplicado</th></tr></thead><tbody>' + examples + '</tbody></table></div></section>';
   }
