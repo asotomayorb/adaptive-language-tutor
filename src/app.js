@@ -160,7 +160,7 @@ function getExerciseSpeechSegments(exercise) {
 function autoSpeak(text, locale = catalog?.locale) {
   if (text && speech.enabled) speech.speak(text, locale, { automatic: true });
 }
-const topicLabels = { daily:"vida cotidiana", travel:"viajes", food:"comida y restaurantes", work:"trabajo y estudios", random:"tema sorpresa" };
+const topicLabels = { daily:"vida cotidiana", travel:"viajes", food:"comida y restaurantes", work:"trabajo y estudios", reading:"comprensión lectora", random:"tema sorpresa" };
 const customLanguageLocales = {
   "suajili":"sw-KE", "ucraniano":"uk-UA", "persa":"fa-IR", "farsi":"fa-IR",
   "checo":"cs-CZ", "rumano":"ro-RO", "húngaro":"hu-HU", "hungaro":"hu-HU",
@@ -388,17 +388,18 @@ function refreshDashboard() {
     if (!metrics.length) {
       chartMarkup = '<p class="empty-chart">Completa una sesión para comparar la precisión entre idiomas.</p>';
     } else {
-      const width = Math.max(480, Math.floor((statsContent.clientWidth || 760) - 24)), height = 330;
+      const width = 760, height = 340;
       const left = 44, right = 18, top = 26, bottom = 58;
       const plotWidth = width-left-right, plotHeight = height-top-bottom;
       const yAt = value => top + (100-value)*plotHeight/100;
-      const slot = plotWidth/metrics.length, barWidth = Math.min(68,Math.max(18,slot*0.78));
+      const slot = Math.min(38,plotWidth/metrics.length), groupWidth = slot*metrics.length;
+      const groupStart = left + (plotWidth-groupWidth)/2, barWidth = Math.max(18,slot*0.84);
       const grid = [0,25,50,75,100].map(value =>
         '<line x1="' + left + '" y1="' + yAt(value) + '" x2="' + (width-right) + '" y2="' + yAt(value) + '" class="chart-gridline"/><text x="4" y="' + (yAt(value)+4) + '" class="chart-axis-label">' + value + '%</text>'
       ).join("");
       const bars = metrics.map((item,index) => {
-        const x = left + slot*index + (slot-barWidth)/2, y = yAt(item.accuracy), h = plotHeight*item.accuracy/100;
-        const labelX = left + slot*(index+0.5);
+        const x = groupStart + slot*index + (slot-barWidth)/2, y = yAt(item.accuracy), h = plotHeight*item.accuracy/100;
+        const labelX = groupStart + slot*(index+0.5);
         return '<rect class="stats-bar" x="' + x + '" y="' + y + '" width="' + barWidth + '" height="' + h + '" rx="5" fill="' + colorFor(index) + '"><title>' + escapeHTML(item.label) + ': ' + item.accuracy + '%</title></rect>' +
           '<text x="' + labelX + '" y="' + (y-7) + '" text-anchor="middle" class="chart-value-label">' + item.accuracy + '%</text>' +
           '<text x="' + labelX + '" y="' + (height-25) + '" text-anchor="middle" class="stats-flag-label" aria-label="' + escapeHTML(item.label) + '">' + item.flag + '</text>';
@@ -421,7 +422,7 @@ function refreshDashboard() {
     if (!practicedDays.length) {
       chartMarkup = '<p class="empty-chart">Todavía no hay días de práctica registrados para ' + escapeHTML(language?.label || "") + '.</p>';
     } else {
-      const width = Math.max(300, Math.floor((statsContent.clientWidth || 760) - 52)), height = 340, left = 38, right = 38, top = 28, bottom = 64;
+      const width = 760, height = 340, left = 38, right = 38, top = 28, bottom = 64;
       const plotWidth = width-left-right, plotHeight = height-top-bottom;
       const maxQuestions = Math.max(1,...practicedDays.map(([,item])=>item.attempted));
       const questionMax = Math.max(5,Math.ceil(maxQuestions/5)*5);
@@ -453,7 +454,7 @@ function refreshDashboard() {
   statsContent.innerHTML = '<section class="stats-table-card"><h2>Progreso por idioma</h2>' +
     (metrics.length?'<div class="stats-table-wrap"><table class="stats-language-table">' + header + body + '</table></div>':'<p class="empty-chart">Aún no hay idiomas con actividad registrada.</p>') +
     '</section><section class="progress-chart-card"><div class="stats-chart-heading"><h2>Evolución</h2><label class="stats-view-picker"><span class="visually-hidden">Vista del gráfico</span><select id="stats-view-select" aria-label="Seleccionar vista de estadísticas">' + options + '</select></label></div>' +
-    chartMarkup + '</section>';
+    '<div class="stats-chart-stage">' + chartMarkup + '</div></section>';
   $("stats-view-select").value = selectedView;
   $("stats-view-select").addEventListener("change", refreshDashboard);
 }
@@ -551,7 +552,10 @@ function renderSpacedReview() {
 
   if (card.cardType === "pattern") {
     $("hint-btn").hidden = true;
-    $("lesson-content").innerHTML = '<p class="eyebrow">REPASO DE PATRÓN</p><h3>' + escapeHTML(card.pattern) + '</h3><p>Intenta recordar una frase propia que aplique este patrón. Este repaso no consume turnos de práctica.</p>';
+    const readingMarkup = currentExercise.passage
+    ? '<section class="reading-passage"><span class="reading-passage-kicker">Texto de lectura</span><h3>' + escapeHTML(currentExercise.passageTitle || "Lectura") + '</h3><p>' + escapeHTML(currentExercise.passage) + '</p></section>'
+    : "";
+  $("lesson-content").innerHTML = readingMarkup +  '<p class="eyebrow">REPASO DE PATRÓN</p><h3>' + escapeHTML(card.pattern) + '</h3><p>Intenta recordar una frase propia que aplique este patrón. Este repaso no consume turnos de práctica.</p>';
     $("answer-area").innerHTML = '<p class="muted">¿Pudiste recordar y aplicar el patrón?</p><button id="pattern-recalled" class="primary" type="button">Lo recordé</button><button id="pattern-practice" class="secondary" type="button">Necesito practicarlo</button>';
     const gradePattern = recalled => {
       const result = gradeReview(reviewProgressDraft || progress, card.key, recalled);
@@ -613,7 +617,7 @@ $("setup-form").addEventListener("submit", event => {
     return;
   }
   const questionCount = Number($("duration").value);
-  const config = { language:catalog.label, languageId:catalog.id, languageLocale:catalog.locale || catalog.id, duration:questionCount, questionCount, level:$("level").value, topic:$("topic").value };
+  const config = { language:catalog.label, languageId:catalog.id, languageLocale:catalog.locale || catalog.id, duration:questionCount, questionCount, level:$("level").value, topic:selectedExerciseMode === "reading" ? "reading" : $("topic").value };
   persistSettings();
   sessionAbortController?.abort();
   sessionAbortController = new AbortController();
@@ -622,7 +626,7 @@ $("setup-form").addEventListener("submit", event => {
   reviewMode = false;
   $("summary-panel").classList.add("hidden");
   $("lesson-panel").classList.remove("hidden");
-  const useLiveAI = aiConfigured && catalog.exercises.length < questionCount;
+  const useLiveAI = selectedExerciseMode !== "reading" && aiConfigured && catalog.exercises.length < questionCount;
   $("session-status").textContent = useLiveAI ? "Tutor IA en sesión" : "Práctica local";
   showSessionView(selectedExerciseMode);
   if (useLiveAI) {
@@ -1220,9 +1224,11 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   bindTargetWords($("lesson-content"));
   speech.stop();
   speech.speakSequence(questionSpeechSegments, { automatic: true });
-  const useMultipleChoice = routeMode
-    ? routePhase.id !== "sentences" && Array.isArray(currentExercise.options) && currentExercise.options.length >= 2
-    : questionIndex < 3;
+  const useMultipleChoice = currentExercise.type === "reading"
+    ? Array.isArray(currentExercise.options) && currentExercise.options.length >= 2
+    : routeMode
+      ? routePhase.id !== "sentences" && Array.isArray(currentExercise.options) && currentExercise.options.length >= 2
+      : questionIndex < 3;
   if (useMultipleChoice) {
     const options = currentExercise.options || [];
     $("answer-area").innerHTML = options.map((option,index) => '<div class="answer-option-row"><button class="answer-option" data-choice="' + index + '">' + renderClickableTargetText(option) + '</button>' + speakerButton(option, currentExercise.optionsLocale || (currentExercise.speechMode === "listening" ? "es-CL" : catalog.locale)) + '</div>').join("");
@@ -1524,6 +1530,7 @@ function showScreen(name) {
     $("practice-toggle")?.setAttribute("aria-expanded","false");
     $("start-session").textContent = "Comenzar práctica";
     $("topic").disabled = false;
+    $("topic").value = "daily";
   }
   if (name === "route") renderRouteDashboard();
   if (name === "stats") refreshDashboard();
@@ -1541,7 +1548,7 @@ function showSessionView(mode) {
   document.querySelectorAll(".app-screen").forEach(screen => screen.classList.add("hidden"));
   $("session-view").classList.remove("hidden");
   $("app-shell").classList.add("session-active");
-  $("session-mode-label").textContent = mode === "review" ? "Repaso" : "Práctica";
+  $("session-mode-label").textContent = mode === "review" ? "Repaso" : mode === "reading" ? "Comprensión lectora" : "Práctica";
   window.scrollTo(0, 0);
 }
 function closeSessionAndReturn() {
@@ -1587,8 +1594,9 @@ document.querySelectorAll("[data-mode]").forEach(button => button.addEventListen
   $("review-exercises").classList.add("hidden");
   $("setup-panel").classList.toggle("hidden");
   $("practice-toggle")?.setAttribute("aria-expanded",String(!$("setup-panel").classList.contains("hidden")));
-  $("topic").disabled = false;
-  $("start-session").textContent = "Comenzar práctica";
+  $("topic").disabled = selectedExerciseMode === "reading";
+  $("topic").value = selectedExerciseMode === "reading" ? "reading" : "daily";
+  $("start-session").textContent = selectedExerciseMode === "reading" ? "Comenzar lectura" : "Comenzar práctica";
   $("ai-status").classList.remove("hidden");
 }));
 $("route-start-exercises")?.addEventListener("click", () => showScreen("exercises"));
@@ -1645,7 +1653,8 @@ const theoryContent = {
     ["Personas y familia", "Vocabulario para hablar de personas, relaciones y familia. Aprende cada sustantivo con sus marcas gramaticales cuando corresponda."],
     ["Tiempo y fechas", "Días, meses, horas y expresiones temporales para organizar actividades y contar cuándo suceden las cosas."],
     ["Comida y bebida", "Ingredientes, comidas, bebidas y vocabulario para pedir, comprar o expresar preferencias."],
-    ["Viajes y transporte", "Palabras para desplazarse, comprar pasajes, orientarse y resolver situaciones habituales durante un viaje."]
+    ["Viajes y transporte", "Palabras para desplazarse, comprar pasajes, orientarse y resolver situaciones habituales durante un viaje."],
+    ["Números cardinales y ordinales", "Aprende a contar, expresar cantidades, precios, fechas, posiciones y orden. Incluye concordancia de género y formación de números compuestos."]
   ]],
   expressions: ["Expresiones", [
     ["Presentarse", "Estructuras para saludar, decir tu nombre, explicar de dónde eres y conocer a otra persona."],
@@ -1907,13 +1916,14 @@ function renderTenseLesson(languageName, topicIndex) {
   const isPast = topicIndex === 4;
   if (languageName === "Portugués brasileño" && (isPast || topicIndex === 5)) {
     const forms = isPast ? lesson.pastForms : lesson.futureForms;
-    const rows = forms.map(([person,form,,translation]) =>
-      '<tr><td><strong>' + escapeHTML(person) + '</strong></td><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td><td>' + escapeHTML(translation) + '</td></tr>'
+    const rows = forms.map(([person,form]) =>
+      '<tr><td><strong>' + escapeHTML(person) + '</strong></td><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td></tr>'
     ).join("");
-    const examples = forms.map(([, ,targetExample,translation]) =>
-      '<p class="theory-target-word">' + escapeHTML(targetExample) + ' ' + speakerButton(targetExample,locale) + '</p><p>' + escapeHTML(translation) + '</p>'
-    ).join("");
-    const header = '<thead><tr><th>Pronombre</th><th>Forma verbal</th><th>Español</th></tr></thead>';
+    const examples = [0,2,3].map(index => {
+      const [person,,targetExample,translation] = forms[index];
+      return '<p><strong>' + escapeHTML(person) + ':</strong> <span class="theory-target-word">' + escapeHTML(targetExample) + '</span> ' + speakerButton(targetExample,locale) + '</p><p>' + escapeHTML(translation) + '</p>';
+    }).join("");
+    const header = '<thead><tr><th>Pronombre</th><th>Forma verbal</th></tr></thead>';
     const simpleFuture = !isPast && lesson.futureSimpleForms
       ? '<h3>Futuro simple (más formal)</h3><table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>Forma</th></tr></thead><tbody>' + lesson.futureSimpleForms.map(([person,form]) => '<tr><td>' + escapeHTML(person) + '</td><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td></tr>').join("") + '</tbody></table>'
       : "";
@@ -2013,6 +2023,30 @@ const articleLessons = {
   }
 };
 function renderAppliedLanguageTopic(languageName, category, index, locale) {
+  if (category === "Vocabulario" && languageName === "Portugués brasileño" && index === 2) {
+    const groups = [
+      ["Días de la semana",[["segunda-feira","lunes"],["terça-feira","martes"],["quarta-feira","miércoles"],["quinta-feira","jueves"],["sexta-feira","viernes"],["sábado","sábado"],["domingo","domingo"]]],
+      ["Meses del año",[["janeiro","enero"],["fevereiro","febrero"],["março","marzo"],["abril","abril"],["maio","mayo"],["junho","junio"],["julho","julio"],["agosto","agosto"],["setembro","septiembre"],["outubro","octubre"],["novembro","noviembre"],["dezembro","diciembre"]]],
+      ["Estaciones",[["primavera","primavera"],["verão","verano"],["outono","otoño"],["inverno","invierno"]]],
+      ["Partes del día",[["de manhã","por la mañana"],["à tarde","por la tarde"],["à noite","por la noche"],["de madrugada","de madrugada"]]],
+      ["Expresiones temporales",[["hoje","hoy"],["ontem","ayer"],["amanhã","mañana"],["depois de amanhã","pasado mañana"],["anteontem","anteayer"],["esta semana","esta semana"],["semana passada","la semana pasada"],["semana que vem","la próxima semana"],["todo dia","todos los días"],["às oito horas","a las ocho"]]]
+    ];
+    return '<p class="theory-slide-text">Vocabulario temporal esencial para hablar de rutinas, fechas, horarios y planes. Los días y meses se escriben normalmente con minúscula.</p>' +
+      groups.map(([heading,entries]) => '<section class="theory-vocab-group"><h3>' + heading + '</h3><table class="theory-pronoun-table"><thead><tr><th>Português</th><th>Español</th></tr></thead><tbody>' +
+        entries.map(([term,meaning]) => '<tr><td><strong class="theory-target-word">' + escapeHTML(term) + '</strong> ' + speakerButton(term,locale) + '</td><td>' + escapeHTML(meaning) + '</td></tr>').join("") +
+      '</tbody></table></section>').join("");
+  }
+  if (category === "Vocabulario" && languageName === "Portugués brasileño" && index === 5) {
+    const groups = [
+      ["Números cardinales",[["zero","cero"],["um / uma","uno / una"],["dois / duas","dos"],["três","tres"],["quatro","cuatro"],["cinco","cinco"],["seis","seis"],["sete","siete"],["oito","ocho"],["nove","nueve"],["dez","diez"],["onze","once"],["doze","doce"],["treze","trece"],["quatorze / catorze","catorce"],["quinze","quince"],["dezesseis","dieciséis"],["dezessete","diecisiete"],["dezoito","dieciocho"],["dezenove","diecinueve"],["vinte","veinte"],["trinta","treinta"],["quarenta","cuarenta"],["cinquenta","cincuenta"],["sessenta","sesenta"],["setenta","setenta"],["oitenta","ochenta"],["noventa","noventa"],["cem","cien"],["cento","ciento (en números compuestos)"],["mil","mil"]]],
+      ["Números ordinales",[["primeiro / primeira","primero / primera"],["segundo / segunda","segundo / segunda"],["terceiro / terceira","tercero / tercera"],["quarto / quarta","cuarto / cuarta"],["quinto / quinta","quinto / quinta"],["sexto / sexta","sexto / sexta"],["sétimo / sétima","séptimo / séptima"],["oitavo / oitava","octavo / octava"],["nono / nona","noveno / novena"],["décimo / décima","décimo / décima"]]]
+    ];
+    return '<p class="theory-slide-text">Los cardinales expresan cantidad; los ordinales indican posición y concuerdan en género con el sustantivo.</p>' +
+      groups.map(([heading,entries]) => '<section class="theory-vocab-group"><h3>' + heading + '</h3><table class="theory-pronoun-table"><thead><tr><th>Português</th><th>Español</th></tr></thead><tbody>' +
+        entries.map(([term,meaning]) => '<tr><td><strong class="theory-target-word">' + escapeHTML(term) + '</strong> ' + speakerButton(term,locale) + '</td><td>' + escapeHTML(meaning) + '</td></tr>').join("") +
+      '</tbody></table></section>').join("") +
+      '<section class="theory-note"><strong>Reglas y observaciones</strong><p>Um/uma y dois/duas varían según el género. A partir de 21, se unen decenas y unidades con e: vinte e um, trinta e dois. Los ordinales concuerdan: o primeiro dia, a primeira semana. En Brasil, después de décimo, a menudo se prefiere el cardinal en usos cotidianos (capítulo 11: capítulo onze), según el contexto.</p></section>';
+  }
   const items = appliedTheoryContent[languageName]?.[category]?.[index];
   if (!items) return null;
   const firstHeader = languageName === "Inglés" ? "English" : "Português";
