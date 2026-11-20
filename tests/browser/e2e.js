@@ -316,7 +316,7 @@ try {
   assert.equal(await page.locator("#topic").isDisabled(),true,"reading topic should not be accidentally changed to a grammar topic");
   await page.locator("#start-session").click();
   assert.equal(await page.locator("#session-mode-label").innerText(),"Comprensión lectora");
-  assert.equal(await page.locator("#turn-count").innerText(),"1 / 6","reading counters should use the number of unique passages available");
+  assert.equal(await page.locator("#turn-count").innerText(),"1 / 5","reading counters should reflect the selected number of questions");
   assert.ok(await page.locator(".exercise-choices .choice-card").nth(1).innerText().then(text => text.includes("Comprensión lectora")),"reading should be the second Training mode");
   assert.ok(await page.locator(".exercise-choices .choice-card").nth(2).innerText().then(text => text.includes("Repaso")),"Review should be the final Training mode");
   assert.equal(await page.locator("#lesson-content .reading-passage").isVisible(),true,"reading mode should show a passage before its question");
@@ -345,6 +345,7 @@ try {
   await page.locator('[data-mode="reading"]').click();
   await page.locator("#duration").selectOption("10");
   await page.locator("#start-session").click();
+  assert.equal(await page.locator("#turn-count").innerText(),"1 / 6","a ten-question request should cap at the six unique reading questions available");
   const correctReadingChoices = [0,0,0,0,1,0];
   for (const choiceIndex of correctReadingChoices) {
     assert.equal(await page.locator("#lesson-content .reading-question-type").evaluate(node => node.textContent.trim()),"Comprensión del texto");
