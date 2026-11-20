@@ -63,3 +63,16 @@ test("reading comprehension passages progress in length from A1 to A2", () => {
     assert.ok(a2.passage.trim().split(/\s+/).length > a1.passage.trim().split(/\s+/).length, catalog.id + " A2 passage should be longer than A1");
   }
 });
+
+
+test("each practice topic has one explicit final translation exercise", () => {
+  for (const catalog of catalogs) {
+    for (const topic of ["daily", "travel", "food", "work"]) {
+      const exercise = catalog.exercises.find(item => item.topic === topic && item.finalPractice);
+      assert.ok(exercise, catalog.id + " missing final translation for " + topic);
+      assert.match(exercise.prompt, /^Traduce al /, exercise.id);
+      assert.ok(exercise.options.includes(exercise.target), exercise.id + " target must remain selectable");
+      assert.ok(Array.isArray(exercise.acceptedAnswers), exercise.id + " should explicitly list equivalent accepted answers");
+    }
+  }
+});
