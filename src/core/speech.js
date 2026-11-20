@@ -25,6 +25,7 @@ export function createSpeechController({
   let pendingRequest = null;
   let listeningForVoices = false;
   let voiceWaitTimer = null;
+  let playbackGeneration = 0;
   try { enabled = storage?.getItem(preferenceKey) !== "false"; } catch {}
 
   function getVoices() {
@@ -63,7 +64,7 @@ export function createSpeechController({
   function setEnabled(value) {
     enabled = Boolean(value);
     try { storage?.setItem(preferenceKey, String(enabled)); } catch {}
-    if (!enabled) { pendingRequest = null; if (voiceWaitTimer) clearTimeout(voiceWaitTimer); voiceWaitTimer = null; try { synthesis?.cancel?.(); } catch {} }
+    if (!enabled) { playbackGeneration += 1; pendingRequest = null; if (voiceWaitTimer) clearTimeout(voiceWaitTimer); voiceWaitTimer = null; try { synthesis?.cancel?.(); } catch {} }
     onStatus({ enabled, supported, speaking:false, paused:false });
     return enabled;
   }
@@ -86,6 +87,7 @@ export function createSpeechController({
   function speak(text, locale, { automatic = false, onEnd, onBoundary, allowSystemVoice = false } = {}) {
     const phrase = String(text || "").trim();
     if (!phrase || !supported || (automatic && !enabled)) return { spoken: false, reason: "unavailable" };
+    playbackGeneration += 1;
     // Always set utterance.lang; when no Voice object is exposed, let the OS TTS
     // engine resolve that explicit locale rather than suppressing playback.
     if (locale && !getVoices().length && !allowSystemVoice) {
@@ -150,7 +152,7 @@ export function createSpeechController({
     try { synthesis.resume(); onStatus({ enabled, supported, speaking:true, paused:false }); return true; } catch { return false; }
   }
 
-  function stop() { pendingRequest = null; if (voiceWaitTimer) clearTimeout(voiceWaitTimer); voiceWaitTimer = null; try { synthesis?.cancel?.(); } catch {} onStatus({ enabled, supported, speaking:false, paused:false }); }
+  function stop() { playbackGeneration += 1; pendingRequest = null; if (voiceWaitTimer) clearTimeout(voiceWaitTimer); voiceWaitTimer = null; try { synthesis?.cancel?.(); } catch {} onStatus({ enabled, supported, speaking:false, paused:false }); }
 
   onStatus({ enabled, supported });
   return {
