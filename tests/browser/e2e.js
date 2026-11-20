@@ -517,7 +517,8 @@ try {
   assert.equal(await routePage.locator('[data-route-unit="travel"]').isDisabled(),false,"a perfect completed first unit must unlock the next unit");
   await routePage.locator("#route-summary-next").click();
   assert.equal(await routePage.locator("#session-view").isVisible(),true,"continuation should start the next unit instead of stopping at the summary");
-  assert.match(await routePage.locator("#session-mode-label").innerText(),/Ruta/);
+  assert.equal(await routePage.locator("#session-mode-label").innerText(),"Entrenamiento");
+  assert.equal(await routePage.locator('[data-route-unit="travel"]').evaluate(node => node.classList.contains("selected")),true,"continuation should select the next unlocked Route unit");
   assert.deepEqual(routeErrors, [], "Portuguese Route integration should not report browser errors");
 } finally {
   if (browser) await browser.close();
