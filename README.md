@@ -618,12 +618,23 @@ Este registro define los criterios de aceptación de la próxima iteración; los
 
 - La sección visible se denomina **Entrenamiento**; los identificadores internos de navegación pueden conservar el nombre histórico `exercises` para evitar romper enlaces y estado.
 - La modalidad Comprensión lectora presenta controles TTS propios del pasaje: reproducir, pausar y continuar. La voz usa el locale del idioma objetivo. Si Web Speech no está disponible, el control queda deshabilitado y la actividad escrita sigue disponible.
-- En una sesión de 10 preguntas, primero se recorren las preguntas de comprensión disponibles (en el catálogo piloto actual: seis, tres por pasaje) y luego se continúa con práctica general del idioma. La interfaz rotula cada pregunta y el encabezado de sesión para distinguir ambos tipos.
+- En el modo Comprensión lectora, todas las preguntas de la sesión deben depender de los pasajes. Si la duración supera el número de preguntas únicas disponibles, se reutiliza el banco de preguntas de lectura de forma cíclica; nunca se incorporan ejercicios generales en esa sesión.
 - La progresión del piloto combina nivel del pasaje (A1/A2), profundidad temática y extensión. Los textos A1 son breves; A2 incluye más contexto, conectores y detalles y puede requerir scroll vertical. El nivel no se determina solo por cantidad de palabras.
 - El hito final de Ruta ahora solicita traducir una frase específica por unidad; se conserva una lista explícita y pequeña de variantes equivalentes aceptadas.
-- En Teoría, las reglas y excepciones de pasado/futuro se muestran como elementos independientes, uno por línea, antes de los ejemplos.
+- En Teoría, todos los temas gramaticales que incluyan reglas y excepciones deben mostrarlas en secciones separadas, con cada punto en una línea independiente; tablas para conjugaciones y ejemplos debajo de las reglas.
 
 - En las sesiones de Entrenamiento (incluida la fase de práctica general posterior a lectura), la última pregunta local se reserva para una traducción concreta por tema. Cada una de las cuatro áreas tiene un ejercicio final marcado y variantes equivalentes declaradas; se evita una consigna abierta con una sola cadena aceptada.
 
 
 **Validación de implementación — 20-11-2026:** `npm run check` y `npm test` aprobados en GitHub Actions run [44673507639](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44673507639); Browser E2E aprobado en run [44673507580](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44673507580). Preview Render desplegado y live en `dep-dbvsjg59fdbs73bthtvg` (commit de código `f4db84d`). La validación auditiva real y Android siguen pendientes.
+
+
+## Correcciones de experiencia móvil — 20-11-2026
+
+- Estadísticas globales: usar barras horizontales de ancho completo, con nombre de idioma y porcentaje en cada fila. El diseño debe priorizar viewport móvil vertical y evitar SVG fijo comprimido.
+- Ruta: el resultado se calcula desde las respuestas puntuables de la unidad, excluyendo el hito integrador independiente. Las respuestas puntuables, porcentaje y estrellas deben compartir el mismo conjunto de datos. Los registros antiguos derivan estrellas mínimas desde su porcentaje para reparar desbloqueos inconsistentes.
+- Comprensión lectora: sesión aislada del entrenamiento general. El banco de preguntas de lectura se repite cíclicamente cuando se solicitan más preguntas que las disponibles.
+- TTS: cada fragmento conserva su locale explícito; los controles manuales identifican el idioma reproducido. Se priorizan `speechLocale` y `promptLocale` sobre cualquier inferencia heurística.
+- Gramática: el renderizador común separa reglas y excepciones en listas legibles, también en los temas de artículos, pasado y futuro con contenido aplicado.
+
+**Validación de esta iteración:** código y pruebas E2E actualizados en la rama de preview. Pendiente confirmar resultados de CI y desplegar el nuevo commit; no declarar validación en Android hasta prueba real.
