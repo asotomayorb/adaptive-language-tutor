@@ -535,3 +535,8 @@ Para cada escenario registrar:
 - [ ] Ejecutar esta lista primero con portugués brasileño (pt-BR).
 - [ ] No aprobar ni propagar los cambios de contenido a otros idiomas hasta que PT-BR esté validado.
 
+### Despliegue de prueba
+- [x] Versión disponible en Render Preview: https://adaptive-language-tutor-preview-5b3d.onrender.com/
+- [x] Deploy LIVE: dep-dc0c80k0916s73db0ftg (commit 94aa33457e7d244f7679ae72186ad2916b5623e9).
+- [ ] Ejecutar las pruebas de audio y disposición anteriores en Android físico sobre esta versión.
+
