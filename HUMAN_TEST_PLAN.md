@@ -383,7 +383,7 @@ Para cada escenario registrar:
 - [ ] La sección y su navegación muestran «Entrenamiento» (sin cambiar el comportamiento de Ruta, Teoría o Estadísticas).
 - [ ] El TTS del pasaje reproduce en el locale objetivo, permite pausar y continuar desde el punto pausado.
 - [ ] Si TTS no está soportado, el botón se deshabilita y la lectura/ejercicio sigue siendo utilizable.
-- [ ] En una sesión de 10 preguntas de Comprensión lectora, las diez preguntas siguen basándose exclusivamente en los pasajes; si se agotan las preguntas únicas, el banco lector se repite sin introducir práctica general.
+- [ ] En Comprensión lectora, el banco no recicla preguntas dentro de la sesión; si se agotan las preguntas únicas antes de alcanzar la cantidad seleccionada, la sesión termina correctamente.
 - [ ] A1 usa un texto breve; A2 presenta mayor profundidad y extensión razonable. Revisar scroll, legibilidad y que los controles no queden ocultos en Android.
 - [ ] La última actividad de cada unidad de Ruta pide traducir una frase concreta; probar la respuesta canónica y cada variante declarada como aceptada.
 - [ ] Gramática: en todos los temas que contienen reglas y excepciones, ambas aparecen en secciones separadas, con un punto por línea; los ejemplos siguen debajo de tablas/notas.
@@ -396,7 +396,7 @@ Para cada escenario registrar:
 - [ ] Ruta: completar la primera unidad con todas las respuestas correctas y verificar 100%, 5 estrellas y desbloqueo de la segunda unidad.
 - [ ] Ruta: comprobar que el hito integrador no altera el denominador ni resta un acierto a la puntuación de las preguntas de la unidad.
 - [ ] Estadísticas: comprobar barras globales en teléfono vertical; nombres largos, porcentajes y barras deben caber sin que el gráfico quede diminuto.
-- [ ] Comprensión lectora: completar 10 preguntas y verificar que ninguna se convierte en práctica general ni pierde su pasaje asociado.
+- [ ] Comprensión lectora: seleccionar 10 preguntas con un banco de seis y verificar que se presentan únicamente las seis preguntas únicas, cada una con su pasaje, sin repetición ni práctica general.
 - [ ] TTS: reproducir manualmente una instrucción en español y un texto objetivo en portugués; confirmar que se usan voces/idiomas distintos y correctos en cada control.
 - [ ] TTS: revisar audio automático, lectura del pasaje y botones de pronunciación en Ruta, Teoría y Entrenamiento.
 - [ ] Teoría: revisar artículos, ser/estar, presente, pasado y futuro; reglas/excepciones deben quedar separadas y legibles en pantalla vertical.
