@@ -1485,9 +1485,10 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   const activityPhaseLabel = routeMode ? routePhase.label : session.config.topic === "reading"
     ? (currentExercise.type === "reading" ? "COMPRENSIÓN DEL TEXTO" : "PRÁCTICA GENERAL")
     : topicLabels[session.config.topic].toUpperCase() + " · " + levelLabel(session.config.level).toUpperCase();
-  $("turn-count").textContent = (questionIndex + 1) + " / " + (routeMode ? routeQuestionCount : session.config.duration);
-  $("progress-bar").style.width = ((questionIndex + 1) / (routeMode ? routeQuestionCount : session.config.duration) * 100) + "%";
-  $("progress-bar").parentElement.setAttribute("aria-valuenow",String(Math.round((questionIndex + 1) / (routeMode ? routeQuestionCount : session.config.duration) * 100)));
+  const activityTotal = routeMode ? routeQuestionCount + 1 : session.config.duration;
+  $("turn-count").textContent = (questionIndex + 1) + " / " + activityTotal;
+  $("progress-bar").style.width = ((questionIndex + 1) / activityTotal * 100) + "%";
+  $("progress-bar").parentElement.setAttribute("aria-valuenow",String(Math.round((questionIndex + 1) / activityTotal * 100)));
   $("streak").textContent = session.streak;
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
