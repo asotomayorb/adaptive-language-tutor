@@ -759,3 +759,5 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - La prueba auditiva en Android y la revisión de legibilidad de las tablas en dispositivo real permanecen pendientes hasta ejecutarse físicamente.
 
 - En Ruta, el capítulo 2 ordena las frases de aplicación por nivel y complejidad creciente (longitud de respuesta), manteniendo primero las estructuras más sencillas.
+
+- Para Android, no se llama a `cancel()` cuando el motor TTS está inactivo: se cancela solo una reproducción/petición activa y se reanuda el motor antes de hablar. Esto evita que cancelar un motor idle suprima la primera utterance tras navegar.
