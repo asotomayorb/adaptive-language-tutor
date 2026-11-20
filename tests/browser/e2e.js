@@ -154,6 +154,11 @@ try {
   assert.match(await page.locator("#theory-description").innerText(), /eu\s*▶\s*yo[\s\S]*você/i);
   assert.ok(await page.locator("#theory-description .theory-pronoun-table tbody tr").count() >= 5, "pronouns should be shown in a bilingual table");
   assert.ok(await page.locator("#theory-description [data-speak]").count() >= 5, "each pronoun should have pronunciation audio");
+  assert.equal(await page.locator("#theory-back").getAttribute("class").then(value => value.includes("back-control")),true,"theory detail should use the shared top-left back control");
+  assert.equal(await page.evaluate(() => window.__spoken.some(item => item.text === "eu" && item.lang === "pt-BR")),true,"opening a theory topic should automatically pronounce target-language content");
+  const theorySpeechCount = await page.evaluate(() => window.__spoken.length);
+  await page.locator("#theory-description [data-speak]").first().click();
+  assert.equal(await page.evaluate(() => window.__spoken.length),theorySpeechCount + 1,"target-language theory text should also play on manual request");
   await page.locator("#theory-next").click();
   assert.equal(await page.locator("#theory-title").innerText(), "Artículos");
   assert.equal(await page.locator("#theory-description").evaluate(root => {
@@ -190,7 +195,7 @@ try {
   assert.match(await page.locator("#theory-description").innerText(), /En futuro simple/i, "future irregularities should be grouped with future rules");
   assert.doesNotMatch(await page.locator("#theory-description").innerText(), /pretérito perfeito|fui, estar|ter → tive/i, "future theory must not contain past exceptions");
   assert.deepEqual(await page.locator("#theory-description .theory-pronoun-table").last().locator("thead th").evaluateAll(nodes => nodes.map(node => node.textContent.trim())), ["Pronombre","Forma verbal"], "future simple table must use the same headings");
-  await page.locator("#theory-close").click();
+  await page.locator("#theory-back").click();
   await page.locator("#theory-list-back").click();
   await page.locator('[data-theory="vocabulary"]').click();
   const vocabularyRows = page.locator("#theory-list-items [data-theory-topic]");
@@ -201,7 +206,7 @@ try {
   await vocabularyRows.nth(5).click();
   const numberTheory = await page.locator("#theory-description").innerText();
   assert.match(numberTheory,/Números cardinales[\s\S]*vinte[\s\S]*Números ordinales[\s\S]*primeiro/i,"number vocabulary should cover cardinal and ordinal forms");
-  await page.locator("#theory-close").click();
+  await page.locator("#theory-back").click();
   // Switching away and back resets Theory to its category start.
   await page.locator('[data-screen="exercises"]').click();
   await page.locator('[data-screen="theory"]').click();
@@ -510,6 +515,8 @@ try {
   await routePage.locator("#route-integration-submit").click();
   await routePage.locator("#summary-panel").waitFor({state:"visible"});
   assert.equal(await routePage.locator("#summary-content .summary-route-stars").innerText(),"★★★★★","Route summary should show stars instead of an achievement percentage");
+  assert.equal(await routePage.locator("#summary-content .route-result-feedback").innerText(),"Perfecto","Route summary should show qualitative achievement feedback");
+  assert.equal(await routePage.locator("#summary-content .route-result").isVisible(),true,"Route should always display its achievement level alongside stars");
   assert.equal(await routePage.locator("#summary-content h3").innerText(),"Reforzar:","Route summary should have one reinforcement subtitle only");
   assert.equal(await routePage.locator("#summary-content h3").count(),1,"Route summary must not split errors, vocabulary and topics into separate sections");
   assert.equal(await routePage.locator("#route-summary-next").isVisible(),true,"Route summary must provide a continuation action");
@@ -517,6 +524,7 @@ try {
   assert.equal(await routePage.locator('[data-route-unit="travel"]').isDisabled(),false,"a perfect completed first unit must unlock the next unit");
   await routePage.locator("#route-summary-next").click();
   assert.equal(await routePage.locator("#session-view").isVisible(),true,"continuation should start the next unit instead of stopping at the summary");
+  assert.equal(await routePage.locator("#lesson-panel").getAttribute("data-route-unit"),"travel","the continuation must load the actual next unit, not just reopen the previous session");
   assert.equal(await routePage.locator("#session-mode-label").innerText(),"Entrenamiento");
   assert.equal(await routePage.locator('[data-route-unit="travel"]').evaluate(node => node.classList.contains("selected")),true,"continuation should select the next unlocked Route unit");
   assert.deepEqual(routeErrors, [], "Portuguese Route integration should not report browser errors");
