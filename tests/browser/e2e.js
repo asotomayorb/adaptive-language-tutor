@@ -117,6 +117,11 @@ try {
   await page.reload({ waitUntil:"networkidle" });
   await page.locator("#welcome-start").click();
   assert.equal(await page.locator('[data-route-unit="work"]').isDisabled(), false, "unit 4 should unlock at three stars in unit 3");
+  await page.locator('[data-route-unit="foundations"]').click();
+  assert.match(await page.locator("#route-start").innerText(), /Repetir unidad/i, "a completed unlocked unit should offer repetition");
+  await page.locator("#route-start").click();
+  assert.equal(await page.locator("#lesson-panel").isVisible(), true, "a completed unit should be startable again");
+  await page.locator("#session-close").click();
   await page.locator("#route-reset").click();
   assert.equal(await page.locator("#route-reset-confirm").isVisible(), true, "route reset must request confirmation");
   await page.locator("#cancel-route-reset").click();
@@ -262,7 +267,9 @@ try {
   assert.equal(await page.locator("#statistics-content .stats-average-line").count(), 0, "global average line should be removed");
   assert.doesNotMatch(await page.locator("#statistics-content .stats-chart-legend").innerText(), /promedio/i, "global average legend should be removed");
   const globalBarWidths = await page.locator("#statistics-content .stats-bar-chart rect.stats-bar").evaluateAll(nodes => nodes.map(node => Number(node.getAttribute("width"))));
-  assert.ok(globalBarWidths.every(width => width > 0 && width <= 54), "global chart bars should be thinner");
+  assert.ok(globalBarWidths.every(width => width > 0 && width <= 68), "global chart bars should use more of each language slot");
+  assert.equal(await page.locator("#statistics-content .stats-bar-chart .stats-flag-label").count(), globalBarWidths.length, "global chart should show one flag per language");
+  assert.equal(await page.locator("#statistics-content .stats-bar-chart .chart-axis-label").evaluateAll(nodes => nodes.some(node => /[A-Za-zÁÉÍÓÚáéíóú]/.test(node.textContent))), false, "language names should not appear below the flags");
   assert.equal(await page.locator("#stats-view-select option").first().innerText(), "🌐 Global");
   await page.locator("#stats-view-select").selectOption("pt-BR");
   assert.equal(await page.locator("#statistics-content .stats-language-chart").isVisible(), true, "a language view should show daily questions and accuracy");
