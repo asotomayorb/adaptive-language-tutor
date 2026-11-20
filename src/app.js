@@ -1975,6 +1975,14 @@ function renderGrammarRuleSections(rules, exceptions = "") {
   return (rulePoints.length ? '<section class="theory-note"><strong>Reglas y usos</strong>' + renderList(rulePoints) + '</section>' : "") +
     (exceptionPoints.length ? '<section class="theory-note"><strong>Excepciones e irregulares</strong>' + renderList(exceptionPoints) + '</section>' : "");
 }
+function renderGrammarRuleContent(rule, exceptions = "") {
+  const text = String(rule || "").trim();
+  const marker = /(?:Atención:|Excepciones?:|Ojo:|No uses\b|No traduzcas\b|Nunca\b)/i.exec(text);
+  if (!marker) return renderGrammarRuleSections(text,exceptions);
+  const mainRules = text.slice(0,marker.index).trim();
+  const exceptionText = [text.slice(marker.index).replace(/^(?:Atención:|Excepciones?:|Ojo:)\s*/i,""),exceptions].filter(Boolean).join(" ");
+  return renderGrammarRuleSections(mainRules,exceptionText);
+}
 function renderTenseLesson(languageName, topicIndex) {
   const lesson = tenseLessons[languageName];
   if (!lesson) return '<p class="theory-slide-text">Revisa la forma verbal dentro de una frase completa y compara cómo cambia según el tiempo, la persona y el aspecto.</p>';
@@ -2033,7 +2041,7 @@ function renderVerbLesson(languageName) {
     }
     return '<tr><td>' + escapeHTML(row[0]) + '</td><td><strong class="theory-target-word">' + escapeHTML(row[1]) + '</strong> ' + speakerButton(row[1], locale) + '</td></tr>';
   }).join("");
-  return '<p class="theory-slide-text">' + escapeHTML(lesson.lead) + '</p><table class="theory-pronoun-table"><tbody>' + rows + '</tbody></table><section class="theory-note"><strong>Regla y excepciones</strong><p>' + escapeHTML(lesson.rule) + '</p></section><section class="theory-example"><span>Ejemplos aplicados</span><p>' + escapeHTML(lesson.example) + '</p></section>';
+  return '<p class="theory-slide-text">' + escapeHTML(lesson.lead) + '</p><table class="theory-pronoun-table"><tbody>' + rows + '</tbody></table>' + renderGrammarRuleContent(lesson.rule,lesson.exceptions) + '<section class="theory-example"><span>Ejemplos aplicados</span><p>' + escapeHTML(lesson.example) + '</p></section>';
 }
 const appliedTheoryContent = {
   "Inglés": {
@@ -2135,7 +2143,7 @@ function renderArticleLesson(languageName, locale) {
   const examples = lesson.rows.map(([form,,,example]) =>
     '<p class="theory-target-word">' + escapeHTML(example) + ' ' + speakerButton(example,locale) + '</p><p>' + escapeHTML(form) + '</p>'
   ).join("");
-  return '<p class="theory-slide-text">' + escapeHTML(lesson.intro) + '</p><table class="theory-pronoun-table"><thead><tr><th>Forma</th><th>Significado</th><th>Uso</th></tr></thead><tbody>' + rows + '</tbody></table>' + renderGrammarRuleSections(lesson.rule,lesson.exceptions) + '<section class="theory-example"><span>Ejemplos</span>' + examples + '</section>';
+  return '<p class="theory-slide-text">' + escapeHTML(lesson.intro) + '</p><table class="theory-pronoun-table"><thead><tr><th>Forma</th><th>Significado</th><th>Uso</th></tr></thead><tbody>' + rows + '</tbody></table>' + renderGrammarRuleContent(lesson.rule,lesson.exceptions) + '<section class="theory-example"><span>Ejemplos</span>' + examples + '</section>';
 }
 function renderItalianAppliedTopic(category, index, locale) {
   const rows = (items) => items.map(([term, meaning, note = ""]) =>
