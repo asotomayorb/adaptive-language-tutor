@@ -757,3 +757,5 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 ### Validación de esta iteración
 - Los tests unitarios y Browser E2E deben cubrir el fallback Android de locale explícito, reproducción secuencial, capítulo de descubrimiento, encabezado/progreso, omisión de «Reforzar» vacío y desbloqueo al umbral de estrellas.
 - La prueba auditiva en Android y la revisión de legibilidad de las tablas en dispositivo real permanecen pendientes hasta ejecutarse físicamente.
+
+- En Ruta, el capítulo 2 ordena las frases de aplicación por nivel y complejidad creciente (longitud de respuesta), manteniendo primero las estructuras más sencillas.
