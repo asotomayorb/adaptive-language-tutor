@@ -586,7 +586,7 @@ try {
   assert.equal(await routePage.locator("#summary-content h3").count(),0,"Route summary should omit the reinforcement subtitle when there is nothing to review");
   assert.equal(await routePage.locator("#summary-content .route-reinforcement").count(),0,"an empty reinforcement section should not be rendered");
   assert.equal(await routePage.locator("#route-summary-next").isVisible(),true,"Route summary must provide a continuation action");
-  assert.match(await routePage.locator("#route-summary-next").innerText(),/Continuar: Viajes y orientación/,"the next unlocked unit should be named in the continuation action");
+  assert.match(await routePage.locator("#route-summary-next").innerText(),/Siguiente unidad.*Viajes y orientación/,"the next unlocked unit should be named in the continuation action");
   assert.equal(await routePage.locator('[data-route-unit="travel"]').isDisabled(),false,"a perfect completed first unit must unlock the next unit");
   await routePage.locator("#route-summary-next").click();
   assert.equal(await routePage.locator("#session-view").isVisible(),true,"continuation should start the next unit instead of stopping at the summary");
@@ -632,7 +632,7 @@ try {
   await thresholdPage.locator("#summary-panel").waitFor({state:"visible"});
   assert.equal(await thresholdPage.locator("#summary-content .summary-route-stars").innerText(),"★★★☆☆");
   assert.equal(await thresholdPage.locator('[data-route-unit="travel"]').isDisabled(),false,"three earned stars should unlock the next unit at the threshold");
-  assert.match(await thresholdPage.locator("#route-summary-next").innerText(),/Continuar: Viajes y orientación/);
+  assert.match(await thresholdPage.locator("#route-summary-next").innerText(),/Siguiente unidad.*Viajes y orientación/);
   await thresholdPage.reload({waitUntil:"networkidle"});
   await thresholdPage.locator("#welcome-start").click();
   await thresholdPage.locator('[data-screen="route"]').click();
