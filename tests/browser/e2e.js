@@ -538,6 +538,46 @@ try {
   assert.equal(await routePage.locator('#route-unit-list [data-route-unit="travel"]').evaluate(node => node.classList.contains("selected")),true,"continuation should select the next unlocked Route unit");
   assert.deepEqual(routeErrors, [], "Portuguese Route integration should not report browser errors");
 
+  const chapterContext = await browser.newContext();
+  const chapterPage = await chapterContext.newPage();
+  await chapterPage.goto(baseUrl,{waitUntil:"networkidle"});
+  await chapterPage.locator("#welcome-start").click();
+  await chapterPage.locator('[data-language="Portugués brasileño"]').click();
+  await chapterPage.locator("#route-start").click();
+  assert.match(await chapterPage.locator("#lesson-content .activity-phase").innerText(),/CAPÍTULO 1 · VOCABULARIO Y REGLAS/);
+  assert.match(await chapterPage.locator("#lesson-content h3").innerText(),/¿Qué significa «Bom dia»\?/);
+  assert.equal((await chapterPage.locator("#turn-count").innerText()).trim(),"1 / 6");
+  await chapterContext.close();
+
+  const thresholdContext = await browser.newContext();
+  const thresholdPage = await thresholdContext.newPage();
+  await thresholdPage.goto(baseUrl,{waitUntil:"networkidle"});
+  await thresholdPage.locator("#welcome-start").click();
+  await thresholdPage.locator('[data-language="Portugués brasileño"]').click();
+  await thresholdPage.evaluate(() => {
+    const session = {
+      config:{language:"Portugués",languageId:"pt-BR",languageLocale:"pt-BR",duration:6,questionCount:6,topic:"daily",level:"zero",routeMode:true,routeUnitId:"foundations"},
+      turn:6,correct:4,attempted:6,streak:0,bestStreak:0,consecutiveCorrect:0,consecutiveErrors:0,
+      errors:[{exerciseId:"wrong-1",submitted:"x",expected:"y"},{exerciseId:"wrong-2",submitted:"x",expected:"y"}],
+      errorsToReview:[],vocabulary:[],reviewQueue:[],answers:Array.from({length:6},(_,i)=>({exerciseId:"seed-"+i,correct:i<4,status:i<4?"correct":"incorrect"}))
+    };
+    localStorage.setItem("adaptive-language-tutor.route-progress:pt-BR",JSON.stringify({
+      languageId:"pt-BR",unitId:"foundations",questionCount:6,session,integration:true,integrationAttempts:0,routeIntegrationHintLevel:0,
+      pendingFeedback:null,localPendingAnswer:null,aiPendingTurn:null,aiMode:false,aiHistory:[],
+      aiLastResult:null,aiCurrentExercise:null,aiPendingFeedback:null
+    }));
+  });
+  await thresholdPage.reload({waitUntil:"networkidle"});
+  await thresholdPage.locator("#welcome-start").click();
+  await thresholdPage.locator("#route-start").click();
+  await thresholdPage.locator("#route-integration-answer").fill("Amanhã estudo em casa.");
+  await thresholdPage.locator("#route-integration-submit").click();
+  await thresholdPage.locator("#summary-panel").waitFor({state:"visible"});
+  assert.equal(await thresholdPage.locator("#summary-content .summary-route-stars").innerText(),"★★★☆☆");
+  assert.equal(await thresholdPage.locator('[data-route-unit="travel"]').isDisabled(),false,"three earned stars should unlock the next unit at the threshold");
+  assert.match(await thresholdPage.locator("#route-summary-next").innerText(),/Continuar: Viajes y orientación/);
+  await thresholdContext.close();
+
   const lastRouteContext = await browser.newContext();
   const lastRoutePage = await lastRouteContext.newPage();
   await lastRoutePage.goto(baseUrl, { waitUntil:"networkidle" });
