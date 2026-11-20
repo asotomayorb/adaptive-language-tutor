@@ -136,19 +136,10 @@ try {
   await page.locator("#confirm-route-reset").click();
   assert.equal(await page.locator('[data-route-unit="travel"]').isDisabled(), true, "confirming reset should relock later units");
 
-  // Standard languages have flags and do not ask users to enter a locale.
-  await page.locator("#open-language-picker").click();
-  await page.locator('[data-language="Italiano"]').click();
-  assert.equal(await page.locator("#selected-language-flag").innerText(), "🇮🇹");
-  assert.equal(await page.locator('[data-mode="reading"]').evaluate(node => node.classList.contains("hidden")),true,"reading mode should stay hidden until that language has reading content");
-  await page.locator("#open-language-picker").click();
-  await page.locator('[data-language="other"]').click();
-  await page.locator("#custom-language-name").fill("Suajili");
-  assert.equal(await page.locator("#custom-language-locale").count(), 0, "custom languages must not request a locale");
-  await page.locator("#language-apply").click();
-  assert.equal(await page.locator("#selected-language-flag").innerText(), "🇰🇪", "recognized custom language should infer its flag");
-  await page.locator("#open-language-picker").click();
-  await page.locator('[data-language="Portugués brasileño"]').click();
+  // The target language is selected once during onboarding; no in-app switch or custom-language entry remains.
+  assert.equal(await page.locator("#open-language-picker").count(),0,"the active navigation must not expose a language picker");
+  assert.equal(await page.locator(".language-mosaic [data-language='other']").count(),0,"custom language generation must not be exposed");
+  assert.equal(await page.locator("#custom-language-name").count(),0,"there must be no free-text language field");
   assert.equal(await page.locator('[data-mode="reading"]').evaluate(node => node.classList.contains("hidden")),false,"Portuguese reading content should enable the reading mode");
 
   // Theory categories open a large list; each topic opens its own full-screen slide.
