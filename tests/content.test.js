@@ -53,3 +53,13 @@ test("diagnostic has enough questions for its four-question flow", () => {
     assert.ok(catalog.exercises.filter(item => item.level === "A2").length >= 1);
   }
 });
+
+
+test("reading comprehension passages progress in length from A1 to A2", () => {
+  for (const catalog of catalogs) {
+    const a1 = catalog.exercises.find(item => item.type === "reading" && item.level === "A1");
+    const a2 = catalog.exercises.find(item => item.type === "reading" && item.level === "A2");
+    assert.ok(a1 && a2, catalog.id + " should include A1 and A2 reading passages");
+    assert.ok(a2.passage.trim().split(/\\s+/).length > a1.passage.trim().split(/\\s+/).length, catalog.id + " A2 passage should be longer than A1");
+  }
+});
