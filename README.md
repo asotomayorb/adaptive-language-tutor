@@ -750,7 +750,7 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 
 ### Teoría
 - Para portugués, el pasado incluye tabla de terminaciones regulares (-AR, -ER, -IR) y una tabla de conjugación de verbos irregulares frecuentes.
-- Los ejemplos aplicados se presentan en tabla de dos columnas: pronombre y frase en idioma objetivo; traducción debajo y entre paréntesis.
+- Los ejemplos aplicados se presentan en tabla de dos columnas: pronombre y frase en idioma objetivo; traducción debajo y entre paréntesis. El mismo formato tabular se aplica a los ejemplos de los demás temas de conjugación y tiempos verbales cuando hay contenido disponible; las traducciones existentes entre paréntesis se conservan y se muestran en una segunda línea.
 - Las tablas pueden desplazarse horizontalmente dentro de su propio contenedor en móvil, sin comprimir el texto hasta hacerlo ilegible.
 - Los casos de futuro mantienen sus tablas propias y no mezclan excepciones del pasado.
 
