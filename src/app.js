@@ -785,10 +785,10 @@ function renderAITutorTurn(result) {
   $("hint-btn").textContent = "Pista";
   const aiRoutePhase = routeMode && !routeIntegration ? getRoutePhase(Math.min(session.turn,routeQuestionCount-1),routeQuestionCount) : null;
   $("lesson-phase").textContent = routeMode ? routeIntegration ? "HITO INTEGRADOR" : aiRoutePhase.label : topicLabels[session.config.topic].toUpperCase() + " · " + levelLabel(session.config.level).toUpperCase();
-  $("turn-count").textContent = routeMode && routeIntegration
-    ? "Actividad integradora"
-    : "Pregunta " + Math.min(session.turn + 1, routeMode ? routeQuestionCount : session.config.duration) + " / " + (routeMode ? routeQuestionCount : session.config.duration);
-  $("progress-bar").style.width = (session.turn / (routeMode ? routeQuestionCount : session.config.duration) * 100) + "%";
+  const activityTotal = routeMode ? routeQuestionCount : session.config.duration;
+  $("turn-count").textContent = Math.min(session.turn + 1, activityTotal) + " / " + activityTotal;
+  $("progress-bar").style.width = (Math.min(session.turn + 1, activityTotal) / activityTotal * 100) + "%";
+  $("progress-bar").parentElement.setAttribute("aria-valuenow",String(Math.round(Math.min(session.turn + 1, activityTotal) / activityTotal * 100)));
   $("streak").textContent = session.streak;
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
@@ -803,6 +803,7 @@ function renderAITutorTurn(result) {
   const targetLocale = session.config.languageLocale || session.config.languageId;
   const speechExercise = {
     ...aiCurrentExercise,
+    instruction,
     speechSegments:Array.isArray(result.speechSegments) && result.speechSegments.length
       ? result.speechSegments : aiCurrentExercise.speechSegments
   };
@@ -819,10 +820,10 @@ function renderAITutorTurn(result) {
   const questionSpeech = targetSpeech.length
     ? { text:targetSpeech.map(item => item.text.trim()).join(" "), locale:targetLocale }
     : null;
-  const promptAudio = aiCurrentExercise.prompt && questionSpeech
-    ? speakerButton(questionSpeech.text,questionSpeech.locale)
-    : "";
-  $("lesson-content").innerHTML = getExerciseIllustration({ ...aiCurrentExercise, topic:session.config.topic }) + instructionMarkup + prompt + promptAudio;
+  currentActivitySpeechSegments = questionSpeechSegments;
+  const promptAudio = questionSpeechSegments.map(item => speakerButton(item.text,item.locale)).join(" ");
+  $("lesson-content").innerHTML = getExerciseIllustration({ ...aiCurrentExercise, topic:session.config.topic }) +
+    '<div class="activity-phase">' + escapeHTML($("lesson-phase").textContent) + '</div>' + instructionMarkup + prompt + promptAudio;
   bindSpeakerButtons($("lesson-content"));
   bindVariantLinks($("lesson-content"));
   bindTargetWords($("lesson-content"));
@@ -1845,7 +1846,7 @@ function showSessionView(mode) {
   document.querySelectorAll(".app-screen").forEach(screen => screen.classList.add("hidden"));
   $("session-view").classList.remove("hidden");
   $("app-shell").classList.add("session-active");
-  $("session-mode-label").textContent = mode === "review" ? "Repaso" : mode === "reading" ? "Comprensión lectora" : "Entrenamiento";
+  $("session-mode-label").textContent = mode === "route" ? "Ruta" : mode === "review" ? "Repaso" : mode === "reading" ? "Comprensión lectora" : "Entrenamiento";
   window.scrollTo(0, 0);
 }
 function closeSessionAndReturn() {
