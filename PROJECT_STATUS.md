@@ -667,3 +667,15 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - Comprensión lectora: nuevo modo independiente dentro de Ejercicios, con seis preguntas piloto A1/A2 en portugués y seis en inglés, dos textos por idioma, comprensión literal, inferencia y vocabulario contextual. Las preguntas son de selección múltiple y el texto permanece visible entre preguntas.
 - Las funcionalidades y los datos de lectura se preparan para portugués e inglés; la validación humana inicial sigue centrada en portugués.
 - Pruebas automatizadas: `npm run check`, `npm test` y `npm run test:e2e` completados correctamente en GitHub Actions para el commit `8fc76fa4f9594233e0b5417a3b8144d4568b0624`. La validación humana en Android sigue pendiente.
+
+
+## Implementación — revisión de lectura y teoría (20-11-2026)
+
+**Cambios incorporados en `feature/mobile-bottom-navigation`:**
+- Reglas y excepciones de pasado/futuro en listas separadas, con un punto por idea.
+- TTS del pasaje lector con pausa y continuación; locale del idioma objetivo.
+- La sesión de comprensión lectora distingue visualmente preguntas del pasaje y práctica general. En el catálogo actual, al completar las seis preguntas de lectura se ofrecen actividades generales para completar la duración configurada.
+- Se amplió la extensión y profundidad del pasaje A2 de portugués e inglés; el orden de selección prioriza el nivel elegido y después la longitud.
+- Nombre visible «Entrenamiento» y consigna final de Ruta convertida en traducción de frase concreta con variantes aceptadas explícitas.
+
+**Validación pendiente:** ejecutar CI y Browser E2E sobre el commit resultante; comprobar TTS real y scroll en Android. No declarar validación humana completa.
