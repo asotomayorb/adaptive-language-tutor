@@ -197,8 +197,10 @@ try {
   assert.ok(await page.locator("#theory-description .theory-pronoun-table tbody tr").count() >= 6, "Portuguese future must conjugate for each subject pronoun");
   assert.match(await page.locator("#theory-description").innerText(), /vou falar|vai falar|vão falar/i, "Portuguese future must show the common ir + infinitive construction");
   assert.deepEqual(await page.locator("#theory-description .theory-pronoun-table").first().locator("thead th").evaluateAll(nodes => nodes.map(node => node.textContent.trim())), ["Pronombre","Forma verbal"], "future conjugation table should only show pronoun and verb form");
-  assert.match(await page.locator("#theory-description").innerText(), /En futuro simple/i, "future irregularities should be grouped with future rules");
-  assert.ok(await page.locator("#theory-description .theory-exceptions .theory-rule-list > li > .theory-rule-children li").count() >= 5,"future irregular roots should be nested under the future-specific exception category");
+  const futureIrregularBlock = page.locator("#theory-description .theory-table-block").filter({hasText:"Excepciones del futuro simple"});
+  assert.equal(await futureIrregularBlock.locator("tbody tr").count(),6,"future irregular verbs should be conjugated for every pronoun");
+  assert.deepEqual(await futureIrregularBlock.locator("thead th").evaluateAll(nodes => nodes.map(node => node.textContent.trim())),["Pronombre","dizer","fazer","trazer","pôr","ter","vir","ser"]);
+  assert.match(await futureIrregularBlock.innerText(),/direi[\\s\\S]*dirás[\\s\\S]*dirá[\\s\\S]*diremos/i,"future irregular forms should be shown across singular and plural subjects");
   assert.doesNotMatch(await page.locator("#theory-description").innerText(), /pretérito perfeito|fui, estar|ter → tive/i, "future theory must not contain past exceptions");
   assert.deepEqual(await page.locator("#theory-description .theory-pronoun-table").last().locator("thead th").evaluateAll(nodes => nodes.map(node => node.textContent.trim())), ["Pronombre","Forma verbal"], "future simple table must use the same headings");
   await page.locator("#theory-back").click();
