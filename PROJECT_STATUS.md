@@ -657,3 +657,13 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - Práctica: retirado el botón antiguo «Repasar error» (se conserva la modalidad independiente Repaso); encabezado de tema/nivel alineado con contador y etiqueta del pictograma mantenida debajo del icono.
 - Reproducción manual restringida al locale del idioma objetivo.
 - E2E ampliado para comprobar estos criterios. Pendiente confirmar los resultados de CI y revisar visual/auditivamente en Android real.
+
+
+## Iteración 20-11-2026 — teoría, estadísticas y comprensión lectora
+
+- Teoría de portugués: tablas de pasado y futuro muestran únicamente pronombre y forma verbal; se conservan ejemplos debajo de la tabla, seleccionados como muestra y no repetidos por cada fila.
+- Vocabulario de portugués: el tema Tiempo y fechas se organiza en días de la semana, meses, estaciones, partes del día y expresiones temporales. Se añadió el tema Números cardinales y ordinales con formas frecuentes y reglas de composición.
+- Estadísticas: comparación global con grupo de barras compacto y centrado; los gráficos global y por idioma usan viewBox fijo y una zona de altura reservada para evitar saltos al cambiar la vista.
+- Comprensión lectora: nuevo modo independiente dentro de Ejercicios, con seis preguntas piloto A1/A2 en portugués y seis en inglés, dos textos por idioma, comprensión literal, inferencia y vocabulario contextual. Las preguntas son de selección múltiple y el texto permanece visible entre preguntas.
+- Las funcionalidades y los datos de lectura se preparan para portugués e inglés; la validación humana inicial sigue centrada en portugués.
+- Pruebas E2E añadidas para estructura de conjugaciones, vocabulario temporal/números, modo lectura y dimensiones del gráfico. Pendiente ejecución automatizada; no marcar como validado hasta correrlas.
