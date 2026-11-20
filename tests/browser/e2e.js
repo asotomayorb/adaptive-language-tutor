@@ -60,8 +60,8 @@ try {
     window.__spoken = [];
     const synth = {
       getVoices: () => [{ name: "Brazilian Portuguese", lang: "pt-BR" }, { name: "English", lang: "en-US" }],
-      speak: utterance => window.__spoken.push({ text: utterance.text, lang: utterance.lang, voice: utterance.voice?.name }),
-      cancel: () => {},
+      speak: utterance => { window.__spoken.push({ text: utterance.text, lang: utterance.lang, voice: utterance.voice?.name }); synth.speaking = true; },
+      cancel: () => { synth.speaking = false; },
       pause: () => { synth.paused = true; },
       resume: () => { synth.paused = false; },
       paused: false,
@@ -304,6 +304,22 @@ try {
   assert.equal(await page.locator("#lesson-content .reading-passage").isVisible(),true,"the passage should remain available across its comprehension questions");
   await page.locator("#session-close").click();
   await page.locator("#session-confirm").waitFor({state:"visible"});
+  await page.locator("#confirm-session-close").click();
+  // A 10-question reading session moves from passage comprehension to clearly labeled general practice.
+  await page.locator('[data-mode="reading"]').click();
+  await page.locator("#duration").selectOption("10");
+  await page.locator("#start-session").click();
+  const correctReadingChoices = [0,0,0,0,1,0];
+  for (const choiceIndex of correctReadingChoices) {
+    assert.equal(await page.locator("#lesson-content .reading-question-type").innerText(),"Comprensión del texto");
+    await page.locator("#answer-area [data-choice]").nth(choiceIndex).click();
+    await page.locator("#answer-area #continue-answer").click();
+  }
+  assert.equal(await page.locator("#lesson-content .reading-passage").count(),0,"general practice should not retain a reading passage");
+  assert.equal(await page.locator("#lesson-content .reading-question-type").innerText(),"Práctica general");
+  assert.equal(await page.locator("#lesson-phase").innerText(),"PRÁCTICA GENERAL");
+  assert.equal(await page.locator("#answer-area #free-answer").count(),1,"general practice should use a clearly stated written task after comprehension");
+  await page.locator("#session-close").click();
   await page.locator("#confirm-session-close").click();
   // Incomplete Exercises sessions are discarded; no partial session is persisted.
   await page.locator('[data-screen="stats"]').click();
