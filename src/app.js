@@ -897,7 +897,6 @@ function renderAITutorTurn(result) {
   const prompt = aiCurrentExercise.prompt
     ? '<h3>' + renderClickableTargetText(aiCurrentExercise.prompt) + '</h3>'
     : '<h3>El tutor está preparando una actividad cerrada.</h3>';
-  const targetLocale = session.config.languageLocale || session.config.languageId;
   const speechExercise = {
     ...aiCurrentExercise,
     instruction,
@@ -910,13 +909,7 @@ function renderAITutorTurn(result) {
     const localeLanguage = String(item.locale).split("-")[0].toLowerCase();
     return !declaredLanguage || declaredLanguage === localeLanguage;
   });
-  const targetSpeech = questionSpeechSegments.filter(item =>
-    String(item.locale).toLowerCase() === String(targetLocale).toLowerCase() &&
-    item.languageRole !== "source" && item.role !== "instruction"
-  );
-  const questionSpeech = targetSpeech.length
-    ? { text:targetSpeech.map(item => item.text.trim()).join(" "), locale:targetLocale }
-    : null;
+
   currentActivitySpeechSegments = questionSpeechSegments;
   const promptAudio = questionSpeechSegments.map(item => speakerButton(item.text,item.locale)).join(" ");
   $("lesson-content").innerHTML = getExerciseIllustration({ ...aiCurrentExercise, topic:session.config.topic }) +
@@ -1494,8 +1487,7 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   $("error-count").textContent = session.errors.length;
   pendingFeedback = null;
   const targetLocale = session.config.languageLocale || session.config.languageId;
-  // Source-language instructions/prompts stay readable but are never sent to
-  // the target-language voice or given a target-language speaker button.
+  // Every displayed source and target segment keeps its own locale and speaker control.
   const questionSpeechSegments = getExerciseSpeechSegments(currentExercise)
     .filter(item => item.locale && item.text);
   currentActivitySpeechSegments = questionSpeechSegments;
