@@ -117,7 +117,7 @@ export function recordAnswer(session, exercise, rawAnswer) {
     session.streak = 0;
     session.consecutiveErrors += 1;
     session.consecutiveCorrect = 0;
-    session.errors.push({ ...attempt, explanation: exercise.explanation, skill: exercise.skill });
+    session.errors.push({ ...attempt, term: exercise.term || exercise.target, meaning: exercise.meaning || "", explanation: exercise.explanation, skill: exercise.skill });
     session.reviewQueue.push({ exerciseId: exercise.id, dueAfter: session.turn + 2, attempts: 0 });
   }
 
@@ -160,7 +160,7 @@ export function normalizeForComparison(value) {
 
 
 export function recordTutorEvaluation(session, {
-  exerciseId, prompt, submitted, expected = "", status = "not_applicable",
+  exerciseId, prompt, submitted, expected = "", term = "", meaning = "", status = "not_applicable",
   feedback = "", skill = "Producción"
 }) {
   const evaluated = ["correct", "partially_correct", "incorrect"].includes(status);
@@ -194,6 +194,8 @@ export function recordTutorEvaluation(session, {
     if (status === "incorrect" || status === "partially_correct") {
       session.errors.push({
         ...attempt,
+        term:term || expected,
+        meaning:meaning || "",
         explanation: feedback || "",
         skill: skill || "Producción"
       });
