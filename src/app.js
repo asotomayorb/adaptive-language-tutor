@@ -1726,9 +1726,22 @@ function getRouteAssessmentScore() {
   const correct = Math.min(attempted, Math.max(0, Number(session?.correct) || 0));
   return { attempted, correct };
 }
+function renderSummaryActions({ origin = "exercises", mode = "practice", canNext = true, nextLabel = "Siguiente ejercicio" } = {}) {
+  $("summary-return-label").textContent = origin === "route" ? "Volver a Ruta" : "Volver a Entrenamiento";
+  $("summary-restart").hidden = false;
+  $("route-summary-next").hidden = !canNext;
+  $("summary-next-label").textContent = nextLabel;
+  $("new-session").hidden = false;
+  $("summary-actions").dataset.origin = origin;
+  $("summary-actions").dataset.mode = mode;
+}
+
 function finishSession() {
   if (!session || sessionFinished) return;
   sessionFinished = true;
+  lastActivityConfig = { ...session.config };
+  lastActivityMode = routeMode ? "route" : session.config.topic === "reading" ? "reading" : "practice";
+  lastActivityExerciseIds = [...new Set((session.answers || []).map(item => item.exerciseId).filter(Boolean))];
   const routeScore = routeMode ? getRouteAssessmentScore() : null;
   if (routeMode && session.routeIntegrationComplete && routeScore.attempted > 0) {
     const attempted = routeScore.attempted;
@@ -1768,7 +1781,6 @@ function finishSession() {
     summary.accuracy = routeScore.attempted ? Math.round(routeScore.correct / routeScore.attempted * 100) : 0;
     summary.errors = summary.errors.filter(item => !String(item.exerciseId || "").startsWith("route-integration-"));
   }
-  const finalFeedback = pendingFeedback;
   pendingFeedback = null;
   persistSession(progress, session, summary);
   saveProgress(progress);
@@ -1778,28 +1790,36 @@ function finishSession() {
   const correctCount = routeMode ? routeScore.correct : Number(summary.correct) || 0;
   const accuracyPercent = attemptedCount ? Math.round(correctCount / attemptedCount * 100) : 0;
   const accuracyMessage = accuracyPercent === 100 ? "Perfecto" : accuracyPercent > 80 ? "Muy bien" : accuracyPercent > 60 ? "Bien" : accuracyPercent >= 40 ? "Vas progresando" : "Sigue practicando";
-  const errorCount = summary.errors.length;
-  const errors = summary.errors.map(item => '<li><span class="summary-submitted">' + escapeHTML(item.submitted) + '</span><span class="summary-arrow"> → </span><span class="summary-expected">' + escapeHTML(item.expected) + '</span></li>').join("");
-  const vocabularyText = summary.vocabulary.map(item =>
-    '<li>' + renderClickableTargetText(item.term) + ' ' + speakerButton(item.term, summaryLocale) + '</li>'
-  ).join("");
-  const focusItems = [...new Set([topicLabels[session.config.topic], ...summary.recommendedFocus, ...(summary.reviewPatterns || [])].filter(Boolean))];
-  const routeStars = Math.min(5,Math.floor(accuracyPercent/20));
-  const routeFeedback = attemptedCount === 0 ? "Sin respuestas evaluadas" : accuracyMessage;
+  const routeStars = Math.min(5,Math.floor(accuracyPercent / 20));
   const routeScoreMarkup = routeMode
-    ? '<section class="route-result" aria-label="Resultado de la unidad"><div class="summary-route-stars" aria-label="' + routeStars + ' de 5 estrellas">' + '★'.repeat(routeStars) + '☆'.repeat(5-routeStars) + '</div><p class="route-result-feedback">' + routeFeedback + '</p></section>' : "";
-  const reinforcementItems = [...new Set([
-    ...summary.errors.flatMap(item => {
-      const exercise = catalog?.exercises?.find(candidate => candidate.id === item.exerciseId);
-      return [item.skill, exercise?.skill, exercise?.term, topicLabels[exercise?.topic]].filter(Boolean);
-    }),
-    ...(summary.errorsToReview || []),
-    ...(session.errorsToReview || [])
-  ])];
+    ? '<section class="route-result" aria-label="Resultado de la unidad"><div class="summary-route-stars" aria-label="' + routeStars + ' de 5 estrellas">' + "★".repeat(routeStars) + "☆".repeat(5-routeStars) + '</div><p class="route-result-feedback">' + accuracyMessage + '</p></section>'
+    : '<div class="summary-accuracy"><strong>' + accuracyPercent + '%</strong><span>' + accuracyMessage + '</span></div>';
+  const reinforcementItems = [];
+  const seenReinforcement = new Set();
+  for (const error of summary.errors || []) {
+    const exercise = catalog?.exercises?.find(candidate => candidate.id === error.exerciseId);
+    const term = String(error.term || exercise?.term || error.expected || exercise?.target || "").trim();
+    if (!term) continue;
+    const meaning = String(error.meaning || exercise?.meaning || "").trim();
+    const key = term.toLocaleLowerCase() + "|" + meaning.toLocaleLowerCase();
+    if (seenReinforcement.has(key)) continue;
+    seenReinforcement.add(key);
+    reinforcementItems.push({term,meaning});
+  }
+  const reinforcementMarkup = reinforcementItems.length
+    ? '<section class="summary-section route-reinforcement"><h3>Reforzar</h3><ul class="summary-reinforcement-list">' +
+      reinforcementItems.map(item => '<li class="summary-reinforcement-item"><div class="summary-reinforcement-target">' +
+        renderClickableTargetText(item.term) + ' ' + speakerButton(item.term,summaryLocale) +
+        '</div>' + (item.meaning ? '<p class="summary-reinforcement-translation">(' + escapeHTML(item.meaning) + ')</p>' : '') +
+        '</li>').join("") + '</ul></section>'
+    : "";
+  $("summary-content").innerHTML = '<h2 class="summary-title">' + (routeMode ? "Resumen de Ruta" : "Resumen") + '</h2>' +
+    routeScoreMarkup + reinforcementMarkup;
+
+  routeSummaryNextUnitId = "";
+  let nextLabel = "Siguiente ejercicio";
+  let canNext = true;
   if (routeMode) {
-    $("summary-content").innerHTML = '<h2 class="summary-title">Resumen</h2>' + routeScoreMarkup +
-      (reinforcementItems.length ? '<section class="summary-section route-reinforcement"><h3>Reforzar:</h3><ul>' +
-        reinforcementItems.map(item => '<li>' + escapeHTML(item) + '</li>').join("") + '</ul></section>' : "");
     const units = getRouteUnitsForCatalog(catalog);
     const activeIndex = units.findIndex(unit => unit.id === activeRouteUnit?.id);
     const nextUnit = units[activeIndex + 1];
@@ -1807,33 +1827,19 @@ function finishSession() {
     const completedRecord = routeState.completedUnits?.[session.config.routeUnitId || activeRouteUnit?.id];
     routeSummaryNextUnitId = session.routeIntegrationComplete && completedRecord?.completed && nextUnit &&
       isRouteUnitUnlocked(units,activeIndex + 1,routeState) ? nextUnit.id : "";
-    $("route-summary-next").hidden = false;
-    if (routeSummaryNextUnitId) {
-      $("route-summary-next").textContent = 'Continuar: ' + nextUnit.title + ' →';
-    } else if (!session.routeIntegrationComplete) {
-      $("route-summary-next").textContent = 'Repetir unidad';
-    } else if (nextUnit) {
-      $("route-summary-next").textContent = 'Repetir para alcanzar ' + nextUnit.requiredStars + ' estrellas';
-    } else {
-      $("route-summary-next").textContent = 'Volver a Ruta';
-    }
-    $("new-session").hidden = true;
-  } else {
-    $("summary-content").innerHTML = '<h2 class="summary-title">Resumen</h2>' +
-      '<div class="summary-accuracy"><strong>' + accuracyPercent + '%</strong><span>' + accuracyMessage + '</span></div>' +
-      '<section class="summary-section"><h3 class="summary-error-title">Errores ' + errorCount + '/' + attemptedCount + '</h3><ul>' +
-      (errors || '<li>Sin errores</li>') + '</ul></section>' +
-      '<section class="summary-section"><h3>Vocabulario</h3><ul>' +
-      (vocabularyText || '<li>Sin palabras nuevas</li>') + '</ul></section>' +
-      '<section class="summary-section"><h3>Temas</h3><ul>' +
-      focusItems.map(item => '<li>' + escapeHTML(item) + '</li>').join("") + '</ul></section>';
-    $("route-summary-next").hidden = true;
-    $("new-session").hidden = false;
+    canNext = Boolean(routeSummaryNextUnitId);
+    nextLabel = routeSummaryNextUnitId ? "Siguiente unidad · " + nextUnit.title : "";
   }
+  currentActivitySpeechSegments = reinforcementItems.map(item => ({text:item.term,locale:summaryLocale}));
   bindSpeakerButtons($("summary-content"));
-  speech.speakSequence(summary.vocabulary.map(item => ({ text: item.term, locale: summaryLocale })), { automatic: true });
+  if (currentActivitySpeechSegments.length) speech.speakSequence(currentActivitySpeechSegments,{automatic:true});
+  renderSummaryActions({
+    origin:routeMode ? "route" : "exercises",
+    mode:lastActivityMode,
+    canNext,
+    nextLabel
+  });
 }
-
 $("new-session").addEventListener("click", () => {
   closeSessionAndReturn();
 });
