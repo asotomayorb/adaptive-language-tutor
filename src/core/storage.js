@@ -65,6 +65,7 @@ export function persistSession(progress, session, summary, now = Date.now()) {
     const card = {
       key, exerciseId: error.exerciseId, language: session.config.language,
       languageId, prompt: error.prompt, expected: error.expected,
+      term: error.term || error.expected, meaning: error.meaning || "",
       explanation: error.explanation || "", skill: error.skill || "",
       intervalIndex: 0, repetitions: 0, lastReviewedAt: null,
       dueAt: new Date(now).toISOString()
