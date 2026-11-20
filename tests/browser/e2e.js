@@ -175,12 +175,24 @@ try {
   assert.equal(await page.locator("#theory-description .theory-note").count(), 2, "past rules and irregularities should be grouped in separate note blocks");
   assert.match(await page.locator("#theory-description").innerText(), /Ayer/i, "past tense should include an applied example");
   assert.ok(await page.locator("#theory-description .theory-pronoun-table tbody tr").count() >= 6, "Portuguese past must conjugate for each subject pronoun");
+  assert.deepEqual(await page.locator("#theory-description .theory-pronoun-table thead th").allInnerTexts(), ["Pronombre","Forma verbal"], "past conjugation table should not repeat Spanish example translations in a third column");
   assert.match(await page.locator("#theory-description").innerText(), /fui|tive|fiz|disse/i, "Portuguese past must explain irregular verbs");
   await page.locator("#theory-next").click();
   assert.equal(await page.locator("#theory-title").innerText(), "Futuro");
   assert.match(await page.locator("#theory-description").innerText(), /Mañana/i, "future tense should include an applied example");
   assert.ok(await page.locator("#theory-description .theory-pronoun-table tbody tr").count() >= 6, "Portuguese future must conjugate for each subject pronoun");
   assert.match(await page.locator("#theory-description").innerText(), /vou falar|vai falar|vão falar/i, "Portuguese future must show the common ir + infinitive construction");
+  assert.deepEqual(await page.locator("#theory-description .theory-pronoun-table").first().locator("thead th").allInnerTexts(), ["Pronombre","Forma verbal"], "future conjugation table should only show pronoun and verb form");
+  await page.locator("#theory-close").click();
+  await page.locator('[data-theory="vocabulary"]').click();
+  const vocabularyRows = page.locator("#theory-list-items [data-theory-topic]");
+  await vocabularyRows.nth(2).click();
+  const timeTheory = await page.locator("#theory-description").innerText();
+  assert.match(timeTheory,/Días de la semana[\s\S]*segunda-feira[\s\S]*Meses del año[\s\S]*janeiro[\s\S]*Estaciones[\s\S]*Partes del día/i,"time vocabulary should include complete grouped calendar vocabulary");
+  await page.locator("#theory-back").click();
+  await vocabularyRows.nth(5).click();
+  const numberTheory = await page.locator("#theory-description").innerText();
+  assert.match(numberTheory,/Números cardinales[\s\S]*vinte[\s\S]*Números ordinales[\s\S]*primeiro/i,"number vocabulary should cover cardinal and ordinal forms");
   await page.locator("#theory-close").click();
   // Switching away and back resets Theory to its category start.
   await page.locator('[data-screen="exercises"]').click();
@@ -259,20 +271,40 @@ try {
   assert.ok(await page.locator("#summary-content .summary-accuracy span").innerText(), "summary should show an accuracy assessment");
   assert.match(summaryHeadings[0], /^Errores \d+\/5$/);
   assert.deepEqual(summaryHeadings.slice(1), ["Vocabulario","Temas"]);
-  // Incomplete Exercises sessions are discarded; no partial session is persisted.
+  // Reading comprehension is a separate mode with a text passage and objective choices.
   await page.locator("#new-session").click();
+  await page.locator('[data-mode="reading"]').click();
+  assert.equal(await page.locator("#topic").inputValue(),"reading","reading mode should select its dedicated topic");
+  assert.equal(await page.locator("#topic").isDisabled(),true,"reading topic should not be accidentally changed to a grammar topic");
+  await page.locator("#start-session").click();
+  assert.equal(await page.locator("#session-mode-label").innerText(),"Comprensión lectora");
+  assert.equal(await page.locator("#lesson-content .reading-passage").isVisible(),true,"reading mode should show a passage before its question");
+  assert.match(await page.locator("#lesson-content .reading-passage").innerText(),/João Pessoa/);
+  assert.equal(await page.locator("#answer-area [data-choice]").count(),3,"reading questions should always use objective multiple-choice answers");
+  await page.locator("#answer-area [data-choice]").first().click();
+  assert.equal(await page.locator("#feedback .answer-status.correct").isVisible(),true,"the reading answer should be evaluated against its canonical answer");
+  await page.locator("#answer-area #continue-answer").click();
+  assert.equal(await page.locator("#lesson-content .reading-passage").isVisible(),true,"the passage should remain available across its comprehension questions");
+  await page.locator("#session-close").click();
+  await page.locator("#session-confirm").waitFor({state:"visible"});
+  await page.locator("#confirm-session-close").click();
+  // Incomplete Exercises sessions are discarded; no partial session is persisted.
   await page.locator('[data-screen="stats"]').click();
   assert.equal(await page.locator("#statistics-content .stats-language-table").isVisible(), true, "statistics should show the cross-language metrics table");
   assert.equal(await page.locator("#statistics-content .stats-bar-chart").isVisible(), true, "global statistics should compare language accuracy with bars");
   assert.equal(await page.locator("#statistics-content .stats-average-line").count(), 0, "global average line should be removed");
   assert.doesNotMatch(await page.locator("#statistics-content .stats-chart-legend").innerText(), /promedio/i, "global average legend should be removed");
   const globalBarWidths = await page.locator("#statistics-content .stats-bar-chart rect.stats-bar").evaluateAll(nodes => nodes.map(node => Number(node.getAttribute("width"))));
-  assert.ok(globalBarWidths.every(width => width > 0 && width <= 68), "global chart bars should use more of each language slot");
+  assert.ok(globalBarWidths.every(width => width > 0 && width <= 32), "global chart bars should be compact and closely grouped");
+  const globalBarCenters = await page.locator("#statistics-content .stats-bar-chart rect.stats-bar").evaluateAll(nodes => nodes.map(node => Number(node.getAttribute("x")) + Number(node.getAttribute("width")) / 2));
+  assert.ok(globalBarCenters.length < 2 || globalBarCenters[globalBarCenters.length-1] - globalBarCenters[0] <= 38 * (globalBarCenters.length-1) + 1, "global bars should form a centered compact group rather than spreading across the chart");
+  const globalStageHeight = await page.locator("#statistics-content .stats-chart-stage").evaluate(node => Math.round(node.getBoundingClientRect().height));
   assert.equal(await page.locator("#statistics-content .stats-bar-chart .stats-flag-label").count(), globalBarWidths.length, "global chart should show one flag per language");
   assert.equal(await page.locator("#statistics-content .stats-bar-chart .chart-axis-label").evaluateAll(nodes => nodes.some(node => /[A-Za-zÁÉÍÓÚáéíóú]/.test(node.textContent))), false, "language names should not appear below the flags");
   assert.equal(await page.locator("#stats-view-select option").first().innerText(), "🌐 Global");
   await page.locator("#stats-view-select").selectOption("pt-BR");
   assert.equal(await page.locator("#statistics-content .stats-language-chart").isVisible(), true, "a language view should show daily questions and accuracy");
+  assert.equal(await page.locator("#statistics-content .stats-chart-stage").evaluate(node => Math.round(node.getBoundingClientRect().height)),globalStageHeight,"chart stage height should remain fixed when changing views");
   assert.equal(await page.locator("#statistics-content .stats-language-chart .chart-axis-title").textContent(), "Días");
   assert.equal(await page.locator("#statistics-content .stats-language-chart text.chart-axis-label").last().textContent(), "1");
   assert.equal(await page.locator("#statistics-content .stats-chart-scroll").evaluate(node => node.scrollWidth <= node.clientWidth + 1), true, "charts must fit the horizontal card margins without lateral scrolling");
