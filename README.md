@@ -637,4 +637,4 @@ Este registro define los criterios de aceptación de la próxima iteración; los
 - TTS: cada fragmento conserva su locale explícito; los controles manuales identifican el idioma reproducido. Se priorizan `speechLocale` y `promptLocale` sobre cualquier inferencia heurística.
 - Gramática: el renderizador común separa reglas y excepciones en listas legibles, también en los temas de artículos, pasado y futuro con contenido aplicado.
 
-**Validación de esta iteración:** código y pruebas E2E actualizados en la rama de preview. Pendiente confirmar resultados de CI y desplegar el nuevo commit; no declarar validación en Android hasta prueba real.
+**Despliegue de esta iteración:** Render Preview live en `dep-dbvt4mqjnfac738bvpqg`, commit `a94588dc58f940027b7d17742e7d6c4908652e57`. Render confirmó build y arranque correctos. Las pruebas E2E se actualizaron, pero su resultado automático aún no está verificado; la validación auditiva y visual en Android sigue pendiente.
