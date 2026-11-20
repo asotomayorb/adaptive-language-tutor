@@ -2210,7 +2210,7 @@ function renderTenseLesson(languageName, topicIndex) {
   const rule = isPast ? lesson.pastRule : lesson.futureRule;
   return '<p class="theory-slide-text">' + (isPast ? "El pasado permite narrar acciones anteriores. Observa esta frase y la forma verbal utilizada:" : "El futuro expresa planes, predicciones e intenciones. Observa esta construcción:") + '</p>' +
     renderGrammarRuleContent(rule,lesson.exceptions) +
-    '<section class="theory-example"><span>' + (isPast ? "Ejemplo en pasado" : "Ejemplo en futuro") + '</span><p class="theory-target-word">' + escapeHTML(example) + ' ' + speakerButton(example, locale) + '</p><p>' + escapeHTML(translation) + '</p></section>';
+    '<section class="theory-example"><span>' + (isPast ? "Ejemplo en pasado" : "Ejemplo en futuro") + '</span>' + renderTheoryExampleTable(example,translation,locale,languageName) + '</section>';
 }
 function renderPronounTable(sample, languageName, locale) {
   if (!sample?.pronouns) return "";
@@ -2218,6 +2218,27 @@ function renderPronounTable(sample, languageName, locale) {
   const meanings = pronounTranslations[languageName] || [];
   const rows = words.map((word,index) => '<tr><td><strong class="theory-target-word">' + escapeHTML(word) + '</strong> ' + speakerButton(word, locale) + '</td><td>' + escapeHTML(meanings[index] || "forma personal") + '</td></tr>').join("");
   return '<table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>Significado</th></tr></thead><tbody>' + rows + '</tbody></table><p class="theory-footnote">Pulsa el icono para escuchar cada forma. El significado puede variar según el contexto y el grado de formalidad.</p>';
+}
+function getTheoryExamplePronoun(example) {
+  const text = String(example || "").trim().replace(/^(?:yesterday|tomorrow|ayer|mañana|ontem|amanhã|ieri|domani|gestern|morgen|hier|demain|明日|昨日|昨天|어제|내일)\\s*,?\\s*/i,"");
+  const match = text.match(/^(a gente|você|vocês|eu|tu|nós|vós|ele|ela|eles|elas|i|you|he|she|it|we|they|je|j['’]|il|elle|on|nous|vous|ils|elles|ich|du|er|sie|es|wir|ihr|io|lui|lei|noi|voi|loro|я|ты|он|она|мы|вы|они|私|我|你|他|她|我们|저는|너는|그는|그녀는|우리는|أنا|أنت|هو|هي|نحن|मैं|तुम|वह|हम)\\b/i);
+  return match ? match[0] : "—";
+}
+function renderTheoryExampleTable(example, translation, locale, languageName = "") {
+  const knownTranslations = languageName === "Portugués brasileño" ? {
+    "Eu sou chilena.":"Soy chilena.",
+    "Hoje estou cansada.":"Hoy estoy cansada.",
+    "Estamos em casa.":"Estamos en casa."
+  } : {};
+  const rows = String(example || "").split(/\\s+\\/\\s+/).map(raw => {
+    const item = raw.trim();
+    const translated = item.match(/^(.*?)\\s*\\(([^()]*)\\)\\s*$/);
+    const target = translated ? translated[1].trim() : item;
+    const meaning = translated ? translated[2].trim() : knownTranslations[target] || translation || "";
+    return '<tr><td>' + escapeHTML(getTheoryExamplePronoun(target)) + '</td><td><span class="theory-target-word">' + escapeHTML(target) + '</span> ' + speakerButton(target,locale) +
+      (meaning ? '<small class="theory-translation">(' + escapeHTML(meaning.replace(/[.]$/,"")) + ')</small>' : '') + '</td></tr>';
+  }).join("");
+  return '<div class="theory-table-scroll"><table class="theory-example-table"><thead><tr><th>Pronombre</th><th>Ejemplo aplicado</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
 }
 function renderVerbLesson(languageName) {
   const lesson = verbLessons[languageName];
@@ -2233,7 +2254,7 @@ function renderVerbLesson(languageName) {
     }
     return '<tr><td>' + escapeHTML(row[0]) + '</td><td><strong class="theory-target-word">' + escapeHTML(row[1]) + '</strong> ' + speakerButton(row[1], locale) + '</td></tr>';
   }).join("");
-  return '<p class="theory-slide-text">' + escapeHTML(lesson.lead) + '</p><table class="theory-pronoun-table"><tbody>' + rows + '</tbody></table>' + renderGrammarRuleContent(lesson.rule,lesson.exceptions) + '<section class="theory-example"><span>Ejemplos aplicados</span><p>' + escapeHTML(lesson.example) + '</p></section>';
+  return '<p class="theory-slide-text">' + escapeHTML(lesson.lead) + '</p><table class="theory-pronoun-table"><tbody>' + rows + '</tbody></table>' + renderGrammarRuleContent(lesson.rule,lesson.exceptions) + '<section class="theory-example"><span>Ejemplos aplicados</span>' + renderTheoryExampleTable(lesson.example,"",locale,languageName) + '</section>';
 }
 const appliedTheoryContent = {
   "Inglés": {
