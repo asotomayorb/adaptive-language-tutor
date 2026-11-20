@@ -790,3 +790,18 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - [ ] Prueba humana en Android: confirmar voces instaladas, acento y reproducción en actividad y teoría.
 - [ ] Prueba humana en Android: comprobar visualmente la flecha y el espaciado en pantallas reales.
 - [ ] Prueba pedagógica: recorrer todas las unidades con distintos porcentajes y comprobar que los errores de «Reforzar» sean representativos.
+
+### Iteración de audio, progresión y consistencia de actividades — 20-11-2026
+
+- [x] TTS: el locale objetivo se conserva en `utterance.lang` aunque Chrome no exponga un objeto Voice coincidente; se deja la resolución final al motor del sistema sin asignar la voz española.
+- [x] TTS: reproducción de secuencias serializada; cada fragmento comienza al finalizar el anterior. `voiceschanged` conserva su reintento y se agrega una espera acotada con reintento explícito si Android no emite el evento.
+- [x] Ruta: unidad inicial renombrada a «Inicio del viaje»; capítulo 1 genera preguntas breves de vocabulario y mantiene ejercicios gramaticales etiquetados; capítulo 2 aplica en contexto y frases progresivas.
+- [x] Ruta: persistencia del mejor puntaje por unidad y evaluación de desbloqueo desde el registro guardado; E2E ampliado al umbral de 3 estrellas.
+- [x] Actividades: cabecera común con nombre de sección, contador y audio; barra de progreso debajo y porcentaje sincronizado con la pregunta actual; icono y etiqueta temática antes de la consigna.
+- [x] Resumen: se omite «Reforzar» si no hay elementos que revisar.
+- [x] Teoría PT-BR: tabla de terminaciones regulares, tabla de conjugación irregular y ejemplos aplicados con traducción parentética en segunda línea; tablas con desplazamiento horizontal controlado.
+- [ ] Confirmar resultado real de GitHub Actions para los últimos commits.
+- [ ] Desplegar el commit de código validado en Render Preview (auto-deploy desactivado).
+- [ ] Prueba humana Android: escuchar audio automático/manual en actividad y teoría; comprobar pronunciación y que no se use voz española.
+- [ ] Prueba humana Android: revisar barra, cabecera, progreso y ancho/legibilidad de tablas.
+- [ ] Recorrer Ruta desde «Inicio del viaje» hasta el resumen; confirmar que el capítulo 1 enseña vocabulario/reglas y que la siguiente unidad queda disponible al alcanzar el umbral.
