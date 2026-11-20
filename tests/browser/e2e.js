@@ -308,35 +308,30 @@ try {
   await page.locator("#session-close").click();
   await page.locator("#session-confirm").waitFor({state:"visible"});
   await page.locator("#confirm-session-close").click();
-  // A 10-question reading session moves from passage comprehension to clearly labeled general practice.
+  // A 10-question reading session stays exclusively within the reading passages.
   await page.locator('[data-mode="reading"]').click();
   await page.locator("#duration").selectOption("10");
   await page.locator("#start-session").click();
-  const correctReadingChoices = [0,0,0,0,1,0];
+  const correctReadingChoices = [0,0,0,0,1,0,0,0,0,0];
   for (const choiceIndex of correctReadingChoices) {
     assert.equal(await page.locator("#lesson-content .reading-question-type").evaluate(node => node.textContent.trim()),"Comprensión del texto");
+    assert.equal(await page.locator("#lesson-content .reading-passage").count(),1,"every reading question must retain its source passage");
     await page.locator("#answer-area [data-choice]").nth(choiceIndex).click();
     await page.locator("#answer-area #continue-answer").click();
   }
-  assert.equal(await page.locator("#lesson-content .reading-passage").count(),0,"general practice should not retain a reading passage");
-  assert.equal(await page.locator("#lesson-content .reading-question-type").evaluate(node => node.textContent.trim()),"Práctica general");
-  assert.equal(await page.locator("#lesson-phase").innerText(),"PRÁCTICA GENERAL");
-  assert.equal(await page.locator("#answer-area #free-answer").count(),1,"general practice should use a clearly stated written task after comprehension");
+  await page.locator("#summary-panel").waitFor({state:"visible"});
+  assert.equal(await page.locator("#summary-content h2").innerText(),"Resumen");
+  assert.equal(await page.locator("#summary-content .summary-accuracy strong").innerText(),"100%","all ten reading questions should be scored without inserting general practice");
   await page.locator("#session-close").click();
   await page.locator("#confirm-session-close").click();
   // Incomplete Exercises sessions are discarded; no partial session is persisted.
   await page.locator('[data-screen="stats"]').click();
   assert.equal(await page.locator("#statistics-content .stats-language-table").isVisible(), true, "statistics should show the cross-language metrics table");
-  assert.equal(await page.locator("#statistics-content .stats-bar-chart").isVisible(), true, "global statistics should compare language accuracy with bars");
-  assert.equal(await page.locator("#statistics-content .stats-average-line").count(), 0, "global average line should be removed");
-  assert.doesNotMatch(await page.locator("#statistics-content .stats-chart-legend").innerText(), /promedio/i, "global average legend should be removed");
-  const globalBarWidths = await page.locator("#statistics-content .stats-bar-chart rect.stats-bar").evaluateAll(nodes => nodes.map(node => Number(node.getAttribute("width"))));
-  assert.ok(globalBarWidths.every(width => width > 0 && width <= 32), "global chart bars should be compact and closely grouped");
-  const globalBarCenters = await page.locator("#statistics-content .stats-bar-chart rect.stats-bar").evaluateAll(nodes => nodes.map(node => Number(node.getAttribute("x")) + Number(node.getAttribute("width")) / 2));
-  assert.ok(globalBarCenters.length < 2 || globalBarCenters[globalBarCenters.length-1] - globalBarCenters[0] <= 38 * (globalBarCenters.length-1) + 1, "global bars should form a centered compact group rather than spreading across the chart");
+  assert.equal(await page.locator("#statistics-content .stats-horizontal-list").isVisible(), true, "global statistics should use full-width horizontal bars on mobile");
+  const globalRows = page.locator("#statistics-content .stats-horizontal-row");
+  assert.ok(await globalRows.count() >= 1, "each language should have its own readable row");
+  assert.ok(await page.locator("#statistics-content .stats-horizontal-track span").evaluateAll(nodes => nodes.every(node => Number.parseFloat(node.style.width) >= 0 && Number.parseFloat(node.style.width) <= 100)), "horizontal bars should encode percentages without overflow");
   const globalStageHeight = await page.locator("#statistics-content .stats-chart-stage").evaluate(node => Math.round(node.getBoundingClientRect().height));
-  assert.equal(await page.locator("#statistics-content .stats-bar-chart .stats-flag-label").count(), globalBarWidths.length, "global chart should show one flag per language");
-  assert.equal(await page.locator("#statistics-content .stats-bar-chart .chart-axis-label").evaluateAll(nodes => nodes.some(node => /[A-Za-zÁÉÍÓÚáéíóú]/.test(node.textContent))), false, "language names should not appear below the flags");
   assert.equal(await page.locator("#stats-view-select option").first().innerText(), "🌐 Global");
   await page.locator("#stats-view-select").selectOption("pt-BR");
   assert.equal(await page.locator("#statistics-content .stats-language-chart").isVisible(), true, "a language view should show daily questions and accuracy");
