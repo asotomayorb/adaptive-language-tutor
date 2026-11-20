@@ -752,7 +752,7 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Para portugués, el pasado incluye tabla de terminaciones regulares (-AR, -ER, -IR) y una tabla de conjugación de verbos irregulares frecuentes.
 - Los ejemplos aplicados se presentan en tabla de dos columnas: pronombre y frase en idioma objetivo; traducción debajo y entre paréntesis. El mismo formato tabular se aplica a los ejemplos de los demás temas de conjugación y tiempos verbales cuando hay contenido disponible; las traducciones existentes entre paréntesis se conservan y se muestran en una segunda línea.
 - Las tablas pueden desplazarse horizontalmente dentro de su propio contenedor en móvil, sin comprimir el texto hasta hacerlo ilegible.
-- Los casos de futuro mantienen sus tablas propias y no mezclan excepciones del pasado.
+- Los casos de futuro mantienen sus tablas propias y no mezclan excepciones del pasado. En portugués, los irregulares del futuro simple (dizer, fazer, trazer, pôr, ter, vir y ser) también se muestran conjugados para todas las personas, en una tabla independiente.
 
 ### Validación de esta iteración
 - Los tests unitarios y Browser E2E deben cubrir el fallback Android de locale explícito, reproducción secuencial, capítulo de descubrimiento, encabezado/progreso, omisión de «Reforzar» vacío y desbloqueo al umbral de estrellas.
