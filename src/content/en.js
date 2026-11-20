@@ -73,7 +73,8 @@ export const english = {
         "level": "A2",
         "topic": "travel",
         "skill": "Accommodation",
-        "prompt": "Traduce: “Necesito una habitación para dos personas.”",
+        "finalPractice": true,
+        "prompt": "Traduce al inglés esta frase concreta: «Necesito una habitación para dos personas».",
         "target": "I need a room for two people",
         "acceptedAnswers": [
           "I need a double room"
@@ -113,7 +114,8 @@ export const english = {
         "level": "A2",
         "topic": "food",
         "skill": "Food preferences",
-        "prompt": "Traduce: “Sin cebolla, por favor.”",
+        "finalPractice": true,
+        "prompt": "Traduce al inglés esta frase concreta: «Sin cebolla, por favor».",
         "target": "No onion, please",
         "acceptedAnswers": [
           "Without onion, please"
@@ -150,7 +152,8 @@ export const english = {
         "level": "A2",
         "topic": "work",
         "skill": "Asking for clarification",
-        "prompt": "¿Cómo dices “¿Puede repetir, por favor?” de forma cortés?",
+        "finalPractice": true,
+        "prompt": "Traduce al inglés esta frase concreta: «¿Puede repetir, por favor?».",
         "target": "Could you repeat that, please?",
         "acceptedAnswers": [
           "Can you repeat that, please?"
@@ -169,15 +172,17 @@ export const english = {
         "id": "en-daily-04",
         "level": "A2",
         "topic": "daily",
-        "skill": "Past simple",
-        "prompt": "Completa: Yesterday I ___ to the market.",
-        "target": "went",
+        "skill": "Past simple translation",
+        "prompt": "Traduce al inglés esta frase concreta: «Ayer fui al mercado».",
+        "target": "Yesterday I went to the market.",
+        "acceptedAnswers": ["I went to the market yesterday."],
+        "finalPractice": true,
         "term": "yesterday",
         "meaning": "ayer",
         "options": [
-          "went",
-          "go",
-          "will go"
+          "Yesterday I went to the market.",
+          "Yesterday I go to the market.",
+          "Tomorrow I will go to the market."
         ],
         "hint": "Yesterday indica pasado.",
         hintSpeechSegments:["Yesterday"], explanationSpeechSegments:["Went","Will go"], "explanation": "Went es el pasado irregular de go. Will go expresa futuro."
