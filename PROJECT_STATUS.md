@@ -809,3 +809,7 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - [x] Teoría: los ejemplos de los demás temas de conjugación y tiempos verbales también usan tablas de pronombre/ejemplo; se conserva la traducción entre paréntesis y se coloca debajo cuando existe en el contenido.
 
 - [x] Teoría PT-BR: las excepciones del futuro simple (dizer, fazer, trazer, pôr, ter, vir y ser) también están conjugadas para todos los pronombres en una tabla independiente.
+
+- [x] Ruta: el capítulo 2 ordena las actividades por nivel y longitud de respuesta, de estructuras breves a frases más complejas.
+- [x] Teoría PT-BR: el pasado cubre el conjunto de irregulares frecuentes en dos tablas conjugadas; el futuro simple muestra sus siete raíces irregulares conjugadas por persona.
+- [x] TTS: callbacks de finalización/progreso quedan invalidados al detener o reemplazar una reproducción, evitando que audio viejo avance tras cambiar de pantalla.
