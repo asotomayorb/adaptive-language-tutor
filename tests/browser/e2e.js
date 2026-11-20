@@ -246,8 +246,9 @@ try {
   assert.equal(await page.locator("#session-status").innerText(), "Práctica local", "available local content should avoid a live AI round trip");
   assert.equal(await page.locator("#lesson-content .exercise-instruction").innerText(), "Escucha la frase en portugués y elige su significado en español.");
   assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text.startsWith("Escucha la frase") && item.lang === "es-CL")), "exercise instructions should be spoken in Spanish");
+  await page.waitForFunction(() => window.__spoken.some(item => item.text === "Bom dia" && item.lang === "pt-BR"));
   assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "Bom dia" && item.lang === "pt-BR")), "the target phrase should be spoken in Portuguese");
-  assert.equal(await page.locator("#lesson-content [data-speak]").evaluateAll(nodes => nodes.every(node => node.dataset.locale === "pt-BR")), true, "manual play controls should only be offered for target-language speech");
+  assert.deepEqual(await page.locator("#lesson-content [data-speak]").evaluateAll(nodes => [...new Set(nodes.map(node => node.dataset.locale))].sort()),["es-CL","pt-BR"],"manual playback controls should preserve the source and target locales");
   assert.ok((await page.locator("#lesson-content .activity-phase").innerText()).length > 0, "the evaluated topic/phase should appear after the illustration");
   assert.equal((await page.locator("#turn-count").innerText()).trim(),"1 / 5","the shared header should show the current question count");
   assert.ok((await page.locator(".activity-progress #progress-bar").evaluate(node => parseFloat(node.style.width))) > 0,"activity progress should reflect the current question counter");
