@@ -238,8 +238,10 @@ try {
   assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text.startsWith("Escucha la frase") && item.lang === "es-CL")), "exercise instructions should be spoken in Spanish");
   assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "Bom dia" && item.lang === "pt-BR")), "the target phrase should be spoken in Portuguese");
   assert.equal(await page.locator("#lesson-content [data-speak]").evaluateAll(nodes => nodes.every(node => node.dataset.locale === "pt-BR")), true, "manual play controls should only be offered for target-language speech");
-  assert.ok((await page.locator("#lesson-phase").innerText()).length > 0, "topic/level heading should appear to the left of the question counter");
-  assert.ok((await page.locator("#turn-count").innerText()).includes("Pregunta"), "question counter should remain visible");
+  assert.ok((await page.locator("#lesson-content .activity-phase").innerText()).length > 0, "the evaluated topic/phase should appear after the illustration");
+  assert.equal((await page.locator("#turn-count").innerText()).trim(),"1 / 5","the shared header should show the current question count");
+  assert.ok((await page.locator(".activity-progress #progress-bar").evaluate(node => parseFloat(node.style.width))) > 0,"activity progress should reflect the current question counter");
+  assert.equal(await page.locator(".activity-header #session-mode-label").innerText(),"Entrenamiento","the activity section title should remain at the left of the header");
   assert.ok((await page.locator("#lesson-content .exercise-illustration small").innerText()).length > 0, "topic caption should remain below the illustration icon");
   assert.equal(await page.locator("#lesson-content > .eyebrow").count(), 0, "duplicate topic/level heading below the icon should be removed");
   assert.equal(await page.locator("#review-btn").count(), 0, "the obsolete Repasar error action should not be rendered");
@@ -524,8 +526,8 @@ try {
   assert.equal(await routePage.locator("#summary-content .summary-route-stars").innerText(),"★★★★★","Route summary should show stars instead of an achievement percentage");
   assert.equal(await routePage.locator("#summary-content .route-result-feedback").innerText(),"Perfecto","Route summary should show qualitative achievement feedback");
   assert.equal(await routePage.locator("#summary-content .route-result").isVisible(),true,"Route should always display its achievement level alongside stars");
-  assert.equal(await routePage.locator("#summary-content h3").innerText(),"Reforzar:","Route summary should have one reinforcement subtitle only");
-  assert.equal(await routePage.locator("#summary-content h3").count(),1,"Route summary must not split errors, vocabulary and topics into separate sections");
+  assert.equal(await routePage.locator("#summary-content h3").count(),0,"Route summary should omit the reinforcement subtitle when there is nothing to review");
+  assert.equal(await routePage.locator("#summary-content .route-reinforcement").count(),0,"an empty reinforcement section should not be rendered");
   assert.equal(await routePage.locator("#route-summary-next").isVisible(),true,"Route summary must provide a continuation action");
   assert.match(await routePage.locator("#route-summary-next").innerText(),/Continuar: Viajes y orientación/,"the next unlocked unit should be named in the continuation action");
   assert.equal(await routePage.locator('[data-route-unit="travel"]').isDisabled(),false,"a perfect completed first unit must unlock the next unit");
