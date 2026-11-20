@@ -1,7 +1,7 @@
 # Registro de estado del proyecto — Adaptive Language Tutor
 
-**Última actualización:** 17-11-2026  
-**Rama:** `feature/ai-tutor-pedagogy`  
+**Última actualización:** 18-11-2026  
+**Rama activa de preview:** `feature/mobile-bottom-navigation`  
 **Pull request:** [#2 – Improve adaptive tutor pedagogy and AI integration](https://github.com/asotomayorb/adaptive-language-tutor/pull/2)  
 **Estado global:** sesiones reales Gemini aprobadas en `pt-BR` y `fr-FR` (3 turnos y 5 fragmentos de voz por idioma); una sesión real adicional de navegador en francés completó persistencia y exportación. Tests unitarios (71) y Browser E2E aprobados en el commit `2425e81` (runs [#44127681116](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44127681116) y [#44127681802](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44127681802)). Se añadió repaso espaciado de patrones lingüísticos mediante autoevaluación, incluyendo conversaciones libres sin respuesta única, y pistas adicionales generadas bajo demanda sin consumir turnos, con reproducción manual de sus fragmentos en el idioma objetivo. La comprobación inicial de salud tiene timeout de 5 s; se corrigió la exposición de archivos estáticos y se añadieron pruebas de rutas privadas y cabeceras de seguridad. Audio TTS está parcialmente implementado y probado en Chromium; la validación auditiva en dispositivos reales y la revisión de seguridad siguen pendientes. No declarar listo para prueba humana amplia ni desplegar públicamente todavía.
 
@@ -377,3 +377,484 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [ ] Validación humana real: naturalidad pedagógica, pronunciación, voces instaladas, calidad auditiva y persistencia en el dispositivo/entorno del usuario.
 
 **Decisión:** la auditoría automatizada está cerrada para iniciar una prueba humana controlada. Esto no habilita producción. Siguen pendientes autenticación, cuotas compartidas, retención/acceso a logs, idempotencia, hosting y revisión de despliegue. PR #2 permanece draft; no merge, despliegue público ni sincronización con Replit.
+
+
+## Requisitos de producto móvil consolidados — 18-11-2026
+
+**Especificación vigente:** [README.md](README.md), secciones 2 a 9 y 11.  
+**Pruebas de aceptación añadidas:** [HUMAN_TEST_PLAN.md](HUMAN_TEST_PLAN.md), sección 8.
+
+- [x] Se registraron las decisiones nuevas en README: navegación Ruta / Ejercicios / Teoría / Estadísticas; barra inferior solo con iconos; Ruta minimalista sin métricas; idioma y audio en cabecera; sin sección Configuración.
+- [x] Se registró el flujo Global/Repaso → preparación (duración, nivel, tema) → ejercicio a pantalla completa.
+- [x] Se registró la decisión de no realizar diagnóstico inicial y comenzar directamente en el nivel elegido.
+- [x] Se registró que cerrar con X, tras confirmar, descarta el progreso temporal de la sesión actual sin borrar el historial previo.
+- [x] Se añadieron criterios de aceptación para recuperación de fallos IA, limpieza de estado entre sesiones/idiomas y comportamiento móvil.
+- [ ] Implementar la nueva navegación y las pantallas Ruta y Teoría.
+- [ ] Eliminar la pantalla/sección Configuración y mover selector de idioma a la cabecera global.
+- [ ] Implementar el flujo de preparación y sesión a pantalla completa, con X y audio únicamente.
+- [ ] Eliminar el diagnóstico inicial y asegurar que el nivel seleccionado se aplique desde la primera actividad.
+- [ ] Corregir el bloqueo del tutor IA, incluyendo timeout, cancelación de solicitudes obsoletas, recuperación y reinicio del estado de actividad.
+- [ ] Asegurar que el cierre confirmado descarta la sesión actual y no persiste datos parciales.
+- [ ] Ejecutar pruebas unitarias, Browser E2E y validación en dispositivo móvil real.
+
+**Importante:** este registro confirma que la especificación y los casos de prueba quedaron documentados. No significa que los cambios de interfaz y lógica ya estén implementados. La revisión del código de la rama muestra que la interfaz actual todavía contiene Inicio/Configuración, navegación con etiquetas, métricas en Inicio y ejercicios integrados en la misma vista; esos elementos siguen pendientes de sustituir conforme al README.
+
+
+## Rediseño de navegación y sesiones — implementación inicial 18-11-2026
+
+### Cambios realizados en código
+- [x] `index.html`: cuatro secciones Ruta, Ejercicios, Teoría y Estadísticas; barra inferior icon-only; selector de idioma y audio en cabecera.
+- [x] `src/styles.css`: estilo móvil, icono activo destacado, controles de cabecera, sesión a pantalla completa y diálogo de confirmación.
+- [x] `src/app.js`: selección Global/Repaso, preparación de sesión, pantalla completa, cierre con descarte, ocultación de métricas y controles secundarios.
+- [x] `src/app.js`: se eliminó el flujo de diagnóstico inicial; el nivel elegido se utiliza desde la primera actividad.
+- [x] `src/app.js`: la sesión de repaso trabaja sobre un borrador temporal y solo persiste al completar los repasos.
+- [x] `src/core/tutor-client.js`: timeout de 30 segundos y cancelación de solicitudes al abandonar la sesión.
+- [x] `src/app.js`: al fallar IA, el usuario puede reintentar o continuar con el motor local.
+- [x] `README.md`: se añadieron los detalles de implementación y pendientes.
+ 
+### Pendiente de verificación
+- [ ] Ejecutar `npm run check`.
+- [ ] Ejecutar `npm test`.
+- [ ] Ejecutar `npm run test:e2e`.
+- [ ] Verificar en preview Render después de desplegar este commit.
+- [ ] Prueba manual en Android real.
+- [ ] Diseñar e implementar el contenido real y progresión del modo historia Ruta.
+- [ ] Incorporar explicaciones didácticas reales en Teoría.
+- [ ] Revisar duración efectiva de sesiones y equivalencia provisional de dos turnos por minuto.
+
+**Estado:** primera implementación de la estructura móvil realizada en la rama. Todavía no está certificada por pruebas automatizadas ni prueba humana. No fusionar a main ni considerar lista para producción hasta cerrar las verificaciones anteriores.
+
+
+## Refinamientos de interfaz móvil — 18-11-2026
+
+**Rama:** feature/mobile-bottom-navigation.
+
+- [x] Se sustituyó el acceso inicial por bienvenida con botón Iniciar.
+- [x] Se rediseñó la barra inferior con Ruta/mapa, Ejercicios/pesas, selector central globo+bandera, Teoría/libro y Estadísticas/gráfico.
+- [x] El selector de idioma abre mosaico; la selección estándar se persiste y vuelve a Ruta. Para idiomas personalizados se toma la región del locale como bandera cuando está disponible.
+- [x] Ejercicios presenta Global/Repaso y los tres selectores en una sola pantalla; cantidad ahora son preguntas (5/10/15/20).
+- [x] Estadísticas muestra barras de precisión de sesiones históricas reales, o estado vacío.
+- [x] Teoría tiene contenido inicial de Gramática, Vocabulario y Expresiones para pt-BR e inglés.
+- [ ] Falta implementar Ruta como flujo pedagógico real con tema/nivel fijos, hitos y guardado parcial.
+- [ ] El criterio sugerido para Ruta (80% en cinco preguntas y actividad integradora) está documentado en README, pero pendiente de aprobación.
+- [ ] Aún no se han ejecutado npm run check, npm test ni npm run test:e2e para esta revisión.
+- [ ] Falta verificación visual y funcional en Android y confirmación de despliegue Render.
+
+**Importante:** no declarar esta revisión lista para prueba humana hasta cerrar los tests, la verificación en móvil y la progresión de Ruta.
+
+- [x] Se corrigió el retorno desde una sesión para mantener visibles las opciones de Ejercicios y sus desplegables. Último commit de código: `6eb031f`.
+
+
+### Despliegue de refinamientos móviles — 18-11-2026
+- [x] Render build y deploy completados correctamente para el commit de código `6eb031fb9b1051ad993df1e9ea8dbf4cd96f9472` (deploy `dep-dbuugt8u01pc73e2o700`).
+- [x] El servidor arrancó y anunció el servicio disponible.
+- [ ] Tests de proyecto y prueba visual/funcional Android aún pendientes; el build de Render no los reemplaza.
+
+
+## Revisión pedagógica y de contenido — 18-11-2026
+
+**Rama:** feature/mobile-bottom-navigation.
+
+- [x] Ruta con evaluación de 10 preguntas, umbral de dominio 8/10 y actividad integradora.
+- [x] Guardado independiente de progreso parcial en Ruta; se puede salir y reanudar.
+- [x] Ejercicios: 3 primeras preguntas con alternativas y luego escritura, independientemente del nivel.
+- [x] Feedback neutral diferido a la pregunta siguiente; respuesta modelo con control de pronunciación.
+- [x] Teoría con listado de temas y diapositivas a pantalla completa con navegación anterior/siguiente.
+- [x] Mosaico de 23 idiomas estándar y alta de idiomas no listados mediante nombre únicamente; no se pide locale. El locale reconocido se infiere internamente.
+- [x] Explicación emergente de variantes ortográficas inglesas (p. ej. color/colour).
+- [x] Bienvenida desaparece al pulsar Iniciar y no se repite tras guardar idioma.
+- [x] Ruta funciona con ejercicios locales para portugués/inglés y con tutor IA para otros idiomas cuando el proveedor está configurado; los borradores quedan separados por idioma.
+- [ ] Ampliar el catálogo de unidades y revisar el contenido de la primera unidad.
+- [x] GitHub Actions: npm run check, npm test y Browser E2E completados correctamente en el commit 3eef3801.
+- [ ] Validar visual y auditivamente en Android real.
+
+## Corrección de feedback, bienvenida y teoría — 18-11-2026
+
+- [x] La pantalla de bienvenida ya no se salta al iniciar con idioma guardado; requiere pulsar Iniciar.
+- [x] Feedback local e IA permanece al final de la pregunta actual. No hay avance automático; botón Continuar. El prompt IA evita repetir la respuesta o listar vocabulario/pronunciación en el mensaje de transición.
+- [x] Alternativas colorean respuesta correcta en verde y opción incorrecta seleccionada en rojo; explicación adicional solo cuando hay error.
+- [x] Se ocultan los bloques de texto Pronunciación/Vocabulario; se mantienen los controles de audio y lectura completa de la pregunta. Los ejemplos de escucha en portugués/inglés pronuncian la frase completa y piden su traducción al español; los ejercicios con hueco pronuncian la frase dejando pausa.
+- [x] Teoría de pronombres en tabla bilingüe con audio por fila y contenido aplicado de artículos, ser/estar y tiempos presente/pasado/futuro para los 23 idiomas estándar.
+- [x] Navegación entre secciones reinicia la vista en el inicio de cada sección.
+- [x] Ruta guarda y restaura el feedback pendiente de la pregunta actual.
+- [x] CI (npm run check, npm test y Browser E2E) aprobado en el commit `e227eea`.
+- [x] Preview Render desplegado en estado `live` para el commit `e227eea` (deploy `dep-dbv2si8u01pc73clh3u0`).
+- [ ] Validar el flujo visual y auditivo en Android real.
+
+
+
+## Correcciones solicitadas — 18-11-2026 (siguiente iteración)
+
+**Rama:** `feature/mobile-bottom-navigation`.
+
+- [x] Ruta ahora tiene un único banner: tras el primer inicio cambia a **Continuar recorrido** y guarda el estado inicial antes de la primera respuesta. La ruta no se reinicia al volver a pulsar el banner.
+- [x] Se retiró el mensaje gris de transición del tutor por encima de cada consigna.
+- [x] Se ajustó la pronunciación de preguntas mixtas: extrae el segmento de la consigna, conserva el locale objetivo y transforma guiones bajos simples/múltiples en pausa.
+- [x] El tutor no debe reproducir segmentos de voz en el idioma de origen como si fueran el idioma objetivo.
+- [x] El botón de envío de respuesta escrita se elimina tras el envío correcto; el feedback permanece y el avance depende de Continuar.
+- [x] El prompt IA exige actividades cerradas y verificables; no admite preguntas abiertas de preferencias sin respuesta modelo.
+- [x] Los errores concretos quedan disponibles inmediatamente en Repaso al persistir la sesión; los patrones cualitativos conservan el primer intervalo de un día.
+- [x] Teoría de italiano ampliada con artículos, *passato prossimo*, *futuro semplice*, ejemplos traducidos, vocabulario y expresiones aplicadas.
+- [ ] CI completo pendiente de ejecución/confirmación sobre el último commit.
+- [ ] Prueba visual y auditiva en Android pendiente.
+- [ ] Completar y revisar el contenido aplicado de teoría para el resto de los idiomas; no asumir que la cobertura es homogénea.
+
+### Diseño futuro (no implementado)
+- Modo de comprensión lectora con textos originales o de dominio público/licencia abierta verificada, atribución y preguntas cerradas basadas en el texto.
+- Clip cultural de 1–2 segundos asociado a cada bandera, usando exclusivamente grabaciones cuya licencia concreta esté verificada como dominio público o compatible.
+
+
+### Validación cerrada de la iteración — 18-11-2026
+- [x] `npm run check` y tests unitarios aprobados en GitHub Actions run `44424442155`.
+- [x] Browser E2E aprobado en run `44424442327`, incluyendo banner único de Ruta, locución por locale, exclusión de fragmentos en español en el audio objetivo y desaparición del botón de envío de texto.
+- [x] Render preview `live` con código `32673f0`, deploy `dep-dbv3kuhsrm7s73bap9n0`.
+- [ ] Validación manual Android: comprobar voz real, pausas en huecos, apariencia y áreas táctiles.
+
+## Iteración funcional — 18-11-2026
+
+**Estado: implementación parcial; CI y Browser E2E aprobados; preview desplegado; prueba humana pendiente.**
+
+- [x] La evaluación local acepta `expectedAnswer` además de `target`, y admite tolerancia de un error tipográfico cuando el ejercicio lo habilita.
+- [x] La interfaz de ejercicios IA presenta feedback determinista inmediato antes de esperar la respuesta del tutor para preparar la siguiente actividad.
+- [x] El prompt del tutor exige consignas en idioma objetivo y actividades integradoras cerradas.
+- [x] Ruta evita reutilizar ejercicios respondidos y busca ejercicios aún no usados en el catálogo completo antes de finalizar por agotamiento.
+- [x] Hito integrador local usa una tarea de traducción delimitada en lugar de una presentación abierta.
+- [x] Resumen reducido a un único título (Resumen) y los apartados Aciertos, Errores, Vocabulario y Temas.
+- [x] Estadísticas comparativas por idioma y gráfico lineal de precisión diaria.
+- [x] Palabras de texto objetivo seleccionables: se muestra la traducción registrada o se solicita una traducción contextual al tutor IA cuando hace falta.
+- [x] README y plan de prueba humana actualizados en esta iteración.
+- [x] Ampliar Teoría con artículos comparativos para inglés, portugués brasileño, francés y alemán; vocabulario y expresiones aplicados para inglés y portugués brasileño.
+- [ ] Completar la auditoría pedagógica de los demás idiomas: aún hay categorías de vocabulario/expresiones con contenido genérico y artículos sin suficiente detalle.
+- [x] Tests automatizados aprobados en el commit desplegado.
+- [x] Browser E2E aprobado en el commit desplegado.
+- [ ] Validar latencia, corrección y consulta de palabras en Android real.
+- [x] Desplegar manualmente a Render; deploy `dep-dbv59grl550s738ontg0` confirmado `live`.
+
+**Riesgos conocidos:** la corrección inmediata de ejercicios IA utiliza la lista cerrada de respuestas aceptadas para evitar falsos positivos. Si el tutor no incluye una variante válida en `acceptedAnswers`, podría producir un falso negativo; por eso debe probarse con respuestas equivalentes reales y ampliar el conjunto de variantes donde corresponda.
+
+- [x] E2E ampliado para probar traducción contextual por palabra y la vista de Estadísticas.
+
+- [x] La selección de palabras dentro de una alternativa no dispara la respuesta; el envío requiere tocar el área de la opción fuera de la palabra.
+
+- [x] El texto clicable distingue consignas marcadas en idioma objetivo de las instrucciones de apoyo en español.
+
+- [x] Los aciertos se resaltan en verde en el resumen; las respuestas erróneas se marcan en rojo y muestran la solución.
+
+- [x] La selección de palabras utiliza segmentación por idioma y contempla sistemas de escritura sin espacios entre palabras.
+
+- [x] Se eliminó el texto de estado redundante que aparecía debajo del resumen.
+
+- [x] Caso E2E de falso positivo añadido: una respuesta de otro idioma no se acepta aunque la evaluación simulada del tutor diga «correcta».
+
+- [x] La paleta del gráfico se genera por cantidad de idiomas, evitando repetir los ocho colores iniciales.
+
+- [x] Se corrigieron las referencias restantes a la paleta anterior en puntos y leyenda del gráfico.
+
+**Último commit desplegado:** `459e10c46861aa31a344db1e14b424bdfee2ccad`  
+**Preview:** https://adaptive-language-tutor-preview-5b3d.onrender.com/  
+**Siguiente validación:** prueba humana Android; completar Teoría en los idiomas restantes.
+
+
+## Iteración actual — 18/19-11-2026
+
+- [x] Selector de estadísticas: 🌐 Global e idioma individual.
+- [x] Comparación global mediante barras de precisión y línea punteada de promedio.
+- [x] Vista por idioma con preguntas respondidas y precisión por día practicado; máximo 15 días activos, numerados sin fechas.
+- [x] Eliminadas las traducciones emergentes al seleccionar palabras.
+- [x] Instrucciones en español separadas del texto a evaluar en los ejercicios locales y en la presentación del tutor IA.
+- [x] Resumen compacto: Aciertos y Errores con cifras sobre el total; se conserva el detalle de respuestas erróneas.
+- [x] Repaso: un error conserva la tarjeta vencida; solo un acierto la mueve al siguiente intervalo.
+- [ ] Validación humana Android de escalado del gráfico, legibilidad de etiquetas y flujo de repaso.
+
+## Iteración de refinamiento — 19-11-2026
+
+- [x] Gráficos de estadísticas ampliados: barras/puntos, trazos, tipografía y leyendas; el tamaño se conserva en móvil con scroll horizontal.
+- [x] Eje horizontal de actividad diaria: título «Días» y marcas numéricas 1…15 sin repetir la palabra.
+- [x] Feedback de ejercicios IA: «Continuar» aparece inmediatamente y espera de forma segura al resultado de la siguiente actividad.
+- [x] Veredicto local determinista: el modelo no puede convertir una respuesta incorrecta en correcta ni provocar elogios contradictorios.
+- [x] Eliminado el bloque gris de respuesta anterior en el hito integrador.
+- [x] Hito integrador de Ruta: pistas progresivas para portugués e inglés y persistencia del nivel de pista.
+- [x] Icono de Ruta sustituido por un mapa del tesoro con línea segmentada y destino marcado.
+- [ ] Auditoría pedagógica completa de Teoría: siguen faltando explicaciones aplicadas en varios idiomas/temas; no marcar como resuelto.
+- [x] Tests unitarios y comprobación estática: [GitHub Actions 44456571620](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44456571620).
+- [x] Browser E2E: [GitHub Actions 44456571650](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44456571650).
+- [x] Deploy manual Render LIVE: [dep-dbv7ee3rjlhs73b4lr9g](https://dashboard.render.com/web/srv-dbus3hnf3r2c739j9ir0/deploys/dep-dbv7ee3rjlhs73b4lr9g), commit `33db475`.
+- [ ] Validación humana Android.
+
+- [x] Consigna del hito integrador formulada en español y pistas progresivas disponibles tanto tras un error como mediante el botón «Pista».
+- [x] Nivel de pista guardado en el borrador de Ruta para continuar tras recargar.
+
+- [x] «Continuar» permanece habilitado mientras se prepara el siguiente turno; un toque anticipado se encola y avanza automáticamente al terminar la solicitud.
+
+- [x] El control «Pista» se muestra explícitamente durante el hito integrador de Ruta; las acciones auxiliares permanecen ocultas en el resto de la sesión.
+
+## Refinamiento 19-11-2026
+- [x] Aviso de voz fallback retirado de la interfaz; TTS continúa usando el locale pedido y fallback del navegador.
+- [x] Cabecera compactada y títulos de pantalla centrados.
+- [x] Gráficos limitados al ancho disponible, sin scroll horizontal.
+- [x] «Global» renombrado «Práctica»; controles de nivel/cantidad/tema ocultos en Repaso.
+- [x] Consigna y frase objetivo se pronuncian en segmentos con locale separado.
+- [x] Tres pistas progresivas para respuestas escritas.
+- [x] Portugués: pasado/futuro ampliados con formas por pronombre, ejemplos, regla y excepciones.
+- [x] Tests unitarios y Browser E2E aprobados; Preview desplegado en Render. [ ] Solicitar y completar prueba humana Android.
+- [ ] Próxima fase: paquetes de contenido offline y motor local determinista para reducir llamadas IA en tiempo real.
+- [ ] Roadmap: módulo de comprensión lectora con textos originales/de dominio público/licencia abierta, y lecturas de noticias didácticas con fuentes.
+- [ ] Política obligatoria: registrar procedencia/licencia/atribución y verificar derechos antes de incluir cada texto.
+
+- [x] Se prioriza el motor local cuando el paquete del idioma contiene ejercicios suficientes para la sesión; la IA en tiempo real queda como respaldo para catálogos insuficientes.
+
+- [x] Tests unitarios y análisis estático: [44570968240](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44570968240) — success.
+- [x] Browser E2E: [44570968307](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44570968307) — success.
+- [x] Render manual deploy LIVE: [dep-dbviiv60tbcc738k7o2g](https://dashboard.render.com/web/srv-dbus3hnf3r2c739j9ir0/deploys/dep-dbviiv60tbcc738k7o2g), commit d41a7cb532c02cb90153e41b877dfeaf5ba212e2.
+- [ ] Prueba humana Android y revisión de calidad pedagógica por idioma.
+
+
+## Iteración Ruta / Ejercicios / Estadísticas — 19-11-2026
+
+### Implementado en la rama activa
+- Ruta con cuatro unidades por tema: Fundamentos, Viajes y orientación, Comida y restaurantes, Trabajo y estudios.
+- Desbloqueo secuencial por finalización y estrellas de la unidad previa. Umbrales: unidad 2 = 3 estrellas en unidad 1; unidad 3 = 5 estrellas en unidad 2; unidad 4 = 3 estrellas en unidad 3 (umbral alcanzable con el conjunto actual de tres preguntas).
+- Puntaje de 0–5 estrellas basado en precisión; resumen por unidad y persistencia por idioma. Se conserva el mejor porcentaje/estrellas de cada unidad; repetirla con un resultado inferior no reduce el avance ni vuelve a bloquear unidades.
+- Ruta organiza actividades en vocabulario/conjugaciones, contexto y frases completas. En catálogos locales, los temas se corresponden con los ejercicios disponibles; en idiomas con IA, el tutor genera contenido por tema.
+- Reinicio de Ruta con diálogo de confirmación; borra solo el progreso de Ruta del idioma activo.
+- Ejercicios: banner desplegable “Ejercicio” para duración/nivel/tema; “Repaso” inicia directamente.
+- Pistas de dos pasos solo para respuestas escritas: “Pista” → “Ver respuesta”. Repaso conserva el tipo de respuesta original y las mismas reglas.
+- Resumen centrado con porcentaje y mensaje de rendimiento; eliminado el subtítulo “Aciertos”.
+- Gráfico de barras global ampliado con menor separación; conserva adaptación móvil sin scroll horizontal.
+- Pictogramas SVG originales según el objeto/tema de cada actividad.
+
+### Decisiones y límites
+- El modo relato con personajes/escenas encadenadas y los ejercicios de emparejar vocabulario quedan en roadmap.
+- Los catálogos locales disponibles para Ruta son portugués brasileño e inglés. Los otros idiomas muestran las cuatro unidades si el tutor IA está configurado; sin IA quedan en preparación.
+- La prueba humana debe validar si los umbrales de estrellas y el tamaño de las unidades son pedagógicamente adecuados. No se considera finalizado hasta probar en Android.
+
+### Commits y CI
+- Cambios principales de Ruta: `81fc199`, `fb37fd2`.
+- Cambios de interacción y revisión: `d054c72`, `2af2271`, `570d419`, `8ecbf2e`.
+- Ajustes de visuales, fases y puntuación: `3e7c9cb`, `f43500d`, `7fa4a5b`, `a0eb84c`, `c52249b`, `e92f732`.
+- Tests unitarios del código más reciente: success en run [44592541104](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44592541104).
+- Browser E2E confirmado success en run [44592484301](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44592484301); la ejecución del commit `e92f732` estaba en curso al registrar esta actualización.
+- Preview todavía debe recibir un deploy manual de la rama actual. El deploy anterior LIVE no contiene estos cambios.
+- Prueba humana Android pendiente.
+
+
+### Despliegue verificado — 19-11-2026
+- Preview: https://adaptive-language-tutor-preview-5b3d.onrender.com/
+- Render service: `adaptive-language-tutor-preview-5b3d` (`srv-dbus3hnf3r2c739j9ir0`).
+- Deploy LIVE: `dep-dbvkeng8v5cc73aukf70`.
+- Commit desplegado: `b7d6526cc8e3629e7898796948ee9cf4fc10e1e9`.
+- Auto-deploy continúa desactivado; el despliegue se ejecutó manualmente tras validar la rama.
+- Runtime logs confirman `npm start`, `node server/index.js`, escucha en `0.0.0.0:10000` y mensaje de Render “Your service is live”.
+- Tests unitarios del código desplegado: success [44593625853](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44593625853).
+- Browser E2E del HEAD desplegado: success [44593625642](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44593625642).
+- [ ] Prueba humana Android pendiente; no se declara cerrada la iteración hasta recibir ese resultado.
+
+
+## Iteración UI — 19-11-2026
+
+- Actualización en feature/mobile-bottom-navigation: barras del gráfico global afinadas y retirada la media global segmentada.
+- Teoría reorganizada para separar tablas, notas de reglas/excepciones y ejemplos posteriores.
+- Práctica: retirado el botón antiguo «Repasar error» (se conserva la modalidad independiente Repaso); encabezado de tema/nivel alineado con contador y etiqueta del pictograma mantenida debajo del icono.
+- Reproducción manual restringida al locale del idioma objetivo.
+- E2E ampliado para comprobar estos criterios. Pendiente confirmar los resultados de CI y revisar visual/auditivamente en Android real.
+
+
+## Iteración 20-11-2026 — teoría, estadísticas y comprensión lectora
+
+- Teoría de portugués: tablas de pasado y futuro muestran únicamente pronombre y forma verbal; se conservan ejemplos debajo de la tabla, seleccionados como muestra y no repetidos por cada fila.
+- Vocabulario de portugués: el tema Tiempo y fechas se organiza en días de la semana, meses, estaciones, partes del día y expresiones temporales. Se añadió el tema Números cardinales y ordinales con formas frecuentes y reglas de composición.
+- Estadísticas: comparación global con grupo de barras compacto y centrado; los gráficos global y por idioma usan viewBox fijo y una zona de altura reservada para evitar saltos al cambiar la vista.
+- Comprensión lectora: nuevo modo independiente dentro de Ejercicios, con seis preguntas piloto A1/A2 en portugués y seis en inglés, dos textos por idioma, comprensión literal, inferencia y vocabulario contextual. Las preguntas son de selección múltiple y el texto permanece visible entre preguntas.
+- Las funcionalidades y los datos de lectura se preparan para portugués e inglés; la validación humana inicial sigue centrada en portugués.
+- Pruebas automatizadas: `npm run check`, `npm test` y `npm run test:e2e` completados correctamente en GitHub Actions para el commit `8fc76fa4f9594233e0b5417a3b8144d4568b0624`. La validación humana en Android sigue pendiente.
+
+
+## Implementación — revisión de lectura y teoría (20-11-2026)
+
+**Cambios incorporados en `feature/mobile-bottom-navigation`:**
+- Reglas y excepciones de pasado/futuro en listas separadas, con un punto por idea.
+- TTS del pasaje lector con pausa y continuación; locale del idioma objetivo.
+- La sesión de comprensión lectora distingue visualmente preguntas del pasaje y práctica general. En el catálogo actual, al completar las seis preguntas de lectura se ofrecen actividades generales para completar la duración configurada.
+- Se amplió la extensión y profundidad del pasaje A2 de portugués e inglés; el orden de selección prioriza el nivel elegido y después la longitud.
+- Nombre visible «Entrenamiento» y consigna final de Ruta convertida en traducción de frase concreta con variantes aceptadas explícitas.
+
+**Validación pendiente:** ejecutar CI y Browser E2E sobre el commit resultante; comprobar TTS real y scroll en Android. No declarar validación humana completa.
+
+
+## Validación — Entrenamiento, TTS y teoría (20-11-2026)
+
+- [x] `npm run check` y `npm test` aprobados en GitHub Actions run [#44673507639](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44673507639), commit `552a556ab46292e4a206080438d0a4a0ded2a90d`.
+- [x] Browser E2E aprobado en run [#44673507580](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44673507580), commit `552a556ab46292e4a206080438d0a4a0ded2a90d`. Incluye teoría de pasado, lectura TTS con pausa/continuación, distinción lectura/práctica general, última pregunta de traducción y flujo de hito final de Ruta.
+- [x] Render Preview desplegado: `dep-dbvsjg59fdbs73bthtvg`, estado `live`, commit `f4db84df3d0b0314eb49955d5b3b0182c0b4773c`. El commit posterior `552a556` solo actualiza pruebas E2E; el código de aplicación y contenido desplegado ya coincide con la rama.
+- [ ] Prueba auditiva real del TTS y verificación de pausa/continuación en Android.
+- [ ] Revisión manual del scroll y legibilidad de los pasajes A1/A2 en un teléfono real.
+- [ ] Validación humana final de las variantes aceptadas de traducción en Ruta y Entrenamiento.
+
+La rama permanece `feature/mobile-bottom-navigation`; no se hizo merge a `main`.
+
+
+## Correcciones móviles — 20-11-2026
+
+Implementación en curso en `feature/mobile-bottom-navigation`:
+
+- [x] Estadísticas globales: reemplazado el SVG de barras verticales de ancho fijo por filas horizontales que ocupan el ancho disponible en móvil vertical.
+- [x] Ruta: puntuación calculada desde las respuestas de la unidad (sin incluir el hito integrador), con porcentaje y estrellas coherentes. Se normalizan registros antiguos para que un porcentaje ya obtenido no deje estrellas insuficientes por datos obsoletos.
+- [x] Comprensión lectora: eliminado el fallback a práctica general. Si se solicitan más preguntas que las disponibles, se recorre cíclicamente el banco lector.
+- [x] TTS: cada fragmento expone su locale; `promptLocale` se respeta explícitamente y los controles manuales indican el locale de reproducción.
+- [x] Teoría: helper común para separar reglas y excepciones en listas; aplicado a los renderizadores generales, artículos y temas aplicados de pasado/futuro.
+- [x] Browser E2E actualizado para cubrir lectura de 10 preguntas sin mezcla, barras en viewport 390×844, locales de audio y desbloqueo de la segunda unidad tras completar correctamente la primera.
+
+**Pendiente de validación:** CI y Browser E2E del commit actual. Sólo después de su aprobación se actualizará Render Preview. La prueba auditiva real en Android y la comprobación visual en el teléfono siguen siendo validaciones humanas pendientes. No se ha hecho merge a `main`.
+
+
+**Despliegue de la iteración móvil:** Render Preview confirmado `live` en `dep-dbvt4mqjnfac738bvpqg`, commit `a94588dc58f940027b7d17742e7d6c4908652e57`. Render reportó build exitoso y proceso Node iniciado. No se pudo confirmar el resultado de GitHub Actions desde el estado de checks consultado; no declarar CI/E2E aprobados hasta revisar sus runs. Validación Android manual sigue pendiente.
+
+
+## Actualización 20-11-2026 — regresiones reportadas
+
+**Cambios aplicados en la rama de trabajo:**
+- El selector de comprensión lectora deja de reciclar preguntas ya contestadas; si se agota el banco, termina la sesión en lugar de reiniciar el índice.
+- Los fragmentos de voz de preguntas locales se filtran por el locale objetivo; las instrucciones y preguntas en español permanecen visibles pero no se reproducen con la voz portuguesa/inglesa.
+- La vista IA ya no usa como fallback una pregunta de idioma origen para TTS del idioma objetivo.
+- Los botones de audio de opciones y respuestas de referencia se limitan al locale objetivo.
+- La lectura incorpora controles de reproducción/pausa, reinicio y barra de desplazamiento basada en SpeechSynthesisUtterance.onboundary.
+- Los sonidos de acierto/error se aplican también al repaso y a la evaluación integradora de Ruta.
+
+**Pendiente de validar antes de declarar corregido:**
+- Reproducir la evaluación final de Ruta y comprobar registro/desbloqueo real de unidades; el flujo necesita una prueba funcional completa y no debe darse por resuelto solo por el cambio de sonido.
+- Verificar TTS en Android real, ya que la disponibilidad de voces exactas y los eventos de progreso dependen del navegador/dispositivo.
+- Confirmar que la barra de lectura avanza y permite saltar a otra posición con las voces instaladas.
+- Ejecutar npm run check, npm test y Browser E2E después de los cambios.
+
+- Corrección adicional: el puntaje final de Ruta ahora usa los contadores de intentos realmente evaluados (`session.attempted` / `session.correct`); los turnos conversacionales IA marcados `not_applicable` dejan de contabilizarse como respuestas incorrectas. Pendiente validar progresión de unidad con sesión IA real.
+
+## Iteración 20-11-2026 — TTS, Teoría, Ruta y simplificación del frontend
+
+### Cambios aplicados en la rama activa
+- [x] TTS local: se elimina la inferencia automática del locale de consignas ambiguas. Solo se reproducen segmentos con locale explícito o rol de idioma claramente declarado.
+- [x] Motor de voz: si no hay voz instalada compatible con el locale solicitado, se omite la reproducción en vez de dejar que el navegador use una voz predeterminada del idioma origen.
+- [x] TTS IA: se validan fragmentos por locale propio; las instrucciones se sintetizan en español y los fragmentos objetivos en el locale objetivo. Los controles manuales siguen limitados al idioma objetivo.
+- [x] Teoría: reglas y excepciones pasan a listas numeradas; se separa el conjunto de excepciones del pasado del correspondiente al futuro para portugués brasileño.
+- [x] Ruta: el resumen muestra estrellas y un único bloque «Reforzar:»; se ocultan porcentaje, subtítulos de errores/vocabulario/temas y datos redundantes.
+- [x] Ruta: el resumen ofrece acción directa para iniciar la siguiente unidad desbloqueada o volver a Ruta si aún no cumple el umbral.
+- [x] Actividad: contador debajo de los controles X/audio; icono de tema como primer elemento del contenido; códigos MCER en niveles de dificultad.
+- [x] Frontend: se elimina el selector de cambio de idioma durante el uso y la opción de idioma personalizado. Se conserva la selección inicial entre idiomas disponibles.
+- [x] Estado interno de IA oculto; no se expone estado «Tutor IA disponible» al usuario.
+
+### Pruebas añadidas/actualizadas
+- [x] Unit tests TTS: voz objetivo ausente no debe provocar fallback a voz fuente.
+- [x] Browser E2E: orden contador/icono, ausencia de selector de idioma activo, resumen de Ruta con estrellas y refuerzo único, y avance directo a la siguiente unidad.
+- [x] npm run check y npm test aprobados en GitHub Actions para el commit de código 1c7a684.
+- [x] npm run test:e2e aprobado en GitHub Actions para el commit de código 1c7a684.
+- [x] Build y deploy manual de Render completados; Preview LIVE en dep-dc03b03m8hqs739dqns0.
+- [ ] Prueba auditiva real en Android con portugués y español; comprobar también comportamiento cuando falta la voz objetivo.
+- [x] Revisión estática de los temas de teoría presentes (gramática, vocabulario y expresiones) y corrección de la separación pasado/futuro; queda pendiente validación pedagógica humana de ejemplos y traducciones.
+- [ ] Verificar que cada elemento de «Reforzar» identifique correctamente palabra/habilidad/tema tras errores locales y de IA.
+- [ ] Prueba humana de desbloqueo y continuidad de las cuatro unidades de Ruta.
+
+### Límites de validación
+Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy Render están aprobados para el commit de código 1c7a684. La voz y el flujo pedagógico requieren prueba humana Android. No se ha modificado Replit ni se ha hecho merge a main.
+
+
+## Iteración 20-11-2026 — correcciones solicitadas de Ruta, Teoría, navegación y TTS
+
+### Cambios implementados
+- [x] Ruta: resumen presenta siempre estrellas y valoración cualitativa, incluso si una sesión incompleta llega al resumen.
+- [x] Ruta: se usa el mismo conjunto de intentos evaluados para calificación, estrellas y desbloqueo; los turnos no evaluables de IA no cuentan.
+- [x] Ruta: el botón inicia la unidad siguiente y el panel de actividad expone el ID de la unidad activa para verificar que no se reabra la anterior.
+- [x] Ruta: si faltan estrellas, el resumen informa el umbral y permite repetir; si no quedan unidades, permite volver al mapa.
+- [x] Teoría: reglas y excepciones pasan de listas planas a jerarquías con categoría de primer nivel y subelementos anidados cuando hay dos puntos, semicolon o enumeración de excepciones.
+- [x] Navegación: flecha icon-only común en esquina superior izquierda para detalle de teoría, lista de temas, setup cuando corresponde y sesión a pantalla completa.
+- [x] Navegación: al retroceder o cambiar sección se detiene el audio de la pantalla anterior.
+- [x] TTS: los fragmentos de consigna objetivo se agregan aunque el proveedor IA también entregue fragmentos de origen; el locale se compara sin distinguir mayúsculas/minúsculas.
+- [x] TTS: teoría pronuncia automáticamente el primer fragmento objetivo al abrir un tema y mantiene botones de pronunciación manual en los elementos disponibles.
+- [x] TTS: el controlador espera `voiceschanged` si Android todavía no entrega voces y cancela solicitudes pendientes al detener reproducción.
+
+### Pruebas añadidas/actualizadas
+- [x] Test unitario para reproducción diferida al cargar voces Android.
+- [x] E2E para valoración cualitativa y estrellas de Ruta, lanzamiento real de la unidad siguiente, jerarquía anidada, TTS automático/manual y flecha común.
+- [ ] Ejecutar `npm run check`, `npm test` y `npm run test:e2e` sobre el HEAD final.
+- [ ] Build y deploy manual Render; auto-deploy permanece desactivado.
+- [ ] Prueba humana Android: verificar voces disponibles y acento correcto en contenido de actividad y teoría.
+- [ ] Prueba humana: recorrer las cuatro unidades, incluyendo el caso de puntaje insuficiente para el desbloqueo.
+
+
+### Verificación final — 20-11-2026
+- [x] `npm run check` y `npm test` aprobados en run [44771349574](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44771349574).
+- [x] `npm run test:e2e` aprobado en run [44771349707](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44771349707).
+- [x] E2E de Ruta: calificación/valoración, continuidad real a unidad 2 y retorno al mapa desde la última unidad sin repetirla.
+- [x] E2E de Teoría: subcategorías anidadas para excepciones de pasado y futuro.
+- [x] E2E de TTS: reproducción automática y manual en locale objetivo; test unitario de espera a `voiceschanged`.
+- [x] E2E de navegación: flecha superior común en sesión y detalles de teoría.
+- [x] Render Preview LIVE: `dep-dc0749ss728c73clirf0`, commit `6b1f36f`.
+- [ ] Prueba humana en Android: confirmar voces instaladas, acento y reproducción en actividad y teoría.
+- [ ] Prueba humana en Android: comprobar visualmente la flecha y el espaciado en pantallas reales.
+- [ ] Prueba pedagógica: recorrer todas las unidades con distintos porcentajes y comprobar que los errores de «Reforzar» sean representativos.
+
+### Iteración de audio, progresión y consistencia de actividades — 20-11-2026
+
+- [x] TTS: el locale objetivo se conserva en `utterance.lang` aunque Chrome no exponga un objeto Voice coincidente; se deja la resolución final al motor del sistema sin asignar la voz española.
+- [x] TTS: reproducción de secuencias serializada; cada fragmento comienza al finalizar el anterior. `voiceschanged` conserva su reintento y se agrega una espera acotada con reintento explícito si Android no emite el evento.
+- [x] Ruta: unidad inicial renombrada a «Inicio del viaje»; capítulo 1 genera preguntas breves de vocabulario y mantiene ejercicios gramaticales etiquetados; capítulo 2 aplica en contexto y frases progresivas.
+- [x] Ruta: persistencia del mejor puntaje por unidad y evaluación de desbloqueo desde el registro guardado; E2E ampliado al umbral de 3 estrellas.
+- [x] Actividades: cabecera común con nombre de sección, contador y audio; barra de progreso debajo y porcentaje sincronizado con la pregunta actual; icono y etiqueta temática antes de la consigna.
+- [x] Resumen: se omite «Reforzar» si no hay elementos que revisar.
+- [x] Teoría PT-BR: tabla de terminaciones regulares, tabla de conjugación irregular y ejemplos aplicados con traducción parentética en segunda línea; tablas con desplazamiento horizontal controlado.
+- [ ] Confirmar resultado real de GitHub Actions para los últimos commits.
+- [ ] Desplegar el commit de código validado en Render Preview (auto-deploy desactivado).
+- [ ] Prueba humana Android: escuchar audio automático/manual en actividad y teoría; comprobar pronunciación y que no se use voz española.
+- [ ] Prueba humana Android: revisar barra, cabecera, progreso y ancho/legibilidad de tablas.
+- [ ] Recorrer Ruta desde «Inicio del viaje» hasta el resumen; confirmar que el capítulo 1 enseña vocabulario/reglas y que la siguiente unidad queda disponible al alcanzar el umbral.
+
+- [x] Teoría: los ejemplos de los demás temas de conjugación y tiempos verbales también usan tablas de pronombre/ejemplo; se conserva la traducción entre paréntesis y se coloca debajo cuando existe en el contenido.
+
+- [x] Teoría PT-BR: las excepciones del futuro simple (dizer, fazer, trazer, pôr, ter, vir y ser) también están conjugadas para todos los pronombres en una tabla independiente.
+
+- [x] Ruta: el capítulo 2 ordena las actividades por nivel y longitud de respuesta, de estructuras breves a frases más complejas.
+- [x] Teoría PT-BR: el pasado cubre el conjunto de irregulares frecuentes en dos tablas conjugadas; el futuro simple muestra sus siete raíces irregulares conjugadas por persona.
+- [x] TTS: callbacks de finalización/progreso quedan invalidados al detener o reemplazar una reproducción, evitando que audio viejo avance tras cambiar de pantalla.
+
+- [x] TTS Android: no se cancela un motor inactivo antes de la primera utterance; cancelación solo si hay audio activo/pendiente/pausado y reanudación explícita antes de reproducir.
+
+### Resultado final de validación y despliegue — 20-11-2026
+
+- [x] `npm run check` + `npm test` — 90 pruebas aprobadas: https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44781107121
+- [x] Browser E2E — aprobado: https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44781107099
+- [x] Render Preview desplegado y estado `live`: `dep-dc07vl3ncjis7381n1d0`
+- [x] Commit desplegado: `d9e98d3fbc70cfb23be41066f6a1959448effb24`
+- [x] Servicio vinculado a `feature/mobile-bottom-navigation`, auto-deploy desactivado; Replit permanece intacto.
+- [ ] Audio audible en Android real: pendiente de comprobación manual; las pruebas de navegador no demuestran reproducción física.
+- [ ] Revisar visualmente tablas y navegación en Android real.
+- [ ] Confirmar con una sesión real que la unidad siguiente aparece desbloqueada tras obtener 3 estrellas y sobrevive a una recarga.
+
+## Iteración 20-11-2026 — Audio PT-BR, actividades comunes y Repaso recuperable
+
+### Implementado
+- [x] Se leyó README al inicio de la iteración y se registran aquí las reglas nuevas; esta sección supersede requisitos previos en conflicto.
+- [x] Afinamiento de contenido y locales centrado en portugués brasileño (pt-BR). No se han actualizado otros catálogos de idioma.
+- [x] Audio en Ejercicios, Ruta, integración, Comprensión lectora, Repaso y expresiones erradas del resumen. Cada fragmento conserva locale; secuencia normal origen → objetivo y lectura pasaje → pregunta.
+- [x] Catálogo PT-BR: locales explícitos para consignas y separación de consignas mixtas donde era necesario.
+- [x] Cabecera/contador/progreso/icono/etiqueta temática comunes. Ruta cuenta también la integración (7 preguntas en la unidad de prueba); lectura limita el total a la duración seleccionada y al banco único disponible.
+- [x] Entrenamiento ordenado: Ejercicios → Comprensión lectora → Repaso.
+- [x] Resumen: solo expresiones incorrectas con audio y traducción; omite «Reforzar» vacío; acciones centradas de volver, reiniciar y siguiente; Ruta solo muestra siguiente unidad cuando se desbloquea.
+- [x] Repaso: cola de todas las palabras/frases pendientes; persiste cada calificación; cierre/recarga conserva tarjetas restantes y contador; reanuda la primera no completada. Las tarjetas falladas quedan pendientes para otra pasada.
+- [x] Renderización de estado vacío de Repaso y limpieza de audio anterior al navegar.
+
+### Validación automatizada
+- [x] Tests y check: https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44825579828
+- [x] Browser E2E: https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44825579907
+- [x] E2E cubre secuencia de voces, controles manuales, lectura automática, Ruta integración, progreso y contador, resumen enfocado y reanudación de Repaso tras cierre/recarga.
+- [ ] Audio audible en Android real: pendiente; el navegador automatizado solo valida llamadas/orden y controles, no que el teléfono emita sonido.
+- [ ] Revisión visual final en Android real: espaciado, legibilidad y botones de resumen.
+
+### Alcance pendiente
+- No extender contenido ni reglas específicas de PT-BR al resto de idiomas hasta que el usuario dé por afinado el flujo portugués.
+- Repetir después la validación de TTS y de interfaces con voces y contenidos propios de cada idioma.
+
+### Despliegue final
+- [x] Render Preview LIVE: https://adaptive-language-tutor-preview-5b3d.onrender.com/
+- [x] Deploy: dep-dc0c80k0916s73db0ftg; commit desplegado: 94aa33457e7d244f7679ae72186ad2916b5623e9.
+- [x] Build exitoso y servicio iniciado; auto-deploy desactivado.
+- [x] Replit permanece intacto; solo se trabajó en feature/mobile-bottom-navigation.
+- [ ] La prueba audible real en Android sigue pendiente.
+

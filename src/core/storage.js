@@ -65,9 +65,10 @@ export function persistSession(progress, session, summary, now = Date.now()) {
     const card = {
       key, exerciseId: error.exerciseId, language: session.config.language,
       languageId, prompt: error.prompt, expected: error.expected,
+      term: error.term || error.expected, meaning: error.meaning || "", promptLocale:error.promptLocale || "es-CL",
       explanation: error.explanation || "", skill: error.skill || "",
       intervalIndex: 0, repetitions: 0, lastReviewedAt: null,
-      dueAt: new Date(now + 24 * 60 * 60 * 1000).toISOString()
+      dueAt: new Date(now).toISOString()
     };
     if (existing) {
       Object.assign(existing, card);
@@ -115,8 +116,9 @@ export function gradeReview(progress, key, correct, now = Date.now()) {
     card.repetitions = 0;
     card.intervalIndex = 0;
   }
-  const days = correct ? INTERVALS_DAYS[card.intervalIndex] : INTERVALS_DAYS[0];
+  const days = correct ? INTERVALS_DAYS[card.intervalIndex] : 0;
   card.lastReviewedAt = new Date(now).toISOString();
+  // An incorrect word stays due; only a correct answer moves it out of the pending queue.
   card.dueAt = new Date(now + days * 24 * 60 * 60 * 1000).toISOString();
   return { card, nextIntervalDays: days };
 }

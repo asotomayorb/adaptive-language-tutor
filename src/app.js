@@ -7,36 +7,180 @@ import { escapeHTML } from "./core/html.js";
 import { createSpeechController } from "./core/speech.js";
 
 const $ = id => document.getElementById(id);
-const catalogs = { "Portugués brasileño": ptBR, "Inglés": english };
+const languageDefinitions = {
+  "Portugués brasileño": { id:"pt-BR", label:"Portugués", locale:"pt-BR", flag:"🇧🇷", catalog:ptBR },
+  "Inglés": { id:"en", label:"Inglés", locale:"en-US", flag:"🇺🇸", catalog:{ ...english, locale:"en-US" } },
+  "Italiano": { id:"it-IT", label:"Italiano", locale:"it-IT", flag:"🇮🇹" },
+  "Alemán": { id:"de-DE", label:"Alemán", locale:"de-DE", flag:"🇩🇪" },
+  "Ruso": { id:"ru-RU", label:"Ruso", locale:"ru-RU", flag:"🇷🇺" },
+  "Francés": { id:"fr-FR", label:"Francés", locale:"fr-FR", flag:"🇫🇷" },
+  "Español": { id:"es-ES", label:"Español", locale:"es-ES", flag:"🇪🇸" },
+  "Japonés": { id:"ja-JP", label:"Japonés", locale:"ja-JP", flag:"🇯🇵" },
+  "Chino mandarín": { id:"zh-CN", label:"Chino mandarín", locale:"zh-CN", flag:"🇨🇳" },
+  "Coreano": { id:"ko-KR", label:"Coreano", locale:"ko-KR", flag:"🇰🇷" },
+  "Neerlandés": { id:"nl-NL", label:"Neerlandés", locale:"nl-NL", flag:"🇳🇱" },
+  "Árabe": { id:"ar-SA", label:"Árabe", locale:"ar-SA", flag:"🇸🇦" },
+  "Hindi": { id:"hi-IN", label:"Hindi", locale:"hi-IN", flag:"🇮🇳" },
+  "Turco": { id:"tr-TR", label:"Turco", locale:"tr-TR", flag:"🇹🇷" },
+  "Griego": { id:"el-GR", label:"Griego", locale:"el-GR", flag:"🇬🇷" },
+  "Polaco": { id:"pl-PL", label:"Polaco", locale:"pl-PL", flag:"🇵🇱" },
+  "Sueco": { id:"sv-SE", label:"Sueco", locale:"sv-SE", flag:"🇸🇪" },
+  "Noruego": { id:"nb-NO", label:"Noruego", locale:"nb-NO", flag:"🇳🇴" },
+  "Danés": { id:"da-DK", label:"Danés", locale:"da-DK", flag:"🇩🇰" },
+  "Hebreo": { id:"he-IL", label:"Hebreo", locale:"he-IL", flag:"🇮🇱" },
+  "Vietnamita": { id:"vi-VN", label:"Vietnamita", locale:"vi-VN", flag:"🇻🇳" },
+  "Indonesio": { id:"id-ID", label:"Indonesio", locale:"id-ID", flag:"🇮🇩" },
+  "Tailandés": { id:"th-TH", label:"Tailandés", locale:"th-TH", flag:"🇹🇭" }
+};
+const catalogs = Object.fromEntries(Object.entries(languageDefinitions).map(([name,definition]) => [name, definition.catalog || { id:definition.id, label:definition.label, locale:definition.locale, exercises:[] }]));
 const speech = createSpeechController({ onStatus: updateAudioStatus });
 function updateAudioStatus(status) {
-  const toggle = document.getElementById("audio-toggle");
-  const label = document.getElementById("audio-status");
-  if (toggle) {
+  const toggles = [document.getElementById("audio-toggle"), document.getElementById("session-audio-toggle")].filter(Boolean);
+  toggles.forEach(toggle => {
     toggle.textContent = status.enabled ? "🔊" : "🔇";
     toggle.setAttribute("aria-pressed", String(status.enabled));
-    toggle.setAttribute("aria-label", status.enabled ? "Desactivar lectura automática" : "Activar lectura automática");
-    toggle.title = status.enabled ? "Lectura automática activada" : "Lectura automática desactivada";
+    toggle.setAttribute("aria-label", status.enabled ? "Desactivar audio" : "Activar audio");
+    toggle.title = status.enabled ? "Audio activado" : "Audio desactivado";
+    toggle.classList.toggle("audio-off", !status.enabled);
+  });
+}
+
+let currentActivitySpeechSegments = [];
+function toggleAudio() {
+  const enabled = speech.setEnabled(!speech.enabled);
+  if (!enabled) {
+    readingPassageActive = false;
+    readingPassagePaused = false;
+    updateReadingPassageControl();
+    return;
   }
-  if (label) {
-    label.textContent = !status.supported
-      ? "Este navegador no ofrece lectura de voz; puedes continuar practicando por escrito."
-      : status.fallback
-        ? "No hay una voz instalada para " + status.locale + "; se usará la voz predeterminada del dispositivo."
-        : status.error ? "La voz seleccionada no pudo reproducir este fragmento." : "";
+  if (currentExercise?.passage && !sessionFinished) {
+    startPassageSpeech(0, { automatic:true, onEnd:() => {
+      const remaining = currentActivitySpeechSegments.filter(item => item.role !== "passage");
+      speech.speakSequence(remaining, { automatic:true });
+    }});
+  } else {
+    speech.speakSequence(currentActivitySpeechSegments, { automatic:true });
   }
 }
-document.getElementById("audio-toggle")?.addEventListener("click", () => {
-  const enabled = speech.setEnabled(!speech.enabled);
-  if (enabled) {
-    const visibleSegments = [...document.querySelectorAll("#lesson-content [data-speak], #answer-area [data-speak], #feedback [data-speak], #summary-content [data-speak]")]
-      .filter(button => !button.closest(".hidden") && button.getClientRects().length > 0)
-      .map(button => ({ text: button.dataset.speak, locale: button.dataset.locale }));
-    speech.speakSequence(visibleSegments, { automatic: true });
-  }
-});
+document.getElementById("audio-toggle")?.addEventListener("click", toggleAudio);
+document.getElementById("session-audio-toggle")?.addEventListener("click", toggleAudio);
 function speakerButton(text, locale) {
-  return '<button class="speak-button" type="button" data-speak="' + escapeHTML(text) + '" data-locale="' + escapeHTML(locale || "") + '" aria-label="Reproducir pronunciación" title="Escuchar">▶</button>';
+  const spokenLocale = locale || session?.config?.languageLocale || catalog?.locale || "und";
+  return '<button class="speak-button" type="button" data-speak="' + escapeHTML(text) + '" data-locale="' + escapeHTML(spokenLocale) + '" aria-label="Escuchar en ' + escapeHTML(spokenLocale) + '" title="Escuchar (' + escapeHTML(spokenLocale) + ')">▶</button>';
+}
+const spellingVariants = {
+  color:["colour","En inglés estadounidense se escribe color; en inglés británico, colour."],
+  favorite:["favourite","En inglés estadounidense se escribe favorite; en inglés británico, favourite."],
+  center:["centre","En inglés estadounidense se escribe center; en inglés británico, centre."],
+  theater:["theatre","En inglés estadounidense se escribe theater; en inglés británico, theatre."],
+  traveled:["travelled","En inglés estadounidense se escribe traveled; en inglés británico, travelled."],
+  organize:["organise","En inglés estadounidense se escribe organize; en inglés británico, organise."]
+};
+function renderVariantTerms(value) {
+  let html = escapeHTML(value || "");
+  if (!["en-US","en-GB"].includes(catalog?.locale)) return html;
+  for (const [word] of Object.entries(spellingVariants)) {
+    const expression = new RegExp("\\b(" + word + ")\\b", "gi");
+    html = html.replace(expression, match => '<button class="variant-link" type="button" data-variant="' + match.toLowerCase() + '">' + match + '</button>');
+  }
+  return html;
+}
+function renderClickableTargetText(value) {
+  return escapeHTML(value || "");
+}
+function bindTargetWords() {
+  // Word-level translation was intentionally removed from exercise interactions.
+}
+function bindVariantLinks(root) {
+  root.querySelectorAll("[data-variant]:not([data-variant-bound])").forEach(button => {
+    button.dataset.variantBound = "true";
+    button.addEventListener("click", () => {
+      const word = button.dataset.variant;
+      const [alternative, explanation] = spellingVariants[word];
+      $("variant-word").textContent = word + " / " + alternative;
+      $("variant-description").textContent = explanation;
+      $("variant-dialog").showModal();
+    });
+  });
+}
+
+let readingPassageActive = false;
+let readingPassagePaused = false;
+let readingPassageOffset = 0;
+let readingPassageProgress = 0;
+function updateReadingPassageControl() {
+  const button = $("reading-tts-toggle");
+  const slider = $("reading-tts-progress");
+  const restart = $("reading-tts-restart");
+  if (button) {
+    button.disabled = !speech.supported;
+    button.textContent = readingPassageActive && !readingPassagePaused ? "Ⅱ" : "▶";
+    button.setAttribute("aria-label", readingPassageActive && !readingPassagePaused ? "Pausar lectura" : "Reproducir lectura");
+  }
+  if (slider) slider.value = String(readingPassageProgress);
+  if (restart) restart.disabled = !speech.supported;
+}
+function startPassageSpeech(fromOffset = 0, { automatic = false, onEnd } = {}) {
+  const passage = currentExercise?.passage || "";
+  if (!passage || !speech.supported) return;
+  readingPassageOffset = Math.max(0, Math.min(passage.length, fromOffset));
+  readingPassageActive = true;
+  readingPassagePaused = false;
+  const result = speech.speak(passage.slice(readingPassageOffset), session?.config?.languageLocale || catalog?.locale, {
+    automatic,
+    onBoundary: event => {
+      if (Number.isFinite(event?.charIndex)) {
+        readingPassageProgress = Math.min(100, Math.round((readingPassageOffset + event.charIndex) / passage.length * 100));
+        updateReadingPassageControl();
+      }
+    },
+    onEnd: () => {
+      readingPassageActive = false;
+      readingPassagePaused = false;
+      readingPassageOffset = 0;
+      readingPassageProgress = 100;
+      updateReadingPassageControl();
+      onEnd?.();
+    }
+  });
+  if (!result.spoken) readingPassageActive = false;
+  updateReadingPassageControl();
+}
+function togglePassageSpeech() {
+  const passage = currentExercise?.passage;
+  if (!passage) return;
+  if (readingPassageActive && readingPassagePaused) {
+    readingPassagePaused = !speech.resume();
+  } else if (readingPassageActive) {
+    readingPassagePaused = speech.pause();
+  } else {
+    const offset = readingPassageProgress >= 100 ? 0 : readingPassageOffset;
+    startPassageSpeech(offset);
+  }
+  updateReadingPassageControl();
+}
+function restartPassageSpeech() {
+  if (!currentExercise?.passage) return;
+  speech.stop();
+  readingPassageActive = false;
+  readingPassagePaused = false;
+  readingPassageOffset = 0;
+  readingPassageProgress = 0;
+  startPassageSpeech(0);
+}
+function seekPassageSpeech(value) {
+  const passage = currentExercise?.passage || "";
+  if (!passage) return;
+  const wasPlaying = readingPassageActive && !readingPassagePaused;
+  const offset = Math.floor(passage.length * Math.max(0, Math.min(100, Number(value) || 0)) / 100);
+  speech.stop();
+  readingPassageOffset = offset;
+  readingPassageProgress = Math.round(offset / passage.length * 100);
+  readingPassageActive = false;
+  readingPassagePaused = false;
+  if (wasPlaying) startPassageSpeech(offset);
+  else updateReadingPassageControl();
 }
 function bindSpeakerButtons(root) {
   root.querySelectorAll("[data-speak]:not([data-speech-bound])").forEach(button => {
@@ -48,10 +192,12 @@ function bindSpeakerButtons(root) {
   });
 }
 function appendSpeechButtons(root, segments) {
-  const locale = session?.config.languageLocale || session?.config.languageId;
-  const valid = (segments || []).filter(item =>
-    item && typeof item.text === "string" && item.text.trim() && item.locale === locale
-  );
+  const targetLocale = session?.config?.languageLocale || catalog?.locale || "";
+  const valid = (segments || []).filter(item => {
+    const locale = String(item?.locale || "").toLowerCase();
+    return item && typeof item.text === "string" && item.text.trim() &&
+      (locale === String(targetLocale).toLowerCase() || locale === "es-cl" || locale === "es");
+  });
   if (!valid.length) return;
   root.insertAdjacentHTML("beforeend", valid.map(item => " " + speakerButton(item.text, item.locale)).join(""));
   bindSpeakerButtons(root);
@@ -65,37 +211,127 @@ function appendCatalogSpeech(root, exercise, field, includeTarget = false) {
   ];
   const unique = [...new Set(phrases.filter(text => typeof text === "string" && text.trim()))];
   const segments = unique.map(text => ({ text, locale }));
+  currentActivitySpeechSegments = segments;
   appendSpeechButtons(root, segments);
   speech.speakSequence(segments, { automatic: true });
+}
+function getExerciseSpeech(exercise) {
+  // Never infer a spoken language from the text itself: Spanish and target-language
+  // prompts can be semantically similar and a wrong voice is worse than silence.
+  if (exercise?.speechText && exercise?.speechLocale) {
+    return { text: exercise.speechText, locale: exercise.speechLocale };
+  }
+  if (exercise?.prompt && exercise?.promptLocale) {
+    return { text: exercise.prompt, locale: exercise.promptLocale };
+  }
+  return { text: "", locale: "" };
+}
+function getExerciseSpeechSegments(exercise) {
+  const targetLocale = session?.config?.languageLocale || catalog?.locale || "";
+  const normalizeLocale = raw => {
+    const locale = String(raw || "").trim();
+    if (!locale) return "";
+    if (locale.toLowerCase() === targetLocale.toLowerCase() ||
+        locale.split("-")[0].toLowerCase() === targetLocale.split("-")[0].toLowerCase()) return targetLocale;
+    if (locale.toLowerCase() === "es" || locale.toLowerCase().startsWith("es-")) return "es-CL";
+    return "";
+  };
+  const segments = [];
+  const add = (text, rawLocale, role) => {
+    const phrase = String(text || "").trim();
+    const locale = normalizeLocale(rawLocale);
+    if (!phrase || !locale) return;
+    if (!segments.some(item => item.text === phrase && item.locale.toLowerCase() === locale.toLowerCase())) {
+      segments.push({ text:phrase, locale, role });
+    }
+  };
+
+  // Reading is presented before its Spanish comprehension question, so its
+  // spoken sequence follows that same visual order.
+  if (exercise?.passage) add(exercise.passage, targetLocale, "passage");
+  if (exercise?.instruction) add(exercise.instruction, "es-CL", "instruction");
+
+  const declared = Array.isArray(exercise?.speechSegments) ? exercise.speechSegments : [];
+  declared.forEach(item => {
+    if (!item?.text || !item?.locale) return;
+    const locale = normalizeLocale(item.locale);
+    if (!locale) return;
+    const declaredLanguage = String(item.language || "").toLowerCase();
+    if (declaredLanguage && declaredLanguage !== locale.split("-")[0].toLowerCase()) return;
+    add(item.text, locale, item.role || item.languageRole || "declared");
+  });
+
+  const spoken = getExerciseSpeech(exercise);
+  if (spoken.text && spoken.locale) add(spoken.text, spoken.locale, "prompt");
+  const prompt = String(exercise?.prompt || "").trim();
+  const promptLocale = exercise?.promptLocale ||
+    (exercise?.promptLanguage === "source" || exercise?.promptLanguage === "native" ? "es-CL" :
+      exercise?.promptLanguage === "target" ? targetLocale : "");
+  if (prompt && promptLocale) add(prompt, promptLocale, "prompt");
+
+  const promptContainsTerm = prompt && String(exercise?.term || "").trim() &&
+    prompt.toLocaleLowerCase().includes(String(exercise.term).trim().toLocaleLowerCase());
+  if (!declared.length && !exercise?.passage && exercise?.type !== "reading" && exercise?.term && !promptContainsTerm) {
+    add(exercise.term, targetLocale, "term");
+  }
+
+  const rank = item => item.role === "passage" ? 0 :
+    item.locale.toLowerCase() === "es-cl" ? 1 : 2;
+  return segments.sort((left,right) => rank(left) - rank(right));
 }
 function autoSpeak(text, locale = catalog?.locale) {
   if (text && speech.enabled) speech.speak(text, locale, { automatic: true });
 }
-const topicLabels = { daily:"vida cotidiana", travel:"viajes", food:"comida y restaurantes", work:"trabajo y estudios", random:"tema sorpresa" };
+const topicLabels = { daily:"vida cotidiana", travel:"viajes", food:"comida y restaurantes", work:"trabajo y estudios", reading:"comprensión lectora", random:"tema sorpresa" };
+const customLanguageLocales = {
+  "suajili":"sw-KE", "ucraniano":"uk-UA", "persa":"fa-IR", "farsi":"fa-IR",
+  "checo":"cs-CZ", "rumano":"ro-RO", "húngaro":"hu-HU", "hungaro":"hu-HU",
+  "finés":"fi-FI", "fines":"fi-FI", "estonio":"et-EE", "croata":"hr-HR",
+  "serbio":"sr-RS", "búlgaro":"bg-BG", "bulgaro":"bg-BG", "catalán":"ca-ES",
+  "catalan":"ca-ES", "gallego":"gl-ES", "urdu":"ur-PK", "bengalí":"bn-BD",
+  "bengali":"bn-BD", "malayo":"ms-MY", "filipino":"fil-PH"
+};
+const customLanguageFlags = {
+  "suajili":"🇰🇪", "ucraniano":"🇺🇦", "persa":"🇮🇷", "farsi":"🇮🇷",
+  "checo":"🇨🇿", "rumano":"🇷🇴", "húngaro":"🇭🇺", "hungaro":"🇭🇺",
+  "finés":"🇫🇮", "fines":"🇫🇮", "estonio":"🇪🇪", "croata":"🇭🇷",
+  "serbio":"🇷🇸", "búlgaro":"🇧🇬", "bulgaro":"🇧🇬", "catalán":"🇪🇸",
+  "catalan":"🇪🇸", "gallego":"🇪🇸", "urdu":"🇵🇰", "bengalí":"🇧🇩",
+  "bengali":"🇧🇩", "malayo":"🇲🇾", "filipino":"🇵🇭"
+};
 function getSelectedCatalog() {
-  const selected = $("language").value;
-  if (selected !== "other") return catalogs[selected] || null;
-  const label = $("custom-language-name").value.trim();
-  const locale = $("custom-language-locale").value.trim();
-  if (!label || !/^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/i.test(locale)) return null;
-  return { id: locale, label, locale, exercises: [] };
+  return catalogs[$("language").value] || null;
 }
-function updateCustomLanguageFields() {
-  const custom = $("language").value === "other";
-  $("custom-language-name-field").classList.toggle("hidden", !custom);
-  $("custom-language-locale-field").classList.toggle("hidden", !custom);
-  $("custom-language-name").required = custom;
-  $("custom-language-locale").required = custom;
+function updateLanguageFlag() {
+  const selected = $("language").value;
+  const readingAvailable = Boolean(getSelectedCatalog()?.exercises?.some(exercise => exercise.type === "reading"));
+  document.querySelector('[data-mode="reading"]')?.classList.toggle("hidden", !readingAvailable);
+  if (typeof ROUTE_STORAGE_KEY !== "undefined") {
+    const selectedCatalog = getSelectedCatalog();
+    routeDraft = getRouteDraftForLanguage(selectedCatalog?.id);
+    renderRouteDashboard();
+  }
 }
 let session = null;
 let catalog = null;
 let diagnostic = null;
 let currentExercise = null;
+let pendingFeedback = null;
+let localPendingAnswer = null;
+let aiPendingFeedback = null;
+let aiPendingTurn = null;
 let reviewExercise = null;
 let reviewMode = false;
 let progress = loadProgress();
 let dueReviewCards = [];
 let reviewIndex = 0;
+let reviewHintLevel = 0;
+let reviewCompletedCount = 0;
+let reviewTotalCount = 0;
+let reviewProcessedKeys = new Set();
+let lastActivityConfig = null;
+let lastActivityMode = "practice";
+let lastActivityExerciseIds = [];
 let aiConfigured = false;
 let aiReady = false;
 let aiMode = false;
@@ -104,108 +340,448 @@ let aiLastResult = null;
 let aiCurrentExercise = null;
 let aiHintLevel = 0;
 let aiHintPending = false;
+let aiEvaluationPending = false;
+let aiContinueRequested = false;
+let routeIntegrationHintLevel = 0;
+let localHintLevel = 0;
 let sessionFinished = false;
+let selectedExerciseMode = "practice";
+let sessionAbortController = null;
+let routeMode = false;
+let routeIntegration = false;
+let routeIntegrationAttempts = 0;
+let routeDraft = null;
+const ROUTE_STORAGE_KEY = "adaptive-language-tutor.route-progress";
+const ROUTE_UNITS_KEY = "adaptive-language-tutor.route-units";
+const ROUTE_UNIT_DEFINITIONS = [
+  { id:"foundations", number:"01", title:"Inicio del viaje", topic:"daily", icon:"🧭", requiredStars:0, description:"Primeras palabras, expresiones y reglas para comenzar a comunicarte." },
+  { id:"travel", number:"02", title:"Viajes y orientación", topic:"travel", icon:"🧭", requiredStars:3, description:"Moverte, preguntar y resolver situaciones." },
+  { id:"food", number:"03", title:"Comida y restaurantes", topic:"food", icon:"🍽️", requiredStars:5, description:"Pedir, elegir y expresar preferencias." },
+  { id:"work", number:"04", title:"Trabajo y estudios", topic:"work", icon:"💼", requiredStars:3, description:"Hablar de tareas, ocupaciones y ayuda." }
+];
+let selectedRouteUnitId = "foundations";
+let routeSelectionTouched = false;
+let activeRouteUnit = null;
+let routeQuestionCount = 10;
+let routeSummaryNextUnitId = "";
+function getRouteDraftForLanguage(languageId) {
+  if (!languageId) return null;
+  try { return JSON.parse(localStorage.getItem(ROUTE_STORAGE_KEY + ":" + languageId) || "null"); }
+  catch { return null; }
+}
+function getRouteProgressForLanguage(languageId) {
+  if (!languageId) return { completedUnits:{} };
+  try {
+    const saved = JSON.parse(localStorage.getItem(ROUTE_UNITS_KEY + ":" + languageId) || "null");
+    if (!saved || typeof saved !== "object") return { completedUnits:{} };
+    const completedUnits = Object.fromEntries(Object.entries(saved.completedUnits || {}).map(([unitId,record]) => {
+      if (!record || !record.completed) return [unitId,record];
+      const accuracy = Math.max(0,Math.min(100,Number(record.accuracy) || 0));
+      const derivedStars = Math.min(5,Math.floor(accuracy / 20));
+      return [unitId,{ ...record, stars:Math.max(Number(record.stars) || 0,derivedStars) }];
+    }));
+    return { ...saved, completedUnits };
+  } catch { return { completedUnits:{} }; }
+}
+function saveRouteProgressForLanguage(languageId, state) {
+  try { localStorage.setItem(ROUTE_UNITS_KEY + ":" + languageId, JSON.stringify(state)); } catch {}
+}
+function getRouteUnitsForCatalog(selectedCatalog) {
+  if (!selectedCatalog) return [];
+  if (!selectedCatalog.exercises?.length) return aiConfigured ? ROUTE_UNIT_DEFINITIONS.map(unit => ({ ...unit, questionCount:10, available:true })) : [];
+  return ROUTE_UNIT_DEFINITIONS.map(unit => ({
+    ...unit, questionCount:selectedCatalog.exercises.filter(exercise => exercise.topic === unit.topic).length,
+    available:selectedCatalog.exercises.some(exercise => exercise.topic === unit.topic)
+  })).filter(unit => unit.available);
+}
+function isRouteUnitUnlocked(units, index, state) {
+  if (index === 0) return true;
+  const record = state.completedUnits?.[units[index-1].id];
+  const earnedStars = Number.isFinite(Number(record?.stars)) ? Number(record.stars) : Math.floor((Number(record?.accuracy) || 0) / 20);
+  return Boolean(record?.completed && earnedStars >= Number(units[index].requiredStars || 0));
+}
+function renderRouteDashboard() {
+  const list = $("route-unit-list"), start = $("route-start");
+  if (!list || !start) return;
+  const selectedCatalog = getSelectedCatalog(), units = getRouteUnitsForCatalog(selectedCatalog);
+  const state = getRouteProgressForLanguage(selectedCatalog?.id);
+  routeDraft = getRouteDraftForLanguage(selectedCatalog?.id);
+  if (!routeSelectionTouched && routeDraft?.unitId && units.some(unit => unit.id === routeDraft.unitId)) selectedRouteUnitId = routeDraft.unitId;
+  else if (!routeSelectionTouched || !units.some(unit => unit.id === selectedRouteUnitId) || !isRouteUnitUnlocked(units,units.findIndex(unit => unit.id === selectedRouteUnitId),state)) {
+    const next = units.find((unit,index) => !state.completedUnits?.[unit.id] && isRouteUnitUnlocked(units,index,state))
+      || units.find((unit,index) => state.completedUnits?.[unit.id] && units[index+1] && !isRouteUnitUnlocked(units,index+1,state))
+      || units[0];
+    selectedRouteUnitId = next?.id || "";
+  }
+  list.innerHTML = units.map((unit,index) => {
+    const record = state.completedUnits?.[unit.id], unlocked = isRouteUnitUnlocked(units,index,state);
+    const stars = record?.stars || 0, starMarkup = "★".repeat(stars) + "☆".repeat(5-stars);
+    const status = !unlocked ? "Bloqueada" : record?.completed ? "Completada" : unit.id === selectedRouteUnitId ? "Disponible" : "Desbloqueada";
+    const requirement = index ? '<small class="route-requirement">Requiere ' + unit.requiredStars + ' estrellas en la unidad anterior</small>' : "";
+    return '<button class="route-unit-card' + (unit.id === selectedRouteUnitId ? ' selected' : '') + (!unlocked ? ' locked' : '') + '" type="button" data-route-unit="' + unit.id + '"' + (!unlocked ? ' disabled' : '') + '>' +
+      '<span class="route-unit-icon" aria-hidden="true">' + unit.icon + '</span><span class="route-unit-copy"><span class="route-unit-kicker">UNIDAD ' + unit.number + ' · ' + status.toUpperCase() + '</span><strong>' + unit.title + '</strong><small>' + unit.description + '</small>' +
+      (record?.completed ? '<span class="route-stars" aria-label="' + stars + ' de 5 estrellas">' + starMarkup + ' · ' + record.accuracy + '%</span>' : requirement) +
+      '</span><span class="route-unit-chevron" aria-hidden="true">›</span></button>';
+  }).join("") || '<p class="muted">La ruta de este idioma se está preparando.</p>';
+  const selected = units.find(unit => unit.id === selectedRouteUnitId), index = units.findIndex(unit => unit.id === selectedRouteUnitId);
+  const record = state.completedUnits?.[selectedRouteUnitId];
+  const draft = Boolean(routeDraft?.session && routeDraft.unitId === selectedRouteUnitId);
+  start.textContent = draft ? "Continuar unidad" : record?.completed ? "Repetir unidad" : "Comenzar unidad";
+  start.disabled = !selected || !isRouteUnitUnlocked(units,index,state);
+  $("route-reset")?.toggleAttribute("disabled", !selectedCatalog);
+  $("route-resume")?.classList.add("hidden");
+}
+function getRoutePhase(index,total) {
+  const chapterOneEnd = Math.max(2,Math.ceil(total * 0.4));
+  if (index < chapterOneEnd) return { id:"discovery",label:"CAPÍTULO 1 · VOCABULARIO Y REGLAS" };
+  return { id:"application",label:"CAPÍTULO 2 · APLICACIÓN PROGRESIVA" };
+}
+function getExerciseIllustration(exercise) {
+  const text = [exercise?.prompt,exercise?.term,exercise?.skill,exercise?.meaning].join(" ").toLocaleLowerCase();
+  const icon = /café|coffee|espresso/.test(text) ? "☕" : /baño|bathroom|banheiro/.test(text) ? "🚻"
+    : /pasaje|billete|ticket|passagem/.test(text) ? "🎫" : /restaurante|cuenta|bill|conta|cebolla|onion|comida/.test(text) ? "🍽️"
+    : /oficina|trabajo|office|work|ocupaci[oó]n/.test(text) ? "💼" : /viaje|tren|estaci[oó]n|travel|train|direcci[oó]n/.test(text) ? "🧭"
+    : /hora|ayer|mañana|yesterday|tomorrow|ontem/.test(text) ? "🕒" : "💬";
+  const label = topicLabels[exercise?.topic] || "situación cotidiana";
+  return '<div class="exercise-illustration" role="img" aria-label="Ilustración de ' + escapeHTML(label) + '"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><rect x="3" y="3" width="58" height="58" rx="15" fill="#e7eff7"/><circle cx="48" cy="15" r="5" fill="#c6d6e7"/><text x="32" y="44" text-anchor="middle" font-size="31">' + icon + '</text></svg><small>' + escapeHTML(label) + '</small></div>';
+}
 
 function refreshDashboard() {
-  const languageId = getSelectedCatalog()?.id;
-  const stats = getProgressStats(progress, languageId);
-  const due = getDueCards(progress, Date.now(), languageId);
-  $("progress-dashboard").innerHTML =
-    '<p class="eyebrow">TU PROGRESO GUARDADO</p>' +
-    '<div class="progress-summary"><span><strong>' + stats.sessions + '</strong> sesiones</span>' +
-    '<span><strong>' + stats.vocabulary + '</strong> palabras</span>' +
-    '<span><strong>' + stats.averageAccuracy + '%</strong> precisión media</span></div>' +
-    '<p class="muted">' + due.length + ' repasos pendientes para este idioma.</p>' +
-    (due.length ? '<button id="start-spaced-review" class="secondary" type="button">Iniciar repaso (' + due.length + ') →</button>' : '');
-  const reviewButton = $("start-spaced-review");
-  if (reviewButton) reviewButton.addEventListener("click", startSpacedReview);
+  const selectedId = getSelectedCatalog()?.id;
+  const languageIds = [...new Set([
+    ...progress.sessions.map(item => item.languageId).filter(Boolean),
+    ...progress.vocabulary.map(item => item.languageId).filter(Boolean),
+    selectedId
+  ].filter(Boolean))];
+  const entries = Object.entries(languageDefinitions);
+  const languages = languageIds.map(id => {
+    const definition = entries.find(([, value]) => value.id === id);
+    const sessionRecord = progress.sessions.find(item => item.languageId === id);
+    const wordRecord = progress.vocabulary.find(item => item.languageId === id);
+    return { id, label: definition?.[0] || sessionRecord?.language || wordRecord?.language || id,
+      flag: definition?.[1].flag || "🌐" };
+  });
+  const due = getDueCards(progress, Date.now(), selectedId).filter(card => card.cardType !== "pattern");
+  const reviewCount = $("review-count");
+  if (reviewCount) reviewCount.textContent = String(due.length);
+  const reviewDashboard = $("review-dashboard");
+  if (reviewDashboard) reviewDashboard.innerHTML = due.length
+    ? "<strong>" + due.length + " errores pendientes.</strong><p>Este apartado contiene únicamente respuestas incorrectas registradas en sesiones anteriores.</p>"
+    : "No tienes repasos pendientes. Los errores que cometas durante las sesiones aparecerán aquí.";
+  const statsContent = $("statistics-content");
+  if (!statsContent) return;
+  const previousStatsView = $("stats-view-select")?.value || "global";
+  const metrics = languages.map(language => {
+    const languageSessions = progress.sessions.filter(item => item.languageId === language.id);
+    const attempted = languageSessions.reduce((sum,item) => sum + (Number(item.attempted) || 0),0);
+    const correct = languageSessions.reduce((sum,item) => sum + (Number(item.correct) || 0),0);
+    const stats = getProgressStats(progress, language.id);
+    let routePercent = 0;
+    try {
+      const routeState = getRouteProgressForLanguage(language.id);
+      const routeUnits = getRouteUnitsForCatalog(languageDefinitions && Object.values(languageDefinitions).find(item => item.id === language.id)?.catalog || { exercises:[] });
+      const completedUnits = routeUnits.filter(unit => routeState.completedUnits?.[unit.id]?.completed).length;
+      routePercent = routeUnits.length ? Math.round(completedUnits / routeUnits.length * 100) : 0;
+      const draft = JSON.parse(localStorage.getItem(ROUTE_STORAGE_KEY + ":" + language.id) || "null");
+      if (draft?.session && !completedUnits) routePercent = Math.max(routePercent, Math.round((draft.session.turn / Math.max(1,draft.questionCount || 10))*100 / Math.max(routeUnits.length,1)));
+    } catch {}
+    return { ...language, sessions:stats.sessions, words:stats.vocabulary,
+      accuracy:attempted ? Math.round(correct / attempted * 100) : stats.averageAccuracy,
+      attempted, correct, routePercent };
+  });
+  const header = '<thead><tr><th>Indicador</th>' + metrics.map(item =>
+    '<th title="' + escapeHTML(item.label) + '">' + item.flag + '</th>').join("") + '</tr></thead>';
+  const rows = [["Sesiones","sessions"],["Palabras","words"],["Precisión","accuracy","%"],["Progreso de Ruta","routePercent","%"]];
+  const body = '<tbody>' + rows.map(([label,key,suffix=""]) =>
+    '<tr><th scope="row">' + label + '</th>' + metrics.map(item => '<td>' + item[key] + suffix + '</td>').join("") + '</tr>').join("") + '</tbody>';
+  const colorFor = index => "hsl(" + Math.round(index * 360 / Math.max(metrics.length, 1)) + " 62% 42%)";
+  const options = '<option value="global">🌐 Global</option>' + metrics.map(item =>
+    '<option value="' + escapeHTML(item.id) + '">' + item.flag + ' ' + escapeHTML(item.label) + '</option>').join("");
+  const selectedView = previousStatsView === "global" || metrics.some(item => item.id === previousStatsView)
+    ? previousStatsView : "global";
+  let chartMarkup = "";
+  if (selectedView === "global") {
+    if (!metrics.length) {
+      chartMarkup = '<p class="empty-chart">Completa una sesión para comparar la precisión entre idiomas.</p>';
+    } else {
+      chartMarkup = '<div class="stats-horizontal-list" role="list" aria-label="Precisión por idioma">' + metrics.map(item =>
+        '<div class="stats-horizontal-row" role="listitem"><div class="stats-horizontal-label"><span>' + item.flag + ' ' + escapeHTML(item.label) + '</span><strong>' + item.accuracy + '%</strong></div>' +
+        '<div class="stats-horizontal-track" role="img" aria-label="' + escapeHTML(item.label) + ': ' + item.accuracy + '%"><span style="width:' + item.accuracy + '%"></span></div></div>'
+      ).join("") + '</div><p class="chart-note">Precisión acumulada por idioma. Las barras ocupan el ancho disponible de la pantalla.</p>';
+    }
+  } else {
+    const language = metrics.find(item => item.id === selectedView);
+    const daily = new Map();
+    for (const item of progress.sessions) {
+      if (item.languageId !== selectedView || !item.completedAt) continue;
+      const day = item.completedAt.slice(0,10);
+      if (!daily.has(day)) daily.set(day,{attempted:0,correct:0});
+      const record = daily.get(day);
+      record.attempted += Number(item.attempted) || 0;
+      record.correct += Number(item.correct) || 0;
+    }
+    const practicedDays = [...daily.entries()].sort(([a],[b]) => a.localeCompare(b)).slice(-15);
+    if (!practicedDays.length) {
+      chartMarkup = '<p class="empty-chart">Todavía no hay días de práctica registrados para ' + escapeHTML(language?.label || "") + '.</p>';
+    } else {
+      const width = 760, height = 340, left = 38, right = 38, top = 28, bottom = 64;
+      const plotWidth = width-left-right, plotHeight = height-top-bottom;
+      const maxQuestions = Math.max(1,...practicedDays.map(([,item])=>item.attempted));
+      const questionMax = Math.max(5,Math.ceil(maxQuestions/5)*5);
+      const xAt = index => practicedDays.length===1 ? left+plotWidth/2 : left+index*plotWidth/(practicedDays.length-1);
+      const yAccuracy = value => top+(100-value)*plotHeight/100;
+      const yQuestions = value => top+(questionMax-value)*plotHeight/questionMax;
+      const grid = [0,25,50,75,100].map(value =>
+        '<line x1="' + left + '" y1="' + yAccuracy(value) + '" x2="' + (width-right) + '" y2="' + yAccuracy(value) + '" class="chart-gridline"/>' +
+        '<text x="3" y="' + (yAccuracy(value)+4) + '" class="chart-axis-label">' + Math.round(questionMax*value/100) + '</text>' +
+        '<text x="' + (width-right+5) + '" y="' + (yAccuracy(value)+4) + '" class="chart-axis-label">' + value + '%</text>'
+      ).join("");
+      const countPoints = practicedDays.map(([,item],index)=>xAt(index)+","+yQuestions(item.attempted)).join(" ");
+      const accuracyPoints = practicedDays.map(([,item],index)=>{
+        const accuracy = item.attempted ? item.correct/item.attempted*100 : 0;
+        return xAt(index)+","+yAccuracy(accuracy);
+      }).join(" ");
+      const dots = practicedDays.map(([,item],index)=>{
+        const accuracy = item.attempted ? item.correct/item.attempted*100 : 0;
+        return '<circle cx="' + xAt(index) + '" cy="' + yQuestions(item.attempted) + '" r="7" class="stats-question-dot"><title>' + item.attempted + ' preguntas</title></circle>' +
+          '<circle cx="' + xAt(index) + '" cy="' + yAccuracy(accuracy) + '" r="7" class="stats-accuracy-dot"><title>' + Math.round(accuracy) + '% precisión</title></circle>' +
+          '<text x="' + xAt(index) + '" y="' + (height-26) + '" text-anchor="middle" class="chart-axis-label">' + (index+1) + '</text>';
+      }).join("");
+      chartMarkup = '<div class="stats-chart-scroll"><svg class="stats-line-chart stats-language-chart" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="Preguntas respondidas y precisión por día practicado">' +
+        grid + '<polyline class="stats-question-line" points="' + countPoints + '"/><polyline class="stats-accuracy-line" points="' + accuracyPoints + '"/>' + dots + '<text x="' + (left+plotWidth/2) + '" y="' + (height-4) + '" text-anchor="middle" class="chart-axis-title">Días</text></svg></div>' +
+        '<div class="stats-chart-legend"><span><i class="legend-question"></i>Preguntas respondidas</span><span><i class="legend-accuracy"></i>Precisión (%)</span></div>' +
+        '<p class="chart-note">Últimos ' + practicedDays.length + ' días practicados · sin días de inactividad.</p>';
+    }
+  }
+  statsContent.innerHTML = '<section class="stats-table-card"><h2>Progreso por idioma</h2>' +
+    (metrics.length?'<div class="stats-table-wrap"><table class="stats-language-table">' + header + body + '</table></div>':'<p class="empty-chart">Aún no hay idiomas con actividad registrada.</p>') +
+    '</section><section class="progress-chart-card"><div class="stats-chart-heading"><h2>Evolución</h2><label class="stats-view-picker"><span class="visually-hidden">Vista del gráfico</span><select id="stats-view-select" aria-label="Seleccionar vista de estadísticas">' + options + '</select></label></div>' +
+    '<div class="stats-chart-stage">' + chartMarkup + '</div></section>';
+  $("stats-view-select").value = selectedView;
+  $("stats-view-select").addEventListener("change", refreshDashboard);
 }
-$("language").addEventListener("change", () => { updateCustomLanguageFields(); refreshDashboard(); });
-$("custom-language-name").addEventListener("input", refreshDashboard);
-$("custom-language-locale").addEventListener("input", refreshDashboard);
-updateCustomLanguageFields();
+$("language").addEventListener("change", () => {
+  updateLanguageFlag();
+  refreshDashboard();
+});
+try {
+  const savedSettings = JSON.parse(localStorage.getItem("adaptive-language-tutor.settings") || "{}");
+  if (savedSettings.selectedLanguage) {
+    $("language").value = savedSettings.selectedLanguage;
+    $("welcome-screen").classList.remove("hidden");
+    $("app-shell").classList.add("hidden");
+  }
+  if (savedSettings.duration) $("duration").value = String(savedSettings.duration);
+  if (savedSettings.level) $("level").value = savedSettings.level;
+  if (savedSettings.topic) $("topic").value = savedSettings.topic;
+
+} catch { /* Ignore malformed optional settings; progress storage remains independent. */ }
+updateLanguageFlag();
 refreshDashboard();
+routeDraft = getRouteDraftForLanguage(getSelectedCatalog()?.id);
+$("route-resume").classList.add("hidden");
 checkTutorHealth().then(status => {
   aiConfigured = Boolean(status.ai?.configured);
   $("ai-status").textContent = aiConfigured
-    ? "Tutor IA disponible · " + (status.ai.provider || "proveedor configurado")
-    : "API IA sin configurar · se mantiene el modo local";
+    ? "Tutor IA disponible"
+    : "Tutor IA no disponible; se utilizarán ejercicios locales";
 }).catch(() => {
-  $("ai-status").textContent = "Backend IA no disponible · se mantiene el modo local";
+  $("ai-status").textContent = "Tutor IA no disponible; se utilizarán ejercicios locales";
 }).finally(() => {
   aiReady = true;
+  updateLanguageFlag();
   $("start-session").disabled = false;
+  $("ai-status").classList.remove("hidden");
 });
 
+const REVIEW_SESSION_KEY = "adaptive-language-tutor.review-session";
+function loadReviewSessionState(languageId) {
+  try {
+    const value = JSON.parse(localStorage.getItem(REVIEW_SESSION_KEY + ":" + languageId) || "null");
+    return value?.version === 1 && Array.isArray(value.remainingKeys) ? value : null;
+  } catch { return null; }
+}
+function saveReviewSessionState(languageId, state) {
+  try { localStorage.setItem(REVIEW_SESSION_KEY + ":" + languageId,JSON.stringify({version:1,...state})); return true; }
+  catch { return false; }
+}
+function clearReviewSessionState(languageId) {
+  try { localStorage.removeItem(REVIEW_SESSION_KEY + ":" + languageId); } catch {}
+}
+function persistReviewQueue() {
+  if (!catalog?.id) return;
+  const remainingKeys = dueReviewCards.slice(reviewIndex).map(card => card.key);
+  if (!remainingKeys.length) {
+    clearReviewSessionState(catalog.id);
+    return;
+  }
+  saveReviewSessionState(catalog.id,{
+    remainingKeys,
+    processedKeys:[...reviewProcessedKeys],
+    completed:reviewCompletedCount,
+    total:reviewTotalCount,
+    updatedAt:new Date().toISOString()
+  });
+}
+function markReviewCardGraded(card) {
+  reviewProcessedKeys.add(card.key);
+  reviewCompletedCount += 1;
+  reviewIndex += 1;
+  persistReviewQueue();
+  saveProgress(progress);
+}
 function startSpacedReview() {
   speech.stop();
   catalog = getSelectedCatalog();
-  if (!catalog) { $("ai-status").textContent = "Indica el nombre del idioma y un locale válido (por ejemplo, fr-FR)."; return; }
-  dueReviewCards = getDueCards(progress, Date.now(), catalog.id);
+  if (!catalog) { $("ai-status").textContent = "Selecciona un idioma del mosaico."; return; }
+  const allDue = getDueCards(progress,Date.now(),catalog.id).filter(card => card.cardType !== "pattern");
+  const saved = loadReviewSessionState(catalog.id);
+  reviewProcessedKeys = new Set(saved?.processedKeys || []);
+  const dueByKey = new Map(allDue.map(card => [card.key,card]));
+  if (saved) {
+    const queued = saved.remainingKeys.map(key => dueByKey.get(key)).filter(Boolean);
+    const queuedKeys = new Set(queued.map(card => card.key));
+    const newlyDue = allDue.filter(card => !reviewProcessedKeys.has(card.key) && !queuedKeys.has(card.key));
+    dueReviewCards = [...queued,...newlyDue];
+    reviewCompletedCount = Number(saved.completed) || 0;
+    reviewTotalCount = Math.max(Number(saved.total) || 0,reviewCompletedCount + dueReviewCards.length);
+  } else {
+    dueReviewCards = allDue;
+    reviewCompletedCount = 0;
+    reviewTotalCount = dueReviewCards.length;
+  }
   reviewIndex = 0;
-  if (!dueReviewCards.length) { refreshDashboard(); return; }
-  $("setup-panel").classList.add("hidden");
+  if (!dueReviewCards.length) {
+    clearReviewSessionState(catalog.id);
+    reviewMode = false;
+    sessionFinished = true;
+    $("session-view").classList.add("hidden");
+    $("app-shell").classList.remove("session-active");
+    showScreen("exercises");
+    $("summary-panel").classList.add("hidden");
+    $("lesson-panel").classList.remove("hidden");
+    $("review-exercises").classList.remove("hidden");
+    $("review-dashboard").innerHTML = "No tienes palabras o frases pendientes.";
+    refreshDashboard();
+    return;
+  }
+  if (reviewTotalCount < reviewCompletedCount + dueReviewCards.length) reviewTotalCount = reviewCompletedCount + dueReviewCards.length;
+  persistReviewQueue();
+  sessionFinished = false;
+  showSessionView("review");
   $("summary-panel").classList.add("hidden");
   $("lesson-panel").classList.remove("hidden");
-  $("session-status").textContent = "Repaso programado";
+  $("session-status").textContent = "";
   reviewMode = true;
+  routeMode = false;
   aiMode = false;
   $("stats").hidden = true;
-  $("hint-btn").hidden = true;
-  $("review-btn").hidden = true;
+  $("hint-btn").hidden = false;
+  $("hint-btn").textContent = "Pista";
   renderSpacedReview();
 }
 
 function renderSpacedReview() {
   speech.stop();
   if (reviewIndex >= dueReviewCards.length) {
+    clearReviewSessionState(catalog?.id);
+    sessionFinished = true;
     $("lesson-panel").classList.add("hidden");
-    $("setup-panel").classList.remove("hidden");
-    $("session-status").textContent = "Repaso completado";
-    refreshDashboard();
+    $("summary-panel").classList.remove("hidden");
+    $("summary-content").innerHTML = '<h2 class="summary-title">Repaso finalizado</h2>';
+    $("session-status").textContent = "";
+    currentActivitySpeechSegments = [];
+    renderSummaryActions({ origin:"exercises", mode:"review", canNext:false });
     return;
   }
   const card = dueReviewCards[reviewIndex];
   const exercise = catalog.exercises.find(item => item.id === card.exerciseId);
   const expected = exercise?.target || card.expected;
-  $("lesson-phase").textContent = "REPETICIÓN ESPACIADA";
-  $("turn-count").textContent = "Tarjeta " + (reviewIndex + 1) + " / " + dueReviewCards.length;
-  $("progress-bar").style.width = (reviewIndex / dueReviewCards.length * 100) + "%";
+  const term = exercise?.term || card.term || expected;
+  const meaning = exercise?.meaning || card.meaning || "";
+  reviewExercise = exercise || { target:expected, term, meaning, hint:card.hint, explanation:card.explanation };
+  reviewHintLevel = 0;
+  $("lesson-phase").textContent = "REPASO";
+  $("turn-count").textContent = (reviewCompletedCount + 1) + " / " + reviewTotalCount;
+  $("progress-bar").style.width = ((reviewCompletedCount + 1) / Math.max(1,reviewTotalCount) * 100) + "%";
+  $("progress-bar").parentElement.setAttribute("aria-valuenow",String(Math.round((reviewCompletedCount + 1) / Math.max(1,reviewTotalCount) * 100)));
   $("feedback").classList.add("hidden");
+  $("hint-btn").hidden = true;
+  const reviewSpeechExercise = {
+    ...reviewExercise,
+    prompt:exercise?.prompt || card.prompt || "",
+    promptLocale:exercise?.promptLocale || card.promptLocale || "es-CL",
+    term
+  };
+  currentActivitySpeechSegments = getExerciseSpeechSegments(reviewSpeechExercise);
+  const audioMarkup = currentActivitySpeechSegments.map(item => speakerButton(item.text,item.locale)).join(" ");
+  $("lesson-content").innerHTML = getExerciseIllustration(exercise || {topic:card.topic || "daily",prompt:card.prompt}) +
+    '<div class="activity-phase">REPASO · PALABRAS Y FRASES</div>' +
+    '<h3>' + escapeHTML(exercise?.prompt || card.prompt || "Recuerda la expresión.") + '</h3>' + audioMarkup;
+  bindSpeakerButtons($("lesson-content"));
+  if (currentActivitySpeechSegments.length) speech.speakSequence(currentActivitySpeechSegments,{automatic:true});
 
-  if (card.cardType === "pattern") {
-    $("lesson-content").innerHTML = '<p class="eyebrow">REPASO DE PATRÓN</p><h3>' + escapeHTML(card.pattern) + '</h3><p>Intenta recordar una frase propia que aplique este patrón. Este repaso no consume turnos de práctica.</p>';
-    $("answer-area").innerHTML = '<p class="muted">¿Pudiste recordar y aplicar el patrón?</p><button id="pattern-recalled" class="primary" type="button">Lo recordé</button><button id="pattern-practice" class="secondary" type="button">Necesito practicarlo</button>';
-    const gradePattern = recalled => {
-      const result = gradeReview(progress, card.key, recalled);
-      saveProgress(progress);
-      showFeedback(recalled
-        ? "Registrado. Próximo repaso en " + (result?.nextIntervalDays || 1) + " días."
-        : "Registrado. Volverá a aparecer mañana; intenta crear una frase nueva con este patrón.", recalled);
-      $("answer-area").innerHTML = '<button id="next-spaced" class="secondary" type="button">Siguiente →</button>';
-      $("next-spaced").addEventListener("click", () => { reviewIndex += 1; renderSpacedReview(); });
-    };
-    $("pattern-recalled").addEventListener("click", () => gradePattern(true));
-    $("pattern-practice").addEventListener("click", () => gradePattern(false));
-    return;
-  }
-
-  $("lesson-content").innerHTML = '<p class="eyebrow">REPASO PROGRAMADO</p><h3>' + escapeHTML(exercise?.prompt || card.prompt || "") + '</h3><p>Escribe la respuesta sin mirar la solución. Este repaso no consume turnos de práctica.</p>';
-  $("answer-area").innerHTML = '<input id="spaced-answer" class="answer-input" placeholder="Escribe tu respuesta…"><button id="check-spaced" class="primary" type="button">Comprobar respuesta</button>';
-  $("check-spaced").addEventListener("click", () => {
-    const answer = $("spaced-answer").value;
-    const checkExercise = exercise || { target: expected, acceptedAnswers: [] };
-    const correct = evaluateAnswer(answer, checkExercise);
-    const result = gradeReview(progress, card.key, correct);
+  const hasOptions = Array.isArray(exercise?.options) && exercise.options.length >= 2;
+  const submitReviewAnswer = answer => {
+    const checkExercise = exercise || { target:expected, acceptedAnswers:[] };
+    const correct = evaluateAnswer(answer,checkExercise);
+    playAnswerFeedbackSound(correct);
+    gradeReview(progress,card.key,correct);
     saveProgress(progress);
-    const interval = result?.nextIntervalDays || 1;
-    showFeedback(correct
-      ? "Correcto. Próximo repaso en " + interval + " días."
-      : "Respuesta de referencia: " + expected + ". " + (exercise?.explanation || card.explanation) + " La tarjeta volverá mañana.", correct);
-    appendCatalogSpeech($("feedback"), exercise || { target: expected }, "explanationSpeechSegments", true);
-    $("answer-area").innerHTML = '<button id="next-spaced" class="secondary" type="button">Siguiente →</button>';
-    $("next-spaced").addEventListener("click", () => { reviewIndex += 1; renderSpacedReview(); });
-  });
+    markReviewCardGraded(card);
+    $("hint-btn").hidden = true;
+    showFeedback(correct ? "Correcto." : "Respuesta de referencia:",correct);
+    $("feedback").insertAdjacentHTML("beforeend",
+      '<div class="review-answer-reveal"><p><strong>' + escapeHTML(term) + '</strong> ' +
+      speakerButton(term,session?.config?.languageLocale || catalog.locale) + '</p>' +
+      (meaning ? '<p class="review-translation">(' + escapeHTML(meaning) + ')</p>' : '') +
+      (!correct && (exercise?.explanation || card.explanation) ? '<p>' + escapeHTML(exercise?.explanation || card.explanation) + '</p>' : '') +
+      '</div>');
+    bindSpeakerButtons($("feedback"));
+    if (reviewIndex >= dueReviewCards.length) {
+      renderSpacedReview();
+      return;
+    }
+    $("answer-area").innerHTML = '<button id="next-spaced" class="primary" type="button">Siguiente →</button>';
+    $("next-spaced").addEventListener("click",renderSpacedReview);
+    if (meaning) speech.speak(term,session?.config?.languageLocale || catalog.locale,{automatic:true});
+  };
+  if (hasOptions) {
+    $("answer-area").innerHTML = exercise.options.map((option,index) =>
+      '<button class="answer-option" type="button" data-review-choice="' + index + '">' + escapeHTML(option) + '</button>'
+    ).join("");
+    $("answer-area").querySelectorAll("[data-review-choice]").forEach(button => button.addEventListener("click",() => {
+      $("answer-area").querySelectorAll("[data-review-choice]").forEach(item => item.disabled = true);
+      submitReviewAnswer(exercise.options[Number(button.dataset.reviewChoice)]);
+    }));
+  } else {
+    $("answer-area").innerHTML = '<input id="spaced-answer" class="answer-input" placeholder="Escribe tu respuesta…"><button id="check-spaced" class="primary" type="button">Comprobar respuesta</button>';
+    $("check-spaced").addEventListener("click",() => submitReviewAnswer($("spaced-answer").value));
+  }
+}
+function startConfiguredActivity(mode, config, excludePrevious = false) {
+  catalog = getSelectedCatalog();
+  if (!catalog || !config) return;
+  const nextConfig = { ...config };
+  if (excludePrevious && lastActivityExerciseIds.length) nextConfig.excludeExerciseIds = [...lastActivityExerciseIds];
+  else delete nextConfig.excludeExerciseIds;
+  sessionAbortController?.abort();
+  sessionAbortController = new AbortController();
+  session = createSession(nextConfig);
+  sessionFinished = false;
+  reviewMode = false;
+  routeMode = false;
+  routeIntegration = false;
+  aiMode = false;
+  lastActivityConfig = { ...config };
+  lastActivityMode = mode;
+  $("summary-panel").classList.add("hidden");
+  $("lesson-panel").classList.remove("hidden");
+  $("session-status").textContent = "";
+  showSessionView(mode);
+  const useLiveAI = mode !== "reading" && aiConfigured && catalog.exercises.length < nextConfig.duration;
+  if (useLiveAI) startAITutorSession(nextConfig);
+  else renderLesson();
 }
 
 $("setup-form").addEventListener("submit", event => {
@@ -213,27 +789,40 @@ $("setup-form").addEventListener("submit", event => {
   if (!aiReady) return;
   catalog = getSelectedCatalog();
   if (!catalog) {
-    $("ai-status").textContent = "Indica el nombre del idioma y un locale válido (por ejemplo, fr-FR).";
+    $("ai-status").textContent = "Selecciona un idioma del mosaico.";
     return;
   }
   if (!catalog.exercises.length && !aiConfigured) {
     $("ai-status").textContent = "Los idiomas personalizados requieren que el tutor IA esté disponible.";
     return;
   }
-  const config = { language:catalog.label, languageId:catalog.id, languageLocale:catalog.locale || catalog.id, duration:Number($("duration").value), level:$("level").value, topic:$("topic").value };
+  if (selectedExerciseMode === "review") {
+    startSpacedReview();
+    return;
+  }
+  const requestedQuestionCount = Number($("duration").value);
+  const readingBankSize = catalog.exercises.filter(exercise => exercise.type === "reading").length;
+  const questionCount = selectedExerciseMode === "reading" && readingBankSize ? Math.min(requestedQuestionCount,readingBankSize) : requestedQuestionCount;
+  const config = { language:catalog.label, languageId:catalog.id, languageLocale:catalog.locale || catalog.id, duration:questionCount, questionCount, level:$("level").value, topic:selectedExerciseMode === "reading" ? "reading" : $("topic").value };
+  lastActivityConfig = { ...config };
+  lastActivityMode = selectedExerciseMode;
+  persistSettings();
+  sessionAbortController?.abort();
+  sessionAbortController = new AbortController();
   session = createSession(config);
   sessionFinished = false;
   reviewMode = false;
-  $("setup-panel").classList.add("hidden");
   $("summary-panel").classList.add("hidden");
   $("lesson-panel").classList.remove("hidden");
-  $("session-status").textContent = aiConfigured ? "Tutor IA en sesión" : "Sesión local";
-  if (aiConfigured) {
+  const useLiveAI = selectedExerciseMode !== "reading" && aiConfigured && catalog.exercises.length < questionCount;
+  $("session-status").textContent = useLiveAI ? "Tutor IA en sesión" : "Práctica local";
+  showSessionView(selectedExerciseMode);
+  if (useLiveAI) {
     startAITutorSession(config);
   } else {
     aiMode = false;
-    if (config.level === "diagnostic") startDiagnostic();
-    else { session.config.level = config.level; renderLesson(); }
+    session.config.level = config.level;
+    renderLesson();
   }
 });
 
@@ -245,18 +834,19 @@ function getAILearnerContext(config = session.config) {
     targetLanguageLocale: config.languageLocale || catalog?.locale || config.languageId,
     level: config.estimatedLevel || config.level,
     topic: config.topic,
-    sessionDuration: config.duration
+    questionCount: config.questionCount || config.duration
   };
 }
 
 async function startAITutorSession(config) {
+  const activeSession = session;
   aiMode = true;
+  aiPendingFeedback = null;
   aiHistory = [];
   aiLastResult = null;
   aiCurrentExercise = null;
-  $("stats").hidden = false;
-  $("hint-btn").hidden = false;
-  $("review-btn").hidden = true;
+  $("stats").hidden = true;
+  $("hint-btn").hidden = true;
   $("lesson-phase").textContent = "TUTOR IA · INICIO";
   $("turn-count").textContent = "Preparando tu sesión…";
   $("lesson-content").textContent = "El tutor está preparando una actividad adaptada a tu nivel.";
@@ -269,62 +859,75 @@ async function startAITutorSession(config) {
         duration: config.duration,
         turn: 0,
         topic: config.topic,
-        diagnostic: config.level === "diagnostic",
+        diagnostic: false,
         performance: { streak: 0, consecutiveCorrect: 0, consecutiveErrors: 0 }
       },
       history: [],
-      userMessage: "Inicia mi sesión de aprendizaje. Preséntame una primera actividad adecuada a mi nivel y tema, y conversa conmigo en español mientras practico el idioma objetivo."
-    });
+      userMessage: "Inicia directamente con una actividad concreta, objetiva y adecuada al nivel y tema seleccionados. No hagas diagnóstico ni preguntas abiertas o subjetivas. Cada pregunta debe tener una única respuesta verificable: prioriza traducción concreta, completar una forma gramatical, identificar una opción o transformar una frase con contexto suficiente. Evita preguntas como «¿cómo responderías?» o «¿qué dirías?» si admiten múltiples respuestas naturales. Para respuestas escritas, define expectedAnswer como solución canónica y acceptedAnswers con todas las variantes lingüísticas correctas razonables; nunca marques como incorrecta una variante equivalente que hayas incluido. Si no puedes definir las variantes válidas de antemano, convierte la actividad en selección múltiple con una sola opción correcta. Escribe las instrucciones siempre en español dentro de message y mantén exercise.prompt separado como texto que se evalúa."
+    }, undefined, { signal: sessionAbortController?.signal });
+    if (session !== activeSession || sessionAbortController?.signal.aborted) return;
     applyLearnerUpdate(session, result.learnerUpdate);
     renderAITutorTurn(result);
   } catch (error) {
-    showAITutorError(error, null);
+    if (session === activeSession && !sessionAbortController?.signal.aborted) showAITutorError(error, null);
   }
 }
 
 function renderAITutorTurn(result) {
+  $("lesson-panel").classList.remove("route-integration-active");
   speech.stop();
   aiLastResult = result;
   aiCurrentExercise = result.exercise || {};
   aiHintLevel = 0;
   aiHintPending = false;
+  aiEvaluationPending = false;
+  aiContinueRequested = false;
   $("hint-btn").disabled = false;
   $("hint-btn").textContent = "Pista";
-  $("lesson-phase").textContent = "TUTOR IA · CONVERSACIÓN";
-  $("turn-count").textContent = "Turno " + Math.min(session.turn + 1, session.config.duration) + " / " + session.config.duration;
-  $("progress-bar").style.width = (session.turn / session.config.duration * 100) + "%";
+  const aiRoutePhase = routeMode && !routeIntegration ? getRoutePhase(Math.min(session.turn,routeQuestionCount-1),routeQuestionCount) : null;
+  $("lesson-phase").textContent = routeMode ? routeIntegration ? "HITO INTEGRADOR" : aiRoutePhase.label : topicLabels[session.config.topic].toUpperCase() + " · " + levelLabel(session.config.level).toUpperCase();
+  const activityTotal = routeMode ? routeQuestionCount + 1 : session.config.duration;
+  $("turn-count").textContent = Math.min(session.turn + 1, activityTotal) + " / " + activityTotal;
+  $("progress-bar").style.width = (Math.min(session.turn + 1, activityTotal) / activityTotal * 100) + "%";
+  $("progress-bar").parentElement.setAttribute("aria-valuenow",String(Math.round(Math.min(session.turn + 1, activityTotal) / activityTotal * 100)));
   $("streak").textContent = session.streak;
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
 
-  const message = '<p>' + escapeHTML(result.message || "") + '</p>';
+  let instruction = String(result.message || "").trim();
+  if (/^(?:¡?muy bien|¡?excelente|¡?correcto|¡?perfecto)/i.test(instruction)) instruction = "Continuemos con la siguiente actividad.";
+  const instructionMarkup = instruction
+    ? '<p class="exercise-instruction">' + escapeHTML(instruction) + '</p>' : "";
   const prompt = aiCurrentExercise.prompt
-    ? '<h3>' + escapeHTML(aiCurrentExercise.prompt) + '</h3>'
-    : '<p class="muted">Responde libremente para continuar la conversación.</p>';
-  const feedback = result.evaluation?.feedback
-    ? '<p class="ai-feedback">' + escapeHTML(result.evaluation.feedback) + '</p>'
-    : "";
-  const vocabulary = (result.learnerUpdate?.vocabulary || []).filter(item => item?.term);
-  const vocabularyMarkup = vocabulary.length
-    ? '<div class="ai-vocabulary"><span class="muted">Vocabulario</span>' + vocabulary.map(item =>
-        '<span class="vocabulary-item">' + escapeHTML(item.term) + speakerButton(item.term, session.config.languageId) + '</span>'
-      ).join("") + '</div>'
-    : "";
-  const speechSegments = (result.speechSegments || []).filter(item =>
-    item && typeof item.text === "string" && item.text.trim() &&
-    typeof item.locale === "string" && item.locale.trim()
-  );
-  const speechMarkup = speechSegments.length
-    ? '<div class="ai-speech-segments"><span class="muted">Pronunciación</span>' + speechSegments.map(item =>
-        '<span class="vocabulary-item">' + escapeHTML(item.text) + speakerButton(item.text, item.locale) + '</span>'
-      ).join("") + '</div>'
-    : "";
-  $("lesson-content").innerHTML = message + feedback + prompt + speechMarkup + vocabularyMarkup;
+    ? '<h3>' + renderClickableTargetText(aiCurrentExercise.prompt) + '</h3>'
+    : '<h3>El tutor está preparando una actividad cerrada.</h3>';
+  const speechExercise = {
+    ...aiCurrentExercise,
+    instruction,
+    speechSegments:Array.isArray(result.speechSegments) && result.speechSegments.length
+      ? result.speechSegments : aiCurrentExercise.speechSegments
+  };
+  const questionSpeechSegments = getExerciseSpeechSegments(speechExercise).filter(item => {
+    if (!item || typeof item.text !== "string" || !item.text.trim() || !item.locale) return false;
+    const declaredLanguage = String(item.language || "").toLowerCase();
+    const localeLanguage = String(item.locale).split("-")[0].toLowerCase();
+    return !declaredLanguage || declaredLanguage === localeLanguage;
+  });
+
+  currentActivitySpeechSegments = questionSpeechSegments;
+  const promptAudio = questionSpeechSegments.map(item => speakerButton(item.text,item.locale)).join(" ");
+  $("lesson-content").innerHTML = getExerciseIllustration({ ...aiCurrentExercise, topic:session.config.topic }) +
+    '<div class="activity-phase">' + escapeHTML($("lesson-phase").textContent) + '</div>' + instructionMarkup + prompt + promptAudio;
   bindSpeakerButtons($("lesson-content"));
-  speech.speakSequence(speechSegments, { automatic: true });
+  bindVariantLinks($("lesson-content"));
+  bindTargetWords($("lesson-content"));
+  if (questionSpeechSegments.length) speech.speakSequence(questionSpeechSegments, { automatic:true });
   $("feedback").classList.add("hidden");
-  $("hint-btn").hidden = false;
-  $("review-btn").hidden = true;
+  const aiOptions = Array.isArray(aiCurrentExercise.options) ? aiCurrentExercise.options : [];
+  const aiShouldUseChoices = routeMode ? !routeIntegration && aiRoutePhase?.id !== "sentences" : session.turn < 3;
+  const aiHasChoices = aiShouldUseChoices && aiOptions.length === 3 && aiOptions.some(option => String(option).trim().toLocaleLowerCase() === String(aiCurrentExercise.expectedAnswer || "").trim().toLocaleLowerCase());
+  $("hint-btn").hidden = aiShouldUseChoices;
+  $("hint-btn").textContent = "Pista";
 
   if (result.nextAction === "finish" || session.turn >= session.config.duration) {
     $("answer-area").innerHTML = '<button id="finish-ai-session" class="primary" type="button">Ver resumen →</button>';
@@ -332,16 +935,32 @@ function renderAITutorTurn(result) {
     return;
   }
 
-  $("answer-area").innerHTML =
-    '<input id="ai-answer" class="answer-input" placeholder="Escribe tu respuesta…" autocomplete="off">' +
-    '<button id="submit-ai-answer" class="primary" type="button">Enviar respuesta →</button>';
-  $("submit-ai-answer").addEventListener("click", () => submitAITutorAnswer($("ai-answer").value));
-  $("ai-answer").addEventListener("keydown", event => {
-    if (event.key === "Enter") submitAITutorAnswer($("ai-answer").value);
-  });
+  if (aiShouldUseChoices) {
+    const options = Array.isArray(aiCurrentExercise.options) ? aiCurrentExercise.options : [];
+    const validClosedChoice = Boolean(aiCurrentExercise.prompt && String(aiCurrentExercise.expectedAnswer || "").trim() &&
+      options.length === 3 && options.some(option => String(option).trim().toLocaleLowerCase() === String(aiCurrentExercise.expectedAnswer).trim().toLocaleLowerCase()));
+    $("answer-area").innerHTML = validClosedChoice
+      ? options.map((option,index) => '<button class="answer-option ai-answer-option" type="button" data-ai-choice="' + index + '">' + renderClickableTargetText(option) + '</button>').join("")
+      : '<p class="muted">El tutor está preparando una pregunta cerrada con respuesta verificable.</p><button id="retry-ai-options" class="secondary" type="button">Reintentar</button>';
+    $("answer-area").querySelectorAll("[data-ai-choice]").forEach(button => button.addEventListener("click", () => submitAITutorAnswer(options[Number(button.dataset.aiChoice)])));
+    bindTargetWords($("answer-area"));
+    $("retry-ai-options")?.addEventListener("click", () => startAITutorSession(session.config));
+  } else if (aiCurrentExercise.prompt && String(aiCurrentExercise.expectedAnswer || "").trim()) {
+    $("answer-area").innerHTML =
+      '<input id="ai-answer" class="answer-input" placeholder="Escribe tu respuesta…" autocomplete="off">' +
+      '<button id="submit-ai-answer" class="primary" type="button">Enviar respuesta →</button>';
+    $("submit-ai-answer").addEventListener("click", () => submitAITutorAnswer($("ai-answer").value));
+    $("ai-answer").addEventListener("keydown", event => {
+      if (event.key === "Enter") submitAITutorAnswer($("ai-answer").value);
+    });
+  } else {
+    $("answer-area").innerHTML = '<p class="muted">La actividad no tiene una respuesta verificable. Se solicitará una pregunta concreta.</p><button id="retry-ai-options" class="secondary" type="button">Reintentar</button>';
+    $("retry-ai-options").addEventListener("click", () => startAITutorSession(session.config));
+  }
 }
 
 async function submitAITutorAnswer(answer) {
+  const activeSession = session;
   const cleanAnswer = String(answer || "").trim();
   if (!cleanAnswer) {
     showFeedback("Escribe una respuesta antes de continuar.", false);
@@ -350,9 +969,27 @@ async function submitAITutorAnswer(answer) {
   speech.stop();
   const submitButton = $("submit-ai-answer");
   const answerInput = $("ai-answer");
-  if (submitButton) submitButton.disabled = true;
+  if (submitButton) submitButton.remove();
   if (answerInput) answerInput.disabled = true;
+  $("answer-area").querySelectorAll("[data-ai-choice]").forEach(button => { button.disabled = true; });
   try {
+    const evaluatedExercise = aiCurrentExercise;
+    const locallyCorrect = evaluateAnswer(cleanAnswer, {
+      target: evaluatedExercise.expectedAnswer || "",
+      acceptedAnswers: evaluatedExercise.acceptedAnswers || [],
+      allowTypo: true
+    });
+    aiEvaluationPending = true;
+    aiContinueRequested = false;
+    showAnswerFeedback({
+      correct: locallyCorrect,
+      expected: evaluatedExercise.expectedAnswer || "",
+      explanation: locallyCorrect ? "" : "La respuesta no coincide con la solución esperada.",
+      selected: cleanAnswer,
+      options: evaluatedExercise.options || [],
+      correctOption: evaluatedExercise.expectedAnswer || "",
+      showContinue: true
+    });
     const conversationHistory = [
       ...aiHistory,
       { role: "assistant", content: JSON.stringify(aiLastResult) }
@@ -364,7 +1001,7 @@ async function submitAITutorAnswer(answer) {
         duration: session.config.duration,
         turn: session.turn + 1,
         topic: session.config.topic,
-        diagnostic: session.config.level === "diagnostic",
+        diagnostic: false,
         currentExercise: aiCurrentExercise,
         performance: {
           streak: session.streak,
@@ -375,34 +1012,67 @@ async function submitAITutorAnswer(answer) {
         }
       },
       history: conversationHistory,
-      userMessage: cleanAnswer
-    });
+      userMessage: cleanAnswer + (routeMode && session.turn + 1 === routeQuestionCount
+        ? " Esta respuesta completa la unidad. La siguiente actividad debe ser una tarea integradora escrita que combine el tema completo; no incluyas alternativas."
+        : (routeMode ? getRoutePhase(Math.min(session.turn + 1,routeQuestionCount-1),routeQuestionCount).id !== "sentences" : session.turn + 1 < 3)
+          ? " La próxima actividad debe ser una pregunta de selección múltiple con tres alternativas plausibles en exercise.options."
+          : " La próxima actividad debe requerir que escriba la respuesta, sin alternativas.") + " Mantén las instrucciones en español dentro de message y separa el texto evaluado en exercise.prompt. La pregunta debe ser objetiva, no abierta ni subjetiva, y tener una única respuesta verificable. Para respuestas escritas, proporciona expectedAnswer canónica y acceptedAnswers con todas las variantes naturales correctas; si no puedes enumerarlas, cambia a selección múltiple con una única opción correcta. No uses preguntas del tipo «¿cómo responderías?» o «¿qué dirías?» sin contexto que determine una sola respuesta. Incluye una pista breve."
+    }, undefined, { signal: sessionAbortController?.signal });
+    if (session !== activeSession || sessionAbortController?.signal.aborted) return;
     aiHistory = [
       ...conversationHistory,
       { role: "user", content: cleanAnswer }
     ];
     applyLearnerUpdate(session, result.learnerUpdate);
-    const evaluation = result.evaluation || {};
+    const modelEvaluation = result.evaluation || {};
+    const evaluation = {
+      ...modelEvaluation,
+      status: locallyCorrect ? "correct" : "incorrect",
+      feedback: locallyCorrect ? "" : (modelEvaluation.feedback || "La respuesta debe coincidir con una solución válida de la actividad.")
+    };
     recordTutorEvaluation(session, {
       exerciseId: "ai-turn-" + (session.turn + 1),
-      prompt: aiCurrentExercise.prompt || aiLastResult.message,
+      prompt: evaluatedExercise.prompt || aiLastResult.message,
       submitted: cleanAnswer,
-      expected: aiCurrentExercise.expectedAnswer || "",
+      expected: evaluatedExercise.expectedAnswer || "",
+      term:evaluatedExercise.term || evaluatedExercise.expectedAnswer || "",
+      meaning:evaluatedExercise.meaning || evaluatedExercise.translation || evaluatedExercise.sourceText || evaluatedExercise.prompt || "",
+      promptLocale:evaluatedExercise.promptLocale || "es-CL",
       status: evaluation.status || "not_applicable",
       feedback: evaluation.feedback || "",
       skill: evaluation.skill || "Producción"
     });
+    aiPendingTurn = {
+      result, evaluation, exercise: evaluatedExercise, answer: cleanAnswer,
+      routeIntegrationQuestion: Boolean(routeMode && routeIntegration && session.turn >= 11)
+    };
+    aiEvaluationPending = false;
+    showAnswerFeedback({
+      correct: evaluation.status === "correct",
+      expected: evaluatedExercise.expectedAnswer || "",
+      explanation: evaluation.status === "correct" ? "" : evaluation.feedback || "Revisa la estructura y vuelve a intentarlo.",
+      selected: cleanAnswer,
+      options: evaluatedExercise.options || [],
+      correctOption: evaluatedExercise.expectedAnswer || "",
+      showContinue: true
+    });
     $("streak").textContent = session.streak;
     $("word-count").textContent = session.vocabulary.length;
     $("error-count").textContent = session.errors.length;
-    renderAITutorTurn(result);
+    if (routeMode) saveRouteDraft();
+    if (aiContinueRequested) {
+      aiContinueRequested = false;
+      continueAfterAnswer();
+    }
   } catch (error) {
-    showAITutorError(error, cleanAnswer);
+    aiEvaluationPending = false;
+    aiContinueRequested = false;
+    if (session === activeSession && !sessionAbortController?.signal.aborted) showAITutorError(error, cleanAnswer);
   }
 }
 
 async function requestAdaptiveHint() {
-  if (aiHintPending || !session || !aiLastResult) return;
+  if (aiHintPending || !session || !aiLastResult || aiHintLevel >= 1) return;
   const activeSession = session;
   const activeExercise = aiCurrentExercise;
   const button = $("hint-btn");
@@ -432,21 +1102,21 @@ async function requestAdaptiveHint() {
       },
       history,
       userMessage: "Dame una pista adicional, más específica que la anterior, para resolver la actividad actual. No reveles la respuesta ni cambies de actividad."
-    });
+    }, undefined, { signal: sessionAbortController?.signal });
     if (session !== activeSession || aiCurrentExercise !== activeExercise || !aiMode) return;
     const hint = result.exercise?.hint;
     if (typeof hint !== "string" || !hint.trim()) {
       throw new Error("El tutor no generó una pista adicional.");
     }
-    aiHintLevel += 1;
-    showFeedback("Pista adicional: " + hint.trim(), true);
+    aiHintLevel = 1;
+    showFeedback("Pista: " + hint.trim(), true);
     const segments = (result.speechSegments || []).filter(item =>
       item && typeof item.text === "string" && item.text.trim() &&
       item.locale === (session.config.languageLocale || session.config.languageId)
     );
     appendSpeechButtons($("feedback"), segments);
     speech.speakSequence(segments, { automatic: true });
-    button.textContent = "Pedir otra pista";
+    button.textContent = "Ver respuesta";
   } catch (error) {
     if (session === activeSession && aiCurrentExercise === activeExercise) {
       showFeedback("No se pudo obtener otra pista. Puedes intentarlo nuevamente. " + (error.message || ""), false);
@@ -464,9 +1134,11 @@ function showAITutorError(error, previousAnswer) {
   $("feedback").textContent = error.message || "Error de conexión.";
   $("feedback").classList.remove("hidden", "bad");
   $("feedback").classList.add("bad");
-  $("answer-area").innerHTML = previousAnswer
-    ? '<button id="retry-ai" class="primary" type="button">Reintentar envío</button>'
-    : '<button id="retry-ai" class="primary" type="button">Reintentar sesión</button>';
+  $("answer-area").innerHTML =
+    (previousAnswer
+      ? '<button id="retry-ai" class="primary" type="button">Reintentar envío</button>'
+      : '<button id="retry-ai" class="primary" type="button">Reintentar sesión</button>') +
+    '<button id="continue-local" class="secondary" type="button">Continuar sin tutor IA</button>';
   $("retry-ai").addEventListener("click", () => {
     const retryButton = $("retry-ai");
     if (retryButton.disabled) return;
@@ -475,18 +1147,311 @@ function showAITutorError(error, previousAnswer) {
     if (previousAnswer) submitAITutorAnswer(previousAnswer);
     else startAITutorSession(session.config);
   });
+  $("continue-local").addEventListener("click", () => {
+    aiMode = false;
+    aiHistory = [];
+    aiLastResult = null;
+    aiCurrentExercise = null;
+    renderLesson();
+  });
 }
 
+function saveRouteDraft() {
+  if (!routeMode || !session) return;
+  routeDraft = {
+    languageId: session.config.languageId,
+    unitId: activeRouteUnit?.id || routeDraft?.unitId || "foundations",
+    questionCount: routeQuestionCount,
+    session: JSON.parse(JSON.stringify(session)),
+    integration: routeIntegration,
+    integrationAttempts: routeIntegrationAttempts,
+    pendingFeedback,
+    localPendingAnswer,
+    aiPendingTurn,
+    aiMode,
+    aiHistory,
+    aiLastResult,
+    aiCurrentExercise,
+    aiPendingFeedback,
+    routeIntegrationHintLevel,
+    failed: session.turn >= routeQuestionCount && !routeIntegration
+  };
+  try { localStorage.setItem(ROUTE_STORAGE_KEY + ":" + session.config.languageId, JSON.stringify(routeDraft)); } catch {}
+  $("route-resume").classList.add("hidden");
+}
+function startRouteSession(resume = false) {
+  catalog = getSelectedCatalog();
+  if (!catalog) return;
+  routeDraft = getRouteDraftForLanguage(catalog.id);
+  const units = getRouteUnitsForCatalog(catalog);
+  const requestedUnitId = resume && routeDraft?.unitId ? routeDraft.unitId : selectedRouteUnitId;
+  activeRouteUnit = units.find(unit => unit.id === requestedUnitId) || units[0];
+  if (!activeRouteUnit) return;
+  const unitIndex = units.findIndex(unit => unit.id === activeRouteUnit.id);
+  const routeProgress = getRouteProgressForLanguage(catalog.id);
+  if (!isRouteUnitUnlocked(units,unitIndex,routeProgress)) return;
+  const useAI = !catalog.exercises.length;
+  const hasMatchingDraft = Boolean(routeDraft?.session && routeDraft.languageId === catalog.id && routeDraft.unitId === activeRouteUnit.id);
+  routeQuestionCount = Number(hasMatchingDraft ? routeDraft.questionCount : activeRouteUnit.questionCount || 10);
+  resume = Boolean(resume && hasMatchingDraft);
+  if (useAI && !aiConfigured) {
+    $("route-start").textContent = "Ruta en preparación";
+    return;
+  }
+  if (resume && hasMatchingDraft) {
+    session = routeDraft.session;
+    pendingFeedback = routeDraft.pendingFeedback || null;
+    localPendingAnswer = routeDraft.localPendingAnswer || null;
+    aiPendingTurn = routeDraft.aiPendingTurn || null;
+    routeIntegration = Boolean(routeDraft.integration);
+    routeIntegrationAttempts = Number(routeDraft.integrationAttempts || 0);
+    aiMode = Boolean(routeDraft.aiMode);
+    aiHistory = routeDraft.aiHistory || [];
+    aiLastResult = routeDraft.aiLastResult || null;
+    aiCurrentExercise = routeDraft.aiCurrentExercise || null;
+    aiPendingFeedback = routeDraft.aiPendingFeedback || null;
+    routeIntegrationHintLevel = Number(routeDraft.routeIntegrationHintLevel || 0);
+  } else {
+    routeQuestionCount = Number(activeRouteUnit.questionCount || 10);
+    session = createSession({
+      language:catalog.label, languageId:catalog.id, languageLocale:catalog.locale,
+      duration:useAI ? routeQuestionCount + 1 : routeQuestionCount,
+      questionCount:useAI ? routeQuestionCount + 1 : routeQuestionCount,
+      level:"zero", topic:activeRouteUnit.topic, routeMode:true, routeUnitId:activeRouteUnit.id
+    });
+    routeIntegration = false;
+    routeIntegrationAttempts = 0;
+    pendingFeedback = null;
+    localPendingAnswer = null;
+    aiPendingTurn = null;
+    aiMode = useAI;
+    aiHistory = [];
+    aiLastResult = null;
+    aiCurrentExercise = null;
+    aiPendingFeedback = null;
+    routeIntegrationHintLevel = 0;
+  }
+  routeMode = true;
+  session.config.routeMode = true;
+  $("lesson-panel").dataset.routeUnit = activeRouteUnit.id;
+  saveRouteDraft();
+  renderRouteDashboard();
+  sessionAbortController?.abort();
+  sessionAbortController = new AbortController();
+  sessionFinished = false;
+  reviewMode = false;
+  $("lesson-panel").classList.remove("hidden");
+  $("summary-panel").classList.add("hidden");
+  showSessionView("route");
+  if (aiPendingTurn) {
+    renderAITutorTurn(aiLastResult);
+    showAnswerFeedback({
+      correct: aiPendingTurn.evaluation?.status === "correct",
+      expected: aiPendingTurn.exercise?.expectedAnswer || "",
+      explanation: aiPendingTurn.evaluation?.status === "correct" ? "" : aiPendingTurn.evaluation?.feedback || "",
+      selected: aiPendingTurn.answer || "",
+      options: aiPendingTurn.exercise?.options || [],
+      correctOption: aiPendingTurn.exercise?.expectedAnswer || ""
+    });
+  } else if (localPendingAnswer) {
+    renderLesson({ exercise: localPendingAnswer.exercise, answered: true });
+    showAnswerFeedback({
+      correct: localPendingAnswer.correct, expected: localPendingAnswer.expected,
+      expectedLocale: localPendingAnswer.expectedLocale,
+      explanation: localPendingAnswer.correct ? "" : localPendingAnswer.explanation,
+      selected: localPendingAnswer.selected, options: localPendingAnswer.options || [],
+      correctOption: localPendingAnswer.expected
+    });
+  } else if (session.turn > routeQuestionCount) renderRouteAssessmentFailed();
+  else if (routeIntegration && aiMode && aiLastResult) renderAITutorTurn(aiLastResult);
+  else if (routeIntegration) renderRouteIntegration();
+  else if (session.turn >= routeQuestionCount) renderRouteIntegration();
+  else if (aiMode && aiLastResult) renderAITutorTurn(aiLastResult);
+  else if (aiMode) startAITutorSession(session.config);
+  else renderLesson();
+}
+function renderRouteIntegration() {
+  $("lesson-panel").classList.add("route-integration-active");
+  $("hint-btn").hidden = false;
+  $("hint-btn").disabled = false;
+  $("hint-btn").textContent = "Pista";
+  speech.stop();
+  const scenarios = {
+    daily: catalog.id === "en"
+      ? { prompt:"Traduce al inglés esta frase concreta: «Mañana estudio en casa».", target:"Tomorrow I study at home.", accepted:["Tomorrow, I study at home."], hints:["Traduce mañana, estudiar y en casa.","Empieza con «Tomorrow…»."] }
+      : { prompt:"Traduce al portugués esta frase concreta: «Mañana estudio en casa».", target:"Amanhã estudo em casa.", accepted:["Amanhã eu estudo em casa."], hints:["Traduce mañana, estudiar y en casa.","Empieza con «Amanhã…»."] },
+    travel: catalog.id === "en"
+      ? { prompt:"Traduce al inglés esta frase concreta: «Quiero comprar un billete».", target:"I want to buy a ticket.", accepted:["I want to buy a ticket, please."], hints:["Traduce quiero, comprar y billete.","Empieza con «I want to buy…»."] }
+      : { prompt:"Traduce al portugués esta frase concreta: «Quiero comprar un pasaje».", target:"Quero comprar uma passagem.", accepted:["Eu quero comprar uma passagem."], hints:["Traduce quiero, comprar y pasaje.","Empieza con «Quero comprar…»."] },
+    food: catalog.id === "en"
+      ? { prompt:"Traduce al inglés esta frase concreta: «Quisiera un café, por favor».", target:"I would like a coffee, please.", accepted:["I'd like a coffee, please."], hints:["Usa una petición cortés.","Empieza con «I would like…»."] }
+      : { prompt:"Traduce al portugués esta frase concreta: «Quisiera un café, por favor».", target:"Eu gostaria de um café, por favor.", accepted:["Gostaria de um café, por favor."], hints:["Usa gostaria de para expresar quisiera.","Empieza con «Eu gostaria de…»."] },
+    work: catalog.id === "en"
+      ? { prompt:"Traduce al inglés esta frase concreta: «Trabajo en una oficina».", target:"I work in an office.", accepted:["I work at an office."], hints:["Traduce trabajo y oficina.","Empieza con «I work…»."] }
+      : { prompt:"Traduce al portugués esta frase concreta: «Trabajo en una oficina».", target:"Trabalho em um escritório.", accepted:["Eu trabalho em um escritório."], hints:["Traduce trabajo y oficina.","Empieza con «Trabalho…»."] }
+  };
+  const scenario = scenarios[activeRouteUnit?.topic || "daily"] || scenarios.daily;
+  const prompt = scenario.prompt;
+  pendingFeedback = null;
+  routeIntegrationHintLevel = Number(routeIntegrationHintLevel || 0);
+  currentExercise = {
+    id:"route-integration-" + (activeRouteUnit?.id || "foundations"), prompt, promptLocale:"es-CL",
+    target:scenario.target, allowTypo:true, acceptedAnswers:scenario.accepted,
+    hints:scenario.hints,
+    explanation:"Esta actividad integra el vocabulario y las estructuras de la unidad " + (activeRouteUnit?.title || "Fundamentos") + "."
+  };
+  $("lesson-phase").textContent = "CAPÍTULO 2 · ACTIVIDAD INTEGRADORA";
+  $("turn-count").textContent = (routeQuestionCount + 1) + " / " + (routeQuestionCount + 1);
+  $("progress-bar").style.width = "100%";
+  $("progress-bar").parentElement.setAttribute("aria-valuenow","100");
+  $("hint-btn").textContent = routeIntegrationHintLevel >= 1 ? "Ver respuesta" : "Pista";
+  $("hint-btn").hidden = routeIntegrationHintLevel >= 2;
+  currentActivitySpeechSegments = getExerciseSpeechSegments(currentExercise);
+  const integrationAudio = currentActivitySpeechSegments.map(item => speakerButton(item.text,item.locale)).join(" ");
+  $("lesson-content").innerHTML = getExerciseIllustration({ topic:activeRouteUnit?.topic, prompt }) + '<div class="activity-phase">CAPÍTULO 2 · ACTIVIDAD INTEGRADORA</div><p class="eyebrow">UNIDAD ' + (activeRouteUnit?.number || "01") + ' · ' + escapeHTML(activeRouteUnit?.title || "INICIO DEL VIAJE").toUpperCase() + '</p><h3>' + escapeHTML(prompt) + '</h3>' + integrationAudio + '<p>Combina lo practicado en los capítulos anteriores.</p>';
+  bindSpeakerButtons($("lesson-content"));
+  speech.speakSequence(currentActivitySpeechSegments,{automatic:true});
+  $("answer-area").innerHTML = '<textarea id="route-integration-answer" class="answer-input" rows="3" placeholder="Escribe tu respuesta completa…"></textarea><button id="route-integration-submit" class="primary" type="button">Comprobar actividad</button>';
+  $("route-integration-submit").addEventListener("click", () => {
+    const answer = $("route-integration-answer").value.trim();
+    const integrationCorrect = evaluateAnswer(answer, currentExercise);
+    playAnswerFeedbackSound(integrationCorrect);
+    if (integrationCorrect) {
+      session.routeIntegrationComplete = true;
+      routeDraft = null;
+      try { localStorage.removeItem(ROUTE_STORAGE_KEY + ":" + session.config.languageId); } catch {}
+      $("route-resume").classList.add("hidden");
+      pendingFeedback = { text:"Actividad integradora completada. Unidad superada.", expected:currentExercise.target };
+      finishSession();
+    } else {
+      routeIntegrationAttempts += 1;
+      routeIntegrationHintLevel = Math.min(routeIntegrationHintLevel + 1, 2);
+      saveRouteDraft();
+      const helpText = routeIntegrationHintLevel === 1 ? currentExercise.hints[0] : "Respuesta de referencia: " + currentExercise.target;
+      const revealedAudio = routeIntegrationHintLevel >= 2 ? " " + speakerButton(currentExercise.target,session.config.languageLocale) : "";
+      $("feedback").innerHTML = '<p class="answer-status incorrect">Todavía no coincide. Inténtalo otra vez.</p><p class="answer-explanation">' + (routeIntegrationHintLevel === 1 ? "Pista: " : "Ver respuesta: ") + escapeHTML(helpText) + revealedAudio + '</p>';
+      $("hint-btn").textContent = "Ver respuesta";
+      if (routeIntegrationHintLevel >= 2) $("hint-btn").hidden = true;
+      $("feedback").classList.remove("hidden","bad");
+      bindSpeakerButtons($("feedback"));
+      if (routeIntegrationHintLevel >= 2) speech.speak(currentExercise.target,session.config.languageLocale,{automatic:true});
+      $("route-integration-answer").value = answer;
+      $("route-integration-answer").focus();
+    }
+  });
+}
+function renderRouteAssessmentFailed() {
+  $("lesson-panel").classList.remove("route-integration-active");
+  pendingFeedback = null;
+  saveRouteDraft();
+  $("lesson-phase").textContent = "REFUERZO NECESARIO";
+  $("turn-count").textContent = routeQuestionCount + " / " + (routeQuestionCount + 1);
+  $("progress-bar").style.width = (routeQuestionCount / (routeQuestionCount + 1) * 100) + "%";
+  $("progress-bar").parentElement.setAttribute("aria-valuenow",String(Math.round(routeQuestionCount / (routeQuestionCount + 1) * 100)));
+  $("lesson-content").innerHTML = getExerciseIllustration({topic:activeRouteUnit?.topic,prompt:activeRouteUnit?.title}) + '<div class="activity-phase">REFUERZO NECESARIO</div><div class="feedback-note"><span>Actividad integradora pendiente</span><p>Completa la actividad integradora para registrar el puntaje de esta unidad.</p></div>';
+  $("answer-area").innerHTML = '<button id="route-retry" class="primary" type="button">Repetir la unidad</button>';
+  $("route-retry").addEventListener("click", () => {
+    const useAI = !catalog.exercises.length;
+    session = createSession({ ...session.config, duration:useAI ? routeQuestionCount + 1 : routeQuestionCount, questionCount:useAI ? routeQuestionCount + 1 : routeQuestionCount });
+    routeIntegration = false;
+    routeIntegrationAttempts = 0;
+    pendingFeedback = null;
+    aiMode = useAI;
+    aiHistory = [];
+    aiLastResult = null;
+    aiCurrentExercise = null;
+    aiPendingFeedback = null;
+    saveRouteDraft();
+    if (useAI) startAITutorSession(session.config);
+    else renderLesson();
+  });
+}
 function getTopicExercises() {
   const matches = catalog.exercises.filter(exercise => session.config.topic === "random" || exercise.topic === session.config.topic);
   return matches.length ? matches : catalog.exercises;
 }
 
 function chooseExercise() {
-  const exercises = getTopicExercises();
+  if (routeMode && getRoutePhase(session.turn,routeQuestionCount).id === "discovery") {
+    const discoveryItems = catalog.exercises.filter(item =>
+      item.topic === session.config.topic && item.term && item.meaning && item.type !== "reading"
+    );
+    const source = discoveryItems[session.turn];
+    if (source) {
+      const grammarItem = /verbo|conjug|gram[aá]t|tiempo verbal/i.test(String(source.skill || ""));
+      if (grammarItem) return source;
+      const distractors = [...new Set(discoveryItems
+        .filter(item => item.id !== source.id)
+        .map(item => String(item.meaning).trim())
+        .filter(Boolean))];
+      const options = [...new Set([String(source.meaning).trim(), ...distractors])].slice(0,3);
+      return {
+        id:"route-discovery-" + (activeRouteUnit?.id || session.config.topic) + "-" + source.id,
+        level:"A1", topic:session.config.topic, type:"vocabulary", skill:"Vocabulario esencial",
+        prompt:"¿Qué significa «" + source.term + "»?",
+        promptLocale:"es-CL", promptLanguage:"source", target:source.meaning,
+        options:options.length >= 2 ? options : undefined, optionsLocale:"es-CL",
+        term:source.term, meaning:source.meaning, speechText:source.term,
+        speechLocale:catalog.locale, hint:"Recuerda el significado de esta palabra en el idioma que estás aprendiendo.",
+        explanation:source.term + " significa " + source.meaning + "."
+      };
+    }
+  }
+  let exercises = getTopicExercises();
   const adaptation = getAdaptation(session);
-  let candidates = exercises.filter(exercise => !session.answers.some(answer => answer.exerciseId === exercise.id));
-  if (!candidates.length) candidates = exercises;
+  let candidates;
+  const finalTurn = !routeMode && session.turn === session.config.duration - 1;
+  if (session.config.topic === "reading") {
+    const answeredIds = new Set(session.answers.map(answer => answer.exerciseId));
+    const reading = catalog.exercises.filter(exercise => exercise.type === "reading" && !answeredIds.has(exercise.id));
+    if (reading.length) {
+      const preferredLevel = session.config.level === "advanced" ? "A2" : "A1";
+      const levelRank = exercise => exercise.level === preferredLevel ? 0 : 1;
+      reading.sort((a,b) => levelRank(a)-levelRank(b) || String(a.passage || "").trim().split(/\s+/).length-String(b.passage || "").trim().split(/\s+/).length);
+      candidates = [reading[0]];
+    } else {
+      // Never recycle a reading question in the same session. End the session
+      // when every distinct reading item has been answered.
+      return null;
+    }
+  } else {
+    candidates = exercises.filter(exercise => !session.answers.some(answer => answer.exerciseId === exercise.id) && (finalTurn || !exercise.finalPractice));
+    if (finalTurn) {
+      const finalExercises = candidates.filter(exercise => exercise.finalPractice);
+      if (finalExercises.length) candidates = finalExercises;
+    }
+  }
+  if (routeMode && getRoutePhase(session.turn,routeQuestionCount).id === "application") {
+    const chapterOneEnd = Math.max(2,Math.ceil(routeQuestionCount * 0.4));
+    const discoverySources = catalog.exercises.filter(item =>
+      item.topic === session.config.topic && item.term && item.meaning && item.type !== "reading"
+    ).slice(0,chapterOneEnd);
+    const isolatedDiscoveryIds = new Set(discoverySources
+      .filter(item => /comprensión auditiva|vocabulario/i.test(String(item.skill || "")) &&
+        String(item.prompt || "").trim().split(/\s+/).filter(Boolean).length <= 2)
+      .map(item => item.id));
+    candidates = candidates.filter(exercise => !isolatedDiscoveryIds.has(exercise.id));
+  }
+  if (!candidates.length && !routeMode && session.config.topic !== "reading") {
+    exercises = catalog.exercises;
+    candidates = exercises.filter(exercise => !session.answers.some(answer => answer.exerciseId === exercise.id));
+  }
+  if (session.turn === 0 && Array.isArray(session.config.excludeExerciseIds) && session.config.excludeExerciseIds.length) {
+    const freshCandidates = candidates.filter(exercise => !session.config.excludeExerciseIds.includes(exercise.id));
+    if (freshCandidates.length) candidates = freshCandidates;
+  }
+  if (!candidates.length) return null;
+  if (routeMode && getRoutePhase(session.turn,routeQuestionCount).id === "application") {
+    const difficulty = exercise => {
+      const level = exercise.level === "A1" ? 0 : exercise.level === "A2" ? 1 : 2;
+      const words = String(exercise.target || exercise.prompt || "").trim().split(/\s+/).filter(Boolean).length;
+      return { level, words, length:String(exercise.target || "").length };
+    };
+    candidates.sort((left,right) => {
+      const a = difficulty(left), b = difficulty(right);
+      return a.level - b.level || a.words - b.words || a.length - b.length || String(left.id).localeCompare(String(right.id));
+    });
+  }
   if (adaptation.mode === "scaffold") {
     const easier = candidates.filter(exercise => exercise.level === "A1");
     if (easier.length) candidates = easier;
@@ -497,114 +1462,234 @@ function chooseExercise() {
   if (session.config.level === "zero") {
     const beginner = candidates.filter(exercise => exercise.level === "A1");
     if (beginner.length) candidates = beginner;
+  } else if (session.config.level === "advanced") {
+    const advanced = candidates.filter(exercise => exercise.level === "A2");
+    if (advanced.length) candidates = advanced;
   }
-  return candidates[session.turn % candidates.length];
-}
-
-function startDiagnostic() {
-  const beginner = catalog.exercises.filter(exercise => exercise.level === "A1").slice(0,3);
-  const challenge = catalog.exercises.filter(exercise => exercise.level === "A2").slice(0,1);
-  diagnostic = { questions:[...beginner, ...challenge], index:0, score:0 };
-  renderDiagnosticQuestion();
-}
-
-function renderDiagnosticQuestion() {
-  const exercise = diagnostic.questions[diagnostic.index];
-  $("lesson-phase").textContent = "DIAGNÓSTICO · " + (diagnostic.index + 1) + " / 4";
-  $("turn-count").textContent = "Evaluación inicial";
-  $("progress-bar").style.width = (diagnostic.index / 4 * 100) + "%";
-  $("stats").hidden = true;
-  $("lesson-content").innerHTML = '<h3>' + escapeHTML(exercise.prompt) + '</h3><p>Responde según lo que ya sabes. Estas preguntas no cuentan en los turnos de práctica.</p>';
-  speech.stop();
-  $("answer-area").innerHTML = exercise.options.map((option,index) =>
-    '<div class="answer-option-row"><button class="answer-option" data-diagnostic="' + index + '">' + escapeHTML(option) + '</button>' + speakerButton(option, catalog.locale) + '</div>'
-  ).join("");
-  $("answer-area").querySelectorAll("[data-diagnostic]").forEach(button => button.addEventListener("click", event => {
-    if (event.target.closest("[data-speak]")) return;
-    if (Number(button.dataset.diagnostic) === exercise.options.indexOf(exercise.target)) diagnostic.score += 1;
-    diagnostic.index += 1;
-    if (diagnostic.index < 4) renderDiagnosticQuestion();
-    else finishDiagnostic();
-  }));
-  $("answer-area").querySelectorAll("[data-speak]").forEach(button => button.addEventListener("click", event => {
-    event.stopPropagation();
-    speech.speak(button.dataset.speak, catalog.locale);
-  }));
-  autoSpeak(exercise.options.join(". "), catalog.locale);
-  $("hint-btn").hidden = true;
-  $("review-btn").hidden = true;
-  $("feedback").classList.add("hidden");
-}
-
-function finishDiagnostic() {
-  const score = diagnostic.score;
-  session.config.level = score <= 1 ? "zero" : score <= 3 ? "basic" : "intermediate";
-  session.config.diagnosticScore = score;
-  $("stats").hidden = false;
-  $("hint-btn").hidden = false;
-  $("review-btn").hidden = false;
-  $("feedback").textContent = "Nivel inicial estimado: " + levelLabel(session.config.level) + ". Es orientativo y se ajustará según tus respuestas.";
-  $("feedback").classList.remove("hidden","bad");
-  renderLesson();
+  return candidates[0];
 }
 
 function levelLabel(level) {
-  return ({zero:"principiante",basic:"básico",intermediate:"intermedio"})[level] || "básico";
+  return ({zero:"Principiante · A1",basic:"Intermedio · B1",intermediate:"Intermedio · B1",advanced:"Avanzado · C1"})[level] || "Intermedio · B1";
 }
 
-function renderLesson() {
-  if (session.turn >= session.config.duration) { finishSession(); return; }
+function renderLesson({ exercise: exerciseOverride = null, answered = false } = {}) {
+  $("lesson-panel").classList.remove("route-integration-active");
+  if (session.turn >= session.config.duration && !answered) { finishSession(); return; }
   reviewMode = false;
-  currentExercise = chooseExercise();
+  const questionIndex = answered ? Math.max(0, session.turn - 1) : session.turn;
+  currentExercise = exerciseOverride || chooseExercise();
+  localHintLevel = 0;
+  if (!currentExercise) { finishSession(); return; }
   const adaptation = getAdaptation(session);
-  $("lesson-phase").textContent = "CONVERSACIÓN GUIADA";
-  $("turn-count").textContent = "Turno " + (session.turn + 1) + " / " + session.config.duration;
-  $("progress-bar").style.width = (session.turn / session.config.duration * 100) + "%";
+  const routePhase = routeMode ? getRoutePhase(questionIndex,routeQuestionCount) : null;
+  const activityPhaseLabel = routeMode ? routePhase.label : session.config.topic === "reading"
+    ? (currentExercise.type === "reading" ? "COMPRENSIÓN DEL TEXTO" : "PRÁCTICA GENERAL")
+    : topicLabels[session.config.topic].toUpperCase() + " · " + levelLabel(session.config.level).toUpperCase();
+  const activityTotal = routeMode ? routeQuestionCount + 1 : session.config.duration;
+  $("turn-count").textContent = (questionIndex + 1) + " / " + activityTotal;
+  $("progress-bar").style.width = ((questionIndex + 1) / activityTotal * 100) + "%";
+  $("progress-bar").parentElement.setAttribute("aria-valuenow",String(Math.round((questionIndex + 1) / activityTotal * 100)));
   $("streak").textContent = session.streak;
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
-  $("lesson-content").innerHTML = '<p class="eyebrow">TEMA: ' + escapeHTML(topicLabels[session.config.topic].toUpperCase()) + ' · NIVEL ' + escapeHTML(levelLabel(session.config.level).toUpperCase()) + '</p><h3>' + escapeHTML(currentExercise.prompt) + '</h3><p>' + escapeHTML(adaptation.message || "Elige una respuesta o escribe la tuya.") + '</p>';
+  pendingFeedback = null;
+  const targetLocale = session.config.languageLocale || session.config.languageId;
+  // Every displayed source and target segment keeps its own locale and speaker control.
+  const questionSpeechSegments = getExerciseSpeechSegments(currentExercise)
+    .filter(item => item.locale && item.text);
+  currentActivitySpeechSegments = questionSpeechSegments;
+  const promptMarkup = currentExercise.promptLanguage === "target"
+    ? renderClickableTargetText(currentExercise.prompt)
+    : renderVariantTerms(currentExercise.prompt);
+  const instructionMarkup = currentExercise.instruction
+    ? '<p class="exercise-instruction">' + escapeHTML(currentExercise.instruction) + '</p>' : "";
+  const questionAudioMarkup = questionSpeechSegments.filter(item => item.role !== "passage")
+    .map(item => speakerButton(item.text, item.locale)).join(" ");
+  const readingMarkup = currentExercise.passage
+    ? '<section class="reading-passage"><span class="reading-passage-kicker">Texto de lectura</span><h3>' + escapeHTML(currentExercise.passageTitle || "Lectura") + '</h3><p>' + escapeHTML(currentExercise.passage) + '</p><div class="reading-player"><button id="reading-tts-toggle" class="reading-player-play" type="button" aria-label="Reproducir lectura">▶</button><input id="reading-tts-progress" class="reading-player-progress" type="range" min="0" max="100" value="0" aria-label="Posición de lectura"><button id="reading-tts-restart" class="reading-player-restart" type="button" aria-label="Reiniciar lectura">↻</button></div></section>'
+    : "";
+  const readingQuestionType = session.config.topic === "reading"
+    ? '<p class="reading-question-type">' + (currentExercise.type === "reading" ? "Comprensión del texto" : "Práctica general") + '</p>' : "";
+  $("lesson-content").innerHTML = getExerciseIllustration({ ...currentExercise, topic:currentExercise.topic || session.config.topic }) + '<div class="activity-phase">' + escapeHTML(activityPhaseLabel) + '</div>' + readingQuestionType + readingMarkup + instructionMarkup + '<h3>' + promptMarkup + '</h3>' + questionAudioMarkup;
+  updateReadingPassageControl();
+  $("reading-tts-toggle")?.addEventListener("click", togglePassageSpeech);
+  $("reading-tts-restart")?.addEventListener("click", restartPassageSpeech);
+  $("reading-tts-progress")?.addEventListener("change", event => seekPassageSpeech(event.target.value));
+  bindVariantLinks($("lesson-content"));
+  bindSpeakerButtons($("lesson-content"));
+  bindTargetWords($("lesson-content"));
   speech.stop();
-  const options = currentExercise.options.map((option,index) => '<div class="answer-option-row"><button class="answer-option" data-choice="' + index + '">' + escapeHTML(option) + '</button>' + speakerButton(option, catalog.locale) + '</div>').join("");
-  $("answer-area").innerHTML = options + '<input id="free-answer" class="answer-input" placeholder="También puedes escribir tu respuesta…"><button id="submit-free" class="secondary" type="button">Comprobar respuesta escrita</button>';
-  $("answer-area").querySelectorAll("[data-choice]").forEach(button => button.addEventListener("click", event => {
-    if (event.target.closest("[data-speak]")) return;
-    submitAnswer(currentExercise.options[Number(button.dataset.choice)]);
-  }));
-  $("answer-area").querySelectorAll("[data-speak]").forEach(button => button.addEventListener("click", event => {
-    event.stopPropagation();
-    speech.speak(button.dataset.speak, catalog.locale);
-  }));
-  autoSpeak(currentExercise.options.join(". "), catalog.locale);
-  $("submit-free").addEventListener("click", () => submitAnswer($("free-answer").value));
+  readingPassageActive = false;
+  readingPassagePaused = false;
+  readingPassageOffset = 0;
+  readingPassageProgress = 0;
+  updateReadingPassageControl();
+  if (currentExercise.passage) {
+    const passageSpeech = questionSpeechSegments.find(item => item.role === "passage");
+    if (passageSpeech && speech.enabled) {
+      startPassageSpeech(0, { automatic:true, onEnd:() => {
+        speech.speakSequence(questionSpeechSegments.filter(item => item.role !== "passage"), { automatic:true });
+      }});
+    }
+  } else {
+    speech.speakSequence(questionSpeechSegments, { automatic:true });
+  }
+  const useMultipleChoice = currentExercise.type === "reading"
+    ? Array.isArray(currentExercise.options) && currentExercise.options.length >= 2
+    : routeMode
+      ? routePhase.id !== "sentences" && Array.isArray(currentExercise.options) && currentExercise.options.length >= 2
+      : questionIndex < session.config.duration - 1 && questionIndex < 3;
+  if (useMultipleChoice) {
+    const options = currentExercise.options || [];
+    $("answer-area").innerHTML = options.map((option,index) => {
+      const optionLocale = currentExercise.optionsLocale || (currentExercise.speechMode === "listening" ? "es-CL" : catalog.locale);
+      const targetSpeaker = optionLocale.toLowerCase() === targetLocale.toLowerCase() ? speakerButton(option, optionLocale) : "";
+      return '<div class="answer-option-row"><button class="answer-option" data-choice="' + index + '">' + renderClickableTargetText(option) + '</button>' + (currentExercise.type === "reading" ? "" : targetSpeaker) + '</div>';
+    }).join("");
+    $("answer-area").querySelectorAll("[data-choice]").forEach(button => button.addEventListener("click", () => submitAnswer(options[Number(button.dataset.choice)])));
+    bindSpeakerButtons($("answer-area"));
+    bindTargetWords($("answer-area"));
+  } else {
+    $("answer-area").innerHTML = '<input id="free-answer" class="answer-input" placeholder="Escribe tu respuesta…" autocomplete="off"><button id="submit-free" class="primary" type="button">Enviar respuesta →</button>';
+    $("submit-free").addEventListener("click", () => submitAnswer($("free-answer").value));
+    $("free-answer").addEventListener("keydown", event => { if (event.key === "Enter") submitAnswer($("free-answer").value); });
+  }
   $("feedback").classList.add("hidden");
   $("hint-btn").disabled = false;
-  $("hint-btn").hidden = false;
-  $("review-btn").hidden = false;
+  $("hint-btn").hidden = routeMode ? routePhase.id !== "sentences" : questionIndex < 3;
+  $("hint-btn").textContent = "Pista";
 }
 
 function submitAnswer(answer) {
   const result = recordAnswer(session, currentExercise, answer);
-  $("answer-area").querySelectorAll("button").forEach(button => button.disabled = true);
-  if (result.correct) {
-    showFeedback("Correcto. " + currentExercise.explanation, true);
-  } else {
-    showFeedback("Respuesta de referencia: " + currentExercise.target + ". " + currentExercise.explanation, false);
-  }
-  appendCatalogSpeech($("feedback"), currentExercise, "explanationSpeechSegments", true);
+  $("submit-free")?.remove();
+  localPendingAnswer = {
+    correct: result.correct, expected: currentExercise.target,
+    expectedLocale: currentExercise.answerLocale || (currentExercise.speechMode === "listening" ? "es-CL" : catalog.locale),
+    explanation: currentExercise.explanation || "", selected: String(answer || ""),
+    exercise: currentExercise, options: currentExercise.options || []
+  };
   updateStats();
-  const next = document.createElement("button");
-  next.className = "primary";
-  next.type = "button";
-  next.textContent = "Continuar →";
-  next.addEventListener("click", renderLesson);
-  $("answer-area").append(next);
+  showAnswerFeedback({
+    correct: result.correct, expected: currentExercise.target,
+    expectedLocale: currentExercise.answerLocale || (currentExercise.speechMode === "listening" ? "es-CL" : catalog.locale),
+    explanation: result.correct ? "" : currentExercise.explanation,
+    selected: String(answer || ""), options: currentExercise.options || [],
+    correctOption: currentExercise.target
+  });
+  if (routeMode) saveRouteDraft();
 }
 
 function updateStats() {
   $("streak").textContent = session.streak;
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
+}
+function playAnswerFeedbackSound(correct) {
+  try {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+    const context = new AudioContextClass();
+    const now = context.currentTime;
+    const notes = correct ? [660, 880] : [260, 190];
+    notes.forEach((frequency,index) => {
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = correct ? "sine" : "triangle";
+      oscillator.frequency.value = frequency;
+      gain.gain.setValueAtTime(0.0001, now + index * 0.13);
+      gain.gain.exponentialRampToValueAtTime(0.12, now + index * 0.13 + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + index * 0.13 + 0.11);
+      oscillator.connect(gain); gain.connect(context.destination);
+      oscillator.start(now + index * 0.13); oscillator.stop(now + index * 0.13 + 0.12);
+    });
+    window.setTimeout(() => context.close().catch(() => {}), 650);
+  } catch {}
+}
+function showAnswerFeedback({ correct, expected, expectedLocale, explanation, selected, options = [], correctOption, showContinue = true }) {
+  playAnswerFeedbackSound(Boolean(correct));
+  $("answer-area").querySelector(".answer-waiting")?.remove();
+  $("answer-area").querySelector("#continue-answer")?.remove();
+  const resolvedExpectedLocale = expectedLocale || session?.config.languageLocale || catalog?.locale;
+  const expectedAudio = resolvedExpectedLocale?.toLowerCase() === (session?.config.languageLocale || catalog?.locale || "").toLowerCase()
+    ? " " + speakerButton(expected, resolvedExpectedLocale) : "";
+  const expectedText = !correct && expected ? '<p class="answer-correct-text">Respuesta correcta: ' + renderClickableTargetText(expected) + expectedAudio + '</p>' : "";
+  const explanationText = !correct && explanation ? '<p class="answer-explanation">' + renderVariantTerms(explanation) + '</p>' : "";
+  $("feedback").innerHTML = (correct ? '<p class="answer-status correct">Correcto</p>' : '<p class="answer-status incorrect">Incorrecto</p>') + expectedText + explanationText;
+  $("feedback").classList.remove("hidden","bad");
+  $("hint-btn").disabled = true;
+  $("hint-btn").hidden = true;
+  $("answer-area").querySelectorAll("[data-choice],[data-ai-choice]").forEach(button => {
+    const value = button.textContent.trim().toLocaleLowerCase();
+    const correctValue = correct ? (selected || correctOption || expected) : (correctOption || expected);
+    const isCorrect = value === String(correctValue || "").trim().toLocaleLowerCase();
+    const isSelected = value === String(selected || "").trim().toLocaleLowerCase();
+    button.classList.toggle("answer-correct", isCorrect);
+    button.classList.toggle("answer-incorrect", !correct && isSelected && !isCorrect);
+    button.disabled = true;
+  });
+  $("answer-area").querySelectorAll("input").forEach(input => { input.disabled = true; });
+  $("answer-area").querySelectorAll("button:not([data-choice]):not([data-ai-choice]):not([data-speak])").forEach(button => { button.disabled = true; });
+  if (showContinue) {
+    $("answer-area").insertAdjacentHTML("beforeend", '<button id="continue-answer" class="primary answer-continue" type="button">Continuar →</button>');
+    $("continue-answer").addEventListener("click", continueAfterAnswer);
+  } else {
+    $("answer-area").insertAdjacentHTML("beforeend", '<p class="muted answer-waiting">Preparando la siguiente pregunta…</p>');
+  }
+  bindSpeakerButtons($("feedback"));
+  bindTargetWords($("feedback"));
+}
+function continueAfterAnswer() {
+  if (aiEvaluationPending) {
+    aiContinueRequested = true;
+    const button = $("continue-answer");
+    if (button) {
+      button.disabled = true;
+      button.textContent = "Continuando…";
+    }
+    return;
+  }
+  $("feedback").classList.add("hidden");
+  if (aiMode && aiPendingTurn) {
+    const pending = aiPendingTurn;
+    aiPendingTurn = null;
+    const evaluation = pending.evaluation || {};
+    if (routeMode && pending.routeIntegrationQuestion) {
+      playAnswerFeedbackSound(evaluation.status === "correct");
+      if (evaluation.status === "correct") {
+        session.routeIntegrationComplete = true;
+        pendingFeedback = { text: evaluation.feedback || "Actividad integradora completada.", expected: pending.exercise.expectedAnswer || "" };
+        finishSession();
+      } else renderRouteAssessmentFailed();
+      return;
+    }
+    if (routeMode && session.turn === routeQuestionCount && !routeIntegration) {
+      routeIntegration = true;
+      if (pending.result?.exercise) pending.result.nextAction = "answer";
+    }
+    if (pending.result?.nextAction === "finish" || (!routeMode && session.turn >= session.config.duration)) {
+      finishSession();
+      return;
+    }
+    renderAITutorTurn(pending.result);
+    if (routeMode) saveRouteDraft();
+    return;
+  }
+  localPendingAnswer = null;
+  if (routeMode) {
+    if (session.turn >= routeQuestionCount) {
+      routeIntegration = true;
+      saveRouteDraft();
+      renderRouteIntegration();
+      return;
+    }
+    saveRouteDraft();
+  } else if (session.turn >= session.config.duration) {
+    finishSession();
+    return;
+  }
+  renderLesson();
 }
 function showFeedback(message, positive) {
   $("feedback").textContent = message;
@@ -614,87 +1699,1032 @@ function showFeedback(message, positive) {
 
 $("hint-btn").addEventListener("click", () => {
   speech.stop();
+  if (reviewMode && reviewExercise) {
+    if (reviewHintLevel === 0) {
+      reviewHintLevel = 1;
+      showFeedback("Pista: " + (reviewExercise.hint || reviewExercise.explanation || "Identifica la palabra clave de la consigna."), true);
+      $("hint-btn").textContent = "Ver respuesta";
+    } else {
+      reviewHintLevel = 2;
+      showFeedback("Respuesta: " + reviewExercise.target, true);
+      $("hint-btn").hidden = true;
+    }
+    return;
+  }
   if (aiMode) {
-    if (aiHintLevel === 0 && aiCurrentExercise?.hint) {
+    if (aiHintLevel >= 2) { $("hint-btn").hidden = true; return; }
+    if (aiHintLevel === 1) {
+      aiHintLevel = 2;
+      showFeedback("Respuesta: " + (aiCurrentExercise?.expectedAnswer || "Consulta la corrección al responder."), true);
+      $("hint-btn").hidden = true;
+      return;
+    }
+    const storedHints = Array.isArray(aiCurrentExercise?.hints) ? aiCurrentExercise.hints : [];
+    const hint = storedHints[0] || aiCurrentExercise?.hint;
+    if (typeof hint === "string" && hint.trim()) {
       aiHintLevel = 1;
-      showFeedback("Pista: " + aiCurrentExercise.hint, true);
+      showFeedback("Pista: " + hint.trim(), true);
       const hintSegments = (aiLastResult?.speechSegments || []).filter(item =>
         item && typeof item.text === "string" && item.text.trim() &&
         item.locale === (session.config.languageLocale || session.config.languageId) &&
-        aiCurrentExercise.hint.toLocaleLowerCase().includes(item.text.toLocaleLowerCase())
+        hint.toLocaleLowerCase().includes(item.text.toLocaleLowerCase())
       );
       appendSpeechButtons($("feedback"), hintSegments);
       speech.speakSequence(hintSegments, { automatic: true });
-      $("hint-btn").textContent = "Pedir otra pista";
+      $("hint-btn").textContent = "Ver respuesta";
       return;
     }
     requestAdaptiveHint();
     return;
   }
   if (!currentExercise) return;
-  showFeedback("Pista: " + currentExercise.hint, true);
-  appendCatalogSpeech($("feedback"), currentExercise, "hintSpeechSegments");
+  if (routeMode && routeIntegration && Array.isArray(currentExercise.hints)) {
+    if (routeIntegrationHintLevel === 0) {
+      routeIntegrationHintLevel = 1;
+      showFeedback("Pista: " + currentExercise.hints[0], true);
+      $("hint-btn").textContent = "Ver respuesta";
+    } else {
+      routeIntegrationHintLevel = 2;
+      showFeedback("Respuesta: " + currentExercise.target, true);
+      appendSpeechButtons($("feedback"),[{text:currentExercise.target,locale:session.config.languageLocale}]);
+      speech.speak(currentExercise.target,session.config.languageLocale,{automatic:true});
+      $("hint-btn").hidden = true;
+    }
+    saveRouteDraft();
+    return;
+  }
+  if (!currentExercise) return;
+  if (localHintLevel === 0) {
+    localHintLevel = 1;
+    showFeedback("Pista: " + (currentExercise.hint || currentExercise.explanation || "Identifica primero la palabra clave de la consigna."), true);
+    appendCatalogSpeech($("feedback"), currentExercise, "hintSpeechSegments");
+    $("hint-btn").textContent = "Ver respuesta";
+  } else {
+    localHintLevel = 2;
+    showFeedback("Respuesta: " + currentExercise.target, true);
+    $("hint-btn").hidden = true;
+  }
 });
 
-$("review-btn").addEventListener("click", () => {
-  const lastError = [...session.errors].reverse().find(error => error.exerciseId);
-  if (!lastError) { showFeedback("Todavía no hay errores registrados para repasar.", true); return; }
-  reviewExercise = catalog.exercises.find(exercise => exercise.id === lastError.exerciseId);
-  if (!reviewExercise) return;
-  reviewMode = true;
-  $("lesson-phase").textContent = "REPASO";
-  speech.stop();
-  $("lesson-content").innerHTML = '<h3>Intenta reconstruir esta frase:</h3><p>' + escapeHTML(reviewExercise.prompt) + '</p><p>La respuesta se comprobará sin consumir un turno de la sesión.</p>';
-  $("answer-area").innerHTML = '<input id="review-answer" class="answer-input" placeholder="Escribe tu respuesta…"><button class="primary" id="check-review" type="button">Comprobar repaso</button>';
-  $("check-review").addEventListener("click", () => {
-    const ok = evaluateAnswer($("review-answer").value, reviewExercise);
-    showFeedback(ok ? "Correcto. " + reviewExercise.explanation : "Respuesta de referencia: " + reviewExercise.target + ". " + reviewExercise.explanation, ok);
-    appendCatalogSpeech($("feedback"), reviewExercise, "explanationSpeechSegments", true);
-    $("answer-area").innerHTML = '<button class="secondary" id="back-to-practice" type="button">Volver a la práctica</button>';
-    $("back-to-practice").addEventListener("click", renderLesson);
-  });
-});
+
+function getRouteAssessmentScore() {
+  // Use the pedagogy engine's evaluated-attempt counters. In AI sessions,
+  // not_applicable conversational turns are recorded in answers but are not
+  // scored attempts and must not lower the unit's final accuracy.
+  const attempted = Math.max(0, Number(session?.attempted) || 0);
+  const correct = Math.min(attempted, Math.max(0, Number(session?.correct) || 0));
+  return { attempted, correct };
+}
+function renderSummaryActions({ origin = "exercises", mode = "practice", canNext = true, nextLabel = "Siguiente ejercicio" } = {}) {
+  $("summary-return-label").textContent = origin === "route" ? "Volver a Ruta" : "Volver a Entrenamiento";
+  $("summary-restart").hidden = false;
+  $("route-summary-next").hidden = !canNext;
+  $("summary-next-label").textContent = nextLabel;
+  $("new-session").hidden = false;
+  $("summary-actions").dataset.origin = origin;
+  $("summary-actions").dataset.mode = mode;
+}
 
 function finishSession() {
   if (!session || sessionFinished) return;
   sessionFinished = true;
+  lastActivityConfig = { ...session.config };
+  lastActivityMode = routeMode ? "route" : session.config.topic === "reading" ? "reading" : "practice";
+  lastActivityExerciseIds = [...new Set((session.answers || []).map(item => item.exerciseId).filter(Boolean))];
+  const routeScore = routeMode ? getRouteAssessmentScore() : null;
+  if (routeMode && session.routeIntegrationComplete && routeScore.attempted > 0) {
+    const attempted = routeScore.attempted;
+    const correct = routeScore.correct;
+    const accuracy = attempted ? Math.round(correct / attempted * 100) : 0;
+    const stars = Math.min(5, Math.floor(accuracy / 20));
+    const state = getRouteProgressForLanguage(session.config.languageId);
+    state.completedUnits = state.completedUnits || {};
+    const unitId = session.config.routeUnitId || activeRouteUnit?.id || "foundations";
+    const previousRecord = state.completedUnits[unitId] || {};
+    const bestAccuracy = Math.max(Number(previousRecord.accuracy) || 0, accuracy);
+    const bestStars = Math.max(Number(previousRecord.stars) || 0, stars, Math.floor(bestAccuracy / 20));
+    state.completedUnits[unitId] = {
+      ...previousRecord, completed:true, stars:bestStars, accuracy:bestAccuracy,
+      correct:bestAccuracy === accuracy ? correct : previousRecord.correct,
+      attempted:bestAccuracy === accuracy ? attempted : previousRecord.attempted,
+      completedAt:new Date().toISOString()
+    };
+    saveRouteProgressForLanguage(session.config.languageId,state);
+    selectedRouteUnitId = activeRouteUnit?.id || "foundations";
+    routeSelectionTouched = false;
+    try { localStorage.removeItem(ROUTE_STORAGE_KEY + ":" + session.config.languageId); } catch {}
+    try { localStorage.removeItem("adaptive-language-tutor.route-started:" + session.config.languageId); } catch {}
+    try { localStorage.removeItem("adaptive-language-tutor.route-completed:" + session.config.languageId); } catch {}
+    routeDraft = null;
+    $("route-resume").classList.add("hidden");
+    renderRouteDashboard();
+  }
   speech.stop();
   $("lesson-panel").classList.add("hidden");
   $("summary-panel").classList.remove("hidden");
-  $("session-status").textContent = "Sesión finalizada";
+  $("session-status").textContent = "";
   const summary = buildSummary(session);
+  if (routeMode && routeScore) {
+    summary.attempted = routeScore.attempted;
+    summary.correct = routeScore.correct;
+    summary.accuracy = routeScore.attempted ? Math.round(routeScore.correct / routeScore.attempted * 100) : 0;
+    summary.errors = summary.errors.filter(item => !String(item.exerciseId || "").startsWith("route-integration-"));
+  }
+  pendingFeedback = null;
   persistSession(progress, session, summary);
   saveProgress(progress);
   refreshDashboard();
-  const diagnosticText = session.config.diagnosticScore === undefined ? "" : '<li>Diagnóstico inicial: ' + session.config.diagnosticScore + '/4 · nivel estimado ' + levelLabel(session.config.level) + '.</li>';
-  const aiLevelText = aiMode && session.config.estimatedLevel
-    ? '<li>Nivel estimado por el tutor IA: ' + escapeHTML(session.config.estimatedLevel) + '.</li>'
-    : "";
-  const focusItems = [...summary.recommendedFocus, ...(summary.reviewPatterns || [])];
-  const focus = focusItems.length ? focusItems.map(escapeHTML).join("; ") : "Mantener la práctica y ampliar vocabulario.";
   const summaryLocale = session.config.languageLocale || session.config.languageId;
-  const vocabularyText = summary.vocabulary.map(item =>
-    escapeHTML(item.term) + speakerButton(item.term, summaryLocale) + " (" + escapeHTML(item.meaning) + ")"
-  ).join(", ") || "ninguno";
-  $("summary-content").innerHTML = '<p class="intro">Completaste ' + summary.turns + ' turnos de ' + escapeHTML(session.config.language) + '.</p><ul class="summary-list">' + diagnosticText + aiLevelText + '<li>Respuestas evaluadas como correctas: ' + summary.correct + '/' + summary.attempted + ' (' + summary.accuracy + '%).</li><li>Mejor racha: ' + summary.bestStreak + '.</li><li>Vocabulario aprendido: ' + vocabularyText + '.</li><li>Errores evaluados para reforzar: ' + summary.errors.length + '.</li><li>Focos y patrones recomendados: ' + focus + '.</li></ul>';
+  const attemptedCount = routeMode ? routeScore.attempted : Number(summary.attempted) || session.answers.length;
+  const correctCount = routeMode ? routeScore.correct : Number(summary.correct) || 0;
+  const accuracyPercent = attemptedCount ? Math.round(correctCount / attemptedCount * 100) : 0;
+  const accuracyMessage = accuracyPercent === 100 ? "Perfecto" : accuracyPercent > 80 ? "Muy bien" : accuracyPercent > 60 ? "Bien" : accuracyPercent >= 40 ? "Vas progresando" : "Sigue practicando";
+  const routeStars = Math.min(5,Math.floor(accuracyPercent / 20));
+  const routeScoreMarkup = routeMode
+    ? '<section class="route-result" aria-label="Resultado de la unidad"><div class="summary-route-stars" aria-label="' + routeStars + ' de 5 estrellas">' + "★".repeat(routeStars) + "☆".repeat(5-routeStars) + '</div><p class="route-result-feedback">' + accuracyMessage + '</p></section>'
+    : '<div class="summary-accuracy"><strong>' + accuracyPercent + '%</strong><span>' + accuracyMessage + '</span></div>';
+  const reinforcementItems = [];
+  const seenReinforcement = new Set();
+  for (const error of summary.errors || []) {
+    const exercise = catalog?.exercises?.find(candidate => candidate.id === error.exerciseId);
+    const term = String(error.term || exercise?.term || error.expected || exercise?.target || "").trim();
+    if (!term) continue;
+    const meaning = String(error.meaning || exercise?.meaning || "").trim();
+    const key = term.toLocaleLowerCase() + "|" + meaning.toLocaleLowerCase();
+    if (seenReinforcement.has(key)) continue;
+    seenReinforcement.add(key);
+    reinforcementItems.push({term,meaning});
+  }
+  const reinforcementMarkup = reinforcementItems.length
+    ? '<section class="summary-section route-reinforcement"><h3>Reforzar</h3><ul class="summary-reinforcement-list">' +
+      reinforcementItems.map(item => '<li class="summary-reinforcement-item"><div class="summary-reinforcement-target">' +
+        renderClickableTargetText(item.term) + ' ' + speakerButton(item.term,summaryLocale) +
+        '</div>' + (item.meaning ? '<p class="summary-reinforcement-translation">(' + escapeHTML(item.meaning) + ')</p>' : '') +
+        '</li>').join("") + '</ul></section>'
+    : "";
+  $("summary-content").innerHTML = '<h2 class="summary-title">' + (routeMode ? "Resumen de Ruta" : "Resumen") + '</h2>' +
+    routeScoreMarkup + reinforcementMarkup;
+
+  routeSummaryNextUnitId = "";
+  let nextLabel = "Siguiente ejercicio";
+  let canNext = true;
+  if (routeMode) {
+    const units = getRouteUnitsForCatalog(catalog);
+    const activeIndex = units.findIndex(unit => unit.id === activeRouteUnit?.id);
+    const nextUnit = units[activeIndex + 1];
+    const routeState = getRouteProgressForLanguage(session.config.languageId);
+    const completedRecord = routeState.completedUnits?.[session.config.routeUnitId || activeRouteUnit?.id];
+    routeSummaryNextUnitId = session.routeIntegrationComplete && completedRecord?.completed && nextUnit &&
+      isRouteUnitUnlocked(units,activeIndex + 1,routeState) ? nextUnit.id : "";
+    canNext = Boolean(routeSummaryNextUnitId);
+    nextLabel = routeSummaryNextUnitId ? "Siguiente unidad · " + nextUnit.title : "";
+  }
+  currentActivitySpeechSegments = reinforcementItems.map(item => ({text:item.term,locale:summaryLocale}));
   bindSpeakerButtons($("summary-content"));
-  speech.speakSequence(summary.vocabulary.map(item => ({ text: item.term, locale: summaryLocale })), { automatic: true });
+  if (currentActivitySpeechSegments.length) speech.speakSequence(currentActivitySpeechSegments,{automatic:true});
+  renderSummaryActions({
+    origin:routeMode ? "route" : "exercises",
+    mode:lastActivityMode,
+    canNext,
+    nextLabel
+  });
+}
+$("new-session").addEventListener("click",() => {
+  closeSessionAndReturn();
+});
+$("summary-restart")?.addEventListener("click",() => {
+  if (routeMode && activeRouteUnit) {
+    selectedRouteUnitId = activeRouteUnit.id;
+    routeSelectionTouched = true;
+    startRouteSession(false);
+  } else if (reviewMode) {
+    startSpacedReview();
+  } else if (lastActivityConfig) {
+    startConfiguredActivity(lastActivityMode,lastActivityConfig,false);
+  }
+});
+$("route-summary-next")?.addEventListener("click",() => {
+  if (routeMode) {
+    if (!routeSummaryNextUnitId) return;
+    selectedRouteUnitId = routeSummaryNextUnitId;
+    routeSelectionTouched = true;
+    startRouteSession(false);
+    if (activeRouteUnit?.id !== routeSummaryNextUnitId || !session || session.config.routeUnitId !== routeSummaryNextUnitId) {
+      routeSelectionTouched = false;
+      closeSessionAndReturn();
+      showScreen("route");
+    }
+    return;
+  }
+  if (!reviewMode && lastActivityConfig) startConfiguredActivity(lastActivityMode,lastActivityConfig,true);
+});
+
+// Main navigation and language onboarding
+function showScreen(name) {
+  speech.stop();
+  currentActivitySpeechSegments = [];
+  currentExercise = null;
+  $("session-view").classList.add("hidden");
+  $("app-shell").classList.remove("session-active");
+  if (name === "theory") {
+    $("theory-detail").classList.add("hidden");
+    $("theory-topic-list").classList.add("hidden");
+    $("theory-grid").classList.remove("hidden");
+  }
+  if (name === "exercises") {
+    $("exercise-choice-panel").classList.remove("hidden");
+    $("review-exercises").classList.add("hidden");
+    selectedExerciseMode = "practice";
+    document.querySelectorAll("[data-mode]").forEach(item => item.classList.toggle("selected", item.dataset.mode === "practice"));
+    $("screen-exercises").classList.remove("review-selected");
+    $("setup-panel").classList.add("hidden");
+    $("practice-toggle")?.setAttribute("aria-expanded","false");
+    $("start-session").textContent = "Comenzar entrenamiento";
+    $("topic").disabled = false;
+    $("topic").value = "daily";
+  }
+  if (name === "route") renderRouteDashboard();
+  if (name === "stats") refreshDashboard();
+  document.querySelectorAll(".app-screen").forEach(screen => screen.classList.toggle("hidden", screen.id !== "screen-" + name));
+  $("app-shell").classList.remove("session-active");
+  document.querySelectorAll(".nav-item").forEach(button => {
+    const active = button.dataset.screen === name;
+    button.classList.toggle("active", active);
+    if (active) button.setAttribute("aria-current", "page");
+    else button.removeAttribute("aria-current");
+  });
+  window.scrollTo(0, 0);
+}
+function showSessionView(mode) {
+  document.querySelectorAll(".app-screen").forEach(screen => screen.classList.add("hidden"));
+  $("session-view").classList.remove("hidden");
+  $("app-shell").classList.add("session-active");
+  $("session-mode-label").textContent = mode === "route" ? "Ruta" : mode === "review" ? "Repaso" : mode === "reading" ? "Comprensión lectora" : "Entrenamiento";
+  window.scrollTo(0, 0);
+}
+function closeSessionAndReturn() {
+  sessionAbortController?.abort();
+  sessionAbortController = null;
+  if (reviewMode && !sessionFinished) persistReviewQueue();
+  speech.stop();
+  session = null;
+  aiMode = false;
+  aiHistory = [];
+  aiLastResult = null;
+  aiCurrentExercise = null;
+  aiPendingTurn = null;
+  localPendingAnswer = null;
+  aiHintPending = false;
+  aiHintLevel = 0;
+  sessionFinished = false;
+  currentExercise = null;
+  reviewMode = false;
+  currentActivitySpeechSegments = [];
+  $("lesson-panel").classList.remove("hidden");
+  $("summary-panel").classList.add("hidden");
+  $("session-view").classList.add("hidden");
+  $("app-shell").classList.remove("session-active");
+  $("exercise-choice-panel").classList.remove("hidden");
+  $("review-exercises").classList.add("hidden");
+  const returnScreen = routeMode ? "route" : "exercises";
+  routeMode = false;
+  showScreen(returnScreen);
 }
 
-$("new-session").addEventListener("click", () => {
+ document.querySelectorAll("[data-screen]").forEach(button => button.addEventListener("click", () => showScreen(button.dataset.screen)));
+document.querySelectorAll("[data-mode]").forEach(button => button.addEventListener("click", () => {
+  selectedExerciseMode = button.dataset.mode;
+  document.querySelectorAll("[data-mode]").forEach(item => item.classList.toggle("selected", item === button));
+  if (selectedExerciseMode === "review") {
+    $("setup-panel").classList.add("hidden");
+    $("practice-toggle")?.setAttribute("aria-expanded","false");
+    $("screen-exercises").classList.add("review-selected");
+    startSpacedReview();
+    return;
+  }
+  $("screen-exercises").classList.remove("review-selected");
+  $("review-exercises").classList.add("hidden");
+  $("setup-panel").classList.toggle("hidden");
+  $("practice-toggle")?.setAttribute("aria-expanded",String(!$("setup-panel").classList.contains("hidden")));
+  $("topic").disabled = selectedExerciseMode === "reading";
+  $("topic").value = selectedExerciseMode === "reading" ? "reading" : "daily";
+  $("start-session").textContent = selectedExerciseMode === "reading" ? "Comenzar lectura" : "Comenzar entrenamiento";
+  $("ai-status").classList.remove("hidden");
+}));
+$("route-start-exercises")?.addEventListener("click", () => showScreen("exercises"));
+$("route-unit-list")?.addEventListener("click", event => {
+  const button = event.target.closest("[data-route-unit]");
+  if (!button || button.disabled) return;
+  selectedRouteUnitId = button.dataset.routeUnit;
+  routeSelectionTouched = true;
+  renderRouteDashboard();
+});
+$("route-start").addEventListener("click", () => startRouteSession(Boolean(routeDraft?.session && routeDraft.unitId === selectedRouteUnitId)));
+$("route-resume").addEventListener("click", () => startRouteSession(true));
+$("route-reset").addEventListener("click", () => $("route-reset-confirm").showModal());
+$("cancel-route-reset").addEventListener("click", () => $("route-reset-confirm").close());
+$("confirm-route-reset").addEventListener("click", () => {
+  $("route-reset-confirm").close();
+  const languageId = getSelectedCatalog()?.id;
+  if (!languageId) return;
+  try {
+    localStorage.removeItem(ROUTE_UNITS_KEY + ":" + languageId);
+    localStorage.removeItem(ROUTE_STORAGE_KEY + ":" + languageId);
+    localStorage.removeItem("adaptive-language-tutor.route-started:" + languageId);
+    localStorage.removeItem("adaptive-language-tutor.route-completed:" + languageId);
+  } catch {}
+  routeDraft = null;
+  activeRouteUnit = null;
+  selectedRouteUnitId = "foundations";
+  routeSelectionTouched = false;
+  routeMode = false;
+  renderRouteDashboard();
+});
+$("setup-back")?.addEventListener("click", () => showScreen("exercises"));
+$("session-close").addEventListener("click", () => {
+  if (sessionFinished || routeMode) closeSessionAndReturn();
+  else $("session-confirm").showModal();
+});
+$("cancel-session-close").addEventListener("click", () => $("session-confirm").close());
+$("confirm-session-close").addEventListener("click", () => {
+  $("session-confirm").close();
+  closeSessionAndReturn();
+});
+
+const theoryContent = {
+  grammar: ["Gramática", [
+    ["Pronombres personales", "Los pronombres indican quién realiza la acción. Su forma y frecuencia de uso dependen del idioma; en algunas lenguas pueden omitirse cuando el verbo ya identifica a la persona."],
+    ["Artículos", "Los artículos acompañan al sustantivo y pueden indicar si hablamos de algo conocido o no. Algunos idiomas distinguen género y número; otros no utilizan artículos."],
+    ["Verbo ser y estar", "Este tema expresa identidad, características, estados y ubicación. Algunos idiomas usan dos verbos diferentes; otros concentran varios significados en una sola forma."],
+    ["Tiempo presente", "Se utiliza para hábitos, hechos generales y situaciones actuales. La conjugación puede cambiar según la persona, el número y el tipo de verbo."],
+    ["Pasado", "Permite hablar de acciones terminadas o situaciones anteriores. Aprende las formas regulares e irregulares dentro de frases completas."],
+    ["Futuro", "Expresa planes, predicciones e intenciones. Cada idioma utiliza sus propias formas verbales o construcciones auxiliares."]
+  ]],
+  vocabulary: ["Vocabulario", [
+    ["Saludos", "Saludos y despedidas formales e informales. Aprende a elegirlos según la hora, la situación y la relación con la otra persona."],
+    ["Personas y familia", "Vocabulario para hablar de personas, relaciones y familia. Aprende cada sustantivo con sus marcas gramaticales cuando corresponda."],
+    ["Tiempo y fechas", "Días, meses, horas y expresiones temporales para organizar actividades y contar cuándo suceden las cosas."],
+    ["Comida y bebida", "Ingredientes, comidas, bebidas y vocabulario para pedir, comprar o expresar preferencias."],
+    ["Viajes y transporte", "Palabras para desplazarse, comprar pasajes, orientarse y resolver situaciones habituales durante un viaje."],
+    ["Números cardinales y ordinales", "Aprende a contar, expresar cantidades, precios, fechas, posiciones y orden. Incluye concordancia de género y formación de números compuestos."]
+  ]],
+  expressions: ["Expresiones", [
+    ["Presentarse", "Estructuras para saludar, decir tu nombre, explicar de dónde eres y conocer a otra persona."],
+    ["Pedir ayuda", "Formas directas y corteses de solicitar ayuda, pedir que repitan y explicar que no has entendido."],
+    ["En un café", "Frases para pedir alimentos y bebidas, consultar opciones y pagar de manera educada."],
+    ["Preguntar y aclarar", "Preguntas para pedir ubicaciones, precios, horarios y confirmar que has entendido la respuesta."],
+    ["Conversación cotidiana", "Preguntas abiertas y respuestas breves para mantener una conversación y mostrar interés."]
+  ]]
+};
+const theorySamples = {
+  "Portugués brasileño":{pronouns:"eu, você, ele, ela, nós, vocês, eles/elas",greeting:"Olá! Bom dia! Até logo!",intro:"Meu nome é Ana. Sou do Chile.",articles:"o, a, os, as; um, uma, uns, umas"},
+  "Inglés":{pronouns:"I, you, he, she, it, we, they",greeting:"Hello! Good morning! See you later!",intro:"My name is Ana. I'm from Chile.",articles:"the; a, an"},
+  "Italiano":{pronouns:"io, tu, lui, lei, noi, voi, loro",greeting:"Ciao! Buongiorno! A presto!",intro:"Mi chiamo Ana. Sono del Cile.",articles:"il, lo, la, i, gli, le; un, uno, una"},
+  "Alemán":{pronouns:"ich, du, er, sie, es, wir, ihr, sie",greeting:"Hallo! Guten Morgen! Bis später!",intro:"Ich heiße Ana. Ich komme aus Chile.",articles:"der, die, das; ein, eine"},
+  "Ruso":{pronouns:"я, ты, он, она, оно, мы, вы, они",greeting:"Здравствуйте! Доброе утро! До свидания!",intro:"Меня зовут Ана. Я из Чили.",articles:"El ruso no utiliza artículos equivalentes a el/la o un/una."},
+  "Francés":{pronouns:"je, tu, il, elle, nous, vous, ils, elles",greeting:"Bonjour! Salut! À bientôt!",intro:"Je m'appelle Ana. Je viens du Chili.",articles:"le, la, les; un, une, des"},
+  "Español":{pronouns:"yo, tú, él, ella, nosotros, vosotros/ustedes, ellos",greeting:"¡Hola! ¡Buenos días! ¡Hasta luego!",intro:"Me llamo Ana. Soy de Chile.",articles:"el, la, los, las; un, una, unos, unas"},
+  "Japonés":{pronouns:"私, あなた, 彼, 彼女, 私たち",greeting:"こんにちは。おはようございます。またね。",intro:"私はアナです。チリ出身です。",articles:"El japonés no utiliza artículos equivalentes a el/la o un/una."},
+  "Chino mandarín":{pronouns:"我, 你, 他, 她, 我们, 你们, 他们",greeting:"你好！早上好！再见！",intro:"我叫安娜。我来自智利。",articles:"El chino mandarín no utiliza artículos equivalentes a el/la o un/una."},
+  "Coreano":{pronouns:"나, 너, 그, 그녀, 우리, 여러분",greeting:"안녕하세요! 좋은 아침이에요! 안녕히 가세요!",intro:"제 이름은 아나예요. 저는 칠레에서 왔어요.",articles:"El coreano no utiliza artículos equivalentes a el/la o un/una."},
+  "Neerlandés":{pronouns:"ik, jij, hij, zij, wij, jullie, zij",greeting:"Hallo! Goedemorgen! Tot ziens!",intro:"Ik heet Ana. Ik kom uit Chili.",articles:"de, het; een"},
+  "Árabe":{pronouns:"أنا, أنت, هو, هي, نحن, أنتم, هم",greeting:"مرحباً! صباح الخير! إلى اللقاء!",intro:"اسمي آنا. أنا من تشيلي.",articles:"الـ es el artículo definido; no existe un artículo indefinido equivalente."},
+  "Hindi":{pronouns:"मैं, तुम, वह, हम, आप, वे",greeting:"नमस्ते! सुप्रभात! फिर मिलेंगे!",intro:"मेरा नाम आना है। मैं चिली से हूँ।",articles:"El hindi no utiliza artículos equivalentes a el/la o un/una."},
+  "Turco":{pronouns:"ben, sen, o, biz, siz, onlar",greeting:"Merhaba! Günaydın! Görüşürüz!",intro:"Benim adım Ana. Şililiyim.",articles:"bir puede funcionar como artículo indefinido; no hay artículo definido separado."},
+  "Griego":{pronouns:"εγώ, εσύ, αυτός, αυτή, εμείς, εσείς, αυτοί",greeting:"Γεια σου! Καλημέρα! Τα λέμε!",intro:"Με λένε Άννα. Είμαι από τη Χιλή.",articles:"ο, η, το; ένας, μία, ένα"},
+  "Polaco":{pronouns:"ja, ty, on, ona, my, wy, oni/one",greeting:"Cześć! Dzień dobry! Do zobaczenia!",intro:"Mam na imię Ana. Jestem z Chile.",articles:"El polaco no utiliza artículos equivalentes a el/la o un/una."},
+  "Sueco":{pronouns:"jag, du, han, hon, vi, ni, de",greeting:"Hej! God morgon! Vi ses!",intro:"Jag heter Ana. Jag kommer från Chile.",articles:"en, ett; el definido suele expresarse como sufijo."},
+  "Noruego":{pronouns:"jeg, du, han, hun, vi, dere, de",greeting:"Hei! God morgen! Ha det!",intro:"Jeg heter Ana. Jeg kommer fra Chile.",articles:"en, ei, et; el definido suele expresarse como sufijo."},
+  "Danés":{pronouns:"jeg, du, han, hun, vi, I, de",greeting:"Hej! Godmorgen! Vi ses!",intro:"Jeg hedder Ana. Jeg kommer fra Chile.",articles:"en, et; el definido suele expresarse como sufijo."},
+  "Hebreo":{pronouns:"אני, אתה, את, הוא, היא, אנחנו, אתם, הם",greeting:"שלום! בוקר טוב! להתראות!",intro:"קוראים לי אנה. אני מצ׳ילה.",articles:"ה־ es el artículo definido; no existe un artículo indefinido equivalente."},
+  "Vietnamita":{pronouns:"tôi, bạn, anh ấy, cô ấy, chúng tôi, họ",greeting:"Xin chào! Chào buổi sáng! Tạm biệt!",intro:"Tôi tên là Ana. Tôi đến từ Chile.",articles:"El vietnamita no utiliza artículos equivalentes a el/la o un/una."},
+  "Indonesio":{pronouns:"saya, kamu, dia, kami, kita, mereka",greeting:"Halo! Selamat pagi! Sampai jumpa!",intro:"Nama saya Ana. Saya dari Chili.",articles:"El indonesio no utiliza artículos equivalentes a el/la o un/una."},
+  "Tailandés":{pronouns:"ฉัน, คุณ, เขา, เรา, พวกเขา",greeting:"สวัสดี! อรุณสวัสดิ์! แล้วพบกันใหม่!",intro:"ฉันชื่ออานา ฉันมาจากชิลี",articles:"El tailandés no utiliza artículos equivalentes a el/la o un/una."}
+};
+const pronounTranslations = {
+  "Portugués brasileño":["yo","tú / usted","él","ella","nosotros","ustedes","ellos / ellas"],
+  "Inglés":["yo","tú / ustedes","él","ella","ello / eso","nosotros","ellos / ellas"],
+  "Italiano":["yo","tú","él","ella","nosotros","ustedes","ellos / ellas"],
+  "Alemán":["yo","tú","él","ella","ello","nosotros","vosotros","ellos / ellas"],
+  "Ruso":["yo","tú","él","ella","ello","nosotros","usted / ustedes","ellos / ellas"],
+  "Francés":["yo","tú","él","ella","nosotros","usted / ustedes","ellos","ellas"],
+  "Español":["yo","tú","él","ella","nosotros","vosotros / ustedes","ellos / ellas"],
+  "Japonés":["yo","tú","él","ella","nosotros"],
+  "Chino mandarín":["yo","tú","él","ella","nosotros","ustedes","ellos / ellas"],
+  "Coreano":["yo","tú","él","ella","nosotros","ustedes"],
+  "Neerlandés":["yo","tú","él","ella","nosotros","ustedes","ellos / ellas"],
+  "Árabe":["yo","tú (masculino)","tú (femenino)","él","ella","nosotros","ustedes","ellos"],
+  "Hindi":["yo","tú","él / ella","nosotros","usted / ustedes","ellos / ellas"],
+  "Turco":["yo","tú","él / ella","nosotros","usted / ustedes","ellos / ellas"],
+  "Griego":["yo","tú","él","ella","nosotros","ustedes","ellos"],
+  "Polaco":["yo","tú","él","ella","nosotros","ustedes","ellos / ellas"],
+  "Sueco":["yo","tú","él","ella","nosotros","ustedes","ellos / ellas"],
+  "Noruego":["yo","tú","él","ella","nosotros","ustedes","ellos / ellas"],
+  "Danés":["yo","tú","él","ella","nosotros","ustedes","ellos / ellas"],
+  "Hebreo":["yo","tú (masculino)","tú (femenino)","él","ella","nosotros","ustedes","ellos"],
+  "Vietnamita":["yo","tú","él","ella","nosotros (excl.)","ellos / ellas"],
+  "Indonesio":["yo (formal)","tú","él / ella","nosotros (excl.)","nosotros (incl.)","ellos / ellas"],
+  "Tailandés":["yo","tú / usted","él / ella","nosotros","ellos / ellas"]
+};
+const verbLessons = {
+  "Portugués brasileño": {
+    lead:"Portugués distingue ser (identidad, características y origen) de estar (estado temporal y ubicación). Con você/vocês se usa la forma de tercera persona.",
+    tables:[["SER · identidad","Persona","Forma"],["eu","sou"],["você / ele / ela","é"],["nós","somos"],["vocês / eles / elas","são"],["ESTAR · estado y ubicación","Persona","Forma"],["eu","estou"],["você / ele / ela","está"],["nós","estamos"],["vocês / eles / elas","estão"]],
+    example:"Eu sou chilena. / Hoje estou cansada. / Estamos em casa.",
+    rule:"SER: origen, identidad y rasgos definitorios. ESTAR: estados, condiciones y ubicación. Atención: estar también se usa en estar + gerundio (estou estudando)."
+  },
+  "Inglés":{
+    lead:"El inglés utiliza un solo verbo principal, to be, para los significados habituales de ser y estar. La forma cambia según la persona.",
+    tables:[["TO BE · presente","Persona","Forma"],["I","am"],["you / we / they","are"],["he / she / it","is"]],
+    example:"I am Chilean (soy chileno/a). / I am tired (estoy cansado/a). / We are at home (estamos en casa).",
+    rule:"En preguntas se invierte el orden (Are you ready?). En negativo se añade not (is not / isn't). No se traduce mecánicamente ser/estar: el contexto determina el sentido."
+  },
+  "Italiano":{
+    lead:"Essere expresa identidad, origen y características; stare se usa especialmente con estados, permanencia y algunas construcciones. La ubicación normalmente usa essere.",
+    tables:[["ESSERE","Persona","Forma"],["io","sono"],["tu","sei"],["lui / lei","è"],["noi","siamo"],["voi","siete"],["loro","sono"],["STARE","Persona","Forma"],["io","sto"],["tu","stai"],["lui / lei","sta"],["noi","stiamo"],["voi","state"],["loro","stanno"]],
+    example:"Sono cileno. / Sto bene. / Sto a casa (me quedo en casa).",
+    rule:"Essere: identidad, origen y ubicación (Sono a Roma). Stare: estado o permanencia (Sto bene). Stare + gerundio expresa acción en curso (sto studiando)."
+  },
+  "Alemán":{
+    lead:"Se usa sein para identidad, características, estados y ubicación; no hay una oposición equivalente a ser/estar del español.",
+    tables:[["SEIN · presente","Persona","Forma"],["ich","bin"],["du","bist"],["er / sie / es","ist"],["wir","sind"],["ihr","seid"],["sie / Sie","sind"]],
+    example:"Ich bin Chilene (soy chileno). / Ich bin müde (estoy cansado). / Wir sind zu Hause (estamos en casa).",
+    rule:"El verbo es irregular y debe memorizarse. Para indicar cambio o convertirse se usa werden (ich werde müde = me estoy cansando). La ubicación se expresa con sein y una expresión de lugar."
+  },
+  "Ruso":{
+    lead:"En presente, el ruso normalmente omite el verbo equivalente a ser/estar cuando une sujeto y atributo. El verbo быть aparece con claridad en pasado y futuro.",
+    tables:[["БЫТЬ · formas útiles","Tiempo / persona","Forma"],["presente","normalmente se omite"],["pasado masc. / fem.","был / была"],["futuro · я","буду"],["futuro · ты","будешь"],["futuro · он / она","будет"],["futuro · мы / вы / они","будем / будете / будут"]],
+    example:"Я студент (soy estudiante). / Она дома (ella está en casa). / Я был дома (estuve en casa). / Я буду дома (estaré en casa).",
+    rule:"No añadas есть en una oración nominal presente normal. El pasado concuerda en género y el futuro utiliza буду + infinitivo."
+  },
+  "Francés":{
+    lead:"Être cubre la mayoría de los usos de ser y estar. Es irregular y aparece en identidad, descripción, estado y ubicación.",
+    tables:[["ÊTRE · presente","Persona","Forma"],["je","suis"],["tu","es"],["il / elle / on","est"],["nous","sommes"],["vous","êtes"],["ils / elles","sont"]],
+    example:"Je suis chilien (soy chileno). / Je suis fatigué (estoy cansado). / Nous sommes à Paris (estamos en París).",
+    rule:"Memoriza las seis formas: no siguen un patrón regular. Para indicar permanencia o estado que continúa también puede aparecer rester (Je reste ici)."
+  },
+  "Español":{
+    lead:"El español distingue ser y estar. La elección depende de identidad/rasgo, estado/condición o ubicación; no es simplemente una diferencia entre permanente y temporal.",
+    tables:[["SER · presente","Persona","Forma"],["yo","soy"],["tú","eres"],["él / ella / usted","es"],["nosotros","somos"],["vosotros","sois"],["ellos / ustedes","son"],["ESTAR · presente","Persona","Forma"],["yo","estoy"],["tú","estás"],["él / ella / usted","está"],["nosotros","estamos"],["vosotros","estáis"],["ellos / ustedes","están"]],
+    example:"Soy de Chile (origen). / Estoy cansado (estado). / Estamos en casa (ubicación).",
+    rule:"SER: identidad, origen, profesión y características. ESTAR: ubicación, estado y resultado. Excepción importante: ser listo = inteligente; estar listo = preparado."
+  },
+  "Neerlandés":{
+    lead:"Zijn expresa identidad, estado y ubicación. La forma verbal cambia con la persona y jij tiene una forma especial en preguntas.",
+    tables:[["ZIJN · presente","Persona","Forma"],["ik","ben"],["jij / je","bent (pregunta: ben jij?)"],["hij / zij / het","is"],["wij / jullie / zij","zijn"]],
+    example:"Ik ben student. / Zij is moe. / We zijn thuis.",
+    rule:"El verbo es irregular. En una pregunta con jij, la -t desaparece cuando el verbo va delante: Ben jij klaar?"
+  },
+  "Japonés":{
+    lead:"です (desu) funciona como cópula para identificar o describir; います/あります expresan existencia o ubicación. No cambia según la persona.",
+    tables:[["CÓPULA · forma cortés","Uso","Forma"],["presente afirmativo","です (desu)"],["presente negativo","ではありません / じゃありません"],["pasado afirmativo","でした"],["pasado negativo","ではありませんでした"]],
+    example:"私は学生です (Soy estudiante). / 私は家にいます (Estoy en casa).",
+    rule:"El sujeto suele omitirse si se entiende. Para personas y animales se usa います; para objetos y plantas, あります. El orden habitual sitúa el verbo al final."
+  },
+  "Chino mandarín":{
+    lead:"是 (shì) une sujeto e identidad; 在 (zài) indica ubicación. Los verbos no se conjugan por persona ni número.",
+    tables:[["SER / IDENTIDAD","Uso","Forma"],["identidad","我是学生 (wǒ shì xuésheng)"],["ESTAR / UBICACIÓN","Uso","Forma"],["ubicación","我在家 (wǒ zài jiā)"],["estado / existencia","我很好 (wǒ hěn hǎo)"]],
+    example:"我是智利人 (Soy chileno/a). / 我在家 (Estoy en casa).",
+    rule:"No uses 是 delante de adjetivos simples: 很好 significa estar bien. Para ubicación utiliza 在. El verbo no cambia según yo/tú/él."
+  },
+  "Coreano":{
+    lead:"이다 (ida) es la cópula de identidad; 있다 (itda) expresa existencia, posesión o ubicación. Las terminaciones cambian según cortesía y tiempo.",
+    tables:[["IDENTIDAD · estilo cortés","Uso","Forma"],["después de consonante","이에요"],["después de vocal","예요"],["forma formal","입니다"],["ESTAR / EXISTIR","Uso","Forma"],["presente cortés","있어요"],["pasado cortés","있었어요"],["negación","없어요 (no hay / no tener)"]],
+    example:"저는 학생이에요 (Soy estudiante). / 집에 있어요 (Estoy en casa).",
+    rule:"La cópula se une al sustantivo: 학생이에요, 의사예요. Para ubicación se usa el marcador 에 + 있어요. La cortesía es esencial."
+  },
+  "Árabe":{
+    lead:"En presente, las oraciones nominales suelen omitir el verbo ser/estar. كان (kāna) expresa ser/estar en pasado y cambia según género y número.",
+    tables:[["PRESENTE","Ejemplo","Significado"],["أنا طالب","anā ṭālib","Soy estudiante"],["هي في البيت","hiya fī al-bayt","Ella está en casa"],["PASADO · كان","Persona","Forma"],["هو","كان (kāna)"],["هي","كانت (kānat)"],["هم","كانوا (kānū)"]],
+    example:"أنا من تشيلي (Soy de Chile). / أنا في البيت (Estoy en casa). / كنت في البيت (Estuve en casa).",
+    rule:"No añadas كان en una oración nominal presente simple. El adjetivo y el sustantivo pueden concordar en género y número; el árabe tiene diferencias dialectales."
+  },
+  "Hindi":{
+    lead:"होना (honā) significa ser/estar. En presente, हूँ / हो / है / हैं cambian con la persona, el número y el nivel de respeto; algunas formas también concuerdan con género.",
+    tables:[["होना · presente","Persona","Forma"],["मैं","हूँ (hū̃)"],["तुम","हो (ho)"],["वह","है (hai)"],["हम","हैं (haĩ)"],["आप / वे","हैं (haĩ)"]],
+    example:"मैं चिली से हूँ (Soy de Chile). / वह घर पर है (Él/ella está en casa).",
+    rule:"आप utiliza la forma respetuosa हैं. En construcciones de pasado y participio, el género del sujeto puede cambiar la forma verbal."
+  },
+  "Turco":{
+    lead:"Turco expresa identidad con sufijos de cópula añadidos al sustantivo o adjetivo. La terminación cambia por persona y armonía vocálica; el pronombre puede omitirse.",
+    tables:[["CÓPULA · presente","Persona","Ejemplo"],["ben","öğretmenim"],["sen","öğretmensin"],["o","öğretmen"],["biz","öğretmeniz"],["siz","öğretmensiniz"],["onlar","öğretmen(ler)"]],
+    example:"Ben Şililiyim (Soy chileno/a). / Evdeyim (Estoy en casa).",
+    rule:"El sufijo depende de la última vocal (armonía vocálica). En tercera persona singular puede no aparecer un sufijo audible. La ubicación suele marcarse con -de/-da."
+  },
+  "Griego":{
+    lead:"Είμαι (eímai) cubre ser y estar. Es irregular y conserva una forma propia para cada persona.",
+    tables:[["ΕΙΜΑΙ · presente","Persona","Forma"],["εγώ","είμαι"],["εσύ","είσαι"],["αυτός / αυτή","είναι"],["εμείς","είμαστε"],["εσείς","είστε"],["αυτοί / αυτές","είναι"]],
+    example:"Είμαι από τη Χιλή (Soy de Chile). / Είμαι κουρασμένος (Estoy cansado). / Είμαστε στο σπίτι (Estamos en casa).",
+    rule:"El adjetivo concuerda en género y número. La ubicación se expresa con una preposición y el caso correspondiente."
+  },
+  "Polaco":{
+    lead:"Być significa ser/estar y es irregular. El verbo cambia según la persona; en pasado también concuerda en género.",
+    tables:[["BYĆ · presente","Persona","Forma"],["ja","jestem"],["ty","jesteś"],["on / ona / ono","jest"],["my","jesteśmy"],["wy","jesteście"],["oni / one","są"]],
+    example:"Jestem z Chile (Soy de Chile). / Jestem w domu (Estoy en casa).",
+    rule:"En pasado se distingue género: byłem (masculino), byłam (femenino). El presente de być es obligatorio en estas oraciones."
+  },
+  "Sueco":{
+    lead:"Vara cubre ser y estar. En presente, la forma är es la misma para todas las personas.",
+    tables:[["VARA · presente","Persona","Forma"],["jag","är"],["du","är"],["han / hon / den / det","är"],["vi / ni / de","är"]],
+    example:"Jag är från Chile (Soy de Chile). / Jag är trött (Estoy cansado/a). / Vi är hemma (Estamos en casa).",
+    rule:"La forma no cambia con la persona. Para el pasado se usa var; para el supino/participio, varit."
+  },
+  "Noruego":{
+    lead:"Være expresa ser/estar y utiliza er para todas las personas en presente.",
+    tables:[["VÆRE · presente","Persona","Forma"],["jeg","er"],["du","er"],["han / hun / det","er"],["vi / dere / de","er"]],
+    example:"Jeg er fra Chile (Soy de Chile). / Jeg er trøtt (Estoy cansado/a). / Vi er hjemme (Estamos en casa).",
+    rule:"La forma presente no cambia por persona. El pasado es var y el participio ha sido/estado se forma con vært."
+  },
+  "Danés":{
+    lead:"Være cubre ser y estar; en presente la forma er se utiliza con todas las personas.",
+    tables:[["VÆRE · presente","Persona","Forma"],["jeg","er"],["du","er"],["han / hun / det","er"],["vi / I / de","er"]],
+    example:"Jeg er fra Chile (Soy de Chile). / Jeg er træt (Estoy cansado/a). / Vi er hjemme (Estamos en casa).",
+    rule:"El presente no cambia según la persona. El pasado es var y el participio es været."
+  },
+  "Hebreo":{
+    lead:"En presente, el hebreo suele usar oraciones nominales sin verbo ser/estar. היה (hayá) aparece en pasado y cambia según género y número.",
+    tables:[["PRESENTE","Ejemplo","Significado"],["אני סטודנט","ani student","Soy estudiante (masculino)"],["אני בבית","ani babáyit","Estoy en casa"],["PASADO · היה","Persona","Forma"],["él","היה (hayá)"],["ella","הייתה (haytá)"],["ellos","היו (hayú)"]],
+    example:"אני מצ׳ילה (Soy de Chile). / היא בבית (Ella está en casa).",
+    rule:"El verbo presente se omite normalmente. En pasado, la forma concuerda con género y número; el futuro utiliza יהיה y sus variantes."
+  },
+  "Vietnamita":{
+    lead:"Là introduce identidad o profesión; ở expresa ubicación. Los verbos no se conjugan por persona y el contexto marca el tiempo.",
+    tables:[["IDENTIDAD / UBICACIÓN","Uso","Forma"],["identidad","là"],["ubicación","ở"],["pasado","đã + verbo"],["futuro","sẽ + verbo"]],
+    example:"Tôi là sinh viên (Soy estudiante). / Tôi ở nhà (Estoy en casa).",
+    rule:"No cambies el verbo según yo/tú/él. Para marcar pasado o futuro se añaden partículas como đã o sẽ."
+  },
+  "Indonesio":{
+    lead:"Indonesio suele omitir la cópula en frases nominales; adalah da énfasis o define, y berada indica ubicación. No hay conjugación por persona.",
+    tables:[["IDENTIDAD / UBICACIÓN","Uso","Forma"],["definición","adalah"],["ubicación","berada"],["pasado","sudah + verbo"],["futuro","akan + verbo"]],
+    example:"Saya mahasiswa (Soy estudiante). / Saya berada di rumah (Estoy en casa).",
+    rule:"En conversación, la cópula suele omitirse. El tiempo se expresa mediante palabras como sudah (ya) y akan (futuro), no mediante terminaciones verbales."
+  },
+  "Tailandés":{
+    lead:"เป็น (pen) expresa identidad o profesión; อยู่ (yùu) indica ubicación o permanencia. Los verbos no se conjugan por persona.",
+    tables:[["IDENTIDAD / UBICACIÓN","Uso","Forma"],["identidad / profesión","เป็น (pen)"],["ubicación / permanencia","อยู่ (yùu)"],["pasado","เคย / แล้ว según contexto"],["futuro","จะ (jà) + verbo"]],
+    example:"ฉันเป็นนักเรียน (Soy estudiante). / ฉันอยู่ที่บ้าน (Estoy en casa).",
+    rule:"No existe flexión verbal por persona. La cortesía se expresa con partículas como ครับ / ค่ะ y el tiempo mediante marcadores."
+  }
+};
+const tenseLessons = {
+  "Portugués brasileño":{
+    present:[["eu","falo"],["tu","falas (uso regional)"],["você / ele / ela","fala"],["nós","falamos"],["a gente","fala"],["vocês / eles / elas","falam"]],
+    past:"Ontem eu falei português.",
+    pastEs:"Ayer hablé portugués.",
+    pastRule:"El pretérito perfeito indica una acción terminada. En verbos regulares, -ar usa -ei, -aste, -ou, -amos, -aram; -er usa -i, -este, -eu, -emos, -eram; -ir usa -i, -iste, -iu, -imos, -iram. El sujeto você/vocês exige tercera persona. En Brasil, a gente + verbo en tercera persona singular es muy frecuente. En regiones que usan tu, la norma es tu falaste; en el habla coloquial también se oye tu falou.",
+    pastForms:[
+      ["eu","falei","Eu falei com Ana ontem.","Ayer hablé con Ana."],
+      ["tu","falaste","Tu falaste com Ana ontem.","Ayer hablaste con Ana (uso regional; la concordancia coloquial puede variar)."],
+      ["você / ele / ela","falou","Você falou com Ana ontem.","Ayer hablaste / habló con Ana."],
+      ["nós","falamos","Nós falamos com Ana ontem.","Ayer hablamos con Ana."],
+      ["a gente","falou","A gente falou com Ana ontem.","Ayer hablamos con Ana (muy habitual en Brasil)."],
+      ["vocês / eles / elas","falaram","Vocês falaram com Ana ontem.","Ayer hablaron con Ana."]
+    ],
+    future:"Amanhã eu vou falar português.",
+    futureEs:"Mañana hablaré portugués.",
+    futureRule:"En portugués brasileño hablado predomina ir en presente + infinitivo. El futuro simple es correcto, pero suele sonar más formal o escrito. La forma auxiliar ir cambia según la persona; el infinitivo principal no cambia. Con tu, vais es la forma estándar; en algunas regiones brasileñas se oye tu vai. A gente usa vai.",
+    futureForms:[
+      ["eu","vou falar","Eu vou falar com Ana amanhã.","Mañana hablaré con Ana."],
+      ["tu","vais falar","Tu vais falar com Ana amanhã.","Mañana hablarás con Ana (forma estándar; el uso brasileño regional puede variar)."],
+      ["você / ele / ela","vai falar","Você vai falar com Ana amanhã.","Mañana hablarás / hablará con Ana."],
+      ["nós","vamos falar","Nós vamos falar com Ana amanhã.","Mañana hablaremos con Ana."],
+      ["a gente","vai falar","A gente vai falar com Ana amanhã.","Mañana hablaremos con Ana (muy habitual en Brasil)."],
+      ["vocês / eles / elas","vão falar","Vocês vão falar com Ana amanhã.","Mañana hablarán con Ana."]
+    ],
+    futureSimpleForms:[["eu","falarei"],["tu","falarás"],["você / ele / ela","falará"],["nós","falaremos"],["a gente","falará"],["vocês / eles / elas","falarão"]],
+    exceptions:"Irregulares frecuentes en pretérito perfeito: ser/ir → fui, estar → estive, ter → tive, fazer → fiz, dizer → disse, trazer → trouxe, pôr → pus, ver → vi, vir → vim. En futuro simple cambian algunas raíces: dizer → direi, fazer → farei, trazer → trarei, pôr → porei, ter → terei, vir → virei, ser → serei."
+  },
+  "Inglés":{present:[["I","speak"],["you / we / they","speak"],["he / she / it","speaks"]],past:"Yesterday I spoke English.",pastEs:"Ayer hablé inglés.",pastRule:"Speak es irregular: speak – spoke – spoken. El pasado no cambia según la persona.",future:"Tomorrow I will speak English.",futureEs:"Mañana hablaré inglés.",futureRule:"Will + verbo base expresa futuro. También se usa be going to para planes e intenciones."},
+  "Italiano":{present:[["io","parlo"],["tu","parli"],["lui / lei","parla"],["noi","parliamo"],["voi","parlate"],["loro","parlano"]],past:"Ieri ho parlato italiano.",pastEs:"Ayer hablé italiano.",pastRule:"El passato prossimo usa avere/essere + participio. Parlare forma parlato; algunos verbos de movimiento usan essere.",future:"Domani parlerò italiano.",futureEs:"Mañana hablaré italiano.",futureRule:"El futuro simple de parlare añade terminaciones: parlerò, parlerai, parlerà, parleremo, parlerete, parleranno."},
+  "Alemán":{present:[["ich","spreche"],["du","sprichst"],["er / sie / es","spricht"],["wir","sprechen"],["ihr","sprecht"],["sie / Sie","sprechen"]],past:"Gestern habe ich Deutsch gesprochen.",pastEs:"Ayer hablé alemán.",pastRule:"En conversación se usa mucho Perfekt: haben + participio (gesprochen). Algunos verbos de movimiento forman el perfecto con sein.",future:"Morgen werde ich Deutsch sprechen.",futureEs:"Mañana hablaré alemán.",futureRule:"Werden + infinitivo forma el futuro. En conversación también se usa el presente con una referencia temporal."},
+  "Ruso":{present:[["я","говорю"],["ты","говоришь"],["он / она","говорит"],["мы","говорим"],["вы","говорите"],["они","говорят"]],past:"Вчера я говорил по-русски. / говорила",pastEs:"Ayer hablé ruso (forma masculina / femenina).",pastRule:"El pasado concuerda en género singular: говорил (masculino), говорила (femenino); en plural, говорили.",future:"Завтра я буду говорить по-русски.",futureEs:"Mañana hablaré ruso.",futureRule:"El futuro imperfectivo se forma con буду + infinitivo. Los verbos perfectivos suelen usar una forma simple de futuro."},
+  "Francés":{present:[["je","parle"],["tu","parles"],["il / elle / on","parle"],["nous","parlons"],["vous","parlez"],["ils / elles","parlent"]],past:"Hier, j'ai parlé français.",pastEs:"Ayer hablé francés.",pastRule:"El passé composé usa avoir/être + participio (parlé). La mayoría de verbos utiliza avoir; verbos pronominales y algunos de movimiento usan être.",future:"Demain, je parlerai français.",futureEs:"Mañana hablaré francés.",futureRule:"El futur simple añade terminaciones al infinitivo: parlerai, parleras, parlera, parlerons, parlerez, parleront."},
+  "Español":{present:[["yo","hablo"],["tú","hablas"],["él / ella / usted","habla"],["nosotros","hablamos"],["vosotros","habláis"],["ellos / ustedes","hablan"]],past:"Ayer hablé español.",pastEs:"Ayer hablé español.",pastRule:"En verbos regulares -ar, el pretérito usa -é, -aste, -ó, -amos, -asteis, -aron. Hay irregulares como tener → tuve.",future:"Mañana hablaré español.",futureEs:"Mañana hablaré español.",futureRule:"El futuro simple añade al infinitivo -é, -ás, -á, -emos, -éis, -án. También se usa ir a + infinitivo."},
+  "Japonés":{present:[["わたし / 私","話します (hanashimasu)"],["あなた","話します (hanashimasu)"],["かれ / 彼","話します (hanashimasu)"],["わたしたち / 私たち","話します (hanashimasu)"]],past:"昨日、日本語を話しました。",pastEs:"Ayer hablé japonés.",pastRule:"La forma cortés pasada añade ました (mashita) a la base verbal. No cambia por persona; el contexto indica quién habla.",future:"明日、日本語を話します。",futureEs:"Mañana hablaré japonés.",futureRule:"No existe un tiempo futuro verbal separado: se usa la forma no pasada 話します junto a una referencia como 明日 (mañana)."},
+  "Chino mandarín":{present:[["我","说 (shuō)"],["你","说 (shuō)"],["他 / 她","说 (shuō)"],["我们","说 (shuō)"],["他们","说 (shuō)"]],past:"昨天我说了中文。",pastEs:"Ayer hablé chino.",pastRule:"El verbo no se conjuga por persona. 了 marca una acción completada; el contexto temporal también es importante.",future:"明天我会说中文。",futureEs:"Mañana hablaré chino.",futureRule:"会 (huì) puede indicar futuro o posibilidad. El verbo permanece igual para todas las personas."},
+  "Coreano":{present:[["저는","말해요"],["너는","말해"],["그는 / 그녀는","말해요"],["우리는","말해요"],["여러분은","말해요"]],past:"어제 한국어를 말했어요.",pastEs:"Ayer hablé coreano.",pastRule:"El pasado cortés suele añadir -았어요 / -었어요 según la vocal de la raíz. 말하다 → 말했어요.",future:"내일 한국어를 말할 거예요.",futureEs:"Mañana hablaré coreano.",futureRule:"-(으)ㄹ 거예요 expresa planes o predicciones. La terminación depende de si la raíz termina en vocal o consonante."},
+  "Neerlandés":{present:[["ik","spreek"],["jij / je","spreekt"],["hij / zij","spreekt"],["wij / jullie / zij","spreken"]],past:"Gisteren sprak ik Nederlands.",pastEs:"Ayer hablé neerlandés.",pastRule:"Spreken es irregular en pasado: sprak (singular), spraken (plural); el participio es gesproken.",future:"Morgen zal ik Nederlands spreken.",futureEs:"Mañana hablaré neerlandés.",futureRule:"Zullen + infinitivo expresa futuro o intención. También es habitual usar el presente con una referencia temporal."},
+  "Árabe":{present:[["أنا","أتكلم"],["أنتَ / أنتِ","تتكلم"],["هو / هي","يتكلم / تتكلم"],["نحن","نتكلم"],["أنتم","تتكلمون"],["هم","يتكلمون"]],past:"تحدثتُ العربية أمس.",pastEs:"Ayer hablé árabe.",pastRule:"El pasado se forma con una raíz y terminaciones personales; género y número afectan varias formas. La conjugación puede variar entre árabe estándar y dialectos.",future:"سأتكلم العربية غدًا.",futureEs:"Mañana hablaré árabe.",futureRule:"سـ o سوف delante del presente expresa futuro. El verbo concuerda con persona, género y número."},
+  "Hindi":{present:[["मैं","बोलता हूँ / बोलती हूँ"],["तुम","बोलते हो / बोलती हो"],["वह","बोलता है / बोलती है"],["हम","बोलते हैं / बोलती हैं"],["आप","बोलते हैं / बोलती हैं"]],past:"मैंने कल हिंदी बोली।",pastEs:"Ayer hablé hindi.",pastRule:"El pasado puede usar ने con verbos transitivos en construcciones perfectivas; el participio concuerda con género y número según la estructura.",future:"मैं कल हिंदी बोलूँगा / बोलूँगी।",futureEs:"Mañana hablaré hindi (masculino / femenino).",futureRule:"La forma futura cambia por persona y género: बोलूँगा (masculino), बोलूँगी (femenino)."},
+  "Turco":{present:[["ben","konuşurum"],["sen","konuşursun"],["o","konuşur"],["biz","konuşuruz"],["siz","konuşursunuz"],["onlar","konuşurlar"]],past:"Dün Türkçe konuştum.",pastEs:"Ayer hablé turco.",pastRule:"El pasado directo añade -dı/-di/-du/-dü o variantes sordas -tı/-ti/-tu/-tü según armonía vocálica y consonante final.",future:"Yarın Türkçe konuşacağım.",futureEs:"Mañana hablaré turco.",futureRule:"El futuro añade -(y)acak/-(y)ecek y terminaciones personales; la vocal sigue la armonía vocálica."},
+  "Griego":{present:[["εγώ","μιλάω"],["εσύ","μιλάς"],["αυτός / αυτή","μιλάει"],["εμείς","μιλάμε"],["εσείς","μιλάτε"],["αυτοί","μιλάνε"]],past:"Χθες μίλησα ελληνικά.",pastEs:"Ayer hablé griego.",pastRule:"El aoristo expresa una acción pasada completa. Μιλάω cambia a μίλησα; muchos verbos tienen raíz de pasado propia.",future:"Αύριο θα μιλήσω ελληνικά.",futureEs:"Mañana hablaré griego.",futureRule:"Θα + forma de aoristo expresa futuro. La partícula θα precede al verbo."},
+  "Polaco":{present:[["ja","mówię"],["ty","mówisz"],["on / ona","mówi"],["my","mówimy"],["wy","mówicie"],["oni / one","mówią"]],past:"Wczoraj mówiłem po polsku. / mówiłam",pastEs:"Ayer hablé polaco (masculino / femenino).",pastRule:"El pasado concuerda en género y número: mówiłem (masculino), mówiłam (femenino). La persona también se marca con terminaciones.",future:"Jutro będę mówić po polsku.",futureEs:"Mañana hablaré polaco.",futureRule:"Para verbos imperfectivos se usa będę + infinitivo. Los perfectivos forman el futuro con una forma simple."},
+  "Sueco":{present:[["jag","talar"],["du","talar"],["han / hon","talar"],["vi","talar"],["ni","talar"],["de","talar"]],past:"I går talade jag svenska.",pastEs:"Ayer hablé sueco.",pastRule:"Talade es pasado regular. Los verbos suecos no cambian según la persona.",future:"I morgon ska jag tala svenska.",futureEs:"Mañana hablaré sueco.",futureRule:"Ska + infinitivo expresa plan o intención. También se usa kommer att para predicciones."},
+  "Noruego":{present:[["jeg","snakker"],["du","snakker"],["han / hun","snakker"],["vi","snakker"],["dere","snakker"],["de","snakker"]],past:"I går snakket jeg norsk.",pastEs:"Ayer hablé noruego.",pastRule:"Snakket es pasado regular. La forma verbal no cambia según la persona.",future:"I morgen skal jeg snakke norsk.",futureEs:"Mañana hablaré noruego.",futureRule:"Skal + infinitivo expresa intención o plan. También puede usarse kommer til å para predicción."},
+  "Danés":{present:[["jeg","taler"],["du","taler"],["han / hun","taler"],["vi","taler"],["I","taler"],["de","taler"]],past:"I går talte jeg dansk.",pastEs:"Ayer hablé danés.",pastRule:"Talte es la forma pasada de tale. La forma verbal no cambia según la persona.",future:"I morgen vil jeg tale dansk.",futureEs:"Mañana hablaré danés.",futureRule:"Vil + infinitivo expresa voluntad o futuro. También se usa el presente con una referencia temporal."},
+  "Hebreo":{present:[["אני","מדבר / מדברת"],["אתה / את","מדבר / מדברת"],["הוא / היא","מדבר / מדברת"],["אנחנו","מדברים / מדברות"],["הם / הן","מדברים / מדברות"]],past:"דיברתי עברית אתמול.",pastEs:"Ayer hablé hebreo.",pastRule:"El pasado cambia por persona, género y número. דיברתי es la forma de primera persona singular para ambos géneros.",future:"אדבר עברית מחר.",futureEs:"Mañana hablaré hebreo.",futureRule:"El futuro utiliza prefijos personales; la raíz verbal se mantiene con patrones propios del binyán."},
+  "Vietnamita":{present:[["tôi","nói"],["bạn","nói"],["anh ấy / cô ấy","nói"],["chúng tôi","nói"],["họ","nói"]],past:"Hôm qua tôi đã nói tiếng Việt.",pastEs:"Ayer hablé vietnamita.",pastRule:"El verbo no se conjuga. Đã puede marcar pasado o acción completada; el contexto también puede expresar el tiempo.",future:"Ngày mai tôi sẽ nói tiếng Việt.",futureEs:"Mañana hablaré vietnamita.",futureRule:"Sẽ marca futuro; el verbo nói no cambia por persona."},
+  "Indonesio":{present:[["saya","berbicara"],["kamu","berbicara"],["dia","berbicara"],["kami / kita","berbicara"],["mereka","berbicara"]],past:"Kemarin saya sudah berbicara bahasa Indonesia.",pastEs:"Ayer hablé indonesio.",pastRule:"El verbo no cambia por persona. Sudah indica que algo ya ocurrió o está completado.",future:"Besok saya akan berbicara bahasa Indonesia.",futureEs:"Mañana hablaré indonesio.",futureRule:"Akan marca futuro y va antes del verbo; no se modifica el verbo."},
+  "Tailandés":{present:[["ฉัน","พูด"],["คุณ","พูด"],["เขา","พูด"],["เรา","พูด"],["พวกเขา","พูด"]],past:"เมื่อวานฉันพูดภาษาไทยแล้ว",pastEs:"Ayer hablé tailandés.",pastRule:"El verbo no se conjuga por persona. Marcadores como แล้ว y expresiones temporales indican acción completada.",future:"พรุ่งนี้ฉันจะพูดภาษาไทย",futureEs:"Mañana hablaré tailandés.",futureRule:"จะ (jà) delante del verbo marca futuro o intención; el verbo no cambia."}
+};
+function renderGrammarRuleSections(rules, exceptions = "") {
+  const clean = value => String(value || "").trim().replace(/^[-•\d.)\s]+/, "").replace(/[.;:]$/, "").trim();
+  const splitChildren = value => String(value || "")
+    .split(/;\s+|,\s+(?=[^,;]+?\s*→)/)
+    .map(clean).filter(Boolean);
+  const parseHierarchy = value => String(value || "").split(/(?<=[.!?])\s+/).map(sentence => {
+    const item = clean(sentence);
+    if (!item) return null;
+    const colon = item.indexOf(":");
+    if (colon > 0 && colon < item.length - 1) {
+      const parent = clean(item.slice(0,colon));
+      const children = splitChildren(item.slice(colon + 1));
+      return children.length ? { parent, children } : { parent };
+    }
+    const parts = item.split(/;\s+/).map(clean).filter(Boolean);
+    if (parts.length > 1) return { parent:parts[0], children:parts.slice(1) };
+    return { parent:item };
+  }).filter(Boolean);
+  const renderList = nodes => '<ol class="theory-rule-list">' + nodes.map(node =>
+    '<li><span class="theory-rule-parent">' + escapeHTML(node.parent) + '</span>' +
+    (node.children?.length ? '<ul class="theory-rule-children">' + node.children.map(child => '<li>' + escapeHTML(child) + '</li>').join("") + '</ul>' : '') +
+    '</li>'
+  ).join("") + '</ol>';
+  const rulePoints = parseHierarchy(rules), exceptionPoints = parseHierarchy(exceptions);
+  return (rulePoints.length ? '<section class="theory-note theory-rules"><h3>Reglas y usos</h3>' + renderList(rulePoints) + '</section>' : "") +
+    (exceptionPoints.length ? '<section class="theory-note theory-exceptions"><h3>Excepciones e irregulares</h3>' + renderList(exceptionPoints) + '</section>' : "");
+}
+function renderGrammarRuleContent(rule, exceptions = "") {
+  const text = String(rule || "").trim();
+  const marker = /(?:Atención:|Excepciones?:|Ojo:|No uses\b|No traduzcas\b|No se\b|Nunca\b)/i.exec(text);
+  if (!marker) return renderGrammarRuleSections(text,exceptions);
+  const mainRules = text.slice(0,marker.index).trim();
+  const exceptionText = [text.slice(marker.index).replace(/^(?:Atención:|Excepciones?:|Ojo:)\s*/i,""),exceptions].filter(Boolean).join(" ");
+  return renderGrammarRuleSections(mainRules,exceptionText);
+}
+function renderTenseLesson(languageName, topicIndex) {
+  const lesson = tenseLessons[languageName];
+  if (!lesson) return '<p class="theory-slide-text">Revisa la forma verbal dentro de una frase completa y compara cómo cambia según el tiempo, la persona y el aspecto.</p>';
+  const locale = getSelectedCatalog()?.locale || "und";
+  if (topicIndex === 3) {
+    const rows = lesson.present.map(([person,form]) => '<tr><td>' + escapeHTML(person) + '</td><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form, locale) + '</td></tr>').join("");
+    return '<p class="theory-slide-text">El presente se usa para hábitos, hechos y situaciones actuales. Observa qué formas cambian y cuáles permanecen iguales:</p><table class="theory-pronoun-table"><thead><tr><th>Persona</th><th>Forma verbal</th></tr></thead><tbody>' + rows + '</tbody></table>';
+  }
+  const isPast = topicIndex === 4;
+  if (languageName === "Portugués brasileño" && (isPast || topicIndex === 5)) {
+    const forms = isPast ? lesson.pastForms : lesson.futureForms;
+    const rows = forms.map(([person,form]) =>
+      '<tr><td><strong>' + escapeHTML(person) + '</strong></td><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td></tr>'
+    ).join("");
+    const examples = [0,2,3].map(index => {
+      const [person,,targetExample,translation] = forms[index];
+      return '<tr><td>' + escapeHTML(person) + '</td><td><span class="theory-target-word">' + escapeHTML(targetExample) + '</span> ' + speakerButton(targetExample,locale) + '<small class="theory-translation">(' + escapeHTML(translation) + ')</small></td></tr>';
+    }).join("");
+    const header = '<thead><tr><th>Pronombre</th><th>Forma verbal</th></tr></thead>';
+    const regularPastTable = isPast ? '<section class="theory-table-block"><h3>Terminaciones regulares</h3><p>Los verbos regulares cambian su terminación de la siguiente manera:</p><div class="theory-table-scroll"><table class="theory-pronoun-table"><thead><tr><th></th><th>-AR · falar</th><th>-ER · comer</th><th>-IR · partir</th></tr></thead><tbody>' +
+      [['eu','falei','comi','parti'],['tu','falaste','comeste','partiste'],['você / ele / ela','falou','comeu','partiu'],['nós','falamos','comemos','partimos'],['a gente','falou','comeu','partiu'],['vocês / eles / elas','falaram','comeram','partiram']].map(row => '<tr>' + row.map((cell,index) => '<td>' + (index ? '<strong class="theory-target-word">' + cell + '</strong> ' + speakerButton(cell,locale) : '<strong>' + cell + '</strong>') + '</td>').join('') + '</tr>').join('') +
+      '</tbody></table></div></section>' : '';
+    const pastIrregularTable = isPast ? '<section class="theory-table-block"><h3>Excepciones: verbos irregulares</h3><div class="theory-table-scroll"><table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>ser / ir</th><th>estar</th><th>ter</th><th>fazer</th></tr></thead><tbody>' +
+      [['eu','fui','estive','tive','fiz'],['tu','foste','estiveste','tiveste','fizeste'],['você / ele / ela','foi','esteve','teve','fez'],['nós','fomos','estivemos','tivemos','fizemos'],['a gente','foi','esteve','teve','fez'],['vocês / eles / elas','foram','estiveram','tiveram','fizeram']].map(row => '<tr>' + row.map((cell,index) => '<td>' + (index ? '<strong class="theory-target-word">' + cell + '</strong> ' + speakerButton(cell,locale) : '<strong>' + cell + '</strong>') + '</td>').join('') + '</tr>').join('') +
+      '</tbody></table></div></section>' : '';
+    const pastIrregularTableTwo = isPast ? '<section class="theory-table-block"><h3>Más verbos irregulares</h3><div class="theory-table-scroll"><table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>dizer</th><th>trazer</th><th>pôr</th><th>ver</th><th>vir</th></tr></thead><tbody>' +
+      [['eu','disse','trouxe','pus','vi','vim'],['tu','disseste','trouxeste','puseste','viste','vieste'],['você / ele / ela','disse','trouxe','pôs','viu','veio'],['nós','dissemos','trouxemos','pusemos','vimos','viemos'],['a gente','disse','trouxe','pôs','viu','veio'],['vocês / eles / elas','disseram','trouxeram','puseram','viram','vieram']].map(row => '<tr>' + row.map((cell,index) => '<td>' + (index ? '<strong class="theory-target-word">' + cell + '</strong> ' + speakerButton(cell,locale) : '<strong>' + cell + '</strong>') + '</td>').join('') + '</tr>').join('') +
+      '</tbody></table></div></section>' : '';
+    const simpleFuture = !isPast && lesson.futureSimpleForms
+      ? '<section class="theory-table-block"><h3>Futuro simple (más formal)</h3><div class="theory-table-scroll"><table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>Forma verbal</th></tr></thead><tbody>' + lesson.futureSimpleForms.map(([person,form]) => '<tr><td>' + escapeHTML(person) + '</td><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td></tr>').join("") + '</tbody></table></div></section>'
+      : "";
+    const futureIrregularTable = !isPast ? '<section class="theory-table-block"><h3>Excepciones del futuro simple · conjugación</h3><div class="theory-table-scroll"><table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>dizer</th><th>fazer</th><th>trazer</th><th>pôr</th><th>ter</th><th>vir</th><th>ser</th></tr></thead><tbody>' +
+      [['eu','direi','farei','trarei','porei','terei','virei','serei'],['tu','dirás','farás','trarás','porás','terás','virás','serás'],['você / ele / ela','dirá','fará','trará','porá','terá','virá','será'],['nós','diremos','faremos','traremos','poremos','teremos','viremos','seremos'],['a gente','dirá','fará','trará','porá','terá','virá','será'],['vocês / eles / elas','dirão','farão','trarão','porão','terão','virão','serão']].map(row => '<tr>' + row.map((cell,index) => '<td>' + (index ? '<strong class="theory-target-word">' + cell + '</strong> ' + speakerButton(cell,locale) : '<strong>' + cell + '</strong>') + '</td>').join('') + '</tr>').join('') +
+      '</tbody></table></div></section>' : '';
+    const rule = isPast ? lesson.pastRule : lesson.futureRule;
+    const intro = isPast
+      ? "El pretérito perfeito expresa acciones concluidas en el pasado. Primero identifica el infinitivo y después aplica la terminación correspondiente a la persona."
+      : "En portugués brasileño, el futuro próximo se forma con ir en presente + infinitivo. El futuro simple es correcto, pero tiene un uso más formal.";
+    return '<p class="theory-slide-text">' + escapeHTML(intro) + '</p>' + regularPastTable +
+      '<section class="theory-table-block"><h3>Conjugación de ejemplo: ' + (isPast ? 'falar en pasado' : 'ir + infinitivo') + '</h3><div class="theory-table-scroll"><table class="theory-pronoun-table">' + header + '<tbody>' + rows + '</tbody></table></div></section>' +
+      pastIrregularTable + pastIrregularTableTwo + simpleFuture + futureIrregularTable +
+      renderGrammarRuleSections(rule,"") +
+      '<section class="theory-example"><span>Ejemplos aplicados</span><div class="theory-table-scroll"><table class="theory-example-table"><thead><tr><th>Pronombre</th><th>Ejemplo aplicado</th></tr></thead><tbody>' + examples + '</tbody></table></div></section>';
+  }
+  const example = isPast ? lesson.past : lesson.future;
+  const translation = isPast ? lesson.pastEs : lesson.futureEs;
+  const rule = isPast ? lesson.pastRule : lesson.futureRule;
+  return '<p class="theory-slide-text">' + (isPast ? "El pasado permite narrar acciones anteriores. Observa esta frase y la forma verbal utilizada:" : "El futuro expresa planes, predicciones e intenciones. Observa esta construcción:") + '</p>' +
+    renderGrammarRuleContent(rule,lesson.exceptions) +
+    '<section class="theory-example"><span>' + (isPast ? "Ejemplo en pasado" : "Ejemplo en futuro") + '</span>' + renderTheoryExampleTable(example,translation,locale,languageName) + '</section>';
+}
+function renderPronounTable(sample, languageName, locale) {
+  if (!sample?.pronouns) return "";
+  const words = sample.pronouns.split(/\s*,\s*/);
+  const meanings = pronounTranslations[languageName] || [];
+  const rows = words.map((word,index) => '<tr><td><strong class="theory-target-word">' + escapeHTML(word) + '</strong> ' + speakerButton(word, locale) + '</td><td>' + escapeHTML(meanings[index] || "forma personal") + '</td></tr>').join("");
+  return '<table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>Significado</th></tr></thead><tbody>' + rows + '</tbody></table><p class="theory-footnote">Pulsa el icono para escuchar cada forma. El significado puede variar según el contexto y el grado de formalidad.</p>';
+}
+function getTheoryExamplePronoun(example) {
+  const text = String(example || "").trim().replace(/^(?:yesterday|tomorrow|ayer|mañana|ontem|amanhã|ieri|domani|gestern|morgen|hier|demain|明日|昨日|昨天|어제|내일)[，、,]?\s*/i,"");
+  const unicodeMatch = text.match(/^(私|我|你|他|她|我们|저는|너는|그는|그녀는|우리는|أنا|أنت|هو|هي|نحن|मैं|तुम|वह|हम)/);
+  const match = unicodeMatch || text.match(/^(a gente|você|vocês|eu|tu|nós|vós|ele|ela|eles|elas|i|you|he|she|it|we|they|je|j['’]|il|elle|on|nous|vous|ils|elles|ich|du|er|sie|es|wir|ihr|io|lui|lei|noi|voi|loro|я|ты|он|она|мы|вы|они)\b/i);
+  return match ? match[0] : "—";
+}
+function renderTheoryExampleTable(example, translation, locale, languageName = "") {
+  const knownTranslations = ({
+    "Portugués brasileño":{
+      "Eu sou chilena.":"Soy chilena.",
+      "Hoje estou cansada.":"Hoy estoy cansada.",
+      "Estamos em casa.":"Estamos en casa."
+    },
+    "Italiano":{
+      "Sono cileno.":"Soy chileno.",
+      "Sto bene.":"Estoy bien.",
+      "Sto a casa":"Me quedo en casa."
+    },
+    "Neerlandés":{
+      "Ik ben student.":"Soy estudiante.",
+      "Zij is moe.":"Ella está cansada.",
+      "We zijn thuis.":"Estamos en casa."
+    }
+  })[languageName] || {};
+  const rows = String(example || "").split(/\s+\/\s+/).map(raw => {
+    const item = raw.trim();
+    const translated = item.match(/^(.*?)\s*\(([^()]*)\)\s*$/);
+    const target = translated ? translated[1].trim() : item;
+    const meaning = translated ? translated[2].trim() : knownTranslations[target] || translation || "";
+    return '<tr><td>' + escapeHTML(getTheoryExamplePronoun(target)) + '</td><td><span class="theory-target-word">' + escapeHTML(target) + '</span> ' + speakerButton(target,locale) +
+      (meaning ? '<small class="theory-translation">(' + escapeHTML(meaning.replace(/[.]$/,"")) + ')</small>' : '') + '</td></tr>';
+  }).join("");
+  return '<div class="theory-table-scroll"><table class="theory-example-table"><thead><tr><th>Pronombre</th><th>Ejemplo aplicado</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+}
+function renderVerbLesson(languageName) {
+  const lesson = verbLessons[languageName];
+  if (!lesson) return '<p class="theory-slide-text">La forma de expresar identidad, estado y ubicación depende de este idioma. Compara siempre la estructura verbal con una frase real y revisa las formas personales en el contexto de la unidad.</p>';
+  const headers = ["Persona","Forma","Uso","Ejemplo","Significado"];
+  const locale = getSelectedCatalog()?.locale || "und";
+  const rows = lesson.tables.map(row => {
+    if (row.length === 3 && headers.includes(row[1]) && headers.includes(row[2])) {
+      return '<tr><th colspan="3">' + escapeHTML(row[0]) + '</th></tr>';
+    }
+    if (row.length === 3) {
+      return '<tr><td>' + escapeHTML(row[0]) + '</td><td><strong class="theory-target-word">' + escapeHTML(row[1]) + '</strong> ' + speakerButton(row[0], locale) + '</td><td>' + escapeHTML(row[2]) + '</td></tr>';
+    }
+    return '<tr><td>' + escapeHTML(row[0]) + '</td><td><strong class="theory-target-word">' + escapeHTML(row[1]) + '</strong> ' + speakerButton(row[1], locale) + '</td></tr>';
+  }).join("");
+  return '<p class="theory-slide-text">' + escapeHTML(lesson.lead) + '</p><table class="theory-pronoun-table"><tbody>' + rows + '</tbody></table>' + renderGrammarRuleContent(lesson.rule,lesson.exceptions) + '<section class="theory-example"><span>Ejemplos aplicados</span>' + renderTheoryExampleTable(lesson.example,"",locale,languageName) + '</section>';
+}
+const appliedTheoryContent = {
+  "Inglés": {
+    "Vocabulario": [
+      [["hello","hola","neutral"],["good morning","buenos días","mañana"],["good evening","buenas tardes/noches","tarde/noche"],["goodbye","adiós","neutral"],["see you later","hasta luego","informal"]],
+      [["mother","madre"],["father","padre"],["brother","hermano"],["sister","hermana"],["parents","padres"]],
+      [["today","hoy"],["tomorrow","mañana"],["yesterday","ayer"],["Monday","lunes"],["at eight","a las ocho"]],
+      [["the bill","la cuenta"],["a table for two","una mesa para dos"],["still water","agua sin gas"],["the menu","el menú"],["without onions","sin cebolla"]],
+      [["ticket","billete / entrada"],["station","estación"],["platform","andén"],["on the right","a la derecha"],["how much is it?","¿cuánto cuesta?"]]
+    ],
+    "Expresiones": [
+      [["My name is…","Me llamo…"],["Nice to meet you.","Mucho gusto."],["I'm from Chile.","Soy de Chile."],["Where are you from?","¿De dónde eres?"]],
+      [["Could you help me?","¿Podría ayudarme?"],["Could you repeat that, please?","¿Podría repetirlo, por favor?"],["I don't understand.","No entiendo."],["Could you speak more slowly?","¿Podría hablar más despacio?"]],
+      [["I'd like a coffee, please.","Quisiera un café, por favor."],["Could I see the menu?","¿Podría ver el menú?"],["The bill, please.","La cuenta, por favor."],["Can I pay by card?","¿Puedo pagar con tarjeta?"]],
+      [["Where is the station?","¿Dónde está la estación?"],["What time does the train leave?","¿A qué hora sale el tren?"],["How much does it cost?","¿Cuánto cuesta?"],["Could you show me on the map?","¿Podría mostrármelo en el mapa?"]],
+      [["How are you?","¿Cómo estás?"],["I'm fine, thanks.","Estoy bien, gracias."],["What are you doing today?","¿Qué haces hoy?"],["See you tomorrow.","Nos vemos mañana."]]
+    ]
+  },
+  "Portugués brasileño": {
+    "Vocabulario": [
+      [["olá","hola","neutral"],["bom dia","buenos días","mañana"],["boa tarde","buenas tardes","tarde"],["boa noite","buenas noches","noche"],["até logo","hasta luego","neutral"]],
+      [["mãe","madre"],["pai","padre"],["irmão","hermano"],["irmã","hermana"],["pais","padres"]],
+      [["hoje","hoy"],["amanhã","mañana"],["ontem","ayer"],["segunda-feira","lunes"],["às oito","a las ocho"]],
+      [["a conta","la cuenta"],["uma mesa para dois","una mesa para dos"],["água sem gás","agua sin gas"],["o cardápio","el menú"],["sem cebola","sin cebolla"]],
+      [["a passagem","el pasaje"],["a estação","la estación"],["a plataforma","el andén"],["à direita","a la derecha"],["quanto custa?","¿cuánto cuesta?"]]
+    ],
+    "Expresiones": [
+      [["Meu nome é…","Me llamo…"],["Muito prazer!","¡Mucho gusto!"],["Sou do Chile.","Soy de Chile."],["De onde você é?","¿De dónde eres?"]],
+      [["Você pode me ajudar?","¿Puedes ayudarme?"],["Pode repetir, por favor?","¿Puede repetir, por favor?"],["Não entendi.","No entendí."],["Pode falar mais devagar?","¿Puede hablar más despacio?"]],
+      [["Eu gostaria de um café, por favor.","Quisiera un café, por favor."],["Posso ver o cardápio?","¿Puedo ver el menú?"],["A conta, por favor.","La cuenta, por favor."],["Posso pagar com cartão?","¿Puedo pagar con tarjeta?"]],
+      [["Onde fica a estação?","¿Dónde queda la estación?"],["A que horas o trem sai?","¿A qué hora sale el tren?"],["Quanto custa?","¿Cuánto cuesta?"],["Pode me mostrar no mapa?","¿Puede mostrármelo en el mapa?"]],
+      [["Tudo bem?","¿Todo bien?"],["Tudo bem, obrigado/a.","Todo bien, gracias."],["O que você vai fazer hoje?","¿Qué vas a hacer hoy?"],["Até amanhã.","Hasta mañana."]]
+    ]
+  }
+};
+const articleLessons = {
+  "Inglés": {
+    intro:"El inglés distingue artículo definido, indefinido y ausencia de artículo. La elección depende de si el referente es identificable y de si el sustantivo es contable.",
+    rows:[["the","el / la / los / las","referente específico o conocido","the book · el libro"],["a","un / una","sustantivo contable singular antes de sonido consonántico","a book · un libro"],["an","un / una","sustantivo contable singular antes de sonido vocálico","an apple · una manzana"],["—","sin artículo","plural o incontable en sentido general","Books are useful · Los libros son útiles"]],
+    rule:"Usa a/an según el sonido, no la letra: an hour, a university. No uses a/an con plurales ni incontables."
+  },
+  "Portugués brasileño": {
+    intro:"El artículo concuerda con género y número. En portugués brasileño es frecuente usar artículo definido delante de nombres propios y posesivos, aunque el uso varía por región.",
+    rows:[["o / a","el / la","masculino / femenino singular","o livro · el libro / a casa · la casa"],["os / as","los / las","masculino / femenino plural","os livros · los libros / as casas · las casas"],["um / uma","un / una","indefinido singular","um carro · un auto / uma mesa · una mesa"],["uns / umas","unos / unas","indefinido plural","uns amigos · unos amigos"]],
+    rule:"Aprende el sustantivo junto con su género. Las contracciones son frecuentes: de + o = do; em + a = na; a + a = à."
+  },
+  "Francés": {
+    intro:"El artículo francés concuerda en género y número. Ante vocal o h muda, le y la se contraen en l'.",
+    rows:[["le / la / l'","el / la","definido singular masculino / femenino","le livre · el libro / l'amie · la amiga"],["les","los / las","definido plural","les maisons · las casas"],["un / une","un / una","indefinido singular","un livre · un libro / une table · una mesa"],["des","unos / unas","indefinido plural","des amis · unos amigos"]],
+    rule:"Después de una negación, un artículo partitivo suele convertirse en de/d': Je ne bois pas de café. No traduzcas siempre el artículo español palabra por palabra."
+  },
+  "Alemán": {
+    intro:"El alemán distingue género gramatical (masculino, femenino y neutro), número y caso. El artículo cambia según la función del sustantivo.",
+    rows:[["der","el","masculino nominativo","der Mann · el hombre"],["die","la / las","femenino singular o plural nominativo","die Frau · la mujer / die Kinder · los niños"],["das","lo / el","neutro nominativo","das Kind · el niño"],["ein / eine","un / una","indefinido nominativo masculino/neutro y femenino","ein Tisch · una mesa / eine Lampe · una lámpara"]],
+    rule:"Memoriza cada sustantivo con su artículo. En acusativo masculino der cambia a den y ein cambia a einen; los artículos también cambian en dativo y genitivo."
+  }
+};
+function renderAppliedLanguageTopic(languageName, category, index, locale) {
+  if (category === "Vocabulario" && languageName === "Portugués brasileño" && index === 2) {
+    const groups = [
+      ["Días de la semana",[["segunda-feira","lunes"],["terça-feira","martes"],["quarta-feira","miércoles"],["quinta-feira","jueves"],["sexta-feira","viernes"],["sábado","sábado"],["domingo","domingo"]]],
+      ["Meses del año",[["janeiro","enero"],["fevereiro","febrero"],["março","marzo"],["abril","abril"],["maio","mayo"],["junho","junio"],["julho","julio"],["agosto","agosto"],["setembro","septiembre"],["outubro","octubre"],["novembro","noviembre"],["dezembro","diciembre"]]],
+      ["Estaciones",[["primavera","primavera"],["verão","verano"],["outono","otoño"],["inverno","invierno"]]],
+      ["Partes del día",[["de manhã","por la mañana"],["à tarde","por la tarde"],["à noite","por la noche"],["de madrugada","de madrugada"]]],
+      ["Expresiones temporales",[["hoje","hoy"],["ontem","ayer"],["amanhã","mañana"],["depois de amanhã","pasado mañana"],["anteontem","anteayer"],["esta semana","esta semana"],["semana passada","la semana pasada"],["semana que vem","la próxima semana"],["todo dia","todos los días"],["às oito horas","a las ocho"]]]
+    ];
+    return '<p class="theory-slide-text">Vocabulario temporal esencial para hablar de rutinas, fechas, horarios y planes. Los días y meses se escriben normalmente con minúscula.</p>' +
+      groups.map(([heading,entries]) => '<section class="theory-vocab-group"><h3>' + heading + '</h3><table class="theory-pronoun-table"><thead><tr><th>Português</th><th>Español</th></tr></thead><tbody>' +
+        entries.map(([term,meaning]) => '<tr><td><strong class="theory-target-word">' + escapeHTML(term) + '</strong> ' + speakerButton(term,locale) + '</td><td>' + escapeHTML(meaning) + '</td></tr>').join("") +
+      '</tbody></table></section>').join("");
+  }
+  if (category === "Vocabulario" && languageName === "Portugués brasileño" && index === 5) {
+    const groups = [
+      ["Números cardinales",[["zero","cero"],["um / uma","uno / una"],["dois / duas","dos"],["três","tres"],["quatro","cuatro"],["cinco","cinco"],["seis","seis"],["sete","siete"],["oito","ocho"],["nove","nueve"],["dez","diez"],["onze","once"],["doze","doce"],["treze","trece"],["quatorze / catorze","catorce"],["quinze","quince"],["dezesseis","dieciséis"],["dezessete","diecisiete"],["dezoito","dieciocho"],["dezenove","diecinueve"],["vinte","veinte"],["trinta","treinta"],["quarenta","cuarenta"],["cinquenta","cincuenta"],["sessenta","sesenta"],["setenta","setenta"],["oitenta","ochenta"],["noventa","noventa"],["cem","cien"],["cento","ciento (en números compuestos)"],["mil","mil"]]],
+      ["Números ordinales",[["primeiro / primeira","primero / primera"],["segundo / segunda","segundo / segunda"],["terceiro / terceira","tercero / tercera"],["quarto / quarta","cuarto / cuarta"],["quinto / quinta","quinto / quinta"],["sexto / sexta","sexto / sexta"],["sétimo / sétima","séptimo / séptima"],["oitavo / oitava","octavo / octava"],["nono / nona","noveno / novena"],["décimo / décima","décimo / décima"]]]
+    ];
+    return '<p class="theory-slide-text">Los cardinales expresan cantidad; los ordinales indican posición y concuerdan en género con el sustantivo.</p>' +
+      groups.map(([heading,entries]) => '<section class="theory-vocab-group"><h3>' + heading + '</h3><table class="theory-pronoun-table"><thead><tr><th>Português</th><th>Español</th></tr></thead><tbody>' +
+        entries.map(([term,meaning]) => '<tr><td><strong class="theory-target-word">' + escapeHTML(term) + '</strong> ' + speakerButton(term,locale) + '</td><td>' + escapeHTML(meaning) + '</td></tr>').join("") +
+      '</tbody></table></section>').join("") +
+      '<section class="theory-note"><strong>Reglas y observaciones</strong><p>Um/uma y dois/duas varían según el género. A partir de 21, se unen decenas y unidades con e: vinte e um, trinta e dois. Los ordinales concuerdan: o primeiro dia, a primeira semana. En Brasil, después de décimo, a menudo se prefiere el cardinal en usos cotidianos (capítulo 11: capítulo onze), según el contexto.</p></section>';
+  }
+  const items = appliedTheoryContent[languageName]?.[category]?.[index];
+  if (!items) return null;
+  const firstHeader = languageName === "Inglés" ? "English" : "Português";
+  const rows = items.map(([term,meaning,context=""]) =>
+    '<tr><td><strong class="theory-target-word">' + escapeHTML(term) + '</strong> ' + speakerButton(term,locale) + '</td><td>' + escapeHTML(meaning) + '</td>' +
+    (items.some(item=>item[2]) ? '<td>' + escapeHTML(context) + '</td>' : '') + '</tr>'
+  ).join("");
+  return '<p class="theory-slide-text">' + (category === "Vocabulario" ? "Palabras útiles organizadas por situación. Aprende el término junto con su contexto." : "Frases listas para usar en situaciones cotidianas; observa el nivel de cortesía.") + '</p>' +
+    '<table class="theory-pronoun-table"><thead><tr><th>' + firstHeader + '</th><th>Español</th>' + (items.some(item=>item[2])?'<th>Contexto</th>':'') + '</tr></thead><tbody>' + rows + '</tbody></table>';
+}
+function renderArticleLesson(languageName, locale) {
+  const lesson = articleLessons[languageName];
+  if (!lesson) return null;
+  const rows = lesson.rows.map(([form,meaning,usage]) =>
+    '<tr><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td><td>' + escapeHTML(meaning) + '</td><td>' + escapeHTML(usage) + '</td></tr>'
+  ).join("");
+  const examples = lesson.rows.map(([form,,,example]) =>
+    '<p class="theory-target-word">' + escapeHTML(example) + ' ' + speakerButton(example,locale) + '</p><p>' + escapeHTML(form) + '</p>'
+  ).join("");
+  return '<p class="theory-slide-text">' + escapeHTML(lesson.intro) + '</p><table class="theory-pronoun-table"><thead><tr><th>Forma</th><th>Significado</th><th>Uso</th></tr></thead><tbody>' + rows + '</tbody></table>' + renderGrammarRuleContent(lesson.rule,lesson.exceptions) + '<section class="theory-example"><span>Ejemplos</span>' + examples + '</section>';
+}
+function renderItalianAppliedTopic(category, index, locale) {
+  const rows = (items) => items.map(([term, meaning, note = ""]) =>
+    '<tr><td><strong class="theory-target-word">' + escapeHTML(term) + '</strong> ' + speakerButton(term, locale) + '</td><td>' + escapeHTML(meaning) + '</td>' + (note ? '<td>' + escapeHTML(note) + '</td>' : '') + '</tr>'
+  ).join("");
+  if (category === "Gramática" && index === 1) {
+    return '<p class="theory-slide-text">En italiano el artículo concuerda con el sustantivo en género y número. La forma masculina depende del sonido inicial; la forma femenina se contrae ante vocal.</p>' +
+      '<h3>Artículos definidos</h3><table class="theory-pronoun-table"><thead><tr><th>Forma y ejemplo</th><th>Significado</th><th>Cuándo se usa</th></tr></thead><tbody>' +
+      rows([["il libro","el libro","Masculino singular; consonante común"],["lo studente","el estudiante","Masculino singular; s + consonante, z, gn, ps"],["l’amico","el amigo","Masculino singular ante vocal"],["la casa","la casa","Femenino singular ante consonante"],["l’amica","la amiga","Femenino singular ante vocal"],["i libri","los libros","Plural de il"],["gli studenti / gli amici","los estudiantes / los amigos","Plural de lo y l’ masculino"],["le case","las casas","Plural femenino"]]) +
+      '</tbody></table><h3>Artículos indefinidos</h3><table class="theory-pronoun-table"><thead><tr><th>Forma y ejemplo</th><th>Significado</th></tr></thead><tbody>' +
+      rows([["un libro","un libro"],["uno studente","un estudiante"],["un amico","un amigo (sin apóstrofo)"],["una casa","una casa"],["un’amica","una amiga (con apóstrofo)"]]) +
+      '</tbody></table>' + renderGrammarRuleSections("El artículo concuerda con el sustantivo en género y número. La forma masculina depende del sonido inicial; la forma femenina se contrae ante vocal.", "No escribas *il studente ni *la amica. Memoriza el sustantivo junto con su artículo.");
+  }
+  if (category === "Gramática" && index === 4) {
+    const people = ["io","tu","lui / lei","noi","voi","loro"];
+    const forms = [["ho parlato","sono andato/a"],["hai parlato","sei andato/a"],["ha parlato","è andato/a"],["abbiamo parlato","siamo andati/e"],["avete parlato","siete andati/e"],["hanno parlato","sono andati/e"]];
+    return '<p class="theory-slide-text">El pasado más usado en conversación es el <strong>passato prossimo</strong>: auxiliar en presente (avere o essere) + participio pasado. Se usa para acciones terminadas: ayer, la semana pasada, esta mañana.</p>' +
+      '<h3>Conjugación aplicada</h3><table class="theory-pronoun-table"><thead><tr><th>Persona</th><th>parlare · hablar</th><th>andare · ir</th></tr></thead><tbody>' +
+      people.map((person,i)=>'<tr><td>'+person+'</td><td><strong class="theory-target-word">'+forms[i][0]+'</strong> '+speakerButton(forms[i][0],locale)+'</td><td><strong class="theory-target-word">'+forms[i][1]+'</strong> '+speakerButton(forms[i][1],locale)+'</td></tr>').join("") +
+      '</tbody></table>' + renderGrammarRuleSections("Avere se usa con la mayoría de los verbos transitivos (ho mangiato). Essere se usa con muchos verbos de movimiento, cambio de estado y verbos reflexivos (sono arrivato, mi sono svegliato). Con essere, el participio concuerda en género y número: andato/a/i/e.", "Hay verbos cuyo auxiliar debe aprenderse junto con el verbo.") + '<section class="theory-example"><span>Ejemplos reales</span><p class="theory-target-word">Ieri ho parlato con Maria. ' + speakerButton("Ieri ho parlato con Maria.",locale) + '</p><p>Ayer hablé con María.</p><p class="theory-target-word">Domenica siamo andati a Roma. ' + speakerButton("Domenica siamo andati a Roma.",locale) + '</p><p>El domingo fuimos a Roma.</p></section>';
+  }
+  if (category === "Gramática" && index === 5) {
+    const people = ["io","tu","lui / lei","noi","voi","loro"];
+    const forms = [["parlerò","sarò"],["parlerai","sarai"],["parlerà","sarà"],["parleremo","saremo"],["parlerete","sarete"],["parleranno","saranno"]];
+    return '<p class="theory-slide-text">El <strong>futuro semplice</strong> expresa predicciones, promesas e intenciones futuras. Las terminaciones son las mismas para los verbos en -are, -ere e -ire, aunque la raíz puede cambiar.</p><table class="theory-pronoun-table"><thead><tr><th>Persona</th><th>parlare · hablar</th><th>essere · ser/estar</th></tr></thead><tbody>' +
+      people.map((person,i)=>'<tr><td>'+person+'</td><td><strong class="theory-target-word">'+forms[i][0]+'</strong> '+speakerButton(forms[i][0],locale)+'</td><td><strong class="theory-target-word">'+forms[i][1]+'</strong> '+speakerButton(forms[i][1],locale)+'</td></tr>').join("") +
+      '</tbody></table>' + renderGrammarRuleSections("Los verbos en -are cambian la a por e (parlare → parler-). Se añaden -ò, -ai, -à, -emo, -ete, -anno. En conversación, el presente con una expresión temporal también puede indicar futuro.", "Essere y avere son irregulares: sarò y avrò.") + '<section class="theory-example"><span>Ejemplos</span><p class="theory-target-word">Domani parlerò con il professore. ' + speakerButton("Domani parlerò con il professore.",locale) + '</p><p>Mañana hablaré con el profesor.</p><p class="theory-target-word">L’anno prossimo saremo in Italia. ' + speakerButton("L’anno prossimo saremo in Italia.",locale) + '</p><p>El próximo año estaremos en Italia.</p></section>';
+  }
+  const vocabulary = {
+    "Vocabulario": [
+      [["ciao","hola / chao","Informal"],["buongiorno","buenos días / buenas tardes","Formal o neutral"],["buonasera","buenas tardes / noches","Desde la tarde"],["arrivederci","hasta luego","Formal"],["a presto","hasta pronto","Neutral"]],
+      [["la madre","la madre"],["il padre","el padre"],["il fratello","el hermano"],["la sorella","la hermana"],["i genitori","los padres"],["il figlio / la figlia","el hijo / la hija"]],
+      [["oggi","hoy"],["domani","mañana"],["ieri","ayer"],["lunedì","lunes"],["la settimana","la semana"],["alle otto","a las ocho"]],
+      [["il conto","la cuenta"],["un tavolo per due","una mesa para dos"],["l’acqua naturale","agua sin gas"],["il menù","el menú"],["vorrei…","quisiera…"],["senza…","sin…"]],
+      [["il biglietto","el billete / pasaje"],["la stazione","la estación"],["il binario","el andén / vía"],["a destra","a la derecha"],["a sinistra","a la izquierda"],["quanto costa?","¿cuánto cuesta?"]]
+    ],
+    "Expresiones": [
+      [["Mi chiamo…","Me llamo…"],["Piacere!","¡Mucho gusto!"],["Sono cileno/a.","Soy chileno/a."],["Vengo dal Cile.","Vengo de Chile."]],
+      [["Mi può aiutare?","¿Me puede ayudar? (formal)"],["Può ripetere, per favore?","¿Puede repetir, por favor?"],["Non ho capito.","No entendí."],["Parla più lentamente, per favore.","Hable más despacio, por favor."]],
+      [["Vorrei un caffè, per favore.","Quisiera un café, por favor."],["Posso vedere il menù?","¿Puedo ver el menú?"],["Il conto, per favore.","La cuenta, por favor."],["È possibile pagare con carta?","¿Se puede pagar con tarjeta?"]],
+      [["Dov’è la stazione?","¿Dónde está la estación?"],["A che ora parte il treno?","¿A qué hora sale el tren?"],["Quanto costa?","¿Cuánto cuesta?"],["Può indicarmelo sulla mappa?","¿Puede indicármelo en el mapa?"]],
+      [["Come va?","¿Cómo estás?"],["Tutto bene, grazie.","Todo bien, gracias."],["Che cosa fai oggi?","¿Qué haces hoy?"],["Ci vediamo domani.","Nos vemos mañana."]]
+    ]
+  };
+  if (category === "Vocabulario" || category === "Expresiones") {
+    const items = vocabulary[category]?.[index];
+    if (!items) return null;
+    const heading = category === "Vocabulario" ? "Palabras para usar en contexto" : "Frases listas para una situación real";
+    return '<p class="theory-slide-text">' + heading + '. Escucha cada expresión y fíjate en su traducción y registro.</p><table class="theory-pronoun-table"><thead><tr><th>Italiano</th><th>Español / uso</th></tr></thead><tbody>' + rows(items) + '</tbody></table>';
+  }
+  return null;
+}
+let activeTheoryTopics = [];
+let activeTheoryIndex = 0;
+let activeTheoryCategory = "";
+function openTheoryTopic(index) {
+  activeTheoryIndex = Math.max(0, Math.min(index, activeTheoryTopics.length - 1));
+  const [title, body] = activeTheoryTopics[activeTheoryIndex];
+  const sample = theorySamples[$("language").value] || null;
+  const sampleByTopic = activeTheoryCategory === "Gramática"
+    ? (activeTheoryIndex === 0 ? sample?.pronouns : activeTheoryIndex === 1 ? sample?.articles : null)
+    : activeTheoryCategory === "Vocabulario" && activeTheoryIndex === 0
+      ? sample?.greeting
+      : activeTheoryCategory === "Expresiones" && activeTheoryIndex === 0
+        ? sample?.intro : null;
+  const sampleLabel = activeTheoryIndex === 0 && activeTheoryCategory === "Gramática" ? "Ejemplo de pronombres"
+    : activeTheoryIndex === 1 && activeTheoryCategory === "Gramática" ? "Artículos"
+    : activeTheoryCategory === "Vocabulario" ? "Ejemplo de saludos" : "Ejemplo";
+  const languageName = $("language").value === "other" ? $("custom-language-name").value.trim() : $("language").value;
+  const locale = getSelectedCatalog()?.locale || "und";
+  let detailMarkup = '<p class="theory-slide-text">' + escapeHTML(body) + '</p>';
+  const italianApplied = languageName === "Italiano"
+    ? renderItalianAppliedTopic(activeTheoryCategory, activeTheoryIndex, locale)
+    : null;
+  const appliedLanguage = renderAppliedLanguageTopic(languageName, activeTheoryCategory, activeTheoryIndex, locale);
+  const articleLesson = activeTheoryCategory === "Gramática" && activeTheoryIndex === 1
+    ? renderArticleLesson(languageName, locale) : null;
+  if (italianApplied || appliedLanguage) {
+    detailMarkup = italianApplied || appliedLanguage;
+  } else if (articleLesson) {
+    detailMarkup = articleLesson;
+  } else if (activeTheoryCategory === "Gramática" && activeTheoryIndex === 0) {
+    detailMarkup = '<p class="theory-slide-text">Los pronombres indican quién participa en la oración. Estas son las formas personales más habituales:</p>' + renderPronounTable(sample, languageName, locale);
+  } else if (activeTheoryCategory === "Gramática" && activeTheoryIndex === 1 && sample?.articles) {
+    detailMarkup += '<section class="theory-example"><span>Artículos de este idioma</span><p class="theory-target-word">' + escapeHTML(sample.articles) + '</p><p class="theory-slide-text">Observa género, número y si el artículo es definido o indefinido. Algunos idiomas expresan estas diferencias mediante sufijos o no usan artículos.</p></section>';
+  } else if (activeTheoryCategory === "Gramática" && activeTheoryIndex === 2) {
+    detailMarkup = renderVerbLesson(languageName);
+  } else if (activeTheoryCategory === "Gramática" && activeTheoryIndex >= 3) {
+    detailMarkup = renderTenseLesson(languageName, activeTheoryIndex);
+  } else if (sampleByTopic) {
+    detailMarkup += '<section class="theory-example"><span>' + escapeHTML(sampleLabel) + ' · ' + escapeHTML(languageDefinitions[$("language").value]?.label || languageName) + '</span><p class="theory-target-word">' + escapeHTML(sampleByTopic) + '</p></section>';
+  }
+  $("theory-title").textContent = title;
+  $("theory-category").textContent = activeTheoryCategory;
+  $("theory-description").innerHTML = detailMarkup;
+  bindSpeakerButtons($("theory-description"));
   speech.stop();
-  aiMode = false;
-  sessionFinished = false;
-  $("summary-panel").classList.add("hidden");
-  $("setup-panel").classList.remove("hidden");
-  $("session-status").textContent = "Nueva sesión";
+  const firstTargetAudio = $("theory-description").querySelector('[data-speak][data-locale="' + locale + '"]');
+  if (firstTargetAudio) speech.speak(firstTargetAudio.dataset.speak, locale, { automatic:true });
+  $("theory-counter").textContent = (activeTheoryIndex + 1) + " / " + activeTheoryTopics.length;
+  $("theory-prev").disabled = activeTheoryIndex === 0;
+  $("theory-next").disabled = activeTheoryIndex === activeTheoryTopics.length - 1;
+  $("theory-detail").classList.remove("hidden");
+}
+document.querySelectorAll("[data-theory]").forEach(button => button.addEventListener("click", () => {
+  const [title, topics] = theoryContent[button.dataset.theory];
+  activeTheoryCategory = title;
+  activeTheoryTopics = topics;
+  $("theory-list-title").textContent = title;
+  $("theory-list-items").innerHTML = topics.map(([name],index) =>
+    '<button class="theory-topic-row" type="button" data-theory-topic="' + index + '"><span>' + escapeHTML(name) + '</span><span aria-hidden="true">→</span></button>'
+  ).join("");
+  $("theory-grid").classList.add("hidden");
+  $("theory-topic-list").classList.remove("hidden");
+  $("theory-list-items").querySelectorAll("[data-theory-topic]").forEach(item =>
+    item.addEventListener("click", () => openTheoryTopic(Number(item.dataset.theoryTopic)))
+  );
+}));
+$("theory-list-back").addEventListener("click", () => {
+  speech.stop();
+  $("theory-topic-list").classList.add("hidden");
+  $("theory-grid").classList.remove("hidden");
+});
+$("theory-back").addEventListener("click", () => {
+  speech.stop();
+  $("theory-detail").classList.add("hidden");
+});
+$("theory-prev").addEventListener("click", () => openTheoryTopic(activeTheoryIndex - 1));
+$("theory-next").addEventListener("click", () => openTheoryTopic(activeTheoryIndex + 1));
+$("variant-close").addEventListener("click", () => $("variant-dialog").close());
+function persistSettings() {
+  const savedSettings = {
+    selectedLanguage: $("language").value,
+    duration: $("duration").value,
+    level: $("level").value,
+    topic: $("topic").value,
+  };
+  localStorage.setItem("adaptive-language-tutor.settings", JSON.stringify(savedSettings));
+}
+$("welcome-start").addEventListener("click", () => {
+  if ($("language").value && localStorage.getItem("adaptive-language-tutor.settings")) {
+    $("welcome-screen").classList.add("hidden");
+    $("app-shell").classList.remove("hidden");
+    showScreen("route");
+  } else {
+    $("app-shell").classList.add("hidden");
+    $("language-picker").showModal();
+  }
+});
+$("language-cancel").addEventListener("click", () => {
+  $("language-picker").close();
+  if (!$("language").value || !localStorage.getItem("adaptive-language-tutor.settings")) {
+    $("welcome-screen").classList.remove("hidden");
+    $("app-shell").classList.add("hidden");
+  }
+});
+document.querySelectorAll("[data-language]").forEach(button => button.addEventListener("click", () => {
+  $("language").value = button.dataset.language;
+  try { persistSettings(); } catch {}
+  updateLanguageFlag();
+  $("language-picker").close();
+  $("welcome-screen").classList.add("hidden");
+  $("app-shell").classList.remove("hidden");
+  showScreen("route");
   refreshDashboard();
-});
-$("export-btn").addEventListener("click", () => {
-  const data = { exportedAt:new Date().toISOString(), summary:buildSummary(session), config:session.config, answers:session.answers };
-  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-  anchor.href = url; anchor.download = "language-tutor-progress.json"; anchor.click();
-  URL.revokeObjectURL(url);
-});
+}));
+

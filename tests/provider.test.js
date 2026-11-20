@@ -9,6 +9,7 @@ const tutorJson = JSON.stringify({
     prompt: "Como você se chama?",
     expectedAnswer: "Meu nome é ...",
     acceptedAnswers: ["Eu me chamo ..."],
+    options: ["Meu nome é Ana", "Bom dia", "Até logo"],
     hint: "Usa a expressão meu nome é."
   },
   evaluation: {
@@ -76,7 +77,7 @@ test("Gemini adapter uses its native generateContent format", async () => {
       assert.equal(body.generationConfig.maxOutputTokens, 1200);
       assert.equal(body.generationConfig.responseSchema.type, "OBJECT");
       assert.deepEqual(body.generationConfig.responseSchema.properties.exercise.required,
-        ["type", "prompt", "expectedAnswer", "acceptedAnswers", "hint"]);
+        ["type", "prompt", "expectedAnswer", "acceptedAnswers", "options", "hint"]);
       assert.equal(body.generationConfig.responseSchema.properties.exercise.nullable, true);
       assert.deepEqual(body.generationConfig.responseSchema.required,
         ["message", "exercise", "evaluation", "learnerUpdate", "speechSegments", "nextAction"]);
@@ -139,7 +140,10 @@ test("provider rejects speech segments tagged with a different target locale", a
     fakeFetch("https://api.openai.com/v1/chat/completions", {}, {
       choices: [{ message: { content: JSON.stringify({
         message: "Practiquemos.",
-        exercise: null,
+        exercise: {
+          type: "conversation", prompt: "Comment ça va?", expectedAnswer: "Ça va bien.",
+          acceptedAnswers: ["Je vais bien."], options: ["Ça va bien.", "Au revoir.", "Merci."], hint: null
+        },
         evaluation: null,
         learnerUpdate: null,
         speechSegments: [{ text: "Bonjour", language: "fr", locale: "fr-FR" }],

@@ -13,7 +13,7 @@ function memoryStorage() {
 const baseSession = () => ({
   config: { language: "Portugués brasileño", languageId: "pt-BR", estimatedLevel: "B1" },
   vocabulary: [{ term: "obrigado", meaning: "gracias" }],
-  errors: [{ exerciseId: "greeting-1", prompt: "Saluda", expected: "Olá", explanation: "Saludo básico", skill: "Saludos" }],
+  errors: [{ exerciseId: "greeting-1", prompt: "Saluda", expected: "Olá", term:"Olá", meaning:"hola", promptLocale:"es-CL", explanation: "Saludo básico", skill: "Saludos" }],
   errorsToReview: ["Conjugación en primera persona"]
 });
 
@@ -31,7 +31,7 @@ test("invalid or incompatible stored data safely resets", () => {
   assert.deepEqual(loadProgress(storage), { version: 1, sessions: [], vocabulary: [], reviewCards: [] });
 });
 
-test("persisting a session records history, vocabulary and a review due tomorrow", () => {
+test("persisting a session records history, vocabulary and makes graded errors immediately reviewable", () => {
   const now = Date.parse("2026-01-01T12:00:00.000Z");
   const progress = persistSession(loadProgress(null), baseSession(), {
     attempted: 1, correct: 0, accuracy: 0
@@ -41,11 +41,14 @@ test("persisting a session records history, vocabulary and a review due tomorrow
   assert.deepEqual(progress.sessions[0].reviewPatterns, ["Conjugación en primera persona"]);
   assert.equal(progress.vocabulary[0].term, "obrigado");
   assert.equal(progress.reviewCards.length, 2, "graded error and qualitative pattern should both be scheduled");
+  const answerCard = progress.reviewCards.find(card => card.cardType !== "pattern");
+  assert.equal(answerCard.term,"Olá");
+  assert.equal(answerCard.meaning,"hola");
   const patternCard = progress.reviewCards.find(card => card.cardType === "pattern");
   assert.equal(patternCard.pattern, "Conjugación en primera persona");
   assert.equal(patternCard.expected, "", "pattern cards must not invent a single correct answer");
-  assert.equal(getDueCards(progress, now).length, 0);
-  assert.equal(getDueCards(progress, now + 24 * 60 * 60 * 1000).length, 2);
+  assert.equal(getDueCards(progress, now).length, 1, "the concrete exercise error should be available in Repaso immediately");
+  assert.equal(getDueCards(progress, now + 24 * 60 * 60 * 1000).length, 2, "the qualitative pattern card remains scheduled for tomorrow");
 });
 
 test("AI review cards from separate sessions do not overwrite each other", () => {
@@ -80,7 +83,7 @@ test("AI errors without an expected answer are not made into ungradable review c
   assert.equal(progress.reviewCards.length, 0);
 });
 
-test("successful spaced reviews advance 3, 7 and 14 day intervals; failure resets to one day", () => {
+test("successful spaced reviews advance 3, 7 and 14 day intervals; failure stays due until corrected", () => {
   const now = Date.parse("2026-01-01T12:00:00.000Z");
   const progress = persistSession(loadProgress(null), baseSession(), {
     attempted: 1, correct: 0, accuracy: 0
@@ -89,8 +92,13 @@ test("successful spaced reviews advance 3, 7 and 14 day intervals; failure reset
   assert.equal(gradeReview(progress, key, true, now).nextIntervalDays, 3);
   assert.equal(gradeReview(progress, key, true, now).nextIntervalDays, 7);
   assert.equal(gradeReview(progress, key, true, now).nextIntervalDays, 14);
-  assert.equal(gradeReview(progress, key, false, now).nextIntervalDays, 1);
+  assert.equal(gradeReview(progress, key, false, now).nextIntervalDays, 0);
   assert.equal(progress.reviewCards[0].repetitions, 0);
+  assert.equal(getDueCards(progress, now).some(card => card.key === key), true,
+    "an incorrect answer must leave the word in the pending review queue");
+  gradeReview(progress, key, true, now);
+  assert.equal(getDueCards(progress, now).some(card => card.key === key), false,
+    "a correct answer moves the word out of the pending queue");
 });
 
 test("progress statistics can be filtered by language", () => {
