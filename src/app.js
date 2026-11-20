@@ -1279,6 +1279,17 @@ function chooseExercise() {
     candidates = exercises.filter(exercise => !session.answers.some(answer => answer.exerciseId === exercise.id));
   }
   if (!candidates.length) return null;
+  if (routeMode && getRoutePhase(session.turn,routeQuestionCount).id === "application") {
+    const difficulty = exercise => {
+      const level = exercise.level === "A1" ? 0 : exercise.level === "A2" ? 1 : 2;
+      const words = String(exercise.target || exercise.prompt || "").trim().split(/\\s+/).filter(Boolean).length;
+      return { level, words, length:String(exercise.target || "").length };
+    };
+    candidates.sort((left,right) => {
+      const a = difficulty(left), b = difficulty(right);
+      return a.level - b.level || a.words - b.words || a.length - b.length || String(left.id).localeCompare(String(right.id));
+    });
+  }
   if (adaptation.mode === "scaffold") {
     const easier = candidates.filter(exercise => exercise.level === "A1");
     if (easier.length) candidates = easier;
