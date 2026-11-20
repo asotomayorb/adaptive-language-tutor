@@ -754,3 +754,26 @@ Implementación en curso en `feature/mobile-bottom-navigation`:
 
 ### Límites de validación
 Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy Render están aprobados para el commit de código 1c7a684. La voz y el flujo pedagógico requieren prueba humana Android. No se ha modificado Replit ni se ha hecho merge a main.
+
+
+## Iteración 20-11-2026 — correcciones solicitadas de Ruta, Teoría, navegación y TTS
+
+### Cambios implementados
+- [x] Ruta: resumen presenta siempre estrellas y valoración cualitativa, incluso si una sesión incompleta llega al resumen.
+- [x] Ruta: se usa el mismo conjunto de intentos evaluados para calificación, estrellas y desbloqueo; los turnos no evaluables de IA no cuentan.
+- [x] Ruta: el botón inicia la unidad siguiente y el panel de actividad expone el ID de la unidad activa para verificar que no se reabra la anterior.
+- [x] Ruta: si faltan estrellas, el resumen informa el umbral y permite repetir; si no quedan unidades, permite volver al mapa.
+- [x] Teoría: reglas y excepciones pasan de listas planas a jerarquías con categoría de primer nivel y subelementos anidados cuando hay dos puntos, semicolon o enumeración de excepciones.
+- [x] Navegación: flecha icon-only común en esquina superior izquierda para detalle de teoría, lista de temas, setup cuando corresponde y sesión a pantalla completa.
+- [x] Navegación: al retroceder o cambiar sección se detiene el audio de la pantalla anterior.
+- [x] TTS: los fragmentos de consigna objetivo se agregan aunque el proveedor IA también entregue fragmentos de origen; el locale se compara sin distinguir mayúsculas/minúsculas.
+- [x] TTS: teoría pronuncia automáticamente el primer fragmento objetivo al abrir un tema y mantiene botones de pronunciación manual en los elementos disponibles.
+- [x] TTS: el controlador espera `voiceschanged` si Android todavía no entrega voces y cancela solicitudes pendientes al detener reproducción.
+
+### Pruebas añadidas/actualizadas
+- [x] Test unitario para reproducción diferida al cargar voces Android.
+- [x] E2E para valoración cualitativa y estrellas de Ruta, lanzamiento real de la unidad siguiente, jerarquía anidada, TTS automático/manual y flecha común.
+- [ ] Ejecutar `npm run check`, `npm test` y `npm run test:e2e` sobre el HEAD final.
+- [ ] Build y deploy manual Render; auto-deploy permanece desactivado.
+- [ ] Prueba humana Android: verificar voces disponibles y acento correcto en contenido de actividad y teoría.
+- [ ] Prueba humana: recorrer las cuatro unidades, incluyendo el caso de puntaje insuficiente para el desbloqueo.
