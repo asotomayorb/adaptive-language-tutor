@@ -769,3 +769,43 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Preview URL: https://adaptive-language-tutor-preview-5b3d.onrender.com/
 - The Render service remains on `feature/mobile-bottom-navigation`; auto-deploy is disabled. Replit has not been modified.
 - Android audio playback and human review of mobile table layout remain pending device validation.
+
+## 24. Contrato común de actividades y afinamiento PT-BR — 20-11-2026
+
+> Esta sección reemplaza cualquier regla anterior de resumen, audio o persistencia de Repaso que la contradiga.
+
+### Alcance de idioma
+- El afinamiento funcional y pedagógico actual se valida exclusivamente con **portugués brasileño (pt-BR)**.
+- Se actualizaron locales y ejemplos del catálogo PT-BR; no se deben trasladar cambios de contenido, conjugación o traducción a otros catálogos hasta que PT-BR quede aprobado.
+- Los componentes de interfaz son compartidos por arquitectura; los demás idiomas aún no han pasado la validación humana equivalente.
+
+### Audio bilingüe
+- Todas las actividades evaluadas (Ruta, Ejercicios, Comprensión lectora y Repaso) conservan segmentos con locale explícito y controles manuales para los fragmentos visibles.
+- La reproducción automática respeta el orden visual: instrucción/origen antes del texto objetivo en ejercicios normales; pasaje objetivo antes de su pregunta de comprensión en lectura.
+- El catálogo PT-BR declara explícitamente es-CL o pt-BR en las consignas que requieren voz; los huecos de metadatos se completaron y se separaron consignas mixtas cuando correspondía.
+- Ruta incluye audio en su actividad integradora; lectura reproduce automáticamente el pasaje; Repaso reproduce la consigna y la expresión objetivo disponible; los resúmenes reproducen las expresiones incorrectas.
+- Cambiar de pantalla invalida la cola anterior. El botón global vuelve a reproducir la secuencia de la actividad actual, no texto oculto de una pantalla anterior.
+- Si hay una secuencia de voz explícita, no se añade automáticamente un término que pueda revelar una respuesta oculta.
+
+### Presentación y progreso común
+- Todas las actividades evaluadas usan cabecera con sección a la izquierda, contador a la derecha y audio en la misma línea; barra de progreso debajo; icono del tema y etiqueta de capítulo/tema antes de la consigna.
+- El contador representa el total real de interacciones evaluadas: Ruta incluye su integración (por ejemplo, 1/7 … 7/7); lectura limita el total al banco único disponible y al número seleccionado; Repaso usa el total de tarjetas pendientes de la sesión.
+- Entrenamiento muestra sus modos en este orden: **Ejercicios → Comprensión lectora → Repaso**.
+
+### Resumen común
+- «Reforzar» muestra únicamente palabras/frases incorrectas, cada una con pronunciación del idioma objetivo y traducción entre paréntesis. No se muestran habilidades, temas ni categorías.
+- Si no hay errores que reforzar, se omite por completo el subtítulo.
+- Las acciones aparecen como tarjetas con iconos centrados: volver al menú de origen, reiniciar sesión y pasar al siguiente ejercicio. En Ruta, la tercera acción se denomina «Siguiente unidad» y solo aparece si el umbral de desbloqueo está cumplido; la última unidad no ofrece una continuación ficticia.
+
+### Repaso continuo y recuperable
+- Una sesión incluye todas las tarjetas de palabras/frases pendientes del idioma seleccionado; no se limita a una tarjeta por entrada al módulo.
+- Cada respuesta actualiza y persiste el progreso de inmediato.
+- Si se cierra o recarga una sesión incompleta, se conserva la cola restante, el contador y las tarjetas ya procesadas; al volver a Repaso, continúa en la primera tarjeta no completada.
+- Cada tarjeta se intenta una vez por pasada; las incorrectas permanecen pendientes para una pasada posterior y no generan un bucle infinito en la misma sesión.
+- Las tarjetas de patrones no se mezclan con el Repaso de palabras/frases.
+
+### Validación automatizada
+- npm run check + npm test: aprobado, run [44825579828](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44825579828).
+- Browser E2E: aprobado, run [44825579907](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44825579907). Incluye orden bilingüe, audio en lectura/Ruta/Repaso, contador, resumen, cola de Repaso reanudable y desbloqueo.
+- Pendiente de validación humana: reproducción audible y orden de voces en Android real, incluyendo navegación entre actividades; legibilidad y disposición final en pantalla física.
+
