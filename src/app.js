@@ -2053,7 +2053,7 @@ const tenseLessons = {
 };
 function renderGrammarRuleSections(rules, exceptions = "") {
   const splitPoints = value => String(value || "").replace(/:\s*/g, ". ")
-    .split(/(?<=[.!?])\s+|;\s+/)
+    .split(/(?<=[.!?])\s+|;\s+|,\s+(?=[^,;]+?\s*→)/)
     .map(point => point.trim().replace(/^[-•\d.)\s]+/, "")).filter(Boolean);
   const renderList = points => '<ol class="theory-rule-list">' + points.map(point => '<li>' + escapeHTML(point) + '</li>').join("") + '</ol>';
   const rulePoints = splitPoints(rules), exceptionPoints = splitPoints(exceptions);
