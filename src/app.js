@@ -202,20 +202,15 @@ function appendCatalogSpeech(root, exercise, field, includeTarget = false) {
   speech.speakSequence(segments, { automatic: true });
 }
 function getExerciseSpeech(exercise) {
-  if (exercise?.speechText && typeof exercise.speechText === "string") {
-    return { text: exercise.speechText, locale: exercise.speechLocale || catalog?.locale || "und" };
+  // Never infer a spoken language from the text itself: Spanish and target-language
+  // prompts can be semantically similar and a wrong voice is worse than silence.
+  if (exercise?.speechText && exercise?.speechLocale) {
+    return { text: exercise.speechText, locale: exercise.speechLocale };
   }
-  const prompt = String(exercise?.prompt || "");
-  const afterInstruction = prompt.includes(":") ? prompt.slice(prompt.indexOf(":") + 1) : prompt;
-  const sentence = afterInstruction.replace(/\([^)]*\)/g, "").trim();
-  const hasGap = /_{1,}|＿+/u.test(sentence);
-  const spoken = sentence.replace(/_{1,}|＿+/gu, "…").replace(/[“”]/g, "").trim();
-  const spanishSource = /[¿¡]/.test(sentence) ||
-    /\b(respondes|responderias|dirias|dices|elige|selecciona|traduce|corrige|escucha|marca|escribe|relaciona|ordena|conjuga|transforma|oracion|frase|palabra|pregunta|espanol|significa|donde|cuando|cual|cuales|por que|para que)\b/i.test(sentence);
-  const locale = exercise?.speechLocale || exercise?.promptLocale || (exercise?.promptLanguage === "source" || exercise?.promptLanguage === "native"
-    ? "es-CL" : exercise?.promptLanguage === "target" ? (catalog?.locale || "und")
-    : spanishSource ? "es-CL" : (catalog?.locale || "und"));
-  return { text: spoken || prompt, locale };
+  if (exercise?.prompt && exercise?.promptLocale) {
+    return { text: exercise.prompt, locale: exercise.promptLocale };
+  }
+  return { text: "", locale: "" };
 }
 function getExerciseSpeechSegments(exercise) {
   if (Array.isArray(exercise?.speechSegments) && exercise.speechSegments.length) {
@@ -224,11 +219,13 @@ function getExerciseSpeechSegments(exercise) {
   const segments = [];
   if (exercise?.instruction) segments.push({ text: exercise.instruction, locale: "es-CL" });
   const prompt = String(exercise?.prompt || "").trim();
-  if (prompt) {
-    const locale = exercise.promptLocale || getExerciseSpeech(exercise).locale;
-    segments.push({ text: prompt, locale });
-  }
-  return segments.length ? segments : [getExerciseSpeech(exercise)];
+  const explicitLocale = exercise?.speechLocale || exercise?.promptLocale ||
+    (exercise?.promptLanguage === "source" || exercise?.promptLanguage === "native" ? "es-CL" :
+      exercise?.promptLanguage === "target" ? (catalog?.locale || "") : "");
+  if (prompt && explicitLocale) segments.push({ text: prompt, locale: explicitLocale });
+  const spoken = getExerciseSpeech(exercise);
+  if (!segments.length && spoken.text && spoken.locale) segments.push(spoken);
+  return segments;
 }
 function autoSpeak(text, locale = catalog?.locale) {
   if (text && speech.enabled) speech.speak(text, locale, { automatic: true });
@@ -330,6 +327,7 @@ let selectedRouteUnitId = "foundations";
 let routeSelectionTouched = false;
 let activeRouteUnit = null;
 let routeQuestionCount = 10;
+let routeSummaryNextUnitId = "";
 function getRouteDraftForLanguage(languageId) {
   if (!languageId) return null;
   try { return JSON.parse(localStorage.getItem(ROUTE_STORAGE_KEY + ":" + languageId) || "null"); }
@@ -782,7 +780,9 @@ function renderAITutorTurn(result) {
     : '<h3>El tutor está preparando una actividad cerrada.</h3>';
   const targetLocale = session.config.languageLocale || session.config.languageId;
   const targetSpeech = (result.speechSegments || []).filter(item =>
-    item && typeof item.text === "string" && item.text.trim() && item.locale === targetLocale
+    item && typeof item.text === "string" && item.text.trim() &&
+    String(item.locale || "").toLowerCase() === String(targetLocale).toLowerCase() &&
+    item.languageRole !== "source" && item.role !== "instruction"
   );
   const questionSpeech = targetSpeech.length
     ? { text: targetSpeech.map(item => item.text.trim()).join(" "), locale: targetLocale }
@@ -790,7 +790,7 @@ function renderAITutorTurn(result) {
   const promptAudio = aiCurrentExercise.prompt && questionSpeech
     ? speakerButton(questionSpeech.text, questionSpeech.locale)
     : "";
-  $("lesson-content").innerHTML = getExerciseIllustration(aiCurrentExercise) + instructionMarkup + prompt + promptAudio;
+  $("lesson-content").innerHTML = getExerciseIllustration({ ...aiCurrentExercise, topic:session.config.topic }) + instructionMarkup + prompt + promptAudio;
   bindSpeakerButtons($("lesson-content"));
   bindVariantLinks($("lesson-content"));
   bindTargetWords($("lesson-content"));
@@ -1280,7 +1280,7 @@ function chooseExercise() {
 }
 
 function levelLabel(level) {
-  return ({zero:"principiante",basic:"intermedio",intermediate:"intermedio",advanced:"avanzado"})[level] || "intermedio";
+  return ({zero:"Principiante · A1",basic:"Intermedio · B1",intermediate:"Intermedio · B1",advanced:"Avanzado · C1"})[level] || "Intermedio · B1";
 }
 
 function renderLesson({ exercise: exerciseOverride = null, answered = false } = {}) {
@@ -1318,7 +1318,7 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
     : "";
   const readingQuestionType = session.config.topic === "reading"
     ? '<p class="reading-question-type">' + (currentExercise.type === "reading" ? "Comprensión del texto" : "Práctica general") + '</p>' : "";
-  $("lesson-content").innerHTML = readingQuestionType + getExerciseIllustration(currentExercise) + readingMarkup + instructionMarkup + '<h3>' + promptMarkup + '</h3>' + questionAudioMarkup;
+  $("lesson-content").innerHTML = getExerciseIllustration({ ...currentExercise, topic:currentExercise.topic || session.config.topic }) + readingQuestionType + readingMarkup + instructionMarkup + '<h3>' + promptMarkup + '</h3>' + questionAudioMarkup;
   updateReadingPassageControl();
   $("reading-tts-toggle")?.addEventListener("click", togglePassageSpeech);
   $("reading-tts-restart")?.addEventListener("click", restartPassageSpeech);
@@ -1623,22 +1623,56 @@ function finishSession() {
     '<li>' + renderClickableTargetText(item.term) + ' ' + speakerButton(item.term, summaryLocale) + '</li>'
   ).join("");
   const focusItems = [...new Set([topicLabels[session.config.topic], ...summary.recommendedFocus, ...(summary.reviewPatterns || [])].filter(Boolean))];
+  const routeStars = Math.min(5,Math.floor(accuracyPercent/20));
   const routeScoreMarkup = routeMode && session.routeIntegrationComplete
-    ? '<p class="summary-route-score">' + (Math.min(5,Math.floor(accuracyPercent/20))) + '/5 estrellas en ' + escapeHTML(activeRouteUnit?.title || "la unidad") + '</p>' : "";
-  $("summary-content").innerHTML = '<h2 class="summary-title">Resumen</h2>' +
-    '<div class="summary-accuracy"><strong>' + accuracyPercent + '%</strong><span>' + accuracyMessage + '</span>' + routeScoreMarkup + '</div>' +
-    '<section class="summary-section"><h3 class="summary-error-title">Errores ' + errorCount + '/' + attemptedCount + '</h3><ul>' +
-    (errors || '<li>Sin errores</li>') + '</ul></section>' +
-    '<section class="summary-section"><h3>Vocabulario</h3><ul>' +
-    (vocabularyText || '<li>Sin palabras nuevas</li>') + '</ul></section>' +
-    '<section class="summary-section"><h3>Temas</h3><ul>' +
-    focusItems.map(item => '<li>' + escapeHTML(item) + '</li>').join("") + '</ul></section>';
+    ? '<div class="summary-route-stars" aria-label="' + routeStars + ' de 5 estrellas">' + '★'.repeat(routeStars) + '☆'.repeat(5-routeStars) + '</div>' : "";
+  const reinforcementItems = [...new Set(summary.errors.flatMap(item => {
+    const exercise = catalog?.exercises?.find(candidate => candidate.id === item.exerciseId);
+    return [exercise?.skill, exercise?.term, topicLabels[exercise?.topic]].filter(Boolean);
+  }))];
+  if (routeMode) {
+    $("summary-content").innerHTML = '<h2 class="summary-title">Resumen</h2>' + routeScoreMarkup +
+      '<section class="summary-section route-reinforcement"><h3>Reforzar:</h3><ul>' +
+      (reinforcementItems.length ? reinforcementItems.map(item => '<li>' + escapeHTML(item) + '</li>').join("") : '<li>Sin elementos pendientes</li>') +
+      '</ul></section>';
+    const units = getRouteUnitsForCatalog(catalog);
+    const activeIndex = units.findIndex(unit => unit.id === activeRouteUnit?.id);
+    const nextUnit = units[activeIndex + 1];
+    routeSummaryNextUnitId = nextUnit && isRouteUnitUnlocked(units,activeIndex + 1,getRouteProgressForLanguage(session.config.languageId)) ? nextUnit.id : "";
+    $("route-summary-next").hidden = false;
+    $("route-summary-next").textContent = routeSummaryNextUnitId
+      ? 'Continuar: ' + nextUnit.title + ' →' : 'Volver a Ruta';
+    $("new-session").hidden = true;
+  } else {
+    $("summary-content").innerHTML = '<h2 class="summary-title">Resumen</h2>' +
+      '<div class="summary-accuracy"><strong>' + accuracyPercent + '%</strong><span>' + accuracyMessage + '</span></div>' +
+      '<section class="summary-section"><h3 class="summary-error-title">Errores ' + errorCount + '/' + attemptedCount + '</h3><ul>' +
+      (errors || '<li>Sin errores</li>') + '</ul></section>' +
+      '<section class="summary-section"><h3>Vocabulario</h3><ul>' +
+      (vocabularyText || '<li>Sin palabras nuevas</li>') + '</ul></section>' +
+      '<section class="summary-section"><h3>Temas</h3><ul>' +
+      focusItems.map(item => '<li>' + escapeHTML(item) + '</li>').join("") + '</ul></section>';
+    $("route-summary-next").hidden = true;
+    $("new-session").hidden = false;
+  }
   bindSpeakerButtons($("summary-content"));
   speech.speakSequence(summary.vocabulary.map(item => ({ text: item.term, locale: summaryLocale })), { automatic: true });
 }
 
 $("new-session").addEventListener("click", () => {
   closeSessionAndReturn();
+});
+$("route-summary-next")?.addEventListener("click", () => {
+  const nextId = routeSummaryNextUnitId;
+  if (!nextId) {
+    closeSessionAndReturn();
+    showScreen("route");
+    return;
+  }
+  selectedRouteUnitId = nextId;
+  routeSelectionTouched = true;
+  routeMode = true;
+  startRouteSession(false);
 });
 
 // Main navigation and language onboarding
@@ -2037,12 +2071,12 @@ const tenseLessons = {
 };
 function renderGrammarRuleSections(rules, exceptions = "") {
   const splitPoints = value => String(value || "").replace(/:\s*/g, ". ")
-    .split(/(?<=[.!?])\s+|;\s+|,\s+(?=[^,;]+?\s*→)/)
-    .map(point => point.trim()).filter(Boolean);
-  const renderList = points => '<ul class="theory-rule-list">' + points.map(point => '<li>' + escapeHTML(point) + '</li>').join("") + '</ul>';
+    .split(/(?<=[.!?])\s+|;\s+/)
+    .map(point => point.trim().replace(/^[-•\d.)\s]+/, "")).filter(Boolean);
+  const renderList = points => '<ol class="theory-rule-list">' + points.map(point => '<li>' + escapeHTML(point) + '</li>').join("") + '</ol>';
   const rulePoints = splitPoints(rules), exceptionPoints = splitPoints(exceptions);
-  return (rulePoints.length ? '<section class="theory-note"><strong>Reglas y usos</strong>' + renderList(rulePoints) + '</section>' : "") +
-    (exceptionPoints.length ? '<section class="theory-note"><strong>Excepciones e irregulares</strong>' + renderList(exceptionPoints) + '</section>' : "");
+  return (rulePoints.length ? '<section class="theory-note theory-rules"><h3>Reglas y usos</h3>' + renderList(rulePoints) + '</section>' : "") +
+    (exceptionPoints.length ? '<section class="theory-note theory-exceptions"><h3>Excepciones e irregulares</h3>' + renderList(exceptionPoints) + '</section>' : "");
 }
 function renderGrammarRuleContent(rule, exceptions = "") {
   const text = String(rule || "").trim();
@@ -2075,11 +2109,15 @@ function renderTenseLesson(languageName, topicIndex) {
       ? '<h3>Futuro simple (más formal)</h3><table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>Forma</th></tr></thead><tbody>' + lesson.futureSimpleForms.map(([person,form]) => '<tr><td>' + escapeHTML(person) + '</td><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td></tr>').join("") + '</tbody></table>'
       : "";
     const rule = isPast ? lesson.pastRule : lesson.futureRule;
+    const exceptionText = String(lesson.exceptions || "");
+    const pastExceptionEnd = exceptionText.search(/\bEn futuro simple\b/i);
+    const pastExceptions = isPast ? (pastExceptionEnd >= 0 ? exceptionText.slice(0,pastExceptionEnd).trim() : exceptionText) : "";
+    const futureExceptions = !isPast ? (pastExceptionEnd >= 0 ? exceptionText.slice(pastExceptionEnd).trim() : "") : "";
     const intro = isPast
-      ? "El pretérito perfeito se usa para acciones concluidas en un momento pasado. La terminación depende del infinitivo y del sujeto."
-      : "Para hablar del futuro, el portugués brasileño suele usar ir conjugado + infinitivo. El futuro simple existe, pero es más formal.";
+      ? "El pretérito perfeito expresa acciones concluidas en el pasado. Primero identifica el infinitivo y después aplica la terminación correspondiente a la persona."
+      : "En portugués brasileño, el futuro próximo se forma con ir en presente + infinitivo. El futuro simple es correcto, pero tiene un uso más formal.";
     return '<p class="theory-slide-text">' + escapeHTML(intro) + '</p><table class="theory-pronoun-table">' + header + '<tbody>' + rows + '</tbody></table>' + simpleFuture +
-      renderGrammarRuleSections(rule,lesson.exceptions) +
+      renderGrammarRuleSections(rule,isPast ? pastExceptions : futureExceptions) +
       '<section class="theory-example"><span>Ejemplos aplicados</span>' + examples + '</section>';
   }
   const example = isPast ? lesson.past : lesson.future;
