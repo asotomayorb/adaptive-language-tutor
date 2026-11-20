@@ -733,7 +733,7 @@ Implementación en curso en `feature/mobile-bottom-navigation`:
 ### Cambios aplicados en la rama activa
 - [x] TTS local: se elimina la inferencia automática del locale de consignas ambiguas. Solo se reproducen segmentos con locale explícito o rol de idioma claramente declarado.
 - [x] Motor de voz: si no hay voz instalada compatible con el locale solicitado, se omite la reproducción en vez de dejar que el navegador use una voz predeterminada del idioma origen.
-- [x] TTS IA: se filtran segmentos por locale objetivo y se descartan los marcados como instrucción/idioma origen.
+- [x] TTS IA: se validan fragmentos por locale propio; las instrucciones se sintetizan en español y los fragmentos objetivos en el locale objetivo. Los controles manuales siguen limitados al idioma objetivo.
 - [x] Teoría: reglas y excepciones pasan a listas numeradas; se separa el conjunto de excepciones del pasado del correspondiente al futuro para portugués brasileño.
 - [x] Ruta: el resumen muestra estrellas y un único bloque «Reforzar:»; se ocultan porcentaje, subtítulos de errores/vocabulario/temas y datos redundantes.
 - [x] Ruta: el resumen ofrece acción directa para iniciar la siguiente unidad desbloqueada o volver a Ruta si aún no cumple el umbral.
