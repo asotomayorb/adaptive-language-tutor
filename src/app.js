@@ -203,6 +203,8 @@ function updateLanguageFlag() {
   $("selected-language-flag").textContent = selected === "other"
     ? known?.[1].flag || customLanguageFlags[customKey] || "🏳️"
     : languageDefinitions[selected]?.flag || "🏳️";
+  const readingAvailable = Boolean(getSelectedCatalog()?.exercises?.some(exercise => exercise.type === "reading"));
+  document.querySelector('[data-mode="reading"]')?.classList.toggle("hidden", !readingAvailable);
   if (typeof ROUTE_STORAGE_KEY !== "undefined") {
     const selectedCatalog = getSelectedCatalog();
     routeDraft = getRouteDraftForLanguage(selectedCatalog?.id);
