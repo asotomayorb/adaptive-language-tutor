@@ -543,6 +543,16 @@ try {
 
   // Route's Portuguese integration task must give progressive, resumable clues.
   const routeContext = await browser.newContext();
+  await routeContext.addInitScript(() => {
+    window.__spoken = [];
+    const synth = {
+      getVoices:() => [{name:"Brazilian Portuguese",lang:"pt-BR"},{name:"Spanish",lang:"es-CL"}],
+      speak:utterance => { window.__spoken.push({text:utterance.text,lang:utterance.lang}); setTimeout(() => utterance.onend?.(),0); },
+      cancel:() => {}, resume:() => {}, pause:() => {}, speaking:false, paused:false
+    };
+    Object.defineProperty(window,"speechSynthesis",{configurable:true,value:synth});
+    window.SpeechSynthesisUtterance = class { constructor(text) { this.text=text; this.lang=""; this.voice=null; } };
+  });
   const routePage = await routeContext.newPage();
   const routeErrors = [];
   routePage.on("pageerror", error => routeErrors.push(error.message));
