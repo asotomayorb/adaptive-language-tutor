@@ -650,6 +650,13 @@ function startSpacedReview() {
   reviewIndex = 0;
   if (!dueReviewCards.length) {
     clearReviewSessionState(catalog.id);
+    reviewMode = false;
+    sessionFinished = true;
+    $("session-view").classList.add("hidden");
+    $("app-shell").classList.remove("session-active");
+    $("summary-panel").classList.add("hidden");
+    $("lesson-panel").classList.remove("hidden");
+    $("exercise-choice-panel").classList.add("hidden");
     $("review-exercises").classList.remove("hidden");
     $("review-dashboard").innerHTML = "No tienes palabras o frases pendientes.";
     refreshDashboard();
@@ -1913,6 +1920,8 @@ $("route-summary-next")?.addEventListener("click",() => {
 // Main navigation and language onboarding
 function showScreen(name) {
   speech.stop();
+  currentActivitySpeechSegments = [];
+  currentExercise = null;
   $("session-view").classList.add("hidden");
   $("app-shell").classList.remove("session-active");
   if (name === "theory") {
