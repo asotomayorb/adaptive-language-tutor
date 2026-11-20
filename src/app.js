@@ -1554,7 +1554,7 @@ function getRouteAssessmentScore() {
   // Use the pedagogy engine's evaluated-attempt counters. In AI sessions,
   // not_applicable conversational turns are recorded in answers but are not
   // scored attempts and must not lower the unit's final accuracy.
-  const attempted = Math.max(1, Number(session?.attempted) || 0);
+  const attempted = Math.max(0, Number(session?.attempted) || 0);
   const correct = Math.min(attempted, Math.max(0, Number(session?.correct) || 0));
   return { attempted, correct };
 }
@@ -1562,10 +1562,10 @@ function finishSession() {
   if (!session || sessionFinished) return;
   sessionFinished = true;
   const routeScore = routeMode ? getRouteAssessmentScore() : null;
-  if (routeMode && session.routeIntegrationComplete) {
+  if (routeMode && session.routeIntegrationComplete && routeScore.attempted > 0) {
     const attempted = routeScore.attempted;
     const correct = routeScore.correct;
-    const accuracy = Math.round(correct / attempted * 100);
+    const accuracy = attempted ? Math.round(correct / attempted * 100) : 0;
     const stars = Math.min(5, Math.floor(accuracy / 20));
     const state = getRouteProgressForLanguage(session.config.languageId);
     state.completedUnits = state.completedUnits || {};
@@ -1591,7 +1591,7 @@ function finishSession() {
   if (routeMode && routeScore) {
     summary.attempted = routeScore.attempted;
     summary.correct = routeScore.correct;
-    summary.accuracy = Math.round(routeScore.correct / routeScore.attempted * 100);
+    summary.accuracy = routeScore.attempted ? Math.round(routeScore.correct / routeScore.attempted * 100) : 0;
     summary.errors = summary.errors.filter(item => !String(item.exerciseId || "").startsWith("route-integration-"));
   }
   const finalFeedback = pendingFeedback;
@@ -1689,6 +1689,7 @@ $("route-summary-next")?.addEventListener("click", () => {
 
 // Main navigation and language onboarding
 function showScreen(name) {
+  speech.stop();
   $("session-view").classList.add("hidden");
   $("app-shell").classList.remove("session-active");
   if (name === "theory") {
@@ -2400,10 +2401,14 @@ document.querySelectorAll("[data-theory]").forEach(button => button.addEventList
   );
 }));
 $("theory-list-back").addEventListener("click", () => {
+  speech.stop();
   $("theory-topic-list").classList.add("hidden");
   $("theory-grid").classList.remove("hidden");
 });
-$("theory-back").addEventListener("click", () => $("theory-detail").classList.add("hidden"));
+$("theory-back").addEventListener("click", () => {
+  speech.stop();
+  $("theory-detail").classList.add("hidden");
+});
 $("theory-prev").addEventListener("click", () => openTheoryTopic(activeTheoryIndex - 1));
 $("theory-next").addEventListener("click", () => openTheoryTopic(activeTheoryIndex + 1));
 $("variant-close").addEventListener("click", () => $("variant-dialog").close());
