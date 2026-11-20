@@ -815,3 +815,14 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - [x] TTS: callbacks de finalización/progreso quedan invalidados al detener o reemplazar una reproducción, evitando que audio viejo avance tras cambiar de pantalla.
 
 - [x] TTS Android: no se cancela un motor inactivo antes de la primera utterance; cancelación solo si hay audio activo/pendiente/pausado y reanudación explícita antes de reproducir.
+
+### Resultado final de validación y despliegue — 20-11-2026
+
+- [x] `npm run check` + `npm test` — 90 pruebas aprobadas: https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44781107121
+- [x] Browser E2E — aprobado: https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44781107099
+- [x] Render Preview desplegado y estado `live`: `dep-dc07vl3ncjis7381n1d0`
+- [x] Commit desplegado: `d9e98d3fbc70cfb23be41066f6a1959448effb24`
+- [x] Servicio vinculado a `feature/mobile-bottom-navigation`, auto-deploy desactivado; Replit permanece intacto.
+- [ ] Audio audible en Android real: pendiente de comprobación manual; las pruebas de navegador no demuestran reproducción física.
+- [ ] Revisar visualmente tablas y navegación en Android real.
+- [ ] Confirmar con una sesión real que la unidad siguiente aparece desbloqueada tras obtener 3 estrellas y sobrevive a una recarga.
