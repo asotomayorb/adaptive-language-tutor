@@ -748,6 +748,31 @@ function renderSpacedReview() {
     $("check-spaced").addEventListener("click",() => submitReviewAnswer($("spaced-answer").value));
   }
 }
+function startConfiguredActivity(mode, config, excludePrevious = false) {
+  catalog = getSelectedCatalog();
+  if (!catalog || !config) return;
+  const nextConfig = { ...config };
+  if (excludePrevious && lastActivityExerciseIds.length) nextConfig.excludeExerciseIds = [...lastActivityExerciseIds];
+  else delete nextConfig.excludeExerciseIds;
+  sessionAbortController?.abort();
+  sessionAbortController = new AbortController();
+  session = createSession(nextConfig);
+  sessionFinished = false;
+  reviewMode = false;
+  routeMode = false;
+  routeIntegration = false;
+  aiMode = false;
+  lastActivityConfig = { ...config };
+  lastActivityMode = mode;
+  $("summary-panel").classList.add("hidden");
+  $("lesson-panel").classList.remove("hidden");
+  $("session-status").textContent = "";
+  showSessionView(mode);
+  const useLiveAI = mode !== "reading" && aiConfigured && catalog.exercises.length < nextConfig.duration;
+  if (useLiveAI) startAITutorSession(nextConfig);
+  else renderLesson();
+}
+
 $("setup-form").addEventListener("submit", event => {
   event.preventDefault();
   if (!aiReady) return;
@@ -766,6 +791,8 @@ $("setup-form").addEventListener("submit", event => {
   }
   const questionCount = Number($("duration").value);
   const config = { language:catalog.label, languageId:catalog.id, languageLocale:catalog.locale || catalog.id, duration:questionCount, questionCount, level:$("level").value, topic:selectedExerciseMode === "reading" ? "reading" : $("topic").value };
+  lastActivityConfig = { ...config };
+  lastActivityMode = selectedExerciseMode;
   persistSettings();
   sessionAbortController?.abort();
   sessionAbortController = new AbortController();
@@ -1393,6 +1420,10 @@ function chooseExercise() {
     exercises = catalog.exercises;
     candidates = exercises.filter(exercise => !session.answers.some(answer => answer.exerciseId === exercise.id));
   }
+  if (session.turn === 0 && Array.isArray(session.config.excludeExerciseIds) && session.config.excludeExerciseIds.length) {
+    const freshCandidates = candidates.filter(exercise => !session.config.excludeExerciseIds.includes(exercise.id));
+    if (freshCandidates.length) candidates = freshCandidates;
+  }
   if (!candidates.length) return null;
   if (routeMode && getRoutePhase(session.turn,routeQuestionCount).id === "application") {
     const difficulty = exercise => {
@@ -1840,39 +1871,34 @@ function finishSession() {
     nextLabel
   });
 }
-$("new-session").addEventListener("click", () => {
+$("new-session").addEventListener("click",() => {
   closeSessionAndReturn();
 });
-$("route-summary-next")?.addEventListener("click", () => {
-  const nextId = routeSummaryNextUnitId;
-  if (nextId) {
-    selectedRouteUnitId = nextId;
+$("summary-restart")?.addEventListener("click",() => {
+  if (routeMode && activeRouteUnit) {
+    selectedRouteUnitId = activeRouteUnit.id;
     routeSelectionTouched = true;
-    routeMode = true;
     startRouteSession(false);
-    if (activeRouteUnit?.id !== nextId || !session || session.config.routeUnitId !== nextId) {
+  } else if (reviewMode) {
+    startSpacedReview();
+  } else if (lastActivityConfig) {
+    startConfiguredActivity(lastActivityMode,lastActivityConfig,false);
+  }
+});
+$("route-summary-next")?.addEventListener("click",() => {
+  if (routeMode) {
+    if (!routeSummaryNextUnitId) return;
+    selectedRouteUnitId = routeSummaryNextUnitId;
+    routeSelectionTouched = true;
+    startRouteSession(false);
+    if (activeRouteUnit?.id !== routeSummaryNextUnitId || !session || session.config.routeUnitId !== routeSummaryNextUnitId) {
       routeSelectionTouched = false;
       closeSessionAndReturn();
       showScreen("route");
     }
     return;
   }
-  if (routeMode && activeRouteUnit && session) {
-    const units = getRouteUnitsForCatalog(catalog);
-    const activeIndex = units.findIndex(unit => unit.id === activeRouteUnit.id);
-    const nextUnit = units[activeIndex + 1];
-    const state = getRouteProgressForLanguage(session.config.languageId);
-    const needsRetry = !session.routeIntegrationComplete ||
-      Boolean(nextUnit && !isRouteUnitUnlocked(units,activeIndex + 1,state));
-    if (needsRetry) {
-      selectedRouteUnitId = activeRouteUnit.id;
-      routeSelectionTouched = true;
-      startRouteSession(false);
-      return;
-    }
-  }
-  closeSessionAndReturn();
-  showScreen("route");
+  if (!reviewMode && lastActivityConfig) startConfiguredActivity(lastActivityMode,lastActivityConfig,true);
 });
 
 // Main navigation and language onboarding
