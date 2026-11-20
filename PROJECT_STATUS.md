@@ -691,3 +691,17 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - [ ] Validación humana final de las variantes aceptadas de traducción en Ruta y Entrenamiento.
 
 La rama permanece `feature/mobile-bottom-navigation`; no se hizo merge a `main`.
+
+
+## Correcciones móviles — 20-11-2026
+
+Implementación en curso en `feature/mobile-bottom-navigation`:
+
+- [x] Estadísticas globales: reemplazado el SVG de barras verticales de ancho fijo por filas horizontales que ocupan el ancho disponible en móvil vertical.
+- [x] Ruta: puntuación calculada desde las respuestas de la unidad (sin incluir el hito integrador), con porcentaje y estrellas coherentes. Se normalizan registros antiguos para que un porcentaje ya obtenido no deje estrellas insuficientes por datos obsoletos.
+- [x] Comprensión lectora: eliminado el fallback a práctica general. Si se solicitan más preguntas que las disponibles, se recorre cíclicamente el banco lector.
+- [x] TTS: cada fragmento expone su locale; `promptLocale` se respeta explícitamente y los controles manuales indican el locale de reproducción.
+- [x] Teoría: helper común para separar reglas y excepciones en listas; aplicado a los renderizadores generales, artículos y temas aplicados de pasado/futuro.
+- [x] Browser E2E actualizado para cubrir lectura de 10 preguntas sin mezcla, barras en viewport 390×844, locales de audio y desbloqueo de la segunda unidad tras completar correctamente la primera.
+
+**Pendiente de validación:** CI y Browser E2E del commit actual. Sólo después de su aprobación se actualizará Render Preview. La prueba auditiva real en Android y la comprobación visual en el teléfono siguen siendo validaciones humanas pendientes. No se ha hecho merge a `main`.
