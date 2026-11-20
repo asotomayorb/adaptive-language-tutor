@@ -60,7 +60,7 @@ try {
     window.__spoken = [];
     const synth = {
       getVoices: () => [{ name:"Brazilian Portuguese",lang:"pt-BR" },{ name:"English",lang:"en-US" },{ name:"Spanish",lang:"es-CL" }],
-      speak: utterance => { window.__spoken.push({ text: utterance.text, lang: utterance.lang, voice: utterance.voice?.name }); synth.speaking = true; },
+      speak: utterance => { window.__spoken.push({ text: utterance.text, lang: utterance.lang, voice: utterance.voice?.name }); synth.speaking = true; setTimeout(() => { synth.speaking = false; utterance.onend?.(); }, 0); },
       cancel: () => { synth.speaking = false; },
       pause: () => { synth.paused = true; },
       resume: () => { synth.paused = false; },
@@ -267,6 +267,7 @@ try {
     assert.equal(await page.locator("#feedback .answer-explanation").isVisible(), true, "only incorrect answers should show explanatory feedback");
     await page.locator("#answer-area #continue-answer").click();
     if (turn === 0) {
+      await page.waitForFunction(() => window.__spoken.some(item => item.text.includes("Eu") && item.text.includes("chileno") && item.lang === "pt-BR"));
       assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text.includes("Eu") && item.text.includes("chileno") && item.lang === "pt-BR")), "a recall blank should be spoken as a complete phrase with a pause");
     }
   }
