@@ -100,9 +100,11 @@ export function createSpeechController({
     // when Chrome does not expose a matching Voice object. Keep utterance.lang
     // explicit and let the OS select that language instead of suppressing audio.
     pendingRequest = null;
+    const guardedEnd = () => { if (generation === playbackGeneration) onEnd?.(); };
+    const guardedBoundary = event => { if (generation === playbackGeneration) onBoundary?.(event); };
     try {
       synthesis.cancel?.();
-      synthesis.speak(createUtterance(phrase, locale, onEnd, onBoundary));
+      synthesis.speak(createUtterance(phrase, locale, guardedEnd, guardedBoundary));
       onStatus({ enabled, supported, speaking:true, paused:false, locale });
       return { spoken: true };
     } catch (error) {
