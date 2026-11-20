@@ -744,12 +744,13 @@ Implementación en curso en `feature/mobile-bottom-navigation`:
 ### Pruebas añadidas/actualizadas
 - [x] Unit tests TTS: voz objetivo ausente no debe provocar fallback a voz fuente.
 - [x] Browser E2E: orden contador/icono, ausencia de selector de idioma activo, resumen de Ruta con estrellas y refuerzo único, y avance directo a la siguiente unidad.
-- [ ] Ejecutar y confirmar npm run check, npm test y npm run test:e2e en GitHub Actions para el HEAD final.
-- [ ] Verificar build y deploy manual de Render (auto-deploy desactivado).
+- [x] npm run check y npm test aprobados en GitHub Actions para el commit de código 1c7a684.
+- [x] npm run test:e2e aprobado en GitHub Actions para el commit de código 1c7a684.
+- [x] Build y deploy manual de Render completados; Preview LIVE en dep-dc03b03m8hqs739dqns0.
 - [ ] Prueba auditiva real en Android con portugués y español; comprobar también comportamiento cuando falta la voz objetivo.
-- [ ] Auditar manualmente todos los temas de Teoría en los idiomas que se mantienen disponibles en el selector inicial.
+- [x] Revisión estática de los temas de teoría presentes (gramática, vocabulario y expresiones) y corrección de la separación pasado/futuro; queda pendiente validación pedagógica humana de ejemplos y traducciones.
 - [ ] Verificar que cada elemento de «Reforzar» identifique correctamente palabra/habilidad/tema tras errores locales y de IA.
 - [ ] Prueba humana de desbloqueo y continuidad de las cuatro unidades de Ruta.
 
 ### Límites de validación
-Los cambios están guardados en GitHub, pero aún no deben considerarse verificados hasta que CI/E2E y Render confirmen el HEAD final. La voz y el flujo pedagógico requieren prueba humana Android. No se ha modificado Replit ni se ha hecho merge a main.
+Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy Render están aprobados para el commit de código 1c7a684. La voz y el flujo pedagógico requieren prueba humana Android. No se ha modificado Replit ni se ha hecho merge a main.
