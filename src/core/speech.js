@@ -59,7 +59,7 @@ export function createSpeechController({
   function setEnabled(value) {
     enabled = Boolean(value);
     try { storage?.setItem(preferenceKey, String(enabled)); } catch {}
-    if (!enabled) { try { synthesis?.cancel?.(); } catch {} }
+    if (!enabled) { pendingRequest = null; try { synthesis?.cancel?.(); } catch {} }
     onStatus({ enabled, supported, speaking:false, paused:false });
     return enabled;
   }
@@ -143,7 +143,7 @@ export function createSpeechController({
     try { synthesis.resume(); onStatus({ enabled, supported, speaking:true, paused:false }); return true; } catch { return false; }
   }
 
-  function stop() { try { synthesis?.cancel?.(); } catch {} onStatus({ enabled, supported, speaking:false, paused:false }); }
+  function stop() { pendingRequest = null; try { synthesis?.cancel?.(); } catch {} onStatus({ enabled, supported, speaking:false, paused:false }); }
 
   onStatus({ enabled, supported });
   return {
