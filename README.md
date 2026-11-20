@@ -761,3 +761,11 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - En Ruta, el capítulo 2 ordena las frases de aplicación por nivel y complejidad creciente (longitud de respuesta), manteniendo primero las estructuras más sencillas.
 
 - Para Android, no se llama a `cancel()` cuando el motor TTS está inactivo: se cancela solo una reproducción/petición activa y se reanuda el motor antes de hablar. Esto evita que cancelar un motor idle suprima la primera utterance tras navegar.
+
+### Deploy de validación — 20-11-2026
+- GitHub Actions: `npm run check` + `npm test` passed: https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44781107121
+- Browser E2E passed: https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44781107099
+- Render Preview: **LIVE**, deploy `dep-dc07vl3ncjis7381n1d0`, commit `d9e98d3fbc70cfb23be41066f6a1959448effb24`.
+- Preview URL: https://adaptive-language-tutor-preview-5b3d.onrender.com/
+- The Render service remains on `feature/mobile-bottom-navigation`; auto-deploy is disabled. Replit has not been modified.
+- Android audio playback and human review of mobile table layout remain pending device validation.
