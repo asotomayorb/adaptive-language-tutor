@@ -236,7 +236,8 @@ try {
   assert.equal(await page.locator("#lesson-content .target-word-link").count(), 0, "exercise words should no longer open translation popups");
   assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "Bom dia" && item.lang === "pt-BR")), "audio should speak the complete target-language phrase");
   const initialSpeechLocales = await page.locator("#lesson-content [data-speak]").evaluateAll(nodes => nodes.map(node => node.dataset.locale));
-  assert.ok(initialSpeechLocales.includes("es-CL") && initialSpeechLocales.includes("pt-BR"), "manual audio controls must retain the explicit source and target locales");
+  assert.ok(initialSpeechLocales.length > 0 && initialSpeechLocales.every(locale => locale === "pt-BR"), "manual playback controls should be reserved for target-language fragments");
+  assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text.startsWith("Escucha la frase") && item.lang === "es-CL")), "source instructions should use their own Spanish voice");
   for (let turn = 0; turn < 3; turn += 1) {
     assert.equal(await page.locator("#answer-area [data-choice]").count(), 3, "first three questions should have three choices");
     const questionBefore = await page.locator("#lesson-content h3").innerText();
