@@ -87,7 +87,7 @@ export function createSpeechController({
   function speak(text, locale, { automatic = false, onEnd, onBoundary, allowSystemVoice = false } = {}) {
     const phrase = String(text || "").trim();
     if (!phrase || !supported || (automatic && !enabled)) return { spoken: false, reason: "unavailable" };
-    playbackGeneration += 1;
+    const generation = ++playbackGeneration;
     // Always set utterance.lang; when no Voice object is exposed, let the OS TTS
     // engine resolve that explicit locale rather than suppressing playback.
     if (locale && !getVoices().length && !allowSystemVoice) {
