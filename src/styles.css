@@ -549,3 +549,7 @@
  .exercise-illustration svg{width:60px;height:60px}
  .summary-route-stars{margin:14px 0 24px}
 }
+
+/* Four fixed navigation destinations; no in-session language switcher */
+.bottom-nav{grid-template-columns:repeat(4,minmax(0,1fr))}
+.exercise-status{display:none!important}
