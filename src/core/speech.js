@@ -25,7 +25,7 @@ export function createSpeechController({
     enabled = Boolean(value);
     try { storage?.setItem(preferenceKey, String(enabled)); } catch {}
     if (!enabled) { try { synthesis?.cancel?.(); } catch {} }
-    onStatus({ enabled, supported });
+    onStatus({ enabled, supported, speaking:false, paused:false });
     return enabled;
   }
 
