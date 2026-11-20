@@ -140,7 +140,7 @@
 .session-topbar{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;min-height:60px}
 .session-topbar>span{text-align:center;font-size:12px;color:#7d8b9d}
 .session-topbar .icon-control{width:42px;height:42px;font-size:25px}
-.lesson-panel{max-width:650px;margin:7vh auto 0;padding:20px 0}
+.lesson-panel{max-width:650px;margin:0 auto;padding:4px 0}
 .lesson-panel .lesson-meta{align-items:center}
 .lesson-panel .lesson-content{padding:34px 0 22px;min-height:150px}
 .lesson-panel .lesson-content h3{font-size:25px;line-height:1.25}
@@ -358,7 +358,7 @@
 .stats-chart-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
 .stats-chart-heading h2{margin:0}
 .stats-view-picker select{max-width:230px;min-height:40px;padding:8px 32px 8px 11px;border:1px solid #dce3ec;border-radius:10px;background:#fff;color:#29425f;font:inherit;font-size:13px;font-weight:650}
-.stats-bar-chart,.stats-language-chart{display:block;width:100%;min-width:680px;height:auto;overflow:visible}.stats-bar{min-height:2px}
+.stats-bar-chart,.stats-language-chart{display:block;width:100%;min-width:680px;height:auto;overflow:visible}.stats-bar-chart{min-width:0!important}.stats-flag-label{font-size:22px;dominant-baseline:auto}.stats-bar{min-height:2px}
 .stats-average-line{stroke:#596a80;stroke-width:1.8;stroke-dasharray:5 5}
 .chart-average-label{fill:#596a80;font-size:14px;font-weight:800}
 .chart-value-label{fill:#344a64;font-size:15px;font-weight:800}
