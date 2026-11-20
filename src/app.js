@@ -1977,7 +1977,7 @@ function renderGrammarRuleSections(rules, exceptions = "") {
 }
 function renderGrammarRuleContent(rule, exceptions = "") {
   const text = String(rule || "").trim();
-  const marker = /(?:Atención:|Excepciones?:|Ojo:|No uses\b|No traduzcas\b|Nunca\b)/i.exec(text);
+  const marker = /(?:Atención:|Excepciones?:|Ojo:|No uses\b|No traduzcas\b|No se\b|Nunca\b)/i.exec(text);
   if (!marker) return renderGrammarRuleSections(text,exceptions);
   const mainRules = text.slice(0,marker.index).trim();
   const exceptionText = [text.slice(marker.index).replace(/^(?:Atención:|Excepciones?:|Ojo:)\s*/i,""),exceptions].filter(Boolean).join(" ");
