@@ -211,6 +211,7 @@ function appendCatalogSpeech(root, exercise, field, includeTarget = false) {
   ];
   const unique = [...new Set(phrases.filter(text => typeof text === "string" && text.trim()))];
   const segments = unique.map(text => ({ text, locale }));
+  currentActivitySpeechSegments = segments;
   appendSpeechButtons(root, segments);
   speech.speakSequence(segments, { automatic: true });
 }
@@ -1037,7 +1038,7 @@ async function submitAITutorAnswer(answer) {
       submitted: cleanAnswer,
       expected: evaluatedExercise.expectedAnswer || "",
       term:evaluatedExercise.term || evaluatedExercise.expectedAnswer || "",
-      meaning:evaluatedExercise.meaning || evaluatedExercise.translation || "",
+      meaning:evaluatedExercise.meaning || evaluatedExercise.translation || evaluatedExercise.sourceText || evaluatedExercise.prompt || "",
       promptLocale:evaluatedExercise.promptLocale || "es-CL",
       status: evaluation.status || "not_applicable",
       feedback: evaluation.feedback || "",
