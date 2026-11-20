@@ -2152,23 +2152,31 @@ function renderTenseLesson(languageName, topicIndex) {
     ).join("");
     const examples = [0,2,3].map(index => {
       const [person,,targetExample,translation] = forms[index];
-      return '<p><strong>' + escapeHTML(person) + ':</strong> <span class="theory-target-word">' + escapeHTML(targetExample) + '</span> ' + speakerButton(targetExample,locale) + '</p><p>' + escapeHTML(translation) + '</p>';
+      return '<tr><td>' + escapeHTML(person) + '</td><td><span class="theory-target-word">' + escapeHTML(targetExample) + '</span> ' + speakerButton(targetExample,locale) + '<small class="theory-translation">(' + escapeHTML(translation) + ')</small></td></tr>';
     }).join("");
     const header = '<thead><tr><th>Pronombre</th><th>Forma verbal</th></tr></thead>';
+    const regularPastTable = isPast ? '<section class="theory-table-block"><h3>Terminaciones regulares</h3><p>Los verbos regulares cambian su terminación de la siguiente manera:</p><div class="theory-table-scroll"><table class="theory-pronoun-table"><thead><tr><th></th><th>-AR · falar</th><th>-ER · comer</th><th>-IR · partir</th></tr></thead><tbody>' +
+      [['eu','falei','comi','parti'],['tu','falaste','comeste','partiste'],['você / ele / ela','falou','comeu','partiu'],['nós','falamos','comemos','partimos'],['a gente','falou','comeu','partiu'],['vocês / eles / elas','falaram','comeram','partiram']].map(row => '<tr>' + row.map((cell,index) => '<td>' + (index ? '<strong class="theory-target-word">' + cell + '</strong>' : '<strong>' + cell + '</strong>') + '</td>').join('') + '</tr>').join('') +
+      '</tbody></table></div></section>' : '';
+    const pastIrregularTable = isPast ? '<section class="theory-table-block"><h3>Excepciones: verbos irregulares</h3><div class="theory-table-scroll"><table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>ser / ir</th><th>estar</th><th>ter</th><th>fazer</th></tr></thead><tbody>' +
+      [['eu','fui','estive','tive','fiz'],['tu','foste','estiveste','tiveste','fizeste'],['você / ele / ela','foi','esteve','teve','fez'],['nós','fomos','estivemos','tivemos','fizemos'],['a gente','foi','esteve','teve','fez'],['vocês / eles / elas','foram','estiveram','tiveram','fizeram']].map(row => '<tr>' + row.map((cell,index) => '<td>' + (index ? '<strong class="theory-target-word">' + cell + '</strong>' : '<strong>' + cell + '</strong>') + '</td>').join('') + '</tr>').join('') +
+      '</tbody></table></div></section>' : '';
     const simpleFuture = !isPast && lesson.futureSimpleForms
-      ? '<h3>Futuro simple (más formal)</h3><table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>Forma verbal</th></tr></thead><tbody>' + lesson.futureSimpleForms.map(([person,form]) => '<tr><td>' + escapeHTML(person) + '</td><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td></tr>').join("") + '</tbody></table>'
+      ? '<section class="theory-table-block"><h3>Futuro simple (más formal)</h3><div class="theory-table-scroll"><table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>Forma verbal</th></tr></thead><tbody>' + lesson.futureSimpleForms.map(([person,form]) => '<tr><td>' + escapeHTML(person) + '</td><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td></tr>').join("") + '</tbody></table></div></section>'
       : "";
     const rule = isPast ? lesson.pastRule : lesson.futureRule;
     const exceptionText = String(lesson.exceptions || "");
-    const pastExceptionEnd = exceptionText.search(/\bEn futuro simple\b/i);
+    const pastExceptionEnd = exceptionText.search(/\\bEn futuro simple\\b/i);
     const pastExceptions = isPast ? (pastExceptionEnd >= 0 ? exceptionText.slice(0,pastExceptionEnd).trim() : exceptionText) : "";
     const futureExceptions = !isPast ? (pastExceptionEnd >= 0 ? exceptionText.slice(pastExceptionEnd).trim() : "") : "";
     const intro = isPast
       ? "El pretérito perfeito expresa acciones concluidas en el pasado. Primero identifica el infinitivo y después aplica la terminación correspondiente a la persona."
       : "En portugués brasileño, el futuro próximo se forma con ir en presente + infinitivo. El futuro simple es correcto, pero tiene un uso más formal.";
-    return '<p class="theory-slide-text">' + escapeHTML(intro) + '</p><table class="theory-pronoun-table">' + header + '<tbody>' + rows + '</tbody></table>' + simpleFuture +
-      renderGrammarRuleSections(rule,isPast ? pastExceptions : futureExceptions) +
-      '<section class="theory-example"><span>Ejemplos aplicados</span>' + examples + '</section>';
+    return '<p class="theory-slide-text">' + escapeHTML(intro) + '</p>' + regularPastTable +
+      '<section class="theory-table-block"><h3>Conjugación de ejemplo: ' + (isPast ? 'falar en pasado' : 'ir + infinitivo') + '</h3><div class="theory-table-scroll"><table class="theory-pronoun-table">' + header + '<tbody>' + rows + '</tbody></table></div></section>' +
+      pastIrregularTable + simpleFuture +
+      renderGrammarRuleSections(rule,isPast ? "" : futureExceptions) +
+      '<section class="theory-example"><span>Ejemplos aplicados</span><div class="theory-table-scroll"><table class="theory-example-table"><thead><tr><th>Pronombre</th><th>Ejemplo aplicado</th></tr></thead><tbody>' + examples + '</tbody></table></div></section>';
   }
   const example = isPast ? lesson.past : lesson.future;
   const translation = isPast ? lesson.pastEs : lesson.futureEs;
