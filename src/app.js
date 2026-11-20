@@ -1564,9 +1564,12 @@ $("hint-btn").addEventListener("click", () => {
 
 
 function getRouteAssessmentScore() {
-  const scoredAnswers = (session?.answers || []).slice(0,routeQuestionCount);
-  const correct = scoredAnswers.filter(answer => answer.correct === true).length;
-  return { attempted:Math.max(1,routeQuestionCount), correct:Math.min(routeQuestionCount,correct) };
+  // Use the pedagogy engine's evaluated-attempt counters. In AI sessions,
+  // not_applicable conversational turns are recorded in answers but are not
+  // scored attempts and must not lower the unit's final accuracy.
+  const attempted = Math.max(1, Number(session?.attempted) || 0);
+  const correct = Math.min(attempted, Math.max(0, Number(session?.correct) || 0));
+  return { attempted, correct };
 }
 function finishSession() {
   if (!session || sessionFinished) return;
