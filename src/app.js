@@ -1194,10 +1194,9 @@ function chooseExercise() {
       reading.sort((a,b) => levelRank(a)-levelRank(b) || String(a.passage || "").trim().split(/\s+/).length-String(b.passage || "").trim().split(/\s+/).length);
       candidates = [reading[0]];
     } else {
-      // Reading sessions must never fall through into general exercises.
-      const allReading = catalog.exercises.filter(exercise => exercise.type === "reading");
-      if (!allReading.length) return null;
-      candidates = [allReading[session.turn % allReading.length]];
+      // Never recycle a reading question in the same session. End the session
+      // when every distinct reading item has been answered.
+      return null;
     }
   } else {
     candidates = exercises.filter(exercise => !session.answers.some(answer => answer.exerciseId === exercise.id) && (finalTurn || !exercise.finalPractice));
@@ -1251,13 +1250,16 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
   pendingFeedback = null;
-  const questionSpeechSegments = getExerciseSpeechSegments(currentExercise);
+  const targetLocale = session.config.languageLocale || session.config.languageId;
+  // Source-language instructions/prompts stay readable but are never sent to
+  // the target-language voice or given a target-language speaker button.
+  const questionSpeechSegments = getExerciseSpeechSegments(currentExercise)
+    .filter(item => item.locale && item.locale.toLowerCase() === targetLocale.toLowerCase());
   const promptMarkup = currentExercise.promptLanguage === "target"
     ? renderClickableTargetText(currentExercise.prompt)
     : renderVariantTerms(currentExercise.prompt);
   const instructionMarkup = currentExercise.instruction
     ? '<p class="exercise-instruction">' + escapeHTML(currentExercise.instruction) + '</p>' : "";
-  const targetLocale = session.config.languageLocale || session.config.languageId;
   const questionAudioMarkup = questionSpeechSegments.map(item => speakerButton(item.text, item.locale)).join(" ");
   const readingMarkup = currentExercise.passage
     ? '<section class="reading-passage"><span class="reading-passage-kicker">Texto de lectura</span><h3>' + escapeHTML(currentExercise.passageTitle || "Lectura") + '</h3><p>' + escapeHTML(currentExercise.passage) + '</p><button id="reading-tts-toggle" class="secondary reading-tts-toggle" type="button">Reproducir lectura</button></section>'
@@ -1282,7 +1284,11 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
       : questionIndex < session.config.duration - 1 && questionIndex < 3;
   if (useMultipleChoice) {
     const options = currentExercise.options || [];
-    $("answer-area").innerHTML = options.map((option,index) => '<div class="answer-option-row"><button class="answer-option" data-choice="' + index + '">' + renderClickableTargetText(option) + '</button>' + (currentExercise.type === "reading" ? "" : speakerButton(option, currentExercise.optionsLocale || (currentExercise.speechMode === "listening" ? "es-CL" : catalog.locale))) + '</div>').join("");
+    $("answer-area").innerHTML = options.map((option,index) => {
+      const optionLocale = currentExercise.optionsLocale || (currentExercise.speechMode === "listening" ? "es-CL" : catalog.locale);
+      const targetSpeaker = optionLocale.toLowerCase() === targetLocale.toLowerCase() ? speakerButton(option, optionLocale) : "";
+      return '<div class="answer-option-row"><button class="answer-option" data-choice="' + index + '">' + renderClickableTargetText(option) + '</button>' + (currentExercise.type === "reading" ? "" : targetSpeaker) + '</div>';
+    }).join("");
     $("answer-area").querySelectorAll("[data-choice]").forEach(button => button.addEventListener("click", () => submitAnswer(options[Number(button.dataset.choice)])));
     bindSpeakerButtons($("answer-area"));
     bindTargetWords($("answer-area"));
