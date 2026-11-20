@@ -179,6 +179,7 @@ try {
     return Boolean(table && example && (table.compareDocumentPosition(example) & Node.DOCUMENT_POSITION_FOLLOWING));
   }), true, "past examples should follow the conjugation table");
   assert.equal(await page.locator("#theory-description .theory-note").count(), 2, "past rules and irregularities should be grouped in separate note blocks");
+  assert.ok(await page.locator("#theory-description .theory-rule-list li").count() >= 5, "rules and irregular verbs should be split into separate readable points");
   assert.match(await page.locator("#theory-description").innerText(), /Ayer/i, "past tense should include an applied example");
   assert.ok(await page.locator("#theory-description .theory-pronoun-table tbody tr").count() >= 6, "Portuguese past must conjugate for each subject pronoun");
   assert.deepEqual(await page.locator("#theory-description .theory-pronoun-table thead th").evaluateAll(nodes => nodes.map(node => node.textContent.trim())), ["Pronombre","Forma verbal"], "past conjugation table should not repeat Spanish example translations in a third column");
@@ -206,7 +207,8 @@ try {
   await page.locator('[data-screen="theory"]').click();
   assert.equal(await page.locator("#theory-grid").isVisible(), true, "Theory navigation should return to categories");
   await page.locator('[data-screen="exercises"]').click();
-  assert.equal(await page.locator("#exercise-choice-panel").isVisible(), true, "Exercises navigation should return to its setup screen");
+  assert.equal(await page.locator("#screen-exercises h1").innerText(),"Entrenamiento","the visible section name should be Entrenamiento");
+  assert.equal(await page.locator("#exercise-choice-panel").isVisible(), true, "Training navigation should return to its setup screen");
   await page.locator('[data-mode="review"]').click();
   assert.equal(await page.locator("#setup-form > label:visible").count(), 0, "review should hide practice-only level, duration and topic selectors");
   assert.equal(await page.locator("#review-exercises").isVisible(), true, "review should start immediately without a separate start button");
