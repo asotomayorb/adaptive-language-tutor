@@ -418,7 +418,7 @@ Para cada escenario registrar:
 
 - [ ] TTS portugués: una consigna escrita en español no debe pronunciarse con voz portuguesa.
 - [ ] TTS inglés: una consigna escrita en español no debe pronunciarse con voz inglesa.
-- [ ] TTS mixto: cuando el estímulo contiene español y frase objetivo, solo se reproduce el fragmento objetivo con su locale.
+- [ ] TTS mixto: cuando el estímulo contiene español y frase objetivo, ambos se reproducen en su locale propio; los botones manuales se ofrecen solo para fragmentos del idioma objetivo.
 - [ ] TTS sin voz objetivo instalada: no debe utilizarse la voz predeterminada del idioma origen.
 - [ ] TTS manual: cada botón debe reproducir únicamente el fragmento al que pertenece y mostrar/usar su locale real.
 - [ ] Teoría: revisar uno por uno todos los temas de Gramática, Vocabulario y Expresiones del portugués brasileño y del inglés.
