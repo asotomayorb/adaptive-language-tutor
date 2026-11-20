@@ -725,3 +725,35 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Render Preview: **LIVE**, deploy `dep-dc0749ss728c73clirf0`.
 - La validación de navegador cubre resumen con estrellas y valoración, inicio de la unidad siguiente, retorno desde la última unidad, reglas anidadas, flecha común y audio objetivo automático/manual.
 - Pendiente: validación auditiva y visual humana en Android; en particular, comprobar `voiceschanged` en el dispositivo y la disponibilidad real de voces objetivo.
+
+## 23. Revisión de audio, desbloqueo, actividades y teoría — 20-11-2026
+
+### Audio objetivo en Android
+- Mantener siempre `utterance.lang` con el locale explícito del fragmento.
+- Si Chrome expone voces, priorizar la coincidencia exacta o por idioma. Si la lista no incluye un objeto Voice para el locale solicitado, permitir que el motor TTS del sistema resuelva el locale explícito; no cambiar el texto ni asignarle la voz de español.
+- Si `getVoices()` devuelve una lista vacía, esperar `voiceschanged` y realizar un segundo intento. Si Android no emite el evento, reintentar tras una espera acotada usando el locale explícito del sistema.
+- Las secuencias de fragmentos se reproducen una a una, esperando el final/error de cada utterance; detener la sesión cancela la cola pendiente.
+- La validación real en Android sigue siendo obligatoria. Un `speak()` sin error no demuestra que el usuario haya oído audio.
+
+### Ruta
+- La primera unidad se presenta como **Inicio del viaje**.
+- Cada unidad separa dos capítulos pedagógicos: (1) vocabulario esencial y reglas/conjugaciones nuevas mediante preguntas breves; (2) aplicación en contexto y frases de dificultad progresiva.
+- El capítulo inicial genera preguntas de significado a partir de los términos disponibles en el catálogo y conserva ejercicios de gramática cuando están etiquetados como tales.
+- La progresión sigue usando la calificación por estrellas y el umbral documentado de cada unidad. Al guardar un resultado, se conserva el mejor puntaje y la unidad siguiente se habilita desde el registro persistido, no desde el estado temporal de la pantalla.
+
+### Jerarquía común de actividades
+- Cabecera compartida: nombre de sección a la izquierda, contador a la derecha y control de audio en la misma línea.
+- Barra de progreso inmediatamente debajo; su porcentaje refleja la pregunta actual (incluye la pregunta en curso).
+- A continuación aparece el icono/ilustración del tema, la etiqueta de capítulo/tema y luego la consigna.
+- El mismo patrón aplica a Ruta, Entrenamiento y Comprensión lectora; Repaso conserva contador de tarjetas y progreso equivalente.
+- En el resumen de Ruta, omitir completamente el bloque y subtítulo «Reforzar» cuando no haya elementos pendientes.
+
+### Teoría
+- Para portugués, el pasado incluye tabla de terminaciones regulares (-AR, -ER, -IR) y una tabla de conjugación de verbos irregulares frecuentes.
+- Los ejemplos aplicados se presentan en tabla de dos columnas: pronombre y frase en idioma objetivo; traducción debajo y entre paréntesis.
+- Las tablas pueden desplazarse horizontalmente dentro de su propio contenedor en móvil, sin comprimir el texto hasta hacerlo ilegible.
+- Los casos de futuro mantienen sus tablas propias y no mezclan excepciones del pasado.
+
+### Validación de esta iteración
+- Los tests unitarios y Browser E2E deben cubrir el fallback Android de locale explícito, reproducción secuencial, capítulo de descubrimiento, encabezado/progreso, omisión de «Reforzar» vacío y desbloqueo al umbral de estrellas.
+- La prueba auditiva en Android y la revisión de legibilidad de las tablas en dispositivo real permanecen pendientes hasta ejecutarse físicamente.
