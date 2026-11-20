@@ -518,3 +518,34 @@
 .reading-player button:disabled{opacity:.45;cursor:not-allowed}
 .reading-player .reading-player-restart{background:transparent;color:#29425f;font-size:23px}
 .reading-player-progress{flex:1;min-width:0;accent-color:#315f91;cursor:pointer}
+
+
+/* 20-11-2026: compact activity hierarchy, route summary and theory hierarchy */
+.session-topbar{margin-bottom:4px}
+.lesson-panel .lesson-meta{display:flex;flex-direction:column;align-items:flex-start;gap:0;margin:0 0 12px;padding:0}
+.lesson-panel .lesson-meta #lesson-phase{display:none!important}
+.lesson-panel .lesson-meta #turn-count{display:block;font-size:14px;font-weight:750;letter-spacing:.01em;color:#304a68}
+.lesson-panel>.progress-track{display:none!important}
+.lesson-panel .lesson-content{padding:0 0 18px;min-height:0}
+.exercise-illustration{margin:0 0 18px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.exercise-illustration svg{width:66px;height:66px}
+.exercise-illustration small{font-size:11px;color:#7b899b;text-transform:capitalize}
+.lesson-panel .exercise-instruction{margin:0 0 10px}
+.lesson-panel .lesson-content>h3{margin-top:10px}
+.summary-route-stars{font-size:clamp(30px,8vw,42px);letter-spacing:5px;text-align:center;color:#c18b2d;margin:18px 0 28px}
+.route-reinforcement{margin:12px 0 22px}
+.route-reinforcement h3{font-size:16px;margin:0 0 9px}
+.route-reinforcement ul{margin:0;padding-left:22px;line-height:1.8;color:#53657b}
+#route-summary-next{width:100%;min-height:50px;margin-top:8px}
+.summary-title{text-align:center;margin:0 0 14px}
+.theory-note{margin:18px 0;padding:15px 16px;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc}
+.theory-note h3{font-size:14px;margin:0 0 9px;color:#29425f}
+.theory-rule-list{margin:0;padding-left:23px;display:grid;gap:8px;line-height:1.55;color:#465a72;font-size:13px}
+.theory-rule-list li{padding-left:3px}
+.theory-exceptions{background:#fffaf2;border-color:#efe3ca}
+@media(max-width:620px){
+ .lesson-panel .lesson-meta #turn-count{font-size:13px}
+ .exercise-illustration{margin-bottom:15px}
+ .exercise-illustration svg{width:60px;height:60px}
+ .summary-route-stars{margin:14px 0 24px}
+}
