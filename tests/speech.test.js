@@ -231,3 +231,18 @@ test("stopping a serialized speech sequence prevents stale fragments from playin
   mock.spoken[0].onend?.();
   assert.equal(mock.spoken.length,1,"navigation stop must invalidate the pending second fragment");
 });
+
+
+test("stopping a single utterance suppresses its stale completion callback", () => {
+  const mock = speechMock([{name:"Portuguese",lang:"pt-BR"}]);
+  const controller = createSpeechController({
+    synthesis:mock.api,
+    Utterance:MockUtterance,
+    storage:{getItem:()=>null,setItem:()=>{}}
+  });
+  let ended = false;
+  controller.speak("Bom dia","pt-BR",{onEnd:()=>{ended=true;}});
+  controller.stop();
+  mock.spoken[0].onend?.();
+  assert.equal(ended,false,"a stopped passage must not report completion after navigation");
+});
