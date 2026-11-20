@@ -388,3 +388,5 @@ Para cada escenario registrar:
 - [ ] A1 usa un texto breve; A2 presenta mayor profundidad y extensión razonable. Revisar scroll, legibilidad y que los controles no queden ocultos en Android.
 - [ ] La última actividad de cada unidad de Ruta pide traducir una frase concreta; probar la respuesta canónica y cada variante declarada como aceptada.
 - [ ] Pasado/futuro: las reglas y excepciones aparecen en líneas independientes, legibles en móvil, y los ejemplos siguen debajo de las tablas/notas.
+
+- [ ] En Entrenamiento normal, y en la última pregunta de práctica general tras una sesión lectora de 10 preguntas, la consigna final pide traducir una frase específica y reconoce las variantes declaradas para ese ejercicio.
