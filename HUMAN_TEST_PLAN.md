@@ -364,3 +364,16 @@ Para cada escenario registrar:
 - [ ] Verificar que el encabezado de tema/nivel queda a la izquierda del contador «Pregunta n / total».
 - [ ] Confirmar que la etiqueta breve del tema sigue debajo del pictograma y que no se repite un segundo encabezado de tema/nivel debajo del icono.
 - [ ] En portugués e inglés, comprobar que cada botón ▶ reproduce solo palabras/frases del idioma objetivo; las instrucciones en español y opciones en español no deben ofrecer reproducción manual.
+
+
+## Revisión humana — iteración 20-11-2026
+
+- [ ] Teoría: pasado y futuro muestran solo Pronombre y Forma verbal en la tabla.
+- [ ] Teoría: ejemplos aparecen debajo de la tabla y solo ilustran algunas personas.
+- [ ] Vocabulario: revisar días, meses, estaciones, partes del día y expresiones temporales.
+- [ ] Vocabulario: revisar cardinales, ordinales y reglas de género/composición.
+- [ ] Estadísticas: barras globales forman un grupo compacto y centrado.
+- [ ] Estadísticas: altura del área del gráfico no cambia al alternar Global y un idioma.
+- [ ] Comprensión lectora: probar texto A1, responder las tres preguntas y comprobar que el texto sigue visible.
+- [ ] Comprensión lectora: probar texto A2, inferencia y vocabulario contextual.
+- [ ] Repetir las pruebas de teoría y estadísticas en portugués; después realizar regresión en inglés.
