@@ -473,8 +473,8 @@ try {
   await routePage.evaluate(() => {
     const session = {
       config: { language:"Portugués", languageId:"pt-BR", languageLocale:"pt-BR", duration:6, questionCount:6, topic:"daily", level:"zero", routeMode:true, routeUnitId:"foundations" },
-      turn:6, correct:5, attempted:6, streak:0, bestStreak:0, consecutiveCorrect:0, consecutiveErrors:0,
-      errors:[], errorsToReview:[], vocabulary:[], reviewQueue:[], answers:Array.from({length:6},(_,i)=>({exerciseId:"seed-"+i,status:"correct"}))
+      turn:6, correct:6, attempted:6, streak:0, bestStreak:0, consecutiveCorrect:0, consecutiveErrors:0,
+      errors:[], errorsToReview:[], vocabulary:[], reviewQueue:[], answers:Array.from({length:6},(_,i)=>({exerciseId:"seed-"+i,correct:true,status:"correct"}))
     };
     localStorage.setItem("adaptive-language-tutor.route-progress:pt-BR",JSON.stringify({
       languageId:"pt-BR",unitId:"foundations",questionCount:6,session,integration:true,integrationAttempts:0,routeIntegrationHintLevel:0,
@@ -495,6 +495,11 @@ try {
   assert.equal(await routePage.locator("#hint-btn").innerText(), "Ver respuesta", "the second help step should persist after reload");
   await routePage.locator("#hint-btn").click();
   assert.match(await routePage.locator("#feedback").innerText(), /Respuesta:/, "Route should restore the two-step hint sequence");
+  await routePage.locator("#route-integration-answer").fill("Amanhã estudo em casa.");
+  await routePage.locator("#route-integration-submit").click();
+  await routePage.locator("#summary-panel").waitFor({state:"visible"});
+  assert.equal(await routePage.locator("#summary-content .summary-accuracy strong").innerText(),"100%","Route score must count only the six scored unit questions, not its separate integration task");
+  assert.equal(await routePage.locator('[data-route-unit="travel"]').isDisabled(),false,"a perfect completed first unit must unlock the next unit");
   assert.deepEqual(routeErrors, [], "Portuguese Route integration should not report browser errors");
 } finally {
   if (browser) await browser.close();
