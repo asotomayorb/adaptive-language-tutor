@@ -406,7 +406,7 @@ try {
     window.__spoken = [];
     const synth = {
       getVoices: () => [{ name:"Brazilian Portuguese",lang:"pt-BR" },{ name:"Spanish",lang:"es-CL" },{ name:"French",lang:"fr-FR" }],
-      speak: utterance => window.__spoken.push({ text: utterance.text, lang: utterance.lang, voice: utterance.voice?.name }),
+      speak: utterance => { window.__spoken.push({ text: utterance.text, lang: utterance.lang, voice: utterance.voice?.name }); setTimeout(() => utterance.onend?.(), 0); },
       cancel: () => {}
     };
     Object.defineProperty(window, "speechSynthesis", { configurable: true, value: synth });
