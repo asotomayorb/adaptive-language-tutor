@@ -633,7 +633,7 @@ Este registro define los criterios de aceptación de la próxima iteración; los
 
 - Estadísticas globales: usar barras horizontales de ancho completo, con nombre de idioma y porcentaje en cada fila. El diseño debe priorizar viewport móvil vertical y evitar SVG fijo comprimido.
 - Ruta: el resultado se calcula desde las respuestas puntuables de la unidad, excluyendo el hito integrador independiente. Las respuestas puntuables, porcentaje y estrellas deben compartir el mismo conjunto de datos. Los registros antiguos derivan estrellas mínimas desde su porcentaje para reparar desbloqueos inconsistentes.
-- Comprensión lectora: sesión aislada del entrenamiento general. El banco de preguntas de lectura se repite cíclicamente cuando se solicitan más preguntas que las disponibles.
+- Comprensión lectora: sesión aislada del entrenamiento general. No se repite ninguna pregunta dentro de una sesión; si se solicitan más preguntas que elementos únicos disponibles, la sesión termina al agotarse el banco.
 - TTS: cada fragmento conserva su locale explícito; los controles manuales identifican el idioma reproducido. Se priorizan `speechLocale` y `promptLocale` sobre cualquier inferencia heurística.
 - Gramática: el renderizador común separa reglas y excepciones en listas legibles, también en los temas de artículos, pasado y futuro con contenido aplicado.
 
