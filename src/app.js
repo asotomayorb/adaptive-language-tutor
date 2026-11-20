@@ -1193,6 +1193,7 @@ function chooseExercise() {
   let exercises = getTopicExercises();
   const adaptation = getAdaptation(session);
   let candidates;
+  const finalTurn = !routeMode && session.turn === session.config.duration - 1;
   if (session.config.topic === "reading") {
     const answeredIds = new Set(session.answers.map(answer => answer.exerciseId));
     const reading = catalog.exercises.filter(exercise => exercise.type === "reading" && !answeredIds.has(exercise.id));
@@ -1203,10 +1204,18 @@ function chooseExercise() {
       candidates = [reading[0]];
     } else {
       exercises = catalog.exercises.filter(exercise => exercise.type !== "reading");
-      candidates = exercises.filter(exercise => !answeredIds.has(exercise.id));
+      candidates = exercises.filter(exercise => !answeredIds.has(exercise.id) && (finalTurn || !exercise.finalPractice));
+      if (finalTurn) {
+        const finalExercises = candidates.filter(exercise => exercise.finalPractice);
+        if (finalExercises.length) candidates = finalExercises;
+      }
     }
   } else {
-    candidates = exercises.filter(exercise => !session.answers.some(answer => answer.exerciseId === exercise.id));
+    candidates = exercises.filter(exercise => !session.answers.some(answer => answer.exerciseId === exercise.id) && (finalTurn || !exercise.finalPractice));
+    if (finalTurn) {
+      const finalExercises = candidates.filter(exercise => exercise.finalPractice);
+      if (finalExercises.length) candidates = finalExercises;
+    }
   }
   if (!candidates.length && !routeMode && session.config.topic !== "reading") {
     exercises = catalog.exercises;
@@ -1281,7 +1290,7 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
     ? Array.isArray(currentExercise.options) && currentExercise.options.length >= 2
     : routeMode
       ? routePhase.id !== "sentences" && Array.isArray(currentExercise.options) && currentExercise.options.length >= 2
-      : questionIndex < 3;
+      : questionIndex < session.config.duration - 1 && questionIndex < 3;
   if (useMultipleChoice) {
     const options = currentExercise.options || [];
     $("answer-area").innerHTML = options.map((option,index) => '<div class="answer-option-row"><button class="answer-option" data-choice="' + index + '">' + renderClickableTargetText(option) + '</button>' + (currentExercise.type === "reading" ? "" : speakerButton(option, currentExercise.optionsLocale || (currentExercise.speechMode === "listening" ? "es-CL" : catalog.locale))) + '</div>').join("");
