@@ -180,12 +180,16 @@ try {
   assert.ok(await page.locator("#theory-description .theory-pronoun-table tbody tr").count() >= 6, "Portuguese past must conjugate for each subject pronoun");
   assert.deepEqual(await page.locator("#theory-description .theory-pronoun-table thead th").evaluateAll(nodes => nodes.map(node => node.textContent.trim())), ["Pronombre","Forma verbal"], "past conjugation table should not repeat Spanish example translations in a third column");
   assert.match(await page.locator("#theory-description").innerText(), /fui|tive|fiz|disse/i, "Portuguese past must explain irregular verbs");
+  assert.doesNotMatch(await page.locator("#theory-description").innerText(), /En futuro simple|direi|farei/i, "past theory must not contain future exceptions");
   await page.locator("#theory-next").click();
   assert.equal(await page.locator("#theory-title").innerText(), "Futuro");
   assert.match(await page.locator("#theory-description").innerText(), /Mañana/i, "future tense should include an applied example");
   assert.ok(await page.locator("#theory-description .theory-pronoun-table tbody tr").count() >= 6, "Portuguese future must conjugate for each subject pronoun");
   assert.match(await page.locator("#theory-description").innerText(), /vou falar|vai falar|vão falar/i, "Portuguese future must show the common ir + infinitive construction");
   assert.deepEqual(await page.locator("#theory-description .theory-pronoun-table").first().locator("thead th").evaluateAll(nodes => nodes.map(node => node.textContent.trim())), ["Pronombre","Forma verbal"], "future conjugation table should only show pronoun and verb form");
+  assert.match(await page.locator("#theory-description").innerText(), /En futuro simple/i, "future irregularities should be grouped with future rules");
+  assert.doesNotMatch(await page.locator("#theory-description").innerText(), /pretérito perfeito|fui, estar|ter → tive/i, "future theory must not contain past exceptions");
+  assert.deepEqual(await page.locator("#theory-description .theory-pronoun-table").last().locator("thead th").evaluateAll(nodes => nodes.map(node => node.textContent.trim())), ["Pronombre","Forma verbal"], "future simple table must use the same headings");
   await page.locator("#theory-close").click();
   await page.locator("#theory-list-back").click();
   await page.locator('[data-theory="vocabulary"]').click();
