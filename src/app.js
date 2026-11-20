@@ -742,7 +742,7 @@ function renderAITutorTurn(result) {
   const promptAudio = aiCurrentExercise.prompt && questionSpeech
     ? speakerButton(questionSpeech.text, questionSpeech.locale)
     : "";
-  $("lesson-content").innerHTML = getExerciseIllustration(aiCurrentExercise) + instructionMarkup + prompt + promptAudio;
+  $("lesson-content").innerHTML = instructionMarkup + getExerciseIllustration(aiCurrentExercise) + prompt + promptAudio;
   bindSpeakerButtons($("lesson-content"));
   bindVariantLinks($("lesson-content"));
   bindTargetWords($("lesson-content"));
@@ -1270,7 +1270,7 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
     : "";
   const readingQuestionType = session.config.topic === "reading"
     ? '<p class="reading-question-type">' + (currentExercise.type === "reading" ? "Comprensión del texto" : "Práctica general") + '</p>' : "";
-  $("lesson-content").innerHTML = readingMarkup + readingQuestionType + getExerciseIllustration(currentExercise) + instructionMarkup + '<h3>' + promptMarkup + '</h3>' + questionAudioMarkup;
+  $("lesson-content").innerHTML = readingQuestionType + instructionMarkup + getExerciseIllustration(currentExercise) + readingMarkup + '<h3>' + promptMarkup + '</h3>' + questionAudioMarkup;
   updateReadingPassageControl();
   $("reading-tts-toggle")?.addEventListener("click", togglePassageSpeech);
   bindVariantLinks($("lesson-content"));
@@ -1357,7 +1357,10 @@ function showAnswerFeedback({ correct, expected, expectedLocale, explanation, se
   playAnswerFeedbackSound(Boolean(correct));
   $("answer-area").querySelector(".answer-waiting")?.remove();
   $("answer-area").querySelector("#continue-answer")?.remove();
-  const expectedText = !correct && expected ? '<p class="answer-correct-text">Respuesta correcta: ' + renderClickableTargetText(expected) + ' ' + speakerButton(expected, expectedLocale || session?.config.languageLocale || catalog?.locale) + '</p>' : "";
+  const resolvedExpectedLocale = expectedLocale || session?.config.languageLocale || catalog?.locale;
+  const expectedAudio = resolvedExpectedLocale?.toLowerCase() === (session?.config.languageLocale || catalog?.locale || "").toLowerCase()
+    ? " " + speakerButton(expected, resolvedExpectedLocale) : "";
+  const expectedText = !correct && expected ? '<p class="answer-correct-text">Respuesta correcta: ' + renderClickableTargetText(expected) + expectedAudio + '</p>' : "";
   const explanationText = !correct && explanation ? '<p class="answer-explanation">' + renderVariantTerms(explanation) + '</p>' : "";
   $("feedback").innerHTML = (correct ? '<p class="answer-status correct">Correcto</p>' : '<p class="answer-status incorrect">Incorrecto</p>') + expectedText + explanationText;
   $("feedback").classList.remove("hidden","bad");
