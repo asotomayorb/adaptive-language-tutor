@@ -447,3 +447,23 @@ Para cada escenario registrar:
 - [ ] Prueba humana en Android: revisar tamaños, espacios y orden visual en móvil real.
 - [ ] Prueba humana: completar las cuatro unidades de Ruta, provocar errores y confirmar que «Reforzar» enumera los temas/palabras correctos.
 - [ ] Prueba humana: lectura con seis preguntas únicas, reproducción, pausa, reanudación, reinicio y progreso.
+
+
+## 14. Regresión solicitada — Ruta, jerarquía, flecha y TTS — 20-11-2026
+
+- [ ] Ruta: completar una unidad con 100% y comprobar 5 estrellas + «Perfecto» + acción que inicia la unidad siguiente.
+- [ ] Ruta: completar con 80–99%, 60–79% y menos de 60%; comprobar correspondencia estrellas/valoración y umbrales de desbloqueo.
+- [ ] Ruta: si no alcanza las estrellas requeridas, el resumen informa el umbral y permite repetir la unidad.
+- [ ] Ruta: comprobar que la unidad que aparece activa después de «Continuar» es la siguiente por ID y contenido, no solo que la vista de sesión siga visible.
+- [ ] Ruta: comprobar que el resumen nunca queda sin una acción funcional.
+- [ ] Teoría: pasado portugués presenta «Irregulares frecuentes en pretérito perfeito» como categoría con verbos dependientes anidados.
+- [ ] Teoría: futuro presenta sus raíces irregulares bajo «En futuro simple» sin mezclar excepciones del pasado.
+- [ ] Teoría: inspeccionar todos los temas con reglas compuestas y comprobar jerarquía primer nivel/subnivel, orden y sangría.
+- [ ] Navegación: flecha icon-only idéntica en lista de temas, detalle de teoría, setup secundario y sesión.
+- [ ] Navegación: retroceder detiene cualquier audio pendiente o activo; en sesión conserva confirmación de descarte cuando corresponda.
+- [ ] TTS: abrir un tema de teoría inicia pronunciación del idioma objetivo; pulsar un altavoz reproduce el elemento correcto.
+- [ ] TTS: actividad local e IA pronuncian automáticamente el fragmento objetivo y permiten reproducirlo manualmente.
+- [ ] TTS Android: cargar la aplicación cuando `getVoices()` está vacío y verificar que la reproducción se inicia después de `voiceschanged`.
+- [ ] TTS: cuando no existe voz compatible, no debe escucharse la voz española como sustitución.
+- [ ] Repetir todo en Android real; E2E no sustituye esta comprobación.
+
