@@ -46,9 +46,9 @@ function updateAudioStatus(status) {
   const passageToggle = document.getElementById("reading-tts-toggle");
   if (passageToggle) {
     const paused = Boolean(status.paused);
-    passageToggle.textContent = paused ? "Continuar lectura" : "Pausar lectura";
-    passageToggle.setAttribute("aria-label", paused ? "Continuar lectura" : "Pausar lectura");
-    passageToggle.disabled = !status.speaking && !paused;
+    passageToggle.textContent = paused ? "Continuar lectura" : status.speaking ? "Pausar lectura" : "Reproducir lectura";
+    passageToggle.setAttribute("aria-label", passageToggle.textContent);
+    passageToggle.disabled = !status.supported;
   }
 }
 
@@ -1251,12 +1251,14 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   const targetLocale = session.config.languageLocale || session.config.languageId;
   const questionAudioMarkup = questionSpeechSegments.filter(item => item.locale === targetLocale).map(item => speakerButton(item.text, item.locale)).join(" ");
   const readingMarkup = currentExercise.passage
-    ? '<section class="reading-passage"><span class="reading-passage-kicker">Texto de lectura</span><h3>' + escapeHTML(currentExercise.passageTitle || "Lectura") + '</h3><p>' + escapeHTML(currentExercise.passage) + '</p><button id="reading-tts-toggle" class="secondary reading-tts-toggle" type="button" disabled>Reproducir lectura</button></section>'
+    ? '<section class="reading-passage"><span class="reading-passage-kicker">Texto de lectura</span><h3>' + escapeHTML(currentExercise.passageTitle || "Lectura") + '</h3><p>' + escapeHTML(currentExercise.passage) + '</p><button id="reading-tts-toggle" class="secondary reading-tts-toggle" type="button">Reproducir lectura</button></section>'
     : "";
   const readingQuestionType = session.config.topic === "reading"
     ? '<p class="reading-question-type">' + (currentExercise.type === "reading" ? "Comprensión del texto" : "Práctica general") + '</p>' : "";
   $("lesson-content").innerHTML = readingMarkup + readingQuestionType + getExerciseIllustration(currentExercise) + instructionMarkup + '<h3>' + promptMarkup + '</h3>' + questionAudioMarkup;
-  $("reading-tts-toggle")?.addEventListener("click", togglePassageSpeech);
+  const readingTtsToggle = $("reading-tts-toggle");
+  if (readingTtsToggle) readingTtsToggle.disabled = !speech.supported;
+  readingTtsToggle?.addEventListener("click", togglePassageSpeech);
   bindVariantLinks($("lesson-content"));
   bindSpeakerButtons($("lesson-content"));
   bindTargetWords($("lesson-content"));
