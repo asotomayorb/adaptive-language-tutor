@@ -2088,7 +2088,7 @@ function renderTenseLesson(languageName, topicIndex) {
     }).join("");
     const header = '<thead><tr><th>Pronombre</th><th>Forma verbal</th></tr></thead>';
     const simpleFuture = !isPast && lesson.futureSimpleForms
-      ? '<h3>Futuro simple (más formal)</h3><table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>Forma</th></tr></thead><tbody>' + lesson.futureSimpleForms.map(([person,form]) => '<tr><td>' + escapeHTML(person) + '</td><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td></tr>').join("") + '</tbody></table>'
+      ? '<h3>Futuro simple (más formal)</h3><table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>Forma verbal</th></tr></thead><tbody>' + lesson.futureSimpleForms.map(([person,form]) => '<tr><td>' + escapeHTML(person) + '</td><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td></tr>').join("") + '</tbody></table>'
       : "";
     const rule = isPast ? lesson.pastRule : lesson.futureRule;
     const exceptionText = String(lesson.exceptions || "");
