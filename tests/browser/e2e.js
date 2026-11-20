@@ -204,7 +204,7 @@ try {
   const futureIrregularRows = await futureIrregularBlock.locator("tbody tr").allInnerTexts();
   assert.ok(futureIrregularRows[0].includes("direi") && futureIrregularRows[1].includes("dirás") && futureIrregularRows[2].includes("dirá") && futureIrregularRows[3].includes("diremos"),"future irregular forms should be shown across singular and plural subjects");
   assert.doesNotMatch(await page.locator("#theory-description").innerText(), /pretérito perfeito|fui, estar|ter → tive/i, "future theory must not contain past exceptions");
-  assert.deepEqual(await page.locator("#theory-description .theory-pronoun-table").last().locator("thead th").evaluateAll(nodes => nodes.map(node => node.textContent.trim())), ["Pronombre","Forma verbal"], "future simple table must use the same headings");
+  assert.deepEqual(await page.locator("#theory-description .theory-pronoun-table").nth(1).locator("thead th").evaluateAll(nodes => nodes.map(node => node.textContent.trim())), ["Pronombre","Forma verbal"], "future simple regular table must use the same headings");
   await page.locator("#theory-back").click();
   await page.locator("#theory-list-back").click();
   await page.locator('[data-theory="vocabulary"]').click();
