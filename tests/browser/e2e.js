@@ -533,7 +533,7 @@ try {
   assert.equal(await routePage.locator("#session-view").isVisible(),true,"continuation should start the next unit instead of stopping at the summary");
   assert.equal(await routePage.locator("#lesson-panel").getAttribute("data-route-unit"),"travel","the continuation must load the actual next unit, not just reopen the previous session");
   assert.equal(await routePage.locator("#session-mode-label").innerText(),"Entrenamiento");
-  assert.equal(await routePage.locator('[data-route-unit="travel"]').evaluate(node => node.classList.contains("selected")),true,"continuation should select the next unlocked Route unit");
+  assert.equal(await routePage.locator('#route-unit-list [data-route-unit="travel"]').evaluate(node => node.classList.contains("selected")),true,"continuation should select the next unlocked Route unit");
   assert.deepEqual(routeErrors, [], "Portuguese Route integration should not report browser errors");
 } finally {
   if (browser) await browser.close();
