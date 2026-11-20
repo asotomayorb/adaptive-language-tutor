@@ -271,7 +271,7 @@ function getExerciseSpeechSegments(exercise) {
 
   const promptContainsTerm = prompt && String(exercise?.term || "").trim() &&
     prompt.toLocaleLowerCase().includes(String(exercise.term).trim().toLocaleLowerCase());
-  if (!exercise?.passage && exercise?.type !== "reading" && exercise?.term && !promptContainsTerm) {
+  if (!declared.length && !exercise?.passage && exercise?.type !== "reading" && exercise?.term && !promptContainsTerm) {
     add(exercise.term, targetLocale, "term");
   }
 
