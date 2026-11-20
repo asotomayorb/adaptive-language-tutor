@@ -790,7 +790,7 @@ function renderAITutorTurn(result) {
   const promptAudio = aiCurrentExercise.prompt && questionSpeech
     ? speakerButton(questionSpeech.text, questionSpeech.locale)
     : "";
-  $("lesson-content").innerHTML = instructionMarkup + getExerciseIllustration(aiCurrentExercise) + prompt + promptAudio;
+  $("lesson-content").innerHTML = getExerciseIllustration(aiCurrentExercise) + instructionMarkup + prompt + promptAudio;
   bindSpeakerButtons($("lesson-content"));
   bindVariantLinks($("lesson-content"));
   bindTargetWords($("lesson-content"));
@@ -1318,7 +1318,7 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
     : "";
   const readingQuestionType = session.config.topic === "reading"
     ? '<p class="reading-question-type">' + (currentExercise.type === "reading" ? "Comprensión del texto" : "Práctica general") + '</p>' : "";
-  $("lesson-content").innerHTML = readingQuestionType + instructionMarkup + getExerciseIllustration(currentExercise) + readingMarkup + '<h3>' + promptMarkup + '</h3>' + questionAudioMarkup;
+  $("lesson-content").innerHTML = readingQuestionType + getExerciseIllustration(currentExercise) + readingMarkup + instructionMarkup + '<h3>' + promptMarkup + '</h3>' + questionAudioMarkup;
   updateReadingPassageControl();
   $("reading-tts-toggle")?.addEventListener("click", togglePassageSpeech);
   $("reading-tts-restart")?.addEventListener("click", restartPassageSpeech);
