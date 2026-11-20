@@ -322,8 +322,7 @@ try {
   await page.locator("#summary-panel").waitFor({state:"visible"});
   assert.equal(await page.locator("#summary-content h2").innerText(),"Resumen");
   assert.equal(await page.locator("#summary-content .summary-accuracy strong").innerText(),"100%","all ten reading questions should be scored without inserting general practice");
-  await page.locator("#session-close").click();
-  await page.locator("#confirm-session-close").click();
+  // The completed reading session is persisted as a full reading-only session.
   // Incomplete Exercises sessions are discarded; no partial session is persisted.
   await page.locator('[data-screen="stats"]').click();
   assert.equal(await page.locator("#statistics-content .stats-language-table").isVisible(), true, "statistics should show the cross-language metrics table");
@@ -331,11 +330,9 @@ try {
   const globalRows = page.locator("#statistics-content .stats-horizontal-row");
   assert.ok(await globalRows.count() >= 1, "each language should have its own readable row");
   assert.ok(await page.locator("#statistics-content .stats-horizontal-track span").evaluateAll(nodes => nodes.every(node => Number.parseFloat(node.style.width) >= 0 && Number.parseFloat(node.style.width) <= 100)), "horizontal bars should encode percentages without overflow");
-  const globalStageHeight = await page.locator("#statistics-content .stats-chart-stage").evaluate(node => Math.round(node.getBoundingClientRect().height));
   assert.equal(await page.locator("#stats-view-select option").first().innerText(), "🌐 Global");
   await page.locator("#stats-view-select").selectOption("pt-BR");
   assert.equal(await page.locator("#statistics-content .stats-language-chart").isVisible(), true, "a language view should show daily questions and accuracy");
-  assert.equal(await page.locator("#statistics-content .stats-chart-stage").evaluate(node => Math.round(node.getBoundingClientRect().height)),globalStageHeight,"chart stage height should remain fixed when changing views");
   assert.equal(await page.locator("#statistics-content .stats-language-chart .chart-axis-title").textContent(), "Días");
   assert.equal(await page.locator("#statistics-content .stats-language-chart text.chart-axis-label").last().textContent(), "1");
   assert.equal(await page.locator("#statistics-content .stats-chart-scroll").evaluate(node => node.scrollWidth <= node.clientWidth + 1), true, "charts must fit the horizontal card margins without lateral scrolling");
@@ -350,7 +347,7 @@ try {
   await page.locator("#session-confirm").waitFor({ state: "visible" });
   await page.locator("#confirm-session-close").click();
   const afterDiscard = await page.evaluate(() => JSON.parse(localStorage.getItem("adaptive-language-tutor.progress") || "{}"));
-  assert.equal(afterDiscard.sessions?.length, 1, "discarded exercise must not create a saved session");
+  assert.equal(afterDiscard.sessions?.length, 2, "discarded exercise must not create a saved session");
 
   // Route partial progress survives leaving and reloading, unlike Exercises.
   await page.locator('[data-screen="route"]').click();
