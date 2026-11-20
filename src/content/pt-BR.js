@@ -111,6 +111,7 @@ export const ptBR = {
         "finalPractice": true,
         "prompt": "Traduce al portugués esta frase concreta: «Sin cebolla, por favor».",
         "target": "Sem cebola, por favor",
+        "acceptedAnswers": ["Sem cebola por favor"],
         "term": "sem cebola",
         "meaning": "sin cebolla",
         "options": [
