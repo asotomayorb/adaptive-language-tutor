@@ -1329,6 +1329,8 @@ function renderRouteIntegration() {
       $("hint-btn").textContent = "Ver respuesta";
       if (routeIntegrationHintLevel >= 2) $("hint-btn").hidden = true;
       $("feedback").classList.remove("hidden","bad");
+      bindSpeakerButtons($("feedback"));
+      if (routeIntegrationHintLevel >= 2) speech.speak(currentExercise.target,session.config.languageLocale,{automatic:true});
       $("route-integration-answer").value = answer;
       $("route-integration-answer").focus();
     }
