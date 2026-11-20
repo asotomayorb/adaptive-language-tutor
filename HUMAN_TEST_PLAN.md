@@ -435,3 +435,15 @@ Para cada escenario registrar:
 - [ ] Navegación: no existe selector de cambio de idioma ni opción «Otro idioma»/entrada de idioma personalizado después del inicio.
 - [ ] Frontend: no mostrar mensajes de disponibilidad del tutor IA ni interfaces de texto generativo.
 - [ ] Android: repetir toda la revisión en viewport real; la automatización no sustituye la prueba auditiva ni de legibilidad.
+
+
+## 13. Estado de validación automática — 20-11-2026
+
+- [x] `npm run check` aprobado.
+- [x] `npm test` aprobado.
+- [x] `npm run test:e2e` aprobado: TTS de dos locales, resumen y continuidad de Ruta, selector de idioma, orden de contador/icono, teoría pasado/futuro, lectura sin repetición y navegación móvil.
+- [x] Render Preview desplegado y LIVE.
+- [ ] Prueba humana en Android: comprobar voces es-CL y pt-BR instaladas, y que cada fragmento use la voz propia.
+- [ ] Prueba humana en Android: revisar tamaños, espacios y orden visual en móvil real.
+- [ ] Prueba humana: completar las cuatro unidades de Ruta, provocar errores y confirmar que «Reforzar» enumera los temas/palabras correctos.
+- [ ] Prueba humana: lectura con seis preguntas únicas, reproducción, pausa, reanudación, reinicio y progreso.
