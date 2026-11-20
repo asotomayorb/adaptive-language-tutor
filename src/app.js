@@ -45,13 +45,22 @@ function updateAudioStatus(status) {
   });
 }
 
+let currentActivitySpeechSegments = [];
 function toggleAudio() {
   const enabled = speech.setEnabled(!speech.enabled);
-  if (enabled) {
-    const visibleSegments = [...document.querySelectorAll("#lesson-content [data-speak], #answer-area [data-speak], #feedback [data-speak], #summary-content [data-speak]")]
-      .filter(button => !button.closest(".hidden") && button.getClientRects().length > 0)
-      .map(button => ({ text: button.dataset.speak, locale: button.dataset.locale }));
-    speech.speakSequence(visibleSegments, { automatic: true });
+  if (!enabled) {
+    readingPassageActive = false;
+    readingPassagePaused = false;
+    updateReadingPassageControl();
+    return;
+  }
+  if (currentExercise?.passage) {
+    startPassageSpeech(0, { automatic:true, onEnd:() => {
+      const remaining = currentActivitySpeechSegments.filter(item => item.role !== "passage");
+      speech.speakSequence(remaining, { automatic:true });
+    }});
+  } else {
+    speech.speakSequence(currentActivitySpeechSegments, { automatic:true });
   }
 }
 document.getElementById("audio-toggle")?.addEventListener("click", toggleAudio);
@@ -181,10 +190,12 @@ function bindSpeakerButtons(root) {
   });
 }
 function appendSpeechButtons(root, segments) {
-  const locale = session?.config.languageLocale || session?.config.languageId;
-  const valid = (segments || []).filter(item =>
-    item && typeof item.text === "string" && item.text.trim() && item.locale?.toLowerCase() === String(locale || "").toLowerCase()
-  );
+  const targetLocale = session?.config?.languageLocale || catalog?.locale || "";
+  const valid = (segments || []).filter(item => {
+    const locale = String(item?.locale || "").toLowerCase();
+    return item && typeof item.text === "string" && item.text.trim() &&
+      (locale === String(targetLocale).toLowerCase() || locale === "es-cl" || locale === "es");
+  });
   if (!valid.length) return;
   root.insertAdjacentHTML("beforeend", valid.map(item => " " + speakerButton(item.text, item.locale)).join(""));
   bindSpeakerButtons(root);
@@ -214,25 +225,54 @@ function getExerciseSpeech(exercise) {
 }
 function getExerciseSpeechSegments(exercise) {
   const targetLocale = session?.config?.languageLocale || catalog?.locale || "";
-  const declared = Array.isArray(exercise?.speechSegments)
-    ? exercise.speechSegments.filter(item => item?.text && item?.locale)
-    : [];
-  const segments = [...declared];
-  if (exercise?.instruction && !segments.some(item => item.text === exercise.instruction)) {
-    segments.unshift({ text:exercise.instruction, locale:"es-CL" });
-  }
+  const normalizeLocale = raw => {
+    const locale = String(raw || "").trim();
+    if (!locale) return "";
+    if (locale.toLowerCase() === targetLocale.toLowerCase() ||
+        locale.split("-")[0].toLowerCase() === targetLocale.split("-")[0].toLowerCase()) return targetLocale;
+    if (locale.toLowerCase() === "es" || locale.toLowerCase().startsWith("es-")) return "es-CL";
+    return "";
+  };
+  const segments = [];
+  const add = (text, rawLocale, role) => {
+    const phrase = String(text || "").trim();
+    const locale = normalizeLocale(rawLocale);
+    if (!phrase || !locale) return;
+    if (!segments.some(item => item.text === phrase && item.locale.toLowerCase() === locale.toLowerCase())) {
+      segments.push({ text:phrase, locale, role });
+    }
+  };
+
+  // Reading is presented before its Spanish comprehension question, so its
+  // spoken sequence follows that same visual order.
+  if (exercise?.passage) add(exercise.passage, targetLocale, "passage");
+  if (exercise?.instruction) add(exercise.instruction, "es-CL", "instruction");
+
+  const declared = Array.isArray(exercise?.speechSegments) ? exercise.speechSegments : [];
+  declared.forEach(item => {
+    if (!item?.text || !item?.locale) return;
+    const locale = normalizeLocale(item.locale);
+    if (!locale) return;
+    const declaredLanguage = String(item.language || "").toLowerCase();
+    if (declaredLanguage && declaredLanguage !== locale.split("-")[0].toLowerCase()) return;
+    add(item.text, locale, item.role || item.languageRole || "declared");
+  });
+
   const spoken = getExerciseSpeech(exercise);
-  if (spoken.text && spoken.locale && !segments.some(item => item.text === spoken.text && item.locale === spoken.locale)) {
-    segments.push(spoken);
-  }
+  if (spoken.text && spoken.locale) add(spoken.text, spoken.locale, "prompt");
   const prompt = String(exercise?.prompt || "").trim();
   const promptLocale = exercise?.promptLocale ||
     (exercise?.promptLanguage === "source" || exercise?.promptLanguage === "native" ? "es-CL" :
       exercise?.promptLanguage === "target" ? targetLocale : "");
-  if (prompt && promptLocale && !segments.some(item => item.text === prompt && item.locale.toLowerCase() === promptLocale.toLowerCase())) {
-    segments.push({ text:prompt, locale:promptLocale });
+  if (prompt && promptLocale) add(prompt, promptLocale, "prompt");
+
+  if (!exercise?.passage && exercise?.type !== "reading" && exercise?.term) {
+    add(exercise.term, targetLocale, "term");
   }
-  return [...new Map(segments.map(item => [item.locale.toLowerCase() + "\\u0000" + item.text, item])).values()];
+
+  const rank = item => item.role === "passage" ? 0 :
+    item.locale.toLowerCase() === "es-cl" ? 1 : 2;
+  return segments.sort((left,right) => rank(left) - rank(right));
 }
 function autoSpeak(text, locale = catalog?.locale) {
   if (text && speech.enabled) speech.speak(text, locale, { automatic: true });
