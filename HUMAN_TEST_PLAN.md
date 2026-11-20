@@ -488,3 +488,7 @@ Para cada escenario registrar:
 - [ ] Teoría: verificar que ejemplos de presente, pasado y futuro en otros idiomas también se presentan en tabla de pronombre/ejemplo y mantienen la traducción parentética en una segunda línea.
 
 - [ ] Teoría: revisar la tabla de futuro simple irregular y verificar las siete conjugaciones (dizer, fazer, trazer, pôr, ter, vir y ser) en singular y plural.
+
+- [ ] Ruta: comprobar que las preguntas del capítulo 2 avanzan de frases cortas a estructuras progresivamente más complejas.
+- [ ] Teoría PT-BR: revisar las dos tablas de irregulares del pasado y la tabla de siete verbos irregulares del futuro; verificar formas de todas las personas.
+- [ ] TTS: al salir de una pantalla durante una secuencia o lectura, confirmar que no se reproduce ni actualiza contenido antiguo.
