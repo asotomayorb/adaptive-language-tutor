@@ -679,3 +679,15 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - Nombre visible «Entrenamiento» y consigna final de Ruta convertida en traducción de frase concreta con variantes aceptadas explícitas.
 
 **Validación pendiente:** ejecutar CI y Browser E2E sobre el commit resultante; comprobar TTS real y scroll en Android. No declarar validación humana completa.
+
+
+## Validación — Entrenamiento, TTS y teoría (20-11-2026)
+
+- [x] `npm run check` y `npm test` aprobados en GitHub Actions run [#44673507639](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44673507639), commit `552a556ab46292e4a206080438d0a4a0ded2a90d`.
+- [x] Browser E2E aprobado en run [#44673507580](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44673507580), commit `552a556ab46292e4a206080438d0a4a0ded2a90d`. Incluye teoría de pasado, lectura TTS con pausa/continuación, distinción lectura/práctica general, última pregunta de traducción y flujo de hito final de Ruta.
+- [x] Render Preview desplegado: `dep-dbvsjg59fdbs73bthtvg`, estado `live`, commit `f4db84df3d0b0314eb49955d5b3b0182c0b4773c`. El commit posterior `552a556` solo actualiza pruebas E2E; el código de aplicación y contenido desplegado ya coincide con la rama.
+- [ ] Prueba auditiva real del TTS y verificación de pausa/continuación en Android.
+- [ ] Revisión manual del scroll y legibilidad de los pasajes A1/A2 en un teléfono real.
+- [ ] Validación humana final de las variantes aceptadas de traducción en Ruta y Entrenamiento.
+
+La rama permanece `feature/mobile-bottom-navigation`; no se hizo merge a `main`.
