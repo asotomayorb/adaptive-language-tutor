@@ -175,14 +175,14 @@ try {
   assert.equal(await page.locator("#theory-description .theory-note").count(), 2, "past rules and irregularities should be grouped in separate note blocks");
   assert.match(await page.locator("#theory-description").innerText(), /Ayer/i, "past tense should include an applied example");
   assert.ok(await page.locator("#theory-description .theory-pronoun-table tbody tr").count() >= 6, "Portuguese past must conjugate for each subject pronoun");
-  assert.deepEqual(await page.locator("#theory-description .theory-pronoun-table thead th").allInnerTexts(), ["Pronombre","Forma verbal"], "past conjugation table should not repeat Spanish example translations in a third column");
+  assert.deepEqual(await page.locator("#theory-description .theory-pronoun-table thead th").evaluateAll(nodes => nodes.map(node => node.textContent.trim())), ["Pronombre","Forma verbal"], "past conjugation table should not repeat Spanish example translations in a third column");
   assert.match(await page.locator("#theory-description").innerText(), /fui|tive|fiz|disse/i, "Portuguese past must explain irregular verbs");
   await page.locator("#theory-next").click();
   assert.equal(await page.locator("#theory-title").innerText(), "Futuro");
   assert.match(await page.locator("#theory-description").innerText(), /Mañana/i, "future tense should include an applied example");
   assert.ok(await page.locator("#theory-description .theory-pronoun-table tbody tr").count() >= 6, "Portuguese future must conjugate for each subject pronoun");
   assert.match(await page.locator("#theory-description").innerText(), /vou falar|vai falar|vão falar/i, "Portuguese future must show the common ir + infinitive construction");
-  assert.deepEqual(await page.locator("#theory-description .theory-pronoun-table").first().locator("thead th").allInnerTexts(), ["Pronombre","Forma verbal"], "future conjugation table should only show pronoun and verb form");
+  assert.deepEqual(await page.locator("#theory-description .theory-pronoun-table").first().locator("thead th").evaluateAll(nodes => nodes.map(node => node.textContent.trim())), ["Pronombre","Forma verbal"], "future conjugation table should only show pronoun and verb form");
   await page.locator("#theory-close").click();
   await page.locator('[data-theory="vocabulary"]').click();
   const vocabularyRows = page.locator("#theory-list-items [data-theory-topic]");
