@@ -239,6 +239,8 @@ try {
   assert.equal(await page.locator("#lesson-content h3").innerText(), "Bom dia", "target-language phrase should be separate from the source-language instruction");
   assert.equal(await page.locator("#lesson-content .target-word-link").count(), 0, "exercise words should no longer open translation popups");
   assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "Bom dia" && item.lang === "pt-BR")), "audio should speak the complete target-language phrase");
+  const initialSpeechLocales = await page.locator("#lesson-content [data-speak]").evaluateAll(nodes => nodes.map(node => node.dataset.locale));
+  assert.ok(initialSpeechLocales.includes("es-CL") && initialSpeechLocales.includes("pt-BR"), "manual audio controls must retain the explicit source and target locales");
   for (let turn = 0; turn < 3; turn += 1) {
     assert.equal(await page.locator("#answer-area [data-choice]").count(), 3, "first three questions should have three choices");
     const questionBefore = await page.locator("#lesson-content h3").innerText();
@@ -324,11 +326,13 @@ try {
   assert.equal(await page.locator("#summary-content .summary-accuracy strong").innerText(),"100%","all ten reading questions should be scored without inserting general practice");
   // The completed reading session is persisted as a full reading-only session.
   // Incomplete Exercises sessions are discarded; no partial session is persisted.
+  await page.setViewportSize({width:390,height:844});
   await page.locator('[data-screen="stats"]').click();
   assert.equal(await page.locator("#statistics-content .stats-language-table").isVisible(), true, "statistics should show the cross-language metrics table");
   assert.equal(await page.locator("#statistics-content .stats-horizontal-list").isVisible(), true, "global statistics should use full-width horizontal bars on mobile");
   const globalRows = page.locator("#statistics-content .stats-horizontal-row");
   assert.ok(await globalRows.count() >= 1, "each language should have its own readable row");
+  assert.ok(await page.locator("#statistics-content .stats-horizontal-track").first().evaluate(node => node.getBoundingClientRect().width >= 250), "horizontal accuracy bars should use the available width on a portrait phone");
   assert.ok(await page.locator("#statistics-content .stats-horizontal-track span").evaluateAll(nodes => nodes.every(node => Number.parseFloat(node.style.width) >= 0 && Number.parseFloat(node.style.width) <= 100)), "horizontal bars should encode percentages without overflow");
   assert.equal(await page.locator("#stats-view-select option").first().innerText(), "🌐 Global");
   await page.locator("#stats-view-select").selectOption("pt-BR");
