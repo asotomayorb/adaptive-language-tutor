@@ -31,6 +31,13 @@ export function createSpeechController({
   function getVoices() {
     try { return synthesis?.getVoices?.() || []; } catch { return []; }
   }
+
+  function cancelActivePlayback() {
+    if (!synthesis) return;
+    if (synthesis.speaking || synthesis.pending || synthesis.paused) {
+      try { synthesis.cancel?.(); } catch {}
+    }
+  }
   function flushPendingRequest(forceSystemLocale = false) {
     if (!pendingRequest) return;
     const voices = getVoices();
@@ -103,7 +110,8 @@ export function createSpeechController({
     const guardedEnd = () => { if (generation === playbackGeneration) onEnd?.(); };
     const guardedBoundary = event => { if (generation === playbackGeneration) onBoundary?.(event); };
     try {
-      synthesis.cancel?.();
+      cancelActivePlayback();
+      synthesis.resume?.();
       synthesis.speak(createUtterance(phrase, locale, guardedEnd, guardedBoundary));
       onStatus({ enabled, supported, speaking:true, paused:false, locale });
       return { spoken: true };
@@ -127,7 +135,8 @@ export function createSpeechController({
     }
     pendingRequest = null;
     try {
-      synthesis.cancel?.();
+      cancelActivePlayback();
+      synthesis.resume?.();
       let index = 0;
       const speakNext = () => {
         if (generation !== playbackGeneration || (!enabled && automatic)) return;
