@@ -612,3 +612,13 @@ Esta sección establece las decisiones vigentes y **prevalece sobre descripcione
 - [x] Documentar el criterio de esquemas visuales por pantalla/sección/subsección y alternativas A/B sin tablas comparativas.
 
 Este registro define los criterios de aceptación de la próxima iteración; los puntos marcados pendientes no deben describirse como implementados hasta que el código y las pruebas lo confirmen.
+
+
+## 18. Implementación — entrenamiento y lectura (20-11-2026)
+
+- La sección visible se denomina **Entrenamiento**; los identificadores internos de navegación pueden conservar el nombre histórico `exercises` para evitar romper enlaces y estado.
+- La modalidad Comprensión lectora presenta controles TTS propios del pasaje: reproducir, pausar y continuar. La voz usa el locale del idioma objetivo. Si Web Speech no está disponible, el control queda deshabilitado y la actividad escrita sigue disponible.
+- En una sesión de 10 preguntas, primero se recorren las preguntas de comprensión disponibles (en el catálogo piloto actual: seis, tres por pasaje) y luego se continúa con práctica general del idioma. La interfaz rotula cada pregunta y el encabezado de sesión para distinguir ambos tipos.
+- La progresión del piloto combina nivel del pasaje (A1/A2), profundidad temática y extensión. Los textos A1 son breves; A2 incluye más contexto, conectores y detalles y puede requerir scroll vertical. El nivel no se determina solo por cantidad de palabras.
+- El hito final de Ruta ahora solicita traducir una frase específica por unidad; se conserva una lista explícita y pequeña de variantes equivalentes aceptadas.
+- En Teoría, las reglas y excepciones de pasado/futuro se muestran como elementos independientes, uno por línea, antes de los ejemplos.
