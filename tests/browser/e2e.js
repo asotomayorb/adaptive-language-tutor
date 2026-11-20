@@ -514,6 +514,8 @@ try {
   await routePage.reload({ waitUntil: "networkidle" });
   await routePage.locator("#welcome-start").click();
   await routePage.locator("#route-start").click();
+  assert.equal((await routePage.locator("#turn-count").innerText()).trim(),"7 / 7","the Route integration must be included in the activity counter");
+  assert.match(await routePage.locator("#lesson-content .activity-phase").innerText(),/CAPÍTULO 2 · ACTIVIDAD INTEGRADORA/);
   assert.equal(await routePage.locator("#session-close").innerText(),"←","active sessions should use the shared top-left back arrow");
   assert.match(await routePage.locator("#lesson-content h3").innerText(), /Traduce al portugués esta frase concreta: «Mañana estudio en casa»/i, "the route milestone should request one specific translation");
   await routePage.locator("#route-integration-answer").fill("ola");
