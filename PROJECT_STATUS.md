@@ -705,3 +705,6 @@ Implementación en curso en `feature/mobile-bottom-navigation`:
 - [x] Browser E2E actualizado para cubrir lectura de 10 preguntas sin mezcla, barras en viewport 390×844, locales de audio y desbloqueo de la segunda unidad tras completar correctamente la primera.
 
 **Pendiente de validación:** CI y Browser E2E del commit actual. Sólo después de su aprobación se actualizará Render Preview. La prueba auditiva real en Android y la comprobación visual en el teléfono siguen siendo validaciones humanas pendientes. No se ha hecho merge a `main`.
+
+
+**Despliegue de la iteración móvil:** Render Preview confirmado `live` en `dep-dbvt4mqjnfac738bvpqg`, commit `a94588dc58f940027b7d17742e7d6c4908652e57`. Render reportó build exitoso y proceso Node iniciado. No se pudo confirmar el resultado de GitHub Actions desde el estado de checks consultado; no declarar CI/E2E aprobados hasta revisar sus runs. Validación Android manual sigue pendiente.
