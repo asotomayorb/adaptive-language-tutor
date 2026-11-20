@@ -210,3 +210,24 @@ test("speech retries with the explicit system locale if Android never emits voic
   assert.equal(mock.spoken[0].voice,null);
   controller.stop();
 });
+
+
+test("stopping a serialized speech sequence prevents stale fragments from playing", () => {
+  const mock = speechMock([
+    {name:"Portuguese",lang:"pt-BR"},
+    {name:"English",lang:"en-US"}
+  ]);
+  const controller = createSpeechController({
+    synthesis:mock.api,
+    Utterance:MockUtterance,
+    storage:{getItem:()=>null,setItem:()=>{}}
+  });
+  controller.speakSequence([
+    {text:"Bom dia",locale:"pt-BR"},
+    {text:"Good morning",locale:"en-US"}
+  ]);
+  assert.equal(mock.spoken.length,1);
+  controller.stop();
+  mock.spoken[0].onend?.();
+  assert.equal(mock.spoken.length,1,"navigation stop must invalidate the pending second fragment");
+});
