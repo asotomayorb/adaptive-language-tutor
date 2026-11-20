@@ -1345,9 +1345,10 @@ function renderRouteAssessmentFailed() {
   pendingFeedback = null;
   saveRouteDraft();
   $("lesson-phase").textContent = "REFUERZO NECESARIO";
-  $("turn-count").textContent = session.correct + " / " + routeQuestionCount + " correctas";
-  $("progress-bar").style.width = "100%";
-  $("lesson-content").innerHTML = getExerciseIllustration({topic:activeRouteUnit?.topic,prompt:activeRouteUnit?.title}) + '<div class="feedback-note"><span>Actividad integradora pendiente</span><p>Completa la actividad integradora para registrar el puntaje de esta unidad.</p></div>';
+  $("turn-count").textContent = routeQuestionCount + " / " + (routeQuestionCount + 1);
+  $("progress-bar").style.width = (routeQuestionCount / (routeQuestionCount + 1) * 100) + "%";
+  $("progress-bar").parentElement.setAttribute("aria-valuenow",String(Math.round(routeQuestionCount / (routeQuestionCount + 1) * 100)));
+  $("lesson-content").innerHTML = getExerciseIllustration({topic:activeRouteUnit?.topic,prompt:activeRouteUnit?.title}) + '<div class="activity-phase">REFUERZO NECESARIO</div><div class="feedback-note"><span>Actividad integradora pendiente</span><p>Completa la actividad integradora para registrar el puntaje de esta unidad.</p></div>';
   $("answer-area").innerHTML = '<button id="route-retry" class="primary" type="button">Repetir la unidad</button>';
   $("route-retry").addEventListener("click", () => {
     const useAI = !catalog.exercises.length;
