@@ -556,3 +556,18 @@
 
 /* Remove the legacy vertical gap so the question counter sits immediately under X/audio */
 .lesson-panel{margin-top:0!important;padding-top:0!important}
+
+/* Unified top-left back control for every nested screen */
+.back-control{display:grid;place-items:center;width:42px;height:42px;min-width:42px;border-radius:12px;font-size:25px;line-height:1}
+.subscreen-header{display:flex;align-items:center;gap:12px;margin:0 0 18px}
+.subscreen-header h2{margin:0;font-size:20px;font-weight:750}
+.theory-slide-header{display:grid;grid-template-columns:42px 1fr 42px;align-items:center}
+.theory-slide-header .theory-header-spacer{width:42px;height:42px}
+.theory-rule-parent{font-weight:650;color:#263e59}
+.theory-rule-children{display:grid;gap:6px;margin:8px 0 2px;padding-left:22px;list-style:disc;color:#52657c}
+.theory-rule-children li{padding-left:3px;line-height:1.55}
+.route-result{display:grid;justify-items:center;gap:0;margin:6px 0 20px;padding:16px 12px;border:1px solid #e6ebf1;border-radius:16px;background:#fbfcfe}
+.route-result .summary-route-stars{margin:0 0 4px}
+.route-result-feedback{margin:0;font-size:16px;font-weight:750;color:#294b70}
+.route-reinforcement{margin-top:0}
+@media(max-width:620px){.back-control{width:40px;height:40px;min-width:40px}.subscreen-header{margin-bottom:14px}.theory-rule-children{gap:5px}.route-result{padding:14px 10px}}
