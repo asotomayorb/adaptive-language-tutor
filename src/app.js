@@ -269,7 +269,9 @@ function getExerciseSpeechSegments(exercise) {
       exercise?.promptLanguage === "target" ? targetLocale : "");
   if (prompt && promptLocale) add(prompt, promptLocale, "prompt");
 
-  if (!exercise?.passage && exercise?.type !== "reading" && exercise?.term) {
+  const promptContainsTerm = prompt && String(exercise?.term || "").trim() &&
+    prompt.toLocaleLowerCase().includes(String(exercise.term).trim().toLocaleLowerCase());
+  if (!exercise?.passage && exercise?.type !== "reading" && exercise?.term && !promptContainsTerm) {
     add(exercise.term, targetLocale, "term");
   }
 
