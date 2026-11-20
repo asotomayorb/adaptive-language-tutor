@@ -289,7 +289,7 @@ function renderRouteDashboard() {
   const selectedCatalog = getSelectedCatalog(), units = getRouteUnitsForCatalog(selectedCatalog);
   const state = getRouteProgressForLanguage(selectedCatalog?.id);
   routeDraft = getRouteDraftForLanguage(selectedCatalog?.id);
-  if (routeDraft?.unitId && units.some(unit => unit.id === routeDraft.unitId)) selectedRouteUnitId = routeDraft.unitId;
+  if (!routeSelectionTouched && routeDraft?.unitId && units.some(unit => unit.id === routeDraft.unitId)) selectedRouteUnitId = routeDraft.unitId;
   else if (!routeSelectionTouched || !units.some(unit => unit.id === selectedRouteUnitId) || !isRouteUnitUnlocked(units,units.findIndex(unit => unit.id === selectedRouteUnitId),state)) {
     const next = units.find((unit,index) => !state.completedUnits?.[unit.id] && isRouteUnitUnlocked(units,index,state))
       || units.find((unit,index) => state.completedUnits?.[unit.id] && units[index+1] && !isRouteUnitUnlocked(units,index+1,state))
