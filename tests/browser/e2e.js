@@ -587,6 +587,13 @@ try {
   assert.equal(await thresholdPage.locator("#summary-content .summary-route-stars").innerText(),"★★★☆☆");
   assert.equal(await thresholdPage.locator('[data-route-unit="travel"]').isDisabled(),false,"three earned stars should unlock the next unit at the threshold");
   assert.match(await thresholdPage.locator("#route-summary-next").innerText(),/Continuar: Viajes y orientación/);
+  await thresholdPage.reload({waitUntil:"networkidle"});
+  await thresholdPage.locator("#welcome-start").click();
+  await thresholdPage.locator('[data-screen="route"]').click();
+  assert.equal(await thresholdPage.locator('#route-unit-list [data-route-unit="travel"]').isDisabled(),false,"the next unit unlock must persist after reload");
+  await thresholdPage.locator('#route-unit-list [data-route-unit="travel"]').click();
+  await thresholdPage.locator("#route-start").click();
+  assert.equal(await thresholdPage.locator("#lesson-panel").getAttribute("data-route-unit"),"travel","the unlocked next unit should start after reloading the route map");
   await thresholdContext.close();
 
   const lastRouteContext = await browser.newContext();
