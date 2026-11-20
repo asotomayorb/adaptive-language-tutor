@@ -666,4 +666,4 @@ El merge y la reactivación de Replit se mantienen posteriores a esas validacion
 - Estadísticas: comparación global con grupo de barras compacto y centrado; los gráficos global y por idioma usan viewBox fijo y una zona de altura reservada para evitar saltos al cambiar la vista.
 - Comprensión lectora: nuevo modo independiente dentro de Ejercicios, con seis preguntas piloto A1/A2 en portugués y seis en inglés, dos textos por idioma, comprensión literal, inferencia y vocabulario contextual. Las preguntas son de selección múltiple y el texto permanece visible entre preguntas.
 - Las funcionalidades y los datos de lectura se preparan para portugués e inglés; la validación humana inicial sigue centrada en portugués.
-- Pruebas E2E añadidas para estructura de conjugaciones, vocabulario temporal/números, modo lectura y dimensiones del gráfico. Pendiente ejecución automatizada; no marcar como validado hasta correrlas.
+- Pruebas automatizadas: `npm run check`, `npm test` y `npm run test:e2e` completados correctamente en GitHub Actions para el commit `8fc76fa4f9594233e0b5417a3b8144d4568b0624`. La validación humana en Android sigue pendiente.
