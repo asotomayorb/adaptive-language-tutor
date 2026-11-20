@@ -377,3 +377,14 @@ Para cada escenario registrar:
 - [ ] Comprensión lectora: probar texto A1, responder las tres preguntas y comprobar que el texto sigue visible.
 - [ ] Comprensión lectora: probar texto A2, inferencia y vocabulario contextual.
 - [ ] Repetir las pruebas de teoría y estadísticas en portugués; después realizar regresión en inglés.
+
+
+## 9. Entrenamiento y comprensión lectora — actualización 20-11-2026
+
+- [ ] La sección y su navegación muestran «Entrenamiento» (sin cambiar el comportamiento de Ruta, Teoría o Estadísticas).
+- [ ] El TTS del pasaje reproduce en el locale objetivo, permite pausar y continuar desde el punto pausado.
+- [ ] Si TTS no está soportado, el botón se deshabilita y la lectura/ejercicio sigue siendo utilizable.
+- [ ] En una sesión de 10 preguntas se distinguen las preguntas de comprensión y las de práctica general; después de las seis preguntas lectoras del catálogo piloto, las siguientes no muestran el pasaje ni se presentan como dependientes de él.
+- [ ] A1 usa un texto breve; A2 presenta mayor profundidad y extensión razonable. Revisar scroll, legibilidad y que los controles no queden ocultos en Android.
+- [ ] La última actividad de cada unidad de Ruta pide traducir una frase concreta; probar la respuesta canónica y cada variante declarada como aceptada.
+- [ ] Pasado/futuro: las reglas y excepciones aparecen en líneas independientes, legibles en móvil, y los ejemplos siguen debajo de las tablas/notas.
