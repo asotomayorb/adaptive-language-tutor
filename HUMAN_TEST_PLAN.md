@@ -486,3 +486,5 @@ Para cada escenario registrar:
 - [ ] Teoría: revisar tablas de terminaciones -AR/-ER/-IR, excepciones conjugadas y ejemplos con traducción entre paréntesis; comprobar scroll horizontal local sin desbordamiento de pantalla.
 
 - [ ] Teoría: verificar que ejemplos de presente, pasado y futuro en otros idiomas también se presentan en tabla de pronombre/ejemplo y mantienen la traducción parentética en una segunda línea.
+
+- [ ] Teoría: revisar la tabla de futuro simple irregular y verificar las siete conjugaciones (dizer, fazer, trazer, pôr, ter, vir y ser) en singular y plural.
