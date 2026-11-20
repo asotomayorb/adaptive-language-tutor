@@ -2192,6 +2192,9 @@ function renderTenseLesson(languageName, topicIndex) {
     const simpleFuture = !isPast && lesson.futureSimpleForms
       ? '<section class="theory-table-block"><h3>Futuro simple (más formal)</h3><div class="theory-table-scroll"><table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>Forma verbal</th></tr></thead><tbody>' + lesson.futureSimpleForms.map(([person,form]) => '<tr><td>' + escapeHTML(person) + '</td><td><strong class="theory-target-word">' + escapeHTML(form) + '</strong> ' + speakerButton(form,locale) + '</td></tr>').join("") + '</tbody></table></div></section>'
       : "";
+    const futureIrregularTable = !isPast ? '<section class="theory-table-block"><h3>Excepciones del futuro simple · conjugación</h3><div class="theory-table-scroll"><table class="theory-pronoun-table"><thead><tr><th>Pronombre</th><th>dizer</th><th>fazer</th><th>trazer</th><th>pôr</th><th>ter</th><th>vir</th><th>ser</th></tr></thead><tbody>' +
+      [['eu','direi','farei','trarei','porei','terei','virei','serei'],['tu','dirás','farás','trarás','porás','terás','virás','serás'],['você / ele / ela','dirá','fará','trará','porá','terá','virá','será'],['nós','diremos','faremos','traremos','poremos','teremos','viremos','seremos'],['a gente','dirá','fará','trará','porá','terá','virá','será'],['vocês / eles / elas','dirão','farão','trarão','porão','terão','virão','serão']].map(row => '<tr>' + row.map((cell,index) => '<td>' + (index ? '<strong class="theory-target-word">' + cell + '</strong> ' + speakerButton(cell,locale) : '<strong>' + cell + '</strong>') + '</td>').join('') + '</tr>').join('') +
+      '</tbody></table></div></section>' : '';
     const rule = isPast ? lesson.pastRule : lesson.futureRule;
     const exceptionText = String(lesson.exceptions || "");
     const pastExceptionEnd = exceptionText.search(/\bEn futuro simple\b/i);
@@ -2202,8 +2205,8 @@ function renderTenseLesson(languageName, topicIndex) {
       : "En portugués brasileño, el futuro próximo se forma con ir en presente + infinitivo. El futuro simple es correcto, pero tiene un uso más formal.";
     return '<p class="theory-slide-text">' + escapeHTML(intro) + '</p>' + regularPastTable +
       '<section class="theory-table-block"><h3>Conjugación de ejemplo: ' + (isPast ? 'falar en pasado' : 'ir + infinitivo') + '</h3><div class="theory-table-scroll"><table class="theory-pronoun-table">' + header + '<tbody>' + rows + '</tbody></table></div></section>' +
-      pastIrregularTable + simpleFuture +
-      renderGrammarRuleSections(rule,isPast ? "" : futureExceptions) +
+      pastIrregularTable + simpleFuture + futureIrregularTable +
+      renderGrammarRuleSections(rule,"") +
       '<section class="theory-example"><span>Ejemplos aplicados</span><div class="theory-table-scroll"><table class="theory-example-table"><thead><tr><th>Pronombre</th><th>Ejemplo aplicado</th></tr></thead><tbody>' + examples + '</tbody></table></div></section>';
   }
   const example = isPast ? lesson.past : lesson.future;
