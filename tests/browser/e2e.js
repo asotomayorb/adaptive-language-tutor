@@ -502,8 +502,15 @@ try {
   await routePage.locator("#route-integration-answer").fill("Amanhã estudo em casa.");
   await routePage.locator("#route-integration-submit").click();
   await routePage.locator("#summary-panel").waitFor({state:"visible"});
-  assert.equal(await routePage.locator("#summary-content .summary-accuracy strong").innerText(),"100%","Route score must count only the six scored unit questions, not its separate integration task");
+  assert.equal(await routePage.locator("#summary-content .summary-route-stars").innerText(),"★★★★★","Route summary should show stars instead of an achievement percentage");
+  assert.equal(await routePage.locator("#summary-content h3").innerText(),"Reforzar:","Route summary should have one reinforcement subtitle only");
+  assert.equal(await routePage.locator("#summary-content h3").count(),1,"Route summary must not split errors, vocabulary and topics into separate sections");
+  assert.equal(await routePage.locator("#route-summary-next").isVisible(),true,"Route summary must provide a continuation action");
+  assert.match(await routePage.locator("#route-summary-next").innerText(),/Continuar: Viajes y orientación/,"the next unlocked unit should be named in the continuation action");
   assert.equal(await routePage.locator('[data-route-unit="travel"]').isDisabled(),false,"a perfect completed first unit must unlock the next unit");
+  await routePage.locator("#route-summary-next").click();
+  assert.equal(await routePage.locator("#session-view").isVisible(),true,"continuation should start the next unit instead of stopping at the summary");
+  assert.match(await routePage.locator("#session-mode-label").innerText(),/Ruta/);
   assert.deepEqual(routeErrors, [], "Portuguese Route integration should not report browser errors");
 } finally {
   if (browser) await browser.close();
