@@ -1289,7 +1289,7 @@ function renderRouteIntegration() {
   pendingFeedback = null;
   routeIntegrationHintLevel = Number(routeIntegrationHintLevel || 0);
   currentExercise = {
-    id:"route-integration-" + (activeRouteUnit?.id || "foundations"), prompt,
+    id:"route-integration-" + (activeRouteUnit?.id || "foundations"), prompt, promptLocale:"es-CL",
     target:scenario.target, allowTypo:true, acceptedAnswers:scenario.accepted,
     hints:scenario.hints,
     explanation:"Esta actividad integra el vocabulario y las estructuras de la unidad " + (activeRouteUnit?.title || "Fundamentos") + "."
@@ -1300,8 +1300,11 @@ function renderRouteIntegration() {
   $("progress-bar").parentElement.setAttribute("aria-valuenow","100");
   $("hint-btn").textContent = routeIntegrationHintLevel >= 1 ? "Ver respuesta" : "Pista";
   $("hint-btn").hidden = routeIntegrationHintLevel >= 2;
-  $("lesson-content").innerHTML = getExerciseIllustration({ topic:activeRouteUnit?.topic, prompt }) + '<div class="activity-phase">CAPÍTULO 2 · ACTIVIDAD INTEGRADORA</div><p class="eyebrow">UNIDAD ' + (activeRouteUnit?.number || "01") + ' · ' + escapeHTML(activeRouteUnit?.title || "INICIO DEL VIAJE").toUpperCase() + '</p><h3>' + escapeHTML(prompt) + '</h3><p>Combina lo practicado en los capítulos anteriores.</p>';
+  currentActivitySpeechSegments = getExerciseSpeechSegments(currentExercise);
+  const integrationAudio = currentActivitySpeechSegments.map(item => speakerButton(item.text,item.locale)).join(" ");
+  $("lesson-content").innerHTML = getExerciseIllustration({ topic:activeRouteUnit?.topic, prompt }) + '<div class="activity-phase">CAPÍTULO 2 · ACTIVIDAD INTEGRADORA</div><p class="eyebrow">UNIDAD ' + (activeRouteUnit?.number || "01") + ' · ' + escapeHTML(activeRouteUnit?.title || "INICIO DEL VIAJE").toUpperCase() + '</p><h3>' + escapeHTML(prompt) + '</h3>' + integrationAudio + '<p>Combina lo practicado en los capítulos anteriores.</p>';
   bindSpeakerButtons($("lesson-content"));
+  speech.speakSequence(currentActivitySpeechSegments,{automatic:true});
   $("answer-area").innerHTML = '<textarea id="route-integration-answer" class="answer-input" rows="3" placeholder="Escribe tu respuesta completa…"></textarea><button id="route-integration-submit" class="primary" type="button">Comprobar actividad</button>';
   $("route-integration-submit").addEventListener("click", () => {
     const answer = $("route-integration-answer").value.trim();
