@@ -19,7 +19,7 @@ test("every exercise has the fields required by the learning interface", () => {
         assert.ok(item[field] !== undefined && item[field] !== "", catalog.id + " / " + item.id + " missing " + field);
       }
       assert.ok(["A1", "A2"].includes(item.level), item.id);
-      assert.ok(["daily", "travel", "food", "work"].includes(item.topic), item.id);
+      assert.ok(["daily", "travel", "food", "work", "reading"].includes(item.topic), item.id);
       assert.ok(Array.isArray(item.options) && item.options.length >= 3, item.id);
       assert.ok(item.options.includes(item.target), item.id + " target must be selectable");
     }
