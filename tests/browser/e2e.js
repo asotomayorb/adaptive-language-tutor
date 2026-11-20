@@ -322,7 +322,7 @@ try {
   assert.match(await page.locator("#lesson-content .reading-passage").innerText(),/João Pessoa/);
   assert.equal(await page.locator("#lesson-content #reading-tts-toggle").isVisible(),true,"the passage should expose its own TTS control");
   assert.equal(await page.locator("#reading-tts-toggle").innerText(),"Ⅱ","reading comprehension should start the passage automatically");
-  await page.waitForFunction(() => window.__spoken.some(item => item.text.includes("Ana mora em João Pessoa") && item.lang === "pt-BR"));
+  assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text.includes("Ana mora em João Pessoa") && item.lang === "pt-BR")),"the reading passage should automatically use the Portuguese voice");
   await page.locator("#reading-tts-toggle").click();
   assert.equal(await page.locator("#reading-tts-toggle").innerText(),"▶","passage TTS should pause when requested");
   assert.equal(await page.locator("#reading-tts-toggle").getAttribute("aria-label"),"Reproducir lectura");
