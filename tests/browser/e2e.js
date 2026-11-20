@@ -59,7 +59,7 @@ try {
   await page.addInitScript(() => {
     window.__spoken = [];
     const synth = {
-      getVoices: () => [{ name: "Brazilian Portuguese", lang: "pt-BR" }, { name: "English", lang: "en-US" }],
+      getVoices: () => [{ name:"Brazilian Portuguese",lang:"pt-BR" },{ name:"English",lang:"en-US" },{ name:"Spanish",lang:"es-CL" }],
       speak: utterance => { window.__spoken.push({ text: utterance.text, lang: utterance.lang, voice: utterance.voice?.name }); synth.speaking = true; },
       cancel: () => { synth.speaking = false; },
       pause: () => { synth.paused = true; },
@@ -378,7 +378,7 @@ try {
   await aiContext.addInitScript(() => {
     window.__spoken = [];
     const synth = {
-      getVoices: () => [{ name: "Brazilian Portuguese", lang: "pt-BR" }, { name: "Spanish", lang: "es-CL" }],
+      getVoices: () => [{ name:"Brazilian Portuguese",lang:"pt-BR" },{ name:"Spanish",lang:"es-CL" },{ name:"French",lang:"fr-FR" }],
       speak: utterance => window.__spoken.push({ text: utterance.text, lang: utterance.lang, voice: utterance.voice?.name }),
       cancel: () => {}
     };
