@@ -61,7 +61,11 @@ try {
     const synth = {
       getVoices: () => [{ name: "Brazilian Portuguese", lang: "pt-BR" }, { name: "English", lang: "en-US" }],
       speak: utterance => window.__spoken.push({ text: utterance.text, lang: utterance.lang, voice: utterance.voice?.name }),
-      cancel: () => {}
+      cancel: () => {},
+      pause: () => { synth.paused = true; },
+      resume: () => { synth.paused = false; },
+      paused: false,
+      speaking: false
     };
     Object.defineProperty(window, "speechSynthesis", { configurable: true, value: synth });
     window.SpeechSynthesisUtterance = class {
@@ -283,6 +287,15 @@ try {
   assert.equal(await page.locator("#session-mode-label").innerText(),"Comprensión lectora");
   assert.equal(await page.locator("#lesson-content .reading-passage").isVisible(),true,"reading mode should show a passage before its question");
   assert.match(await page.locator("#lesson-content .reading-passage").innerText(),/João Pessoa/);
+  assert.equal(await page.locator("#lesson-content #reading-tts-toggle").isVisible(),true,"the passage should expose its own TTS control");
+  await page.locator("#reading-tts-toggle").click();
+  assert.equal(await page.locator("#reading-tts-toggle").innerText(),"Pausar lectura","passage TTS should expose pause while speaking");
+  await page.locator("#reading-tts-toggle").click();
+  assert.equal(await page.locator("#reading-tts-toggle").innerText(),"Continuar lectura","passage TTS should expose resume while paused");
+  await page.locator("#reading-tts-toggle").click();
+  assert.equal(await page.locator("#reading-tts-toggle").innerText(),"Pausar lectura","passage TTS should resume without restarting");
+  assert.equal(await page.locator("#lesson-phase").innerText(),"COMPRENSIÓN DEL TEXTO");
+  assert.equal(await page.locator("#lesson-content .reading-question-type").innerText(),"Comprensión del texto");
   assert.equal(await page.locator("#answer-area [data-choice]").count(),3,"reading questions should always use objective multiple-choice answers");
   assert.equal(await page.locator("#answer-area [data-speak]").count(),0,"source-language reading options should not show target-language audio controls");
   await page.locator("#answer-area [data-choice]").first().click();
