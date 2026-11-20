@@ -38,7 +38,8 @@ export function createSpeechController({
     if (voice) onStatus({ enabled, supported });
     if (voice) utterance.voice = voice;
     else if (locale) onStatus({ enabled, supported, fallback: true, locale });
-    utterance.onerror = () => onStatus({ enabled, supported, error: true, locale });
+    utterance.onerror = () => onStatus({ enabled, supported, error: true, locale, speaking:false, paused:false });
+    utterance.onend = () => onStatus({ enabled, supported, speaking:false, paused:false });
     return utterance;
   }
 
@@ -48,6 +49,7 @@ export function createSpeechController({
     try {
       synthesis.cancel?.();
       synthesis.speak(createUtterance(phrase, locale));
+      onStatus({ enabled, supported, speaking:true, paused:false, locale });
       return { spoken: true };
     } catch (error) {
       onStatus({ enabled, supported, error: true, locale });
@@ -62,6 +64,7 @@ export function createSpeechController({
     try {
       synthesis.cancel?.();
       valid.forEach(item => synthesis.speak(createUtterance(item.text, item.locale)));
+      onStatus({ enabled, supported, speaking:true, paused:false });
       return { spoken: true, count: valid.length };
     } catch (error) {
       onStatus({ enabled, supported, error: true });
@@ -69,7 +72,17 @@ export function createSpeechController({
     }
   }
 
-  function stop() { try { synthesis?.cancel?.(); } catch {} }
+  function pause() {
+    if (!supported || typeof synthesis.pause !== "function") return false;
+    try { synthesis.pause(); onStatus({ enabled, supported, speaking:true, paused:true }); return true; } catch { return false; }
+  }
+
+  function resume() {
+    if (!supported || typeof synthesis.resume !== "function") return false;
+    try { synthesis.resume(); onStatus({ enabled, supported, speaking:true, paused:false }); return true; } catch { return false; }
+  }
+
+  function stop() { try { synthesis?.cancel?.(); } catch {} onStatus({ enabled, supported, speaking:false, paused:false }); }
 
   onStatus({ enabled, supported });
   return {
@@ -78,6 +91,10 @@ export function createSpeechController({
     setEnabled,
     speak,
     speakSequence,
+    pause,
+    resume,
+    get paused() { return Boolean(synthesis?.paused); },
+    get speaking() { return Boolean(synthesis?.speaking); },
     stop,
     findVoice: locale => { try { return findVoiceForLocale(synthesis?.getVoices?.() || [], locale); } catch { return null; } }
   };
