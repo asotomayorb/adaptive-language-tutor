@@ -1282,7 +1282,7 @@ function chooseExercise() {
   if (routeMode && getRoutePhase(session.turn,routeQuestionCount).id === "application") {
     const difficulty = exercise => {
       const level = exercise.level === "A1" ? 0 : exercise.level === "A2" ? 1 : 2;
-      const words = String(exercise.target || exercise.prompt || "").trim().split(/\\s+/).filter(Boolean).length;
+      const words = String(exercise.target || exercise.prompt || "").trim().split(/\s+/).filter(Boolean).length;
       return { level, words, length:String(exercise.target || "").length };
     };
     candidates.sort((left,right) => {
