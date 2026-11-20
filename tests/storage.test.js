@@ -13,7 +13,7 @@ function memoryStorage() {
 const baseSession = () => ({
   config: { language: "Portugués brasileño", languageId: "pt-BR", estimatedLevel: "B1" },
   vocabulary: [{ term: "obrigado", meaning: "gracias" }],
-  errors: [{ exerciseId: "greeting-1", prompt: "Saluda", expected: "Olá", explanation: "Saludo básico", skill: "Saludos" }],
+  errors: [{ exerciseId: "greeting-1", prompt: "Saluda", expected: "Olá", term:"Olá", meaning:"hola", promptLocale:"es-CL", explanation: "Saludo básico", skill: "Saludos" }],
   errorsToReview: ["Conjugación en primera persona"]
 });
 
@@ -41,6 +41,9 @@ test("persisting a session records history, vocabulary and makes graded errors i
   assert.deepEqual(progress.sessions[0].reviewPatterns, ["Conjugación en primera persona"]);
   assert.equal(progress.vocabulary[0].term, "obrigado");
   assert.equal(progress.reviewCards.length, 2, "graded error and qualitative pattern should both be scheduled");
+  const answerCard = progress.reviewCards.find(card => card.cardType !== "pattern");
+  assert.equal(answerCard.term,"Olá");
+  assert.equal(answerCard.meaning,"hola");
   const patternCard = progress.reviewCards.find(card => card.cardType === "pattern");
   assert.equal(patternCard.pattern, "Conjugación en primera persona");
   assert.equal(patternCard.expected, "", "pattern cards must not invent a single correct answer");
