@@ -1229,7 +1229,7 @@ function chooseExercise() {
     const discoveryItems = catalog.exercises.filter(item =>
       item.topic === session.config.topic && item.term && item.meaning && item.type !== "reading"
     );
-    const source = discoveryItems[session.turn] || discoveryItems[0];
+    const source = discoveryItems[session.turn];
     if (source) {
       const grammarItem = /verbo|conjug|gram[aá]t|tiempo verbal/i.test(String(source.skill || ""));
       if (grammarItem) return source;
