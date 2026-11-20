@@ -298,7 +298,7 @@ try {
   await page.locator("#reading-tts-toggle").click();
   assert.equal(await page.locator("#reading-tts-toggle").innerText(),"Pausar lectura","passage TTS should resume without restarting");
   assert.equal(await page.locator("#lesson-phase").innerText(),"COMPRENSIÓN DEL TEXTO");
-  assert.equal(await page.locator("#lesson-content .reading-question-type").innerText(),"Comprensión del texto");
+  assert.equal(await page.locator("#lesson-content .reading-question-type").evaluate(node => node.textContent.trim()),"Comprensión del texto");
   assert.equal(await page.locator("#answer-area [data-choice]").count(),3,"reading questions should always use objective multiple-choice answers");
   assert.equal(await page.locator("#answer-area [data-speak]").count(),0,"source-language reading options should not show target-language audio controls");
   await page.locator("#answer-area [data-choice]").first().click();
