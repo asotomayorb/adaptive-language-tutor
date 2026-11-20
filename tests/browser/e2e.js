@@ -60,7 +60,7 @@ try {
     window.__spoken = [];
     const synth = {
       getVoices: () => [{ name:"Brazilian Portuguese",lang:"pt-BR" },{ name:"English",lang:"en-US" },{ name:"Spanish",lang:"es-CL" }],
-      speak: utterance => { window.__spoken.push({ text: utterance.text, lang: utterance.lang, voice: utterance.voice?.name }); synth.speaking = true; setTimeout(() => { synth.speaking = false; utterance.onend?.(); }, 0); },
+      speak: utterance => { window.__spoken.push({ text: utterance.text, lang: utterance.lang, voice: utterance.voice?.name }); synth.speaking = true; const finish = () => { if (synth.paused) { setTimeout(finish, 25); return; } synth.speaking = false; utterance.onend?.(); }; setTimeout(finish, 500); },
       cancel: () => { synth.speaking = false; },
       pause: () => { synth.paused = true; },
       resume: () => { synth.paused = false; },
