@@ -422,24 +422,10 @@ function refreshDashboard() {
     if (!metrics.length) {
       chartMarkup = '<p class="empty-chart">Completa una sesión para comparar la precisión entre idiomas.</p>';
     } else {
-      const width = 760, height = 340;
-      const left = 44, right = 18, top = 26, bottom = 58;
-      const plotWidth = width-left-right, plotHeight = height-top-bottom;
-      const yAt = value => top + (100-value)*plotHeight/100;
-      const slot = Math.min(38,plotWidth/metrics.length), groupWidth = slot*metrics.length;
-      const groupStart = left + (plotWidth-groupWidth)/2, barWidth = Math.max(18,slot*0.84);
-      const grid = [0,25,50,75,100].map(value =>
-        '<line x1="' + left + '" y1="' + yAt(value) + '" x2="' + (width-right) + '" y2="' + yAt(value) + '" class="chart-gridline"/><text x="4" y="' + (yAt(value)+4) + '" class="chart-axis-label">' + value + '%</text>'
-      ).join("");
-      const bars = metrics.map((item,index) => {
-        const x = groupStart + slot*index + (slot-barWidth)/2, y = yAt(item.accuracy), h = plotHeight*item.accuracy/100;
-        const labelX = groupStart + slot*(index+0.5);
-        return '<rect class="stats-bar" x="' + x + '" y="' + y + '" width="' + barWidth + '" height="' + h + '" rx="5" fill="' + colorFor(index) + '"><title>' + escapeHTML(item.label) + ': ' + item.accuracy + '%</title></rect>' +
-          '<text x="' + labelX + '" y="' + (y-7) + '" text-anchor="middle" class="chart-value-label">' + item.accuracy + '%</text>' +
-          '<text x="' + labelX + '" y="' + (height-25) + '" text-anchor="middle" class="stats-flag-label" aria-label="' + escapeHTML(item.label) + '">' + item.flag + '</text>';
-      }).join("");
-      chartMarkup = '<div class="stats-chart-scroll"><svg class="stats-bar-chart" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="Precisión actual comparada entre idiomas">' +
-        grid + bars + '</svg></div><div class="stats-chart-legend"><span><i class="legend-bar"></i>Precisión actual</span></div>';
+      chartMarkup = '<div class="stats-horizontal-list" role="list" aria-label="Precisión por idioma">' + metrics.map(item =>
+        '<div class="stats-horizontal-row" role="listitem"><div class="stats-horizontal-label"><span>' + item.flag + ' ' + escapeHTML(item.label) + '</span><strong>' + item.accuracy + '%</strong></div>' +
+        '<div class="stats-horizontal-track" role="img" aria-label="' + escapeHTML(item.label) + ': ' + item.accuracy + '%"><span style="width:' + item.accuracy + '%"></span></div></div>'
+      ).join("") + '</div><p class="chart-note">Precisión acumulada por idioma. Las barras ocupan el ancho disponible de la pantalla.</p>';
     }
   } else {
     const language = metrics.find(item => item.id === selectedView);
@@ -2161,7 +2147,7 @@ function renderItalianAppliedTopic(category, index, locale) {
       rows([["il libro","el libro","Masculino singular; consonante común"],["lo studente","el estudiante","Masculino singular; s + consonante, z, gn, ps"],["l’amico","el amigo","Masculino singular ante vocal"],["la casa","la casa","Femenino singular ante consonante"],["l’amica","la amiga","Femenino singular ante vocal"],["i libri","los libros","Plural de il"],["gli studenti / gli amici","los estudiantes / los amigos","Plural de lo y l’ masculino"],["le case","las casas","Plural femenino"]]) +
       '</tbody></table><h3>Artículos indefinidos</h3><table class="theory-pronoun-table"><thead><tr><th>Forma y ejemplo</th><th>Significado</th></tr></thead><tbody>' +
       rows([["un libro","un libro"],["uno studente","un estudiante"],["un amico","un amigo (sin apóstrofo)"],["una casa","una casa"],["un’amica","una amiga (con apóstrofo)"]]) +
-      '</tbody></table><p class="theory-slide-text"><strong>Regla práctica:</strong> no escribas *il studente ni *la amica. Compara siempre el artículo con la primera letra/sonido del sustantivo y memoriza el sustantivo junto con su artículo.</p>';
+      '</tbody></table>' + renderGrammarRuleSections("El artículo concuerda con el sustantivo en género y número. La forma masculina depende del sonido inicial; la forma femenina se contrae ante vocal.", "No escribas *il studente ni *la amica. Memoriza el sustantivo junto con su artículo.");
   }
   if (category === "Gramática" && index === 4) {
     const people = ["io","tu","lui / lei","noi","voi","loro"];
@@ -2169,14 +2155,14 @@ function renderItalianAppliedTopic(category, index, locale) {
     return '<p class="theory-slide-text">El pasado más usado en conversación es el <strong>passato prossimo</strong>: auxiliar en presente (avere o essere) + participio pasado. Se usa para acciones terminadas: ayer, la semana pasada, esta mañana.</p>' +
       '<h3>Conjugación aplicada</h3><table class="theory-pronoun-table"><thead><tr><th>Persona</th><th>parlare · hablar</th><th>andare · ir</th></tr></thead><tbody>' +
       people.map((person,i)=>'<tr><td>'+person+'</td><td><strong class="theory-target-word">'+forms[i][0]+'</strong> '+speakerButton(forms[i][0],locale)+'</td><td><strong class="theory-target-word">'+forms[i][1]+'</strong> '+speakerButton(forms[i][1],locale)+'</td></tr>').join("") +
-      '</tbody></table><section class="theory-note"><strong>Auxiliares y concordancia</strong><p>avere se usa con la mayoría de los verbos transitivos (ho mangiato); essere con muchos verbos de movimiento/cambio de estado y verbos reflexivos (sono arrivato, mi sono svegliato). Con essere, el participio concuerda en género y número: andato/a/i/e. Hay verbos cuyo auxiliar debe aprenderse con el verbo.</p></section><section class="theory-example"><span>Ejemplos reales</span><p class="theory-target-word">Ieri ho parlato con Maria. ' + speakerButton("Ieri ho parlato con Maria.",locale) + '</p><p>Ayer hablé con María.</p><p class="theory-target-word">Domenica siamo andati a Roma. ' + speakerButton("Domenica siamo andati a Roma.",locale) + '</p><p>El domingo fuimos a Roma.</p></section>';
+      '</tbody></table>' + renderGrammarRuleSections("Avere se usa con la mayoría de los verbos transitivos (ho mangiato). Essere se usa con muchos verbos de movimiento, cambio de estado y verbos reflexivos (sono arrivato, mi sono svegliato). Con essere, el participio concuerda en género y número: andato/a/i/e.", "Hay verbos cuyo auxiliar debe aprenderse junto con el verbo.") + '<section class="theory-example"><span>Ejemplos reales</span><p class="theory-target-word">Ieri ho parlato con Maria. ' + speakerButton("Ieri ho parlato con Maria.",locale) + '</p><p>Ayer hablé con María.</p><p class="theory-target-word">Domenica siamo andati a Roma. ' + speakerButton("Domenica siamo andati a Roma.",locale) + '</p><p>El domingo fuimos a Roma.</p></section>';
   }
   if (category === "Gramática" && index === 5) {
     const people = ["io","tu","lui / lei","noi","voi","loro"];
     const forms = [["parlerò","sarò"],["parlerai","sarai"],["parlerà","sarà"],["parleremo","saremo"],["parlerete","sarete"],["parleranno","saranno"]];
     return '<p class="theory-slide-text">El <strong>futuro semplice</strong> expresa predicciones, promesas e intenciones futuras. Las terminaciones son las mismas para los verbos en -are, -ere e -ire, aunque la raíz puede cambiar.</p><table class="theory-pronoun-table"><thead><tr><th>Persona</th><th>parlare · hablar</th><th>essere · ser/estar</th></tr></thead><tbody>' +
       people.map((person,i)=>'<tr><td>'+person+'</td><td><strong class="theory-target-word">'+forms[i][0]+'</strong> '+speakerButton(forms[i][0],locale)+'</td><td><strong class="theory-target-word">'+forms[i][1]+'</strong> '+speakerButton(forms[i][1],locale)+'</td></tr>').join("") +
-      '</tbody></table><section class="theory-note"><strong>Formación y excepciones</strong><p>Los verbos en -are cambian la a por e (parlare → parler-); se añaden -ò, -ai, -à, -emo, -ete, -anno. Essere y avere son irregulares: sarò y avrò. En conversación, el presente con una expresión temporal también puede indicar futuro.</p></section><section class="theory-example"><span>Ejemplos</span><p class="theory-target-word">Domani parlerò con il professore. ' + speakerButton("Domani parlerò con il professore.",locale) + '</p><p>Mañana hablaré con el profesor.</p><p class="theory-target-word">L’anno prossimo saremo in Italia. ' + speakerButton("L’anno prossimo saremo in Italia.",locale) + '</p><p>El próximo año estaremos en Italia.</p></section>';
+      '</tbody></table>' + renderGrammarRuleSections("Los verbos en -are cambian la a por e (parlare → parler-). Se añaden -ò, -ai, -à, -emo, -ete, -anno. En conversación, el presente con una expresión temporal también puede indicar futuro.", "Essere y avere son irregulares: sarò y avrò.") + '<section class="theory-example"><span>Ejemplos</span><p class="theory-target-word">Domani parlerò con il professore. ' + speakerButton("Domani parlerò con il professore.",locale) + '</p><p>Mañana hablaré con el profesor.</p><p class="theory-target-word">L’anno prossimo saremo in Italia. ' + speakerButton("L’anno prossimo saremo in Italia.",locale) + '</p><p>El próximo año estaremos en Italia.</p></section>';
   }
   const vocabulary = {
     "Vocabulario": [
