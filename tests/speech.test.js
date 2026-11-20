@@ -158,7 +158,7 @@ test("speech delegates to the OS TTS engine with an explicit target locale when 
 });
 
 test("speech sequence preserves each explicit locale even when Android exposes no matching voice object", () => {
-  const mock = speechMock([{name:"Spanish",lang:"es-CL"},{name:"Portuguese",lang:"pt-BR"}]);
+  const mock = speechMock([{name:"Spanish",lang:"es-CL"}]);
   const controller = createSpeechController({
     synthesis:mock.api,
     Utterance:MockUtterance,
@@ -171,7 +171,7 @@ test("speech sequence preserves each explicit locale even when Android exposes n
   assert.equal(result.count,2);
   assert.deepEqual(mock.spoken.map(item=>[item.lang,item.voice?.lang || null]),[["es-CL","es-CL"]]);
   mock.spoken[0].onend();
-  assert.deepEqual(mock.spoken.map(item=>[item.lang,item.voice?.lang || null]),[["es-CL","es-CL"],["pt-BR","pt-BR"]]);
+  assert.deepEqual(mock.spoken.map(item=>[item.lang,item.voice?.lang || null]),[["es-CL","es-CL"],["pt-BR",null]]);
 });
 
 
