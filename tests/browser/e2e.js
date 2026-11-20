@@ -134,6 +134,7 @@ try {
   await page.locator("#open-language-picker").click();
   await page.locator('[data-language="Italiano"]').click();
   assert.equal(await page.locator("#selected-language-flag").innerText(), "🇮🇹");
+  assert.equal(await page.locator('[data-mode="reading"]').isVisible(),false,"reading mode should stay hidden until that language has reading content");
   await page.locator("#open-language-picker").click();
   await page.locator('[data-language="other"]').click();
   await page.locator("#custom-language-name").fill("Suajili");
@@ -142,6 +143,7 @@ try {
   assert.equal(await page.locator("#selected-language-flag").innerText(), "🇰🇪", "recognized custom language should infer its flag");
   await page.locator("#open-language-picker").click();
   await page.locator('[data-language="Portugués brasileño"]').click();
+  assert.equal(await page.locator('[data-mode="reading"]').isVisible(),true,"Portuguese reading content should enable the reading mode");
 
   // Theory categories open a large list; each topic opens its own full-screen slide.
   await page.locator('[data-screen="theory"]').click();
