@@ -183,7 +183,7 @@ function bindSpeakerButtons(root) {
 function appendSpeechButtons(root, segments) {
   const locale = session?.config.languageLocale || session?.config.languageId;
   const valid = (segments || []).filter(item =>
-    item && typeof item.text === "string" && item.text.trim() && item.locale === locale
+    item && typeof item.text === "string" && item.text.trim() && item.locale?.toLowerCase() === String(locale || "").toLowerCase()
   );
   if (!valid.length) return;
   root.insertAdjacentHTML("beforeend", valid.map(item => " " + speakerButton(item.text, item.locale)).join(""));
