@@ -323,7 +323,12 @@ let progress = loadProgress();
 let dueReviewCards = [];
 let reviewIndex = 0;
 let reviewHintLevel = 0;
-let reviewProgressDraft = null;
+let reviewCompletedCount = 0;
+let reviewTotalCount = 0;
+let reviewProcessedKeys = new Set();
+let lastActivityConfig = null;
+let lastActivityMode = "practice";
+let lastActivityExerciseIds = [];
 let aiConfigured = false;
 let aiReady = false;
 let aiMode = false;
@@ -586,26 +591,79 @@ checkTutorHealth().then(status => {
   $("ai-status").classList.remove("hidden");
 });
 
+const REVIEW_SESSION_KEY = "adaptive-language-tutor.review-session";
+function loadReviewSessionState(languageId) {
+  try {
+    const value = JSON.parse(localStorage.getItem(REVIEW_SESSION_KEY + ":" + languageId) || "null");
+    return value?.version === 1 && Array.isArray(value.remainingKeys) ? value : null;
+  } catch { return null; }
+}
+function saveReviewSessionState(languageId, state) {
+  try { localStorage.setItem(REVIEW_SESSION_KEY + ":" + languageId,JSON.stringify({version:1,...state})); return true; }
+  catch { return false; }
+}
+function clearReviewSessionState(languageId) {
+  try { localStorage.removeItem(REVIEW_SESSION_KEY + ":" + languageId); } catch {}
+}
+function persistReviewQueue() {
+  if (!catalog?.id) return;
+  const remainingKeys = dueReviewCards.slice(reviewIndex).map(card => card.key);
+  if (!remainingKeys.length) {
+    clearReviewSessionState(catalog.id);
+    return;
+  }
+  saveReviewSessionState(catalog.id,{
+    remainingKeys,
+    processedKeys:[...reviewProcessedKeys],
+    completed:reviewCompletedCount,
+    total:reviewTotalCount,
+    updatedAt:new Date().toISOString()
+  });
+}
+function markReviewCardGraded(card) {
+  reviewProcessedKeys.add(card.key);
+  reviewCompletedCount += 1;
+  reviewIndex += 1;
+  persistReviewQueue();
+  saveProgress(progress);
+}
 function startSpacedReview() {
   speech.stop();
   catalog = getSelectedCatalog();
   if (!catalog) { $("ai-status").textContent = "Selecciona un idioma del mosaico."; return; }
-  dueReviewCards = getDueCards(progress, Date.now(), catalog.id).filter(card => card.cardType !== "pattern");
-  reviewProgressDraft = JSON.parse(JSON.stringify(progress));
+  const allDue = getDueCards(progress,Date.now(),catalog.id).filter(card => card.cardType !== "pattern");
+  const saved = loadReviewSessionState(catalog.id);
+  reviewProcessedKeys = new Set(saved?.processedKeys || []);
+  const dueByKey = new Map(allDue.map(card => [card.key,card]));
+  if (saved) {
+    const queued = saved.remainingKeys.map(key => dueByKey.get(key)).filter(Boolean);
+    const queuedKeys = new Set(queued.map(card => card.key));
+    const newlyDue = allDue.filter(card => !reviewProcessedKeys.has(card.key) && !queuedKeys.has(card.key));
+    dueReviewCards = [...queued,...newlyDue];
+    reviewCompletedCount = Number(saved.completed) || 0;
+    reviewTotalCount = Math.max(Number(saved.total) || 0,reviewCompletedCount + dueReviewCards.length);
+  } else {
+    dueReviewCards = allDue;
+    reviewCompletedCount = 0;
+    reviewTotalCount = dueReviewCards.length;
+  }
   reviewIndex = 0;
   if (!dueReviewCards.length) {
-    reviewProgressDraft = null;
+    clearReviewSessionState(catalog.id);
     $("review-exercises").classList.remove("hidden");
-    $("review-dashboard").innerHTML = "No tienes tarjetas pendientes. Los errores nuevos aparecerán aquí después de practicar.";
+    $("review-dashboard").innerHTML = "No tienes palabras o frases pendientes.";
     refreshDashboard();
     return;
   }
+  if (reviewTotalCount < reviewCompletedCount + dueReviewCards.length) reviewTotalCount = reviewCompletedCount + dueReviewCards.length;
+  persistReviewQueue();
   sessionFinished = false;
   showSessionView("review");
   $("summary-panel").classList.add("hidden");
   $("lesson-panel").classList.remove("hidden");
-  $("session-status").textContent = "Repaso programado";
+  $("session-status").textContent = "";
   reviewMode = true;
+  routeMode = false;
   aiMode = false;
   $("stats").hidden = true;
   $("hint-btn").hidden = false;
@@ -616,67 +674,71 @@ function startSpacedReview() {
 function renderSpacedReview() {
   speech.stop();
   if (reviewIndex >= dueReviewCards.length) {
-    if (reviewProgressDraft) {
-      progress = reviewProgressDraft;
-      saveProgress(progress);
-      reviewProgressDraft = null;
-    }
+    clearReviewSessionState(catalog?.id);
     sessionFinished = true;
     $("lesson-panel").classList.add("hidden");
     $("summary-panel").classList.remove("hidden");
-    $("summary-content").textContent = "Has terminado los repasos disponibles.";
+    $("summary-content").innerHTML = '<h2 class="summary-title">Repaso finalizado</h2>';
+    $("session-status").textContent = "";
+    renderSummaryActions({ origin:"exercises", mode:"review", canNext:false });
     return;
   }
   const card = dueReviewCards[reviewIndex];
   const exercise = catalog.exercises.find(item => item.id === card.exerciseId);
   const expected = exercise?.target || card.expected;
-  reviewExercise = exercise || { target:expected, hint:card.hint, explanation:card.explanation };
+  const term = exercise?.term || card.term || expected;
+  const meaning = exercise?.meaning || card.meaning || "";
+  reviewExercise = exercise || { target:expected, term, meaning, hint:card.hint, explanation:card.explanation };
   reviewHintLevel = 0;
-  $("lesson-phase").textContent = "REPETICIÓN ESPACIADA";
-  $("turn-count").textContent = "Tarjeta " + (reviewIndex + 1) + " / " + dueReviewCards.length;
-  $("progress-bar").style.width = ((reviewIndex + 1) / dueReviewCards.length * 100) + "%";
-  $("progress-bar").parentElement.setAttribute("aria-valuenow",String(Math.round((reviewIndex + 1) / dueReviewCards.length * 100)));
+  $("lesson-phase").textContent = "REPASO";
+  $("turn-count").textContent = (reviewCompletedCount + 1) + " / " + reviewTotalCount;
+  $("progress-bar").style.width = ((reviewCompletedCount + 1) / Math.max(1,reviewTotalCount) * 100) + "%";
+  $("progress-bar").parentElement.setAttribute("aria-valuenow",String(Math.round((reviewCompletedCount + 1) / Math.max(1,reviewTotalCount) * 100)));
   $("feedback").classList.add("hidden");
-
-  if (card.cardType === "pattern") {
-    $("hint-btn").hidden = true;
-    $("lesson-content").innerHTML = getExerciseIllustration({topic:card.topic || session?.config?.topic || "daily",prompt:card.pattern}) + '<p class="eyebrow">REPASO DE PATRÓN</p><h3>' + escapeHTML(card.pattern) + '</h3><p>Intenta recordar una frase propia que aplique este patrón. Este repaso no consume turnos de práctica.</p>';
-    $("answer-area").innerHTML = '<p class="muted">¿Pudiste recordar y aplicar el patrón?</p><button id="pattern-recalled" class="primary" type="button">Lo recordé</button><button id="pattern-practice" class="secondary" type="button">Necesito practicarlo</button>';
-    const gradePattern = recalled => {
-      playAnswerFeedbackSound(Boolean(recalled));
-      const result = gradeReview(reviewProgressDraft || progress, card.key, recalled);
-      showFeedback(recalled
-        ? "Registrado. Próximo repaso en " + (result?.nextIntervalDays || 1) + " días."
-        : "Sigue pendiente. Vuelve a intentarlo en otro repaso.", recalled);
-      $("answer-area").innerHTML = '<button id="next-spaced" class="secondary" type="button">Siguiente →</button>';
-      $("next-spaced").addEventListener("click", () => { reviewIndex += 1; renderSpacedReview(); });
-    };
-    $("pattern-recalled").addEventListener("click", () => gradePattern(true));
-    $("pattern-practice").addEventListener("click", () => gradePattern(false));
-    return;
-  }
+  $("hint-btn").hidden = true;
+  const reviewSpeechExercise = {
+    ...reviewExercise,
+    prompt:exercise?.prompt || card.prompt || "",
+    promptLocale:exercise?.promptLocale || card.promptLocale || "es-CL",
+    term
+  };
+  currentActivitySpeechSegments = getExerciseSpeechSegments(reviewSpeechExercise);
+  const audioMarkup = currentActivitySpeechSegments.map(item => speakerButton(item.text,item.locale)).join(" ");
+  $("lesson-content").innerHTML = getExerciseIllustration(exercise || {topic:card.topic || "daily",prompt:card.prompt}) +
+    '<div class="activity-phase">REPASO · PALABRAS Y FRASES</div>' +
+    '<h3>' + escapeHTML(exercise?.prompt || card.prompt || "Recuerda la expresión.") + '</h3>' + audioMarkup;
+  bindSpeakerButtons($("lesson-content"));
+  if (currentActivitySpeechSegments.length) speech.speakSequence(currentActivitySpeechSegments,{automatic:true});
 
   const hasOptions = Array.isArray(exercise?.options) && exercise.options.length >= 2;
-  $("hint-btn").hidden = hasOptions;
-  $("hint-btn").disabled = false;
-  $("hint-btn").textContent = "Pista";
-  $("lesson-content").innerHTML = getExerciseIllustration(exercise || { topic:card.topic, prompt:card.prompt }) + '<p class="eyebrow">REPASO PROGRAMADO</p><h3>' + escapeHTML(exercise?.prompt || card.prompt || "") + '</h3><p>' + (hasOptions ? "Elige la respuesta correcta. Este repaso no consume turnos de práctica." : "Escribe la respuesta sin mirar la solución. Este repaso no consume turnos de práctica.") + '</p>';
   const submitReviewAnswer = answer => {
     const checkExercise = exercise || { target:expected, acceptedAnswers:[] };
     const correct = evaluateAnswer(answer,checkExercise);
     playAnswerFeedbackSound(correct);
-    const result = gradeReview(reviewProgressDraft || progress,card.key,correct);
-    const interval = result?.nextIntervalDays || 1;
+    gradeReview(progress,card.key,correct);
+    saveProgress(progress);
+    markReviewCardGraded(card);
     $("hint-btn").hidden = true;
-    showFeedback(correct
-      ? "Correcto. Próximo repaso en " + interval + " días."
-      : "Respuesta de referencia: " + expected + ". " + (exercise?.explanation || card.explanation) + " La palabra seguirá pendiente hasta responderla correctamente.",correct);
-    appendCatalogSpeech($("feedback"),exercise || { target:expected },"explanationSpeechSegments",true);
-    $("answer-area").innerHTML = '<button id="next-spaced" class="secondary" type="button">Siguiente →</button>';
-    $("next-spaced").addEventListener("click",() => { reviewIndex += 1; renderSpacedReview(); });
+    showFeedback(correct ? "Correcto." : "Respuesta de referencia:",correct);
+    $("feedback").insertAdjacentHTML("beforeend",
+      '<div class="review-answer-reveal"><p><strong>' + escapeHTML(term) + '</strong> ' +
+      speakerButton(term,session?.config?.languageLocale || catalog.locale) + '</p>' +
+      (meaning ? '<p class="review-translation">(' + escapeHTML(meaning) + ')</p>' : '') +
+      (!correct && (exercise?.explanation || card.explanation) ? '<p>' + escapeHTML(exercise?.explanation || card.explanation) + '</p>' : '') +
+      '</div>');
+    bindSpeakerButtons($("feedback"));
+    if (reviewIndex >= dueReviewCards.length) {
+      renderSpacedReview();
+      return;
+    }
+    $("answer-area").innerHTML = '<button id="next-spaced" class="primary" type="button">Siguiente →</button>';
+    $("next-spaced").addEventListener("click",renderSpacedReview);
+    if (meaning) speech.speak(term,session?.config?.languageLocale || catalog.locale,{automatic:true});
   };
   if (hasOptions) {
-    $("answer-area").innerHTML = exercise.options.map((option,index) => '<button class="answer-option" type="button" data-review-choice="' + index + '">' + escapeHTML(option) + '</button>').join("");
+    $("answer-area").innerHTML = exercise.options.map((option,index) =>
+      '<button class="answer-option" type="button" data-review-choice="' + index + '">' + escapeHTML(option) + '</button>'
+    ).join("");
     $("answer-area").querySelectorAll("[data-review-choice]").forEach(button => button.addEventListener("click",() => {
       $("answer-area").querySelectorAll("[data-review-choice]").forEach(item => item.disabled = true);
       submitReviewAnswer(exercise.options[Number(button.dataset.reviewChoice)]);
@@ -686,7 +748,6 @@ function renderSpacedReview() {
     $("check-spaced").addEventListener("click",() => submitReviewAnswer($("spaced-answer").value));
   }
 }
-
 $("setup-form").addEventListener("submit", event => {
   event.preventDefault();
   if (!aiReady) return;
