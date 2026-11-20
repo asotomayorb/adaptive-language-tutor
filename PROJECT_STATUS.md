@@ -805,3 +805,5 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - [ ] Prueba humana Android: escuchar audio automático/manual en actividad y teoría; comprobar pronunciación y que no se use voz española.
 - [ ] Prueba humana Android: revisar barra, cabecera, progreso y ancho/legibilidad de tablas.
 - [ ] Recorrer Ruta desde «Inicio del viaje» hasta el resumen; confirmar que el capítulo 1 enseña vocabulario/reglas y que la siguiente unidad queda disponible al alcanzar el umbral.
+
+- [x] Teoría: los ejemplos de los demás temas de conjugación y tiempos verbales también usan tablas de pronombre/ejemplo; se conserva la traducción entre paréntesis y se coloca debajo cuando existe en el contenido.
