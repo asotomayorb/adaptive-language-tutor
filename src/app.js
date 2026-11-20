@@ -1274,6 +1274,17 @@ function chooseExercise() {
       if (finalExercises.length) candidates = finalExercises;
     }
   }
+  if (routeMode && getRoutePhase(session.turn,routeQuestionCount).id === "application") {
+    const chapterOneEnd = Math.max(2,Math.ceil(routeQuestionCount * 0.4));
+    const discoverySources = catalog.exercises.filter(item =>
+      item.topic === session.config.topic && item.term && item.meaning && item.type !== "reading"
+    ).slice(0,chapterOneEnd);
+    const isolatedDiscoveryIds = new Set(discoverySources
+      .filter(item => /comprensión auditiva|vocabulario/i.test(String(item.skill || "")) &&
+        String(item.prompt || "").trim().split(/\s+/).filter(Boolean).length <= 2)
+      .map(item => item.id));
+    candidates = candidates.filter(exercise => !isolatedDiscoveryIds.has(exercise.id));
+  }
   if (!candidates.length && !routeMode && session.config.topic !== "reading") {
     exercises = catalog.exercises;
     candidates = exercises.filter(exercise => !session.answers.some(answer => answer.exerciseId === exercise.id));
