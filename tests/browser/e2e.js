@@ -259,7 +259,9 @@ try {
   assert.equal(await page.locator("#lesson-content .target-word-link").count(), 0, "exercise words should no longer open translation popups");
   assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "Bom dia" && item.lang === "pt-BR")), "audio should speak the complete target-language phrase");
   const initialSpeechLocales = await page.locator("#lesson-content [data-speak]").evaluateAll(nodes => nodes.map(node => node.dataset.locale));
-  assert.ok(initialSpeechLocales.length > 0 && initialSpeechLocales.every(locale => locale === "pt-BR"), "manual playback controls should be reserved for target-language fragments");
+  assert.ok(initialSpeechLocales.includes("es-CL") && initialSpeechLocales.includes("pt-BR"), "every displayed source and target speech segment should have its own manual audio control");
+  await page.waitForFunction(() => window.__spoken.some(item => item.text === "Bom dia" && item.lang === "pt-BR"));
+  assert.deepEqual(await page.evaluate(() => window.__spoken.slice(0,2).map(item => item.lang)),["es-CL","pt-BR"],"automatic speech should follow the displayed source-then-target order");
   assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text.startsWith("Escucha la frase") && item.lang === "es-CL")), "source instructions should use their own Spanish voice");
   for (let turn = 0; turn < 3; turn += 1) {
     assert.equal(await page.locator("#answer-area [data-choice]").count(), 3, "first three questions should have three choices");
@@ -302,8 +304,10 @@ try {
   const summaryHeadings = await page.locator("#summary-content h3").allInnerTexts();
   assert.match(await page.locator("#summary-content .summary-accuracy strong").innerText(), /^\d+%$/);
   assert.ok(await page.locator("#summary-content .summary-accuracy span").innerText(), "summary should show an accuracy assessment");
-  assert.match(summaryHeadings[0], /^Errores \d+\/5$/);
-  assert.deepEqual(summaryHeadings.slice(1), ["Vocabulario","Temas"]);
+  assert.deepEqual(summaryHeadings,["Reforzar"],"the summary should only group incorrect words and phrases under Reforzar");
+  assert.equal(await page.locator("#summary-content .summary-reinforcement-item").count(),5,"each incorrect Portuguese phrase should have its own reinforcement entry");
+  assert.equal(await page.locator("#summary-content .summary-reinforcement-item [data-speak]").count(),5,"each reinforcement phrase should expose pronunciation");
+  assert.equal(await page.locator("#summary-actions .summary-action").count(),3,"activity summaries should expose return, restart and next actions");
   // Reading comprehension is a separate mode with a text passage and objective choices.
   await page.locator("#new-session").click();
   await page.locator('[data-mode="reading"]').click();
@@ -311,6 +315,8 @@ try {
   assert.equal(await page.locator("#topic").isDisabled(),true,"reading topic should not be accidentally changed to a grammar topic");
   await page.locator("#start-session").click();
   assert.equal(await page.locator("#session-mode-label").innerText(),"Comprensión lectora");
+  assert.ok(await page.locator(".exercise-choices .choice-card").nth(1).innerText().then(text => text.includes("Comprensión lectora")),"reading should be the second Training mode");
+  assert.ok(await page.locator(".exercise-choices .choice-card").nth(2).innerText().then(text => text.includes("Repaso")),"Review should be the final Training mode");
   assert.equal(await page.locator("#lesson-content .reading-passage").isVisible(),true,"reading mode should show a passage before its question");
   assert.match(await page.locator("#lesson-content .reading-passage").innerText(),/João Pessoa/);
   assert.equal(await page.locator("#lesson-content #reading-tts-toggle").isVisible(),true,"the passage should expose its own TTS control");
@@ -547,7 +553,7 @@ try {
   await routePage.locator("#route-summary-next").click();
   assert.equal(await routePage.locator("#session-view").isVisible(),true,"continuation should start the next unit instead of stopping at the summary");
   assert.equal(await routePage.locator("#lesson-panel").getAttribute("data-route-unit"),"travel","the continuation must load the actual next unit, not just reopen the previous session");
-  assert.equal(await routePage.locator("#session-mode-label").innerText(),"Entrenamiento");
+  assert.equal(await routePage.locator("#session-mode-label").innerText(),"Ruta");
   assert.equal(await routePage.locator('#route-unit-list [data-route-unit="travel"]').evaluate(node => node.classList.contains("selected")),true,"continuation should select the next unlocked Route unit");
   assert.deepEqual(routeErrors, [], "Portuguese Route integration should not report browser errors");
 
@@ -622,8 +628,9 @@ try {
   await lastRoutePage.locator("#route-integration-answer").fill("Trabalho em um escritório.");
   await lastRoutePage.locator("#route-integration-submit").click();
   await lastRoutePage.locator("#summary-panel").waitFor({state:"visible"});
-  assert.equal(await lastRoutePage.locator("#route-summary-next").innerText(),"Volver a Ruta","the final unit should offer a return to the map, not a replay");
-  await lastRoutePage.locator("#route-summary-next").click();
+  assert.equal(await lastRoutePage.locator("#route-summary-next").isVisible(),false,"the final unit should not show a next-unit action");
+  assert.equal(await lastRoutePage.locator("#summary-return-label").innerText(),"Volver a Ruta","the summary return action should return to the map");
+  await lastRoutePage.locator("#new-session").click();
   assert.equal(await lastRoutePage.locator("#screen-route").isVisible(),true,"the final unit action should return to the Route map");
   assert.equal(await lastRoutePage.locator("#session-view").isVisible(),false,"the final unit should not reopen itself when the user selects return to Route");
   await lastRouteContext.close();
