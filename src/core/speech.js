@@ -117,6 +117,7 @@ export function createSpeechController({
     if (!requested.length || !supported || (automatic && !enabled)) {
       return { spoken:false, reason:requested.length ? "unavailable" : "empty" };
     }
+    const generation = ++playbackGeneration;
     const voices = getVoices();
     if (!voices.length && !allowSystemVoice && waitForVoices({ type:"sequence", segments:requested, options:{ automatic } })) {
       onStatus({ enabled, supported, speaking:false, paused:false, waitingForVoices:true, locale:requested[0].locale });
@@ -127,7 +128,7 @@ export function createSpeechController({
       synthesis.cancel?.();
       let index = 0;
       const speakNext = () => {
-        if (!enabled && automatic) return;
+        if (generation !== playbackGeneration || (!enabled && automatic)) return;
         const item = requested[index++];
         if (!item) { onStatus({ enabled, supported, speaking:false, paused:false }); return; }
         const utterance = createUtterance(item.text, item.locale, speakNext);
