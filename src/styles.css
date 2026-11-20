@@ -505,3 +505,9 @@
   .stats-chart-heading{align-items:flex-start;gap:10px;flex-wrap:wrap}
   .theory-rule-list{gap:10px}
 }
+
+@media(max-width:620px){
+  .stats-chart-stage{height:auto;min-height:0;display:block;overflow:visible}
+  .stats-chart-stage .stats-chart-scroll{min-height:0;display:block}
+  .progress-chart-card{min-height:0}
+}
