@@ -330,6 +330,7 @@ try {
   assert.equal(await page.locator("#summary-content .summary-accuracy strong").innerText(),"100%","all six unique reading questions should be scored without inserting general practice or recycling questions");
   // The completed reading session is persisted as a full reading-only session.
   // Incomplete Exercises sessions are discarded; no partial session is persisted.
+  await page.locator("#new-session").click();
   await page.setViewportSize({width:390,height:844});
   await page.locator('[data-screen="stats"]').click();
   assert.equal(await page.locator("#statistics-content .stats-language-table").isVisible(), true, "statistics should show the cross-language metrics table");
