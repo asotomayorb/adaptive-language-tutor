@@ -579,3 +579,36 @@ Esta sección establece las decisiones vigentes y **prevalece sobre descripcione
 - **Ejercicios:** se elimina el control obsoleto «Repasar error» de la pantalla de práctica; el repaso programado sigue disponible como modalidad independiente. El encabezado de tema/nivel se ubica a la izquierda del contador de preguntas; el pictograma conserva debajo su etiqueta breve.
 - **Audio manual:** los botones ▶ solo se generan para fragmentos cuyo locale coincide con el idioma objetivo activo. Las instrucciones y opciones en español no muestran botón de reproducción dentro de una práctica de otro idioma.
 - La comprobación automatizada debe cubrir ancho de barras, ausencia de promedio, jerarquía del encabezado, etiqueta bajo pictograma, ausencia de «Repasar error», audio manual solo en idioma objetivo y orden tabla → notas → ejemplos.
+
+
+## 17. Revisión pedagógica y criterio obligatorio para esquemas de interfaz — 20-11-2026
+
+### Teoría
+- Mantener las tablas de conjugación de pasado y futuro con las columnas Pronombre y Forma verbal.
+- Reorganizar las reglas y excepciones: una idea por renglón o elemento visual; usar listas, subtítulos y tablas breves cuando permitan comparar formas. Evitar párrafos densos o mezclar regla, ejemplo y excepción en un mismo bloque.
+- Los ejemplos representativos permanecen después de la tabla. El vocabulario actual se conserva sin cambios salvo correcciones puntuales solicitadas.
+
+### Entrenamiento y comprensión lectora
+- El nombre visible de la sección antes llamada «Ejercicios» pasa a ser **Entrenamiento**. Mantener las modalidades y flujos vigentes salvo los cambios expresamente definidos aquí.
+- La comprensión lectora debe ofrecer reproducción TTS del pasaje con controles visibles de reproducir y pausar. La lectura debe usar el locale del idioma objetivo; no sintetizar como portugués/inglés los textos auxiliares en español.
+- En sesiones de 10 preguntas, distinguir explícitamente las preguntas basadas en el pasaje de las preguntas generales de práctica. Las preguntas generales no deben presentarse como si dependieran del texto.
+- La dificultad de lectura puede progresar combinando (a) profundidad lingüística/temática y (b) extensión y complejidad del pasaje. Los textos más largos pueden ocupar más de una pantalla y permitir scroll vertical, siempre que la longitud sea razonable para el nivel y no esconda la consigna ni los controles. No usar longitud por sí sola como indicador de nivel.
+- La última pregunta de Ruta/entrenamiento debe tener una consigna inequívoca y un objetivo de respuesta único y evaluable (por ejemplo, traducir una frase concreta). Evitar preguntas abiertas que admitan varias respuestas correctas si el evaluador solo reconoce una. Si se usa respuesta abierta, declarar y probar variantes aceptadas.
+
+### Criterio obligatorio para presentar esquemas y alternativas de interfaz
+- Cuando el usuario solicite «esquemas de interfaz», «mockups», «cómo se vería» o alternativas visuales, **mostrar pantallas**, no tablas comparativas.
+- Representar cada sección y subsección afectada mediante una vista independiente. Incluir los estados relevantes (pantalla inicial, selección, preparación, actividad, resultado, estados de audio/pausa, etc.) según el flujo que se esté evaluando.
+- Si corresponde comparar alternativas A/B, presentar cada alternativa como una representación visual de la misma pantalla/flujo, con sus componentes, jerarquía, controles y contenido de ejemplo. No limitarse a describir diferencias en una tabla.
+- No omitir subsecciones ni reducir toda la aplicación a una única pantalla genérica. Mantener consistencia con navegación, cabecera, selector de idioma, controles de audio y navegación inferior definidos en este README.
+- Antes de implementar un rediseño, usar estos esquemas para validar la estructura visual cuando el usuario los haya solicitado. Si no se solicitó un esquema, no introducir mockups innecesarios.
+
+### Registro de feedback — 20-11-2026
+- [ ] Teoría: separar visualmente reglas y excepciones en líneas/listas/tablas.
+- [ ] Comprensión lectora: TTS del pasaje con pausa.
+- [ ] Sesión de 10 preguntas: diferenciar comprensión del texto y práctica general.
+- [ ] Evaluar progresión de lectura por profundidad y extensión razonable del pasaje.
+- [ ] Renombrar «Ejercicios» como «Entrenamiento» en navegación, títulos y textos visibles.
+- [ ] Ruta/entrenamiento: última pregunta de respuesta única, con consigna específica y evaluación coherente.
+- [x] Documentar el criterio de esquemas visuales por pantalla/sección/subsección y alternativas A/B sin tablas comparativas.
+
+Este registro define los criterios de aceptación de la próxima iteración; los puntos marcados pendientes no deben describirse como implementados hasta que el código y las pruebas lo confirmen.
