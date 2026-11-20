@@ -84,14 +84,15 @@ export function createSpeechController({
     if (!phrase || !supported || (automatic && !enabled)) return { spoken: false, reason: "unavailable" };
     // Never let the browser silently substitute its default (often source-language)
     // voice when the requested target-language voice is not installed.
-    if (locale && !findVoice(locale)) {
+    if (locale && !getVoices().length) {
       if (waitForVoices({ type:"single", text:phrase, locale, options:{ automatic, onEnd, onBoundary } })) {
         onStatus({ enabled, supported, speaking:false, paused:false, waitingForVoices:true, locale });
         return { spoken:true, pending:true };
       }
-      onStatus({ enabled, supported, speaking:false, paused:false, missingVoice:true, locale });
-      return { spoken:false, reason:"voice-unavailable" };
     }
+    // On Android, the system TTS engine may provide a locale on demand even
+    // when Chrome does not expose a matching Voice object. Keep utterance.lang
+    // explicit and let the OS select that language instead of suppressing audio.
     pendingRequest = null;
     try {
       synthesis.cancel?.();
@@ -115,21 +116,29 @@ export function createSpeechController({
       onStatus({ enabled, supported, speaking:false, paused:false, waitingForVoices:true, locale:requested[0].locale });
       return { spoken:true, pending:true };
     }
-    const valid = requested.filter(item => findVoice(item.locale));
-    if (!valid.length || valid.length !== requested.length) {
-      const missing = requested.find(item => !findVoice(item.locale));
-      if (missing) onStatus({ enabled, supported, speaking:false, paused:false, missingVoice:true, locale:missing.locale });
-      return { spoken:false, reason:"voice-unavailable" };
+    if (!voices.length && requested.some(item => !findVoice(item.locale))) {
+      if (waitForVoices({ type:"sequence", segments:requested, options:{ automatic } })) {
+        onStatus({ enabled, supported, speaking:false, paused:false, waitingForVoices:true, locale:requested[0].locale });
+        return { spoken:true, pending:true };
+      }
     }
     pendingRequest = null;
     try {
       synthesis.cancel?.();
-      valid.forEach(item => synthesis.speak(createUtterance(item.text, item.locale)));
-      onStatus({ enabled, supported, speaking:true, paused:false });
-      return { spoken: true, count: valid.length };
+      let index = 0;
+      const speakNext = () => {
+        if (!enabled && automatic) return;
+        const item = requested[index++];
+        if (!item) { onStatus({ enabled, supported, speaking:false, paused:false }); return; }
+        const utterance = createUtterance(item.text, item.locale, speakNext);
+        synthesis.speak(utterance);
+        onStatus({ enabled, supported, speaking:true, paused:false, locale:item.locale });
+      };
+      speakNext();
+      return { spoken:true, count:requested.length };
     } catch (error) {
-      onStatus({ enabled, supported, error: true });
-      return { spoken: false, reason: "playback-error" };
+      onStatus({ enabled, supported, error:true });
+      return { spoken:false, reason:"playback-error" };
     }
   }
 
