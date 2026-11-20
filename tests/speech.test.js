@@ -11,7 +11,9 @@ function speechMock(voices = []) {
     api: {
       getVoices: () => voices,
       speak: utterance => spoken.push(utterance),
-      cancel: () => { cancelled += 1; }
+      cancel: () => { cancelled += 1; },
+      pause: () => {},
+      resume: () => {}
     }
   };
 }
