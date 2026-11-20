@@ -473,3 +473,14 @@ Para cada escenario registrar:
 - [x] `npm run check`, `npm test` y `npm run test:e2e` aprobados.
 - [x] Preview Render LIVE en `dep-dc0749ss728c73clirf0`.
 - [ ] Prueba humana Android y revisión pedagógica integral siguen pendientes.
+
+### Regresión adicional — 20-11-2026
+
+- [ ] Android: probar reproducción automática al abrir actividad y reproducción manual; comprobar que el motor del sistema utiliza el locale objetivo aunque Chrome no exponga un objeto Voice coincidente.
+- [ ] Android: comprobar reintento tras `voiceschanged` y, si no se dispara, tras el fallback temporizado; confirmar audio audible, no solo ausencia de error.
+- [ ] Android: verificar que una secuencia de varios fragmentos se reproduce completa y en orden.
+- [ ] Ruta: iniciar «Inicio del viaje»; el capítulo 1 debe preguntar por vocabulario/reglas mediante consignas breves; desde el capítulo 2 deben aparecer frases y aplicación contextual con dificultad progresiva.
+- [ ] Ruta: completar con 3 estrellas y verificar que la unidad siguiente aparece habilitada en el mapa y que el botón del resumen inicia esa unidad.
+- [ ] Actividades: confirmar en Ruta, Entrenamiento, Comprensión y Repaso título a la izquierda, contador a la derecha, barra inmediatamente debajo y pictograma antes de la consigna.
+- [ ] Resumen: cuando no haya errores ni patrones pendientes, confirmar que no aparece el subtítulo «Reforzar».
+- [ ] Teoría: revisar tablas de terminaciones -AR/-ER/-IR, excepciones conjugadas y ejemplos con traducción entre paréntesis; comprobar scroll horizontal local sin desbordamiento de pantalla.
