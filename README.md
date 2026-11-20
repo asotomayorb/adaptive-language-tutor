@@ -809,3 +809,11 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Browser E2E: aprobado, run [44825579907](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44825579907). Incluye orden bilingüe, audio en lectura/Ruta/Repaso, contador, resumen, cola de Repaso reanudable y desbloqueo.
 - Pendiente de validación humana: reproducción audible y orden de voces en Android real, incluyendo navegación entre actividades; legibilidad y disposición final en pantalla física.
 
+## 25. Despliegue de la iteración PT-BR — 20-11-2026
+- Render Preview: **LIVE** en https://adaptive-language-tutor-preview-5b3d.onrender.com/
+- Deploy: dep-dc0c80k0916s73db0ftg.
+- Commit desplegado: 94aa33457e7d244f7679ae72186ad2916b5623e9.
+- Build y arranque confirmados en logs de Render; auto-deploy permanece desactivado.
+- Rama de Preview: feature/mobile-bottom-navigation. Replit permanece intacto.
+- Validación humana de sonido en Android físico sigue pendiente; no se considera resuelta por la prueba automatizada.
+
