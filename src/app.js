@@ -593,7 +593,7 @@ function renderSpacedReview() {
 
   if (card.cardType === "pattern") {
     $("hint-btn").hidden = true;
-    $("lesson-content").innerHTML = '<p class="eyebrow">REPASO DE PATRÓN</p><h3>' + escapeHTML(card.pattern) + '</h3><p>Intenta recordar una frase propia que aplique este patrón. Este repaso no consume turnos de práctica.</p>';
+    $("lesson-content").innerHTML = getExerciseIllustration({topic:card.topic || session?.config?.topic || "daily",prompt:card.pattern}) + '<p class="eyebrow">REPASO DE PATRÓN</p><h3>' + escapeHTML(card.pattern) + '</h3><p>Intenta recordar una frase propia que aplique este patrón. Este repaso no consume turnos de práctica.</p>';
     $("answer-area").innerHTML = '<p class="muted">¿Pudiste recordar y aplicar el patrón?</p><button id="pattern-recalled" class="primary" type="button">Lo recordé</button><button id="pattern-practice" class="secondary" type="button">Necesito practicarlo</button>';
     const gradePattern = recalled => {
       playAnswerFeedbackSound(Boolean(recalled));
@@ -1189,7 +1189,7 @@ function renderRouteAssessmentFailed() {
   $("lesson-phase").textContent = "REFUERZO NECESARIO";
   $("turn-count").textContent = session.correct + " / " + routeQuestionCount + " correctas";
   $("progress-bar").style.width = "100%";
-  $("lesson-content").innerHTML = '<div class="feedback-note"><span>Actividad integradora pendiente</span><p>Completa la actividad integradora para registrar el puntaje de esta unidad.</p></div>';
+  $("lesson-content").innerHTML = getExerciseIllustration({topic:activeRouteUnit?.topic,prompt:activeRouteUnit?.title}) + '<div class="feedback-note"><span>Actividad integradora pendiente</span><p>Completa la actividad integradora para registrar el puntaje de esta unidad.</p></div>';
   $("answer-area").innerHTML = '<button id="route-retry" class="primary" type="button">Repetir la unidad</button>';
   $("route-retry").addEventListener("click", () => {
     const useAI = !catalog.exercises.length;
