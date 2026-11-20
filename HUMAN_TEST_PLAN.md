@@ -484,3 +484,5 @@ Para cada escenario registrar:
 - [ ] Actividades: confirmar en Ruta, Entrenamiento, Comprensión y Repaso título a la izquierda, contador a la derecha, barra inmediatamente debajo y pictograma antes de la consigna.
 - [ ] Resumen: cuando no haya errores ni patrones pendientes, confirmar que no aparece el subtítulo «Reforzar».
 - [ ] Teoría: revisar tablas de terminaciones -AR/-ER/-IR, excepciones conjugadas y ejemplos con traducción entre paréntesis; comprobar scroll horizontal local sin desbordamiento de pantalla.
+
+- [ ] Teoría: verificar que ejemplos de presente, pasado y futuro en otros idiomas también se presentan en tabla de pronombre/ejemplo y mantienen la traducción parentética en una segunda línea.
