@@ -638,3 +638,38 @@ Este registro define los criterios de aceptación de la próxima iteración; los
 - Gramática: el renderizador común separa reglas y excepciones en listas legibles, también en los temas de artículos, pasado y futuro con contenido aplicado.
 
 **Despliegue de esta iteración:** Render Preview live en `dep-dbvt4mqjnfac738bvpqg`, commit `a94588dc58f940027b7d17742e7d6c4908652e57`. Render confirmó build y arranque correctos. Las pruebas E2E se actualizaron, pero su resultado automático aún no está verificado; la validación auditiva y visual en Android sigue pendiente.
+
+## 19. Decisiones vigentes — TTS, Ruta y consistencia visual (20-11-2026)
+
+Esta sección prevalece sobre instrucciones anteriores que permitan cambiar el idioma objetivo desde la navegación, expongan texto de estado del tutor IA o muestren el resumen de Ruta como tres apartados separados.
+
+### TTS y separación de idiomas
+- Cada fragmento que se sintetiza debe tener un locale explícito y validado. No inferir el idioma por similitud léxica, signos de puntuación o palabras aisladas.
+- Las consignas e instrucciones en español usan es-CL; el contenido objetivo usa el locale del idioma elegido. Los fragmentos sin metadatos inequívocos no se reproducen automáticamente.
+- No usar la voz predeterminada del navegador cuando no existe una voz compatible con el locale solicitado. Es preferible omitir ese fragmento a pronunciarlo con el acento del idioma origen.
+- Los botones de audio individuales solo aparecen para texto objetivo y muestran el locale correspondiente.
+- La IA permanece como servicio interno del backend. El frontend no ofrece chat libre, entrada generativa ni selector de idioma personalizado. El idioma se elige una vez al iniciar entre las opciones disponibles; durante el uso no existe un control para incorporar/cambiar idioma. Una futura selección de noticias recientes puede añadirse exclusivamente dentro de Comprensión lectora.
+
+### Teoría
+- Pasado y Futuro son temas independientes: cada uno presenta introducción, tabla/estructura de formas, reglas de uso, excepciones propias y ejemplos de ese mismo tiempo verbal.
+- Una excepción no debe aparecer en otro tiempo verbal. Las irregularidades del pasado y las del futuro deben estar separadas, incluso cuando compartan un mismo verbo.
+- Reglas y excepciones se presentan como listas numeradas legibles, con un punto por idea. Los encabezados distinguen la regla general de los casos especiales. Las tablas preceden a las reglas y los ejemplos quedan al final.
+- Revisar la congruencia conceptual y la estética de todos los temas de Gramática, Vocabulario y Expresiones para los catálogos que se ofrecen en el frontend. No marcar como auditados temas o idiomas sin contenido real.
+
+### Ruta: resumen y continuidad
+- El resumen de Ruta muestra las estrellas obtenidas (0–5), sin porcentaje ni apartados separados de Errores, Vocabulario y Temas.
+- El único subtítulo del resumen es **Reforzar:**. Su lista reúne palabras, habilidades o temas asociados a respuestas fallidas. Si no hubo errores, indica que no hay elementos pendientes.
+- Si la siguiente unidad está desbloqueada, el resumen ofrece una acción directa para comenzar esa unidad. Si no lo está, ofrece volver a Ruta; nunca debe dejar al usuario detenido en el resumen sin una salida.
+- El puntaje, las estrellas, el desbloqueo y el texto del resumen deben derivarse del mismo conjunto de respuestas puntuables.
+
+### Jerarquía común de actividades
+- En toda actividad a pantalla completa, el orden inicial es: controles X/audio → contador de pregunta/actividad → icono/ilustración del tema → consigna y contenido → respuesta.
+- El nombre de dificultad incluye nivel MCER: Principiante · A1, Intermedio · B1 y Avanzado · C1. Los códigos son una referencia de interfaz y deben revisarse si el plan de estudios asigna otro nivel.
+- El estado interno del tutor IA no se muestra como texto de interfaz.
+
+### Protocolo de trabajo y revisión visual
+- Antes de cada iteración, leer este README y revisar el estado vigente de la rama.
+- En cada respuesta de avance del proyecto, incluir una muestra esquemática de las pantallas afectadas; no sustituirla por una tabla de características.
+- Si se presentan alternativas A/B, representar visualmente ambas variantes de la misma pantalla. Cada decisión se recoge con una selección única; el resumen de elecciones se devuelve en orden, por ejemplo: **A · A · B · A**.
+- Al cerrar cada iteración, actualizar README, PROJECT_STATUS y HUMAN_TEST_PLAN con cambios, pruebas y pendientes reales. No confundir build exitoso con validación funcional ni con prueba humana en Android.
+- Mantener GitHub/Render como entorno de trabajo; Replit permanece intacto.
