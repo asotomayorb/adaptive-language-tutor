@@ -5,18 +5,18 @@ import { createSpeechController, findVoiceForLocale } from "../src/core/speech.j
 function speechMock(voices = []) {
   const spoken = [];
   let cancelled = 0;
+  const api = {
+    getVoices: () => voices,
+    speak: utterance => spoken.push(utterance),
+    cancel: () => { cancelled += 1; },
+    pause: () => { api.paused = true; },
+    resume: () => { api.paused = false; },
+    paused: false
+  };
   return {
     spoken,
     get cancelled() { return cancelled; },
-    api: {
-      getVoices: () => voices,
-      speak: utterance => spoken.push(utterance),
-      cancel: () => { cancelled += 1; },
-      pause: () => { api.paused = true; },
-      resume: () => { api.paused = false; },
-      pause: () => {},
-      resume: () => {}
-    }
+    api
   };
 }
 
