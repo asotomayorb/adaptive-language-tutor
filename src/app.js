@@ -138,7 +138,7 @@ function getExerciseSpeech(exercise) {
   const hasGap = /_{1,}|＿+/u.test(sentence);
   const spoken = sentence.replace(/_{1,}|＿+/gu, "…").replace(/[“”]/g, "").trim();
   const spanishSource = /[¿¡áéíóúñ]/i.test(sentence) ||
-    /\b(cómo|qué|cuál|cuáles|dónde|cuándo|por qué|para qué|significa|responde|responder|completa|elige|selecciona|traduce|corrige|escucha|marca|escribe|relaciona|ordena|conjuga|transforma|forma|pasa|di|dime|pregunta|frase|palabra|oración|en español)\b/i.test(sentence);
+    /\b(como|que|cual|cuales|donde|cuando|por que|para que|significa|responde|responder|responderias|dirias|dices|completa|elige|selecciona|traduce|corrige|escucha|marca|escribe|relaciona|ordena|conjuga|transforma|forma|pasa|di|dime|pregunta|frase|palabra|oracion|en espanol)\b/i.test(sentence);
   const locale = exercise?.speechLocale || (exercise?.promptLanguage === "source" || exercise?.promptLanguage === "native"
     ? "es-CL" : exercise?.promptLanguage === "target" ? (catalog?.locale || "und")
     : spanishSource ? "es-CL" : (catalog?.locale || "und"));
