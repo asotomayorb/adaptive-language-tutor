@@ -1913,9 +1913,9 @@ function showSessionView(mode) {
 function closeSessionAndReturn() {
   sessionAbortController?.abort();
   sessionAbortController = null;
+  if (reviewMode && !sessionFinished) persistReviewQueue();
   speech.stop();
   session = null;
-  reviewProgressDraft = null;
   aiMode = false;
   aiHistory = [];
   aiLastResult = null;
@@ -1927,6 +1927,7 @@ function closeSessionAndReturn() {
   sessionFinished = false;
   currentExercise = null;
   reviewMode = false;
+  currentActivitySpeechSegments = [];
   $("lesson-panel").classList.remove("hidden");
   $("summary-panel").classList.add("hidden");
   $("session-view").classList.add("hidden");
