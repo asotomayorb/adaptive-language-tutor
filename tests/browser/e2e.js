@@ -182,10 +182,11 @@ try {
   assert.equal(await page.locator("#theory-description .theory-note").count(), 1, "the regular rule text should remain separate from conjugated irregular-form tables");
   assert.ok(await page.locator("#theory-description .theory-rule-list li").count() >= 1, "the rule should remain a readable point");
   assert.match(await page.locator("#theory-description").innerText(), /Ayer/i, "past tense should include an applied example");
-  assert.ok(await page.locator("#theory-description .theory-table-block").count() >= 3, "past should show regular endings, a conjugation example and irregular verb tables");
+  assert.ok(await page.locator("#theory-description .theory-table-block").count() >= 4, "past should show regular endings, a conjugation example and both irregular verb tables");
   assert.deepEqual(await page.locator("#theory-description .theory-table-block").first().locator("thead th").evaluateAll(nodes => nodes.map(node => node.textContent.trim())), ["","-AR · falar","-ER · comer","-IR · partir"], "regular endings should compare -AR, -ER and -IR side by side");
   assert.ok(await page.locator("#theory-description .theory-table-block").nth(1).locator("tbody tr").count() >= 6, "past example conjugation should include each subject pronoun");
   assert.ok(await page.locator("#theory-description .theory-table-block").nth(2).locator("tbody tr").count() >= 6, "irregular verbs should be conjugated for every pronoun");
+  assert.ok(await page.locator("#theory-description .theory-table-block").nth(3).locator("tbody tr").count() >= 6, "the remaining irregular verbs should also be conjugated for every pronoun");
   assert.deepEqual(await page.locator("#theory-description .theory-example-table thead th").evaluateAll(nodes => nodes.map(node => node.textContent.trim())), ["Pronombre","Ejemplo aplicado"]);
   assert.ok(await page.locator("#theory-description .theory-example-table .theory-translation").count() >= 3, "translations should appear below examples in parentheses");
   assert.match(await page.locator("#theory-description").innerText(), /fui|tive|fiz|disse/i, "Portuguese past must explain irregular verbs");
