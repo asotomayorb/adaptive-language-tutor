@@ -2193,7 +2193,7 @@ function renderTenseLesson(languageName, topicIndex) {
       : "";
     const rule = isPast ? lesson.pastRule : lesson.futureRule;
     const exceptionText = String(lesson.exceptions || "");
-    const pastExceptionEnd = exceptionText.search(/\\bEn futuro simple\\b/i);
+    const pastExceptionEnd = exceptionText.search(/\bEn futuro simple\b/i);
     const pastExceptions = isPast ? (pastExceptionEnd >= 0 ? exceptionText.slice(0,pastExceptionEnd).trim() : exceptionText) : "";
     const futureExceptions = !isPast ? (pastExceptionEnd >= 0 ? exceptionText.slice(pastExceptionEnd).trim() : "") : "";
     const intro = isPast
