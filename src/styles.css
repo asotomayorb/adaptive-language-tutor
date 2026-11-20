@@ -588,3 +588,16 @@
  .activity-counter{font-size:12px}
  .activity-progress{margin-bottom:15px}
 }
+
+
+/* Legible theory conjugation and example tables on narrow screens */
+.theory-table-block{margin:18px 0}
+.theory-table-block h3{margin:0 0 8px;font-size:14px;color:#29425f}
+.theory-table-block>p{margin:0 0 10px;font-size:13px;line-height:1.55;color:#52657c}
+.theory-table-scroll{width:100%;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain}
+.theory-table-scroll .theory-pronoun-table,.theory-table-scroll .theory-example-table{min-width:100%;width:max-content;border-collapse:collapse;font-size:12px}
+.theory-table-scroll th,.theory-table-scroll td{padding:9px 10px;border-bottom:1px solid #e5ebf1;text-align:left;vertical-align:top;white-space:nowrap}
+.theory-table-scroll th{background:#f2f6fa;color:#38536f;font-weight:750}
+.theory-example-table td{white-space:normal;min-width:112px}
+.theory-translation{display:block;margin-top:4px;color:#708096;font-size:11px;line-height:1.4}
+.theory-example-table td:first-child{font-weight:700;white-space:nowrap}
