@@ -81,7 +81,9 @@ try {
   assert.equal(await page.locator("#language-picker").isVisible(), true, "Start should open language selection for a new user");
   await page.locator('[data-language="Portugués brasileño"]').click();
   await page.locator("#screen-route").waitFor({ state: "visible" });
-  assert.equal(await page.locator("#selected-language-flag").innerText(), "🇧🇷");
+  assert.equal(await page.locator("#open-language-picker").count(),0,"the active app must not expose a language-switch control");
+  assert.equal(await page.locator("#selected-language-flag").count(),0,"the active app must not expose a language picker badge");
+  assert.equal(await page.locator("#language-mosaic [data-language='other']").count(),0,"custom generative language entry must be removed");
   assert.equal(await page.locator("#route-unit-list [data-route-unit]").count(), 4, "Portuguese route should show four topic-based units");
   assert.equal(await page.locator('[data-route-unit="travel"]').isDisabled(), true, "unit 2 should remain locked until unit 1 reaches its minimum score");
   assert.equal(await page.locator('[data-route-unit="food"]').isDisabled(), true, "unit 3 should remain locked at the start");
@@ -359,6 +361,9 @@ try {
   // Route partial progress survives leaving and reloading, unlike Exercises.
   await page.locator('[data-screen="route"]').click();
   await page.locator("#route-start").click();
+  assert.equal(await page.locator("#lesson-content .exercise-illustration").count(),1,"every activity must show its topic icon");
+  assert.equal(await page.locator("#lesson-content").locator(":scope > :first-child").getAttribute("class"),"exercise-illustration","the topic icon must follow the question counter directly");
+  assert.match(await page.locator("#turn-count").innerText(),/Pregunta 1/);
   await page.locator("#answer-area [data-choice]").last().click();
   await page.locator("#answer-area #continue-answer").click();
   await page.locator("#answer-area [data-choice]").first().evaluate(button => button.click());
