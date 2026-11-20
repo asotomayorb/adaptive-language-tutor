@@ -168,6 +168,8 @@ try {
   assert.ok(await page.locator("#theory-description .theory-rule-list li").count() >= 2, "article rules should be split into readable points");
   await page.locator("#theory-next").click();
   assert.match(await page.locator("#theory-description").innerText(), /Eu sou|SER|ESTAR/i, "verb theory should include applied conjugation");
+  assert.deepEqual(await page.locator("#theory-description .theory-example-table thead th").evaluateAll(nodes => nodes.map(node => node.textContent.trim())),["Pronombre","Ejemplo aplicado"],"present verb examples should use the same pronoun/example table");
+  assert.ok(await page.locator("#theory-description .theory-example-table .theory-translation").count() >= 3,"present examples should show their Spanish translations below the target phrases");
   assert.equal(await page.locator("#theory-description .theory-note").count(),2,"verb rules and exceptions should use separate sections");
   assert.ok(await page.locator("#theory-description .theory-rule-list li").count() >= 3,"verb rules and exceptions should be listed one point per line");
   await page.locator("#theory-next").click();
