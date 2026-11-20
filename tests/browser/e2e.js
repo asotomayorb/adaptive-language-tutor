@@ -321,14 +321,13 @@ try {
   assert.equal(await page.locator("#lesson-content .reading-passage").isVisible(),true,"reading mode should show a passage before its question");
   assert.match(await page.locator("#lesson-content .reading-passage").innerText(),/João Pessoa/);
   assert.equal(await page.locator("#lesson-content #reading-tts-toggle").isVisible(),true,"the passage should expose its own TTS control");
+  assert.equal(await page.locator("#reading-tts-toggle").innerText(),"Ⅱ","reading comprehension should start the passage automatically");
+  await page.waitForFunction(() => window.__spoken.some(item => item.text.includes("Ana mora em João Pessoa") && item.lang === "pt-BR"));
   await page.locator("#reading-tts-toggle").click();
-  assert.equal(await page.locator("#reading-tts-toggle").innerText(),"Ⅱ","passage TTS should show a pause icon while speaking");
-  assert.equal(await page.locator("#reading-tts-toggle").getAttribute("aria-label"),"Pausar lectura");
+  assert.equal(await page.locator("#reading-tts-toggle").innerText(),"▶","passage TTS should pause when requested");
+  assert.equal(await page.locator("#reading-tts-toggle").getAttribute("aria-label"),"Reproducir lectura");
   assert.equal(await page.locator("#reading-tts-progress").isVisible(),true,"the reading player should show a progress bar");
   assert.equal(await page.locator("#reading-tts-restart").isVisible(),true,"the reading player should show a restart control");
-  await page.locator("#reading-tts-toggle").click();
-  assert.equal(await page.locator("#reading-tts-toggle").innerText(),"▶","passage TTS should show play while paused");
-  assert.equal(await page.locator("#reading-tts-toggle").getAttribute("aria-label"),"Reproducir lectura");
   await page.locator("#reading-tts-toggle").click();
   assert.equal(await page.locator("#reading-tts-toggle").innerText(),"Ⅱ","passage TTS should resume without restarting");
   assert.equal(await page.locator("#lesson-content .reading-question-type").evaluate(node => node.textContent.trim()),"Comprensión del texto");
