@@ -29,7 +29,7 @@ export function createSpeechController({
     return enabled;
   }
 
-  function createUtterance(text, locale) {
+  function createUtterance(text, locale, onEnd) {
     const utterance = new Utterance(String(text || "").trim());
     if (locale) utterance.lang = locale;
     let voices = [];
@@ -39,16 +39,16 @@ export function createSpeechController({
     if (voice) utterance.voice = voice;
     else if (locale) onStatus({ enabled, supported, fallback: true, locale });
     utterance.onerror = () => onStatus({ enabled, supported, error: true, locale, speaking:false, paused:false });
-    utterance.onend = () => onStatus({ enabled, supported, speaking:false, paused:false });
+    utterance.onend = () => { onStatus({ enabled, supported, speaking:false, paused:false }); onEnd?.(); };
     return utterance;
   }
 
-  function speak(text, locale, { automatic = false } = {}) {
+  function speak(text, locale, { automatic = false, onEnd } = {}) {
     const phrase = String(text || "").trim();
     if (!phrase || !supported || (automatic && !enabled)) return { spoken: false, reason: "unavailable" };
     try {
       synthesis.cancel?.();
-      synthesis.speak(createUtterance(phrase, locale));
+      synthesis.speak(createUtterance(phrase, locale, onEnd));
       onStatus({ enabled, supported, speaking:true, paused:false, locale });
       return { spoken: true };
     } catch (error) {
