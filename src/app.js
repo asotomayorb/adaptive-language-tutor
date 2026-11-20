@@ -304,7 +304,7 @@ let routeDraft = null;
 const ROUTE_STORAGE_KEY = "adaptive-language-tutor.route-progress";
 const ROUTE_UNITS_KEY = "adaptive-language-tutor.route-units";
 const ROUTE_UNIT_DEFINITIONS = [
-  { id:"foundations", number:"01", title:"Fundamentos", topic:"daily", icon:"💬", requiredStars:0, description:"Vocabulario, conjugaciones y presentaciones." },
+  { id:"foundations", number:"01", title:"Inicio del viaje", topic:"daily", icon:"🧭", requiredStars:0, description:"Primeras palabras, expresiones y reglas para comenzar a comunicarte." },
   { id:"travel", number:"02", title:"Viajes y orientación", topic:"travel", icon:"🧭", requiredStars:3, description:"Moverte, preguntar y resolver situaciones." },
   { id:"food", number:"03", title:"Comida y restaurantes", topic:"food", icon:"🍽️", requiredStars:5, description:"Pedir, elegir y expresar preferencias." },
   { id:"work", number:"04", title:"Trabajo y estudios", topic:"work", icon:"💼", requiredStars:3, description:"Hablar de tareas, ocupaciones y ayuda." }
@@ -347,7 +347,8 @@ function getRouteUnitsForCatalog(selectedCatalog) {
 function isRouteUnitUnlocked(units, index, state) {
   if (index === 0) return true;
   const record = state.completedUnits?.[units[index-1].id];
-  return Boolean(record?.completed && Number(record.stars) >= Number(units[index].requiredStars || 0));
+  const earnedStars = Number.isFinite(Number(record?.stars)) ? Number(record.stars) : Math.floor((Number(record?.accuracy) || 0) / 20);
+  return Boolean(record?.completed && earnedStars >= Number(units[index].requiredStars || 0));
 }
 function renderRouteDashboard() {
   const list = $("route-unit-list"), start = $("route-start");
@@ -381,10 +382,9 @@ function renderRouteDashboard() {
   $("route-resume")?.classList.add("hidden");
 }
 function getRoutePhase(index,total) {
-  const first = Math.max(1,Math.ceil(total/3)), second = Math.max(first+1,Math.ceil(total*2/3));
-  if (index < first) return { id:"vocabulary",label:"VOCABULARIO Y CONJUGACIONES" };
-  if (index < second) return { id:"context",label:"APLICACIÓN EN CONTEXTO" };
-  return { id:"sentences",label:"FRASES COMPLETAS" };
+  const chapterOneEnd = Math.max(2,Math.ceil(total * 0.4));
+  if (index < chapterOneEnd) return { id:"discovery",label:"CAPÍTULO 1 · VOCABULARIO Y REGLAS" };
+  return { id:"application",label:"CAPÍTULO 2 · APLICACIÓN PROGRESIVA" };
 }
 function getExerciseIllustration(exercise) {
   const text = [exercise?.prompt,exercise?.term,exercise?.skill,exercise?.meaning].join(" ").toLocaleLowerCase();
@@ -1283,11 +1283,11 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   if (!currentExercise) { finishSession(); return; }
   const adaptation = getAdaptation(session);
   const routePhase = routeMode ? getRoutePhase(questionIndex,routeQuestionCount) : null;
-  $("lesson-phase").textContent = routeMode ? routePhase.label : session.config.topic === "reading"
+  const activityPhaseLabel = routeMode ? routePhase.label : session.config.topic === "reading"
     ? (currentExercise.type === "reading" ? "COMPRENSIÓN DEL TEXTO" : "PRÁCTICA GENERAL")
     : topicLabels[session.config.topic].toUpperCase() + " · " + levelLabel(session.config.level).toUpperCase();
-  $("turn-count").textContent = "Pregunta " + (questionIndex + 1) + " / " + (routeMode ? routeQuestionCount : session.config.duration);
-  $("progress-bar").style.width = (questionIndex / (routeMode ? routeQuestionCount : session.config.duration) * 100) + "%";
+  $("turn-count").textContent = (questionIndex + 1) + " / " + (routeMode ? routeQuestionCount : session.config.duration);
+  $("progress-bar").style.width = ((questionIndex + 1) / (routeMode ? routeQuestionCount : session.config.duration) * 100) + "%";
   $("streak").textContent = session.streak;
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
@@ -1310,7 +1310,7 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
     : "";
   const readingQuestionType = session.config.topic === "reading"
     ? '<p class="reading-question-type">' + (currentExercise.type === "reading" ? "Comprensión del texto" : "Práctica general") + '</p>' : "";
-  $("lesson-content").innerHTML = getExerciseIllustration({ ...currentExercise, topic:currentExercise.topic || session.config.topic }) + readingQuestionType + readingMarkup + instructionMarkup + '<h3>' + promptMarkup + '</h3>' + questionAudioMarkup;
+  $("lesson-content").innerHTML = getExerciseIllustration({ ...currentExercise, topic:currentExercise.topic || session.config.topic }) + '<div class="activity-phase">' + escapeHTML(activityPhaseLabel) + '</div>' + readingQuestionType + readingMarkup + instructionMarkup + '<h3>' + promptMarkup + '</h3>' + questionAudioMarkup;
   updateReadingPassageControl();
   $("reading-tts-toggle")?.addEventListener("click", togglePassageSpeech);
   $("reading-tts-restart")?.addEventListener("click", restartPassageSpeech);
@@ -1574,10 +1574,16 @@ function finishSession() {
     const stars = Math.min(5, Math.floor(accuracy / 20));
     const state = getRouteProgressForLanguage(session.config.languageId);
     state.completedUnits = state.completedUnits || {};
-    const unitId = activeRouteUnit?.id || "foundations";
-    const previousRecord = state.completedUnits[unitId];
-    const newRecord = { completed:true, stars, accuracy, correct, attempted, completedAt:new Date().toISOString() };
-    if (!previousRecord?.completed || accuracy > Number(previousRecord.accuracy || 0)) state.completedUnits[unitId] = newRecord;
+    const unitId = session.config.routeUnitId || activeRouteUnit?.id || "foundations";
+    const previousRecord = state.completedUnits[unitId] || {};
+    const bestAccuracy = Math.max(Number(previousRecord.accuracy) || 0, accuracy);
+    const bestStars = Math.max(Number(previousRecord.stars) || 0, stars, Math.floor(bestAccuracy / 20));
+    state.completedUnits[unitId] = {
+      ...previousRecord, completed:true, stars:bestStars, accuracy:bestAccuracy,
+      correct:bestAccuracy === accuracy ? correct : previousRecord.correct,
+      attempted:bestAccuracy === accuracy ? attempted : previousRecord.attempted,
+      completedAt:new Date().toISOString()
+    };
     saveRouteProgressForLanguage(session.config.languageId,state);
     selectedRouteUnitId = activeRouteUnit?.id || "foundations";
     routeSelectionTouched = false;
@@ -1629,14 +1635,14 @@ function finishSession() {
   ])];
   if (routeMode) {
     $("summary-content").innerHTML = '<h2 class="summary-title">Resumen</h2>' + routeScoreMarkup +
-      '<section class="summary-section route-reinforcement"><h3>Reforzar:</h3><ul>' +
-      (reinforcementItems.length ? reinforcementItems.map(item => '<li>' + escapeHTML(item) + '</li>').join("") : '<li>Sin elementos pendientes</li>') +
-      '</ul></section>';
+      (reinforcementItems.length ? '<section class="summary-section route-reinforcement"><h3>Reforzar:</h3><ul>' +
+        reinforcementItems.map(item => '<li>' + escapeHTML(item) + '</li>').join("") + '</ul></section>' : "");
     const units = getRouteUnitsForCatalog(catalog);
     const activeIndex = units.findIndex(unit => unit.id === activeRouteUnit?.id);
     const nextUnit = units[activeIndex + 1];
     const routeState = getRouteProgressForLanguage(session.config.languageId);
-    routeSummaryNextUnitId = session.routeIntegrationComplete && nextUnit &&
+    const completedRecord = routeState.completedUnits?.[session.config.routeUnitId || activeRouteUnit?.id];
+    routeSummaryNextUnitId = session.routeIntegrationComplete && completedRecord?.completed && nextUnit &&
       isRouteUnitUnlocked(units,activeIndex + 1,routeState) ? nextUnit.id : "";
     $("route-summary-next").hidden = false;
     if (routeSummaryNextUnitId) {
