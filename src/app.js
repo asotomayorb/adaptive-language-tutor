@@ -1238,7 +1238,7 @@ function startRouteSession(resume = false) {
   reviewMode = false;
   $("lesson-panel").classList.remove("hidden");
   $("summary-panel").classList.add("hidden");
-  showSessionView("Ruta");
+  showSessionView("route");
   if (aiPendingTurn) {
     renderAITutorTurn(aiLastResult);
     showAnswerFeedback({
