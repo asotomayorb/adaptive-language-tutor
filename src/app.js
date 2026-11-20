@@ -2228,11 +2228,23 @@ function getTheoryExamplePronoun(example) {
   return match ? match[0] : "—";
 }
 function renderTheoryExampleTable(example, translation, locale, languageName = "") {
-  const knownTranslations = languageName === "Portugués brasileño" ? {
-    "Eu sou chilena.":"Soy chilena.",
-    "Hoje estou cansada.":"Hoy estoy cansada.",
-    "Estamos em casa.":"Estamos en casa."
-  } : {};
+  const knownTranslations = ({
+    "Portugués brasileño":{
+      "Eu sou chilena.":"Soy chilena.",
+      "Hoje estou cansada.":"Hoy estoy cansada.",
+      "Estamos em casa.":"Estamos en casa."
+    },
+    "Italiano":{
+      "Sono cileno.":"Soy chileno.",
+      "Sto bene.":"Estoy bien.",
+      "Sto a casa":"Me quedo en casa."
+    },
+    "Neerlandés":{
+      "Ik ben student.":"Soy estudiante.",
+      "Zij is moe.":"Ella está cansada.",
+      "We zijn thuis.":"Estamos en casa."
+    }
+  })[languageName] || {};
   const rows = String(example || "").split(/\s+\/\s+/).map(raw => {
     const item = raw.trim();
     const translated = item.match(/^(.*?)\s*\(([^()]*)\)\s*$/);
