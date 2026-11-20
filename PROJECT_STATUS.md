@@ -727,3 +727,29 @@ Implementación en curso en `feature/mobile-bottom-navigation`:
 - Ejecutar npm run check, npm test y Browser E2E después de los cambios.
 
 - Corrección adicional: el puntaje final de Ruta ahora usa los contadores de intentos realmente evaluados (`session.attempted` / `session.correct`); los turnos conversacionales IA marcados `not_applicable` dejan de contabilizarse como respuestas incorrectas. Pendiente validar progresión de unidad con sesión IA real.
+
+## Iteración 20-11-2026 — TTS, Teoría, Ruta y simplificación del frontend
+
+### Cambios aplicados en la rama activa
+- [x] TTS local: se elimina la inferencia automática del locale de consignas ambiguas. Solo se reproducen segmentos con locale explícito o rol de idioma claramente declarado.
+- [x] Motor de voz: si no hay voz instalada compatible con el locale solicitado, se omite la reproducción en vez de dejar que el navegador use una voz predeterminada del idioma origen.
+- [x] TTS IA: se filtran segmentos por locale objetivo y se descartan los marcados como instrucción/idioma origen.
+- [x] Teoría: reglas y excepciones pasan a listas numeradas; se separa el conjunto de excepciones del pasado del correspondiente al futuro para portugués brasileño.
+- [x] Ruta: el resumen muestra estrellas y un único bloque «Reforzar:»; se ocultan porcentaje, subtítulos de errores/vocabulario/temas y datos redundantes.
+- [x] Ruta: el resumen ofrece acción directa para iniciar la siguiente unidad desbloqueada o volver a Ruta si aún no cumple el umbral.
+- [x] Actividad: contador debajo de los controles X/audio; icono de tema como primer elemento del contenido; códigos MCER en niveles de dificultad.
+- [x] Frontend: se elimina el selector de cambio de idioma durante el uso y la opción de idioma personalizado. Se conserva la selección inicial entre idiomas disponibles.
+- [x] Estado interno de IA oculto; no se expone estado «Tutor IA disponible» al usuario.
+
+### Pruebas añadidas/actualizadas
+- [x] Unit tests TTS: voz objetivo ausente no debe provocar fallback a voz fuente.
+- [x] Browser E2E: orden contador/icono, ausencia de selector de idioma activo, resumen de Ruta con estrellas y refuerzo único, y avance directo a la siguiente unidad.
+- [ ] Ejecutar y confirmar npm run check, npm test y npm run test:e2e en GitHub Actions para el HEAD final.
+- [ ] Verificar build y deploy manual de Render (auto-deploy desactivado).
+- [ ] Prueba auditiva real en Android con portugués y español; comprobar también comportamiento cuando falta la voz objetivo.
+- [ ] Auditar manualmente todos los temas de Teoría en los idiomas que se mantienen disponibles en el selector inicial.
+- [ ] Verificar que cada elemento de «Reforzar» identifique correctamente palabra/habilidad/tema tras errores locales y de IA.
+- [ ] Prueba humana de desbloqueo y continuidad de las cuatro unidades de Ruta.
+
+### Límites de validación
+Los cambios están guardados en GitHub, pero aún no deben considerarse verificados hasta que CI/E2E y Render confirmen el HEAD final. La voz y el flujo pedagógico requieren prueba humana Android. No se ha modificado Replit ni se ha hecho merge a main.
