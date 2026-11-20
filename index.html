@@ -47,7 +47,7 @@
         <label>Cantidad de preguntas<select id="duration"><option value="5">5 preguntas</option><option value="10" selected>10 preguntas</option><option value="15">15 preguntas</option><option value="20">20 preguntas</option></select></label>
         <label>Nivel<select id="level"><option value="zero">Principiante · A1</option><option value="basic" selected>Intermedio · B1</option><option value="advanced">Avanzado · C1</option></select></label>
         <label class="topic-field">Tema<select id="topic"><option value="daily">Vida cotidiana</option><option value="travel">Viajes</option><option value="food">Comida y restaurantes</option><option value="work">Trabajo y estudios</option><option value="reading" hidden>Comprensión lectora</option><option value="random">Todos los temas</option></select></label>
-        <div class="form-footer"><button id="setup-back" class="text-button hidden" type="button">Volver</button><button id="start-session" class="primary" type="submit" disabled>Comenzar</button></div>
+        <div class="form-footer"><button id="setup-back" class="icon-control back-control hidden" type="button" aria-label="Volver">←</button><button id="start-session" class="primary" type="submit" disabled>Comenzar</button></div>
       </form>
     </section>
     <section id="review-exercises" class="panel hidden"><div id="review-dashboard" class="review-dashboard"></div></section>
@@ -61,9 +61,9 @@
       <button class="theory-card" type="button" data-theory="vocabulary"><span>Aa</span><strong>Vocabulario</strong></button>
       <button class="theory-card" type="button" data-theory="expressions"><span>“ ”</span><strong>Expresiones</strong></button>
     </div>
-    <section id="theory-topic-list" class="theory-topic-list hidden"><button id="theory-list-back" class="text-button" type="button">← Categorías</button><h2 id="theory-list-title"></h2><div id="theory-list-items"></div></section>
+    <section id="theory-topic-list" class="theory-topic-list hidden"><header class="subscreen-header"><button id="theory-list-back" class="icon-control back-control" type="button" aria-label="Volver a categorías">←</button><h2 id="theory-list-title"></h2></header><div id="theory-list-items"></div></section>
     <section id="theory-detail" class="theory-slide hidden" aria-modal="true" role="dialog">
-    <header class="theory-slide-header"><button id="theory-back" class="icon-control" type="button" aria-label="Volver a temas">←</button><span id="theory-counter"></span><button id="theory-close" class="icon-control" type="button" aria-label="Cerrar teoría">×</button></header>
+    <header class="theory-slide-header"><button id="theory-back" class="icon-control back-control" type="button" aria-label="Volver a temas">←</button><span id="theory-counter"></span><span class="theory-header-spacer" aria-hidden="true"></span></header>
     <div class="theory-slide-content"><p id="theory-category" class="eyebrow"></p><h2 id="theory-title"></h2><div id="theory-description"></div></div>
     <footer class="theory-slide-footer"><button id="theory-prev" class="secondary" type="button">← Anterior</button><button id="theory-next" class="primary" type="button">Siguiente →</button></footer>
   </section>
@@ -76,7 +76,7 @@
 
   <section id="session-view" class="session-view hidden">
     <header class="session-topbar">
-      <button id="session-close" class="icon-control" type="button" aria-label="Cerrar sesión" title="Cerrar sesión">×</button>
+      <button id="session-close" class="icon-control back-control" type="button" aria-label="Volver" title="Volver">←</button>
       <span id="session-mode-label">Práctica</span>
       <button id="session-audio-toggle" class="icon-control audio-toggle" type="button" aria-pressed="true" aria-label="Desactivar audio">🔊</button>
     </header>
