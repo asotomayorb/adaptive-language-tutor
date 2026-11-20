@@ -213,22 +213,26 @@ function getExerciseSpeech(exercise) {
   return { text: "", locale: "" };
 }
 function getExerciseSpeechSegments(exercise) {
-  if (Array.isArray(exercise?.speechSegments) && exercise.speechSegments.length) {
-    return exercise.speechSegments.filter(item => item?.text && item?.locale);
+  const targetLocale = session?.config?.languageLocale || catalog?.locale || "";
+  const declared = Array.isArray(exercise?.speechSegments)
+    ? exercise.speechSegments.filter(item => item?.text && item?.locale)
+    : [];
+  const segments = [...declared];
+  if (exercise?.instruction && !segments.some(item => item.text === exercise.instruction)) {
+    segments.unshift({ text:exercise.instruction, locale:"es-CL" });
   }
-  const segments = [];
-  if (exercise?.instruction) segments.push({ text: exercise.instruction, locale: "es-CL" });
   const spoken = getExerciseSpeech(exercise);
-  if (spoken.text && spoken.locale) {
-    if (spoken.text !== exercise?.instruction) segments.push(spoken);
-    return segments;
+  if (spoken.text && spoken.locale && !segments.some(item => item.text === spoken.text && item.locale === spoken.locale)) {
+    segments.push(spoken);
   }
   const prompt = String(exercise?.prompt || "").trim();
-  const explicitLocale = exercise?.promptLocale ||
+  const promptLocale = exercise?.promptLocale ||
     (exercise?.promptLanguage === "source" || exercise?.promptLanguage === "native" ? "es-CL" :
-      exercise?.promptLanguage === "target" ? (catalog?.locale || "") : "");
-  if (prompt && explicitLocale) segments.push({ text:prompt, locale:explicitLocale });
-  return segments;
+      exercise?.promptLanguage === "target" ? targetLocale : "");
+  if (prompt && promptLocale && !segments.some(item => item.text === prompt && item.locale.toLowerCase() === promptLocale.toLowerCase())) {
+    segments.push({ text:prompt, locale:promptLocale });
+  }
+  return [...new Map(segments.map(item => [item.locale.toLowerCase() + "\\u0000" + item.text, item])).values()];
 }
 function autoSpeak(text, locale = catalog?.locale) {
   if (text && speech.enabled) speech.speak(text, locale, { automatic: true });
@@ -1606,12 +1610,17 @@ function finishSession() {
   ).join("");
   const focusItems = [...new Set([topicLabels[session.config.topic], ...summary.recommendedFocus, ...(summary.reviewPatterns || [])].filter(Boolean))];
   const routeStars = Math.min(5,Math.floor(accuracyPercent/20));
-  const routeScoreMarkup = routeMode && session.routeIntegrationComplete
-    ? '<div class="summary-route-stars" aria-label="' + routeStars + ' de 5 estrellas">' + '★'.repeat(routeStars) + '☆'.repeat(5-routeStars) + '</div>' : "";
-  const reinforcementItems = [...new Set(summary.errors.flatMap(item => {
-    const exercise = catalog?.exercises?.find(candidate => candidate.id === item.exerciseId);
-    return [exercise?.skill, exercise?.term, topicLabels[exercise?.topic]].filter(Boolean);
-  }))];
+  const routeFeedback = attemptedCount === 0 ? "Sin respuestas evaluadas" : accuracyMessage;
+  const routeScoreMarkup = routeMode
+    ? '<section class="route-result" aria-label="Resultado de la unidad"><div class="summary-route-stars" aria-label="' + routeStars + ' de 5 estrellas">' + '★'.repeat(routeStars) + '☆'.repeat(5-routeStars) + '</div><p class="route-result-feedback">' + routeFeedback + '</p></section>' : "";
+  const reinforcementItems = [...new Set([
+    ...summary.errors.flatMap(item => {
+      const exercise = catalog?.exercises?.find(candidate => candidate.id === item.exerciseId);
+      return [item.skill, exercise?.skill, exercise?.term, topicLabels[exercise?.topic]].filter(Boolean);
+    }),
+    ...(summary.errorsToReview || []),
+    ...(session.errorsToReview || [])
+  ])];
   if (routeMode) {
     $("summary-content").innerHTML = '<h2 class="summary-title">Resumen</h2>' + routeScoreMarkup +
       '<section class="summary-section route-reinforcement"><h3>Reforzar:</h3><ul>' +
@@ -1620,10 +1629,19 @@ function finishSession() {
     const units = getRouteUnitsForCatalog(catalog);
     const activeIndex = units.findIndex(unit => unit.id === activeRouteUnit?.id);
     const nextUnit = units[activeIndex + 1];
-    routeSummaryNextUnitId = nextUnit && isRouteUnitUnlocked(units,activeIndex + 1,getRouteProgressForLanguage(session.config.languageId)) ? nextUnit.id : "";
+    const routeState = getRouteProgressForLanguage(session.config.languageId);
+    routeSummaryNextUnitId = session.routeIntegrationComplete && nextUnit &&
+      isRouteUnitUnlocked(units,activeIndex + 1,routeState) ? nextUnit.id : "";
     $("route-summary-next").hidden = false;
-    $("route-summary-next").textContent = routeSummaryNextUnitId
-      ? 'Continuar: ' + nextUnit.title + ' →' : 'Volver a Ruta';
+    if (routeSummaryNextUnitId) {
+      $("route-summary-next").textContent = 'Continuar: ' + nextUnit.title + ' →';
+    } else if (!session.routeIntegrationComplete) {
+      $("route-summary-next").textContent = 'Repetir unidad';
+    } else if (nextUnit) {
+      $("route-summary-next").textContent = 'Repetir para alcanzar ' + nextUnit.requiredStars + ' estrellas';
+    } else {
+      $("route-summary-next").textContent = 'Volver a Ruta';
+    }
     $("new-session").hidden = true;
   } else {
     $("summary-content").innerHTML = '<h2 class="summary-title">Resumen</h2>' +
@@ -1646,15 +1664,26 @@ $("new-session").addEventListener("click", () => {
 });
 $("route-summary-next")?.addEventListener("click", () => {
   const nextId = routeSummaryNextUnitId;
-  if (!nextId) {
-    closeSessionAndReturn();
-    showScreen("route");
+  if (nextId) {
+    selectedRouteUnitId = nextId;
+    routeSelectionTouched = true;
+    routeMode = true;
+    startRouteSession(false);
+    if (activeRouteUnit?.id !== nextId || !session || session.config.routeUnitId !== nextId) {
+      routeSelectionTouched = false;
+      closeSessionAndReturn();
+      showScreen("route");
+    }
     return;
   }
-  selectedRouteUnitId = nextId;
-  routeSelectionTouched = true;
-  routeMode = true;
-  startRouteSession(false);
+  if (routeMode && activeRouteUnit && session) {
+    selectedRouteUnitId = activeRouteUnit.id;
+    routeSelectionTouched = true;
+    startRouteSession(false);
+    return;
+  }
+  closeSessionAndReturn();
+  showScreen("route");
 });
 
 // Main navigation and language onboarding
@@ -2052,11 +2081,29 @@ const tenseLessons = {
   "Tailandés":{present:[["ฉัน","พูด"],["คุณ","พูด"],["เขา","พูด"],["เรา","พูด"],["พวกเขา","พูด"]],past:"เมื่อวานฉันพูดภาษาไทยแล้ว",pastEs:"Ayer hablé tailandés.",pastRule:"El verbo no se conjuga por persona. Marcadores como แล้ว y expresiones temporales indican acción completada.",future:"พรุ่งนี้ฉันจะพูดภาษาไทย",futureEs:"Mañana hablaré tailandés.",futureRule:"จะ (jà) delante del verbo marca futuro o intención; el verbo no cambia."}
 };
 function renderGrammarRuleSections(rules, exceptions = "") {
-  const splitPoints = value => String(value || "").replace(/:\s*/g, ". ")
-    .split(/(?<=[.!?])\s+|;\s+|,\s+(?=[^,;]+?\s*→)/)
-    .map(point => point.trim().replace(/^[-•\d.)\s]+/, "")).filter(Boolean);
-  const renderList = points => '<ol class="theory-rule-list">' + points.map(point => '<li>' + escapeHTML(point) + '</li>').join("") + '</ol>';
-  const rulePoints = splitPoints(rules), exceptionPoints = splitPoints(exceptions);
+  const clean = value => String(value || "").trim().replace(/^[-•\d.)\s]+/, "").replace(/[.;:]$/, "").trim();
+  const splitChildren = value => String(value || "")
+    .split(/;\s+|,\s+(?=[^,;]+?\s*→)/)
+    .map(clean).filter(Boolean);
+  const parseHierarchy = value => String(value || "").split(/(?<=[.!?])\s+/).map(sentence => {
+    const item = clean(sentence);
+    if (!item) return null;
+    const colon = item.indexOf(":");
+    if (colon > 0 && colon < item.length - 1) {
+      const parent = clean(item.slice(0,colon));
+      const children = splitChildren(item.slice(colon + 1));
+      return children.length ? { parent, children } : { parent };
+    }
+    const parts = item.split(/;\s+/).map(clean).filter(Boolean);
+    if (parts.length > 1) return { parent:parts[0], children:parts.slice(1) };
+    return { parent:item };
+  }).filter(Boolean);
+  const renderList = nodes => '<ol class="theory-rule-list">' + nodes.map(node =>
+    '<li><span class="theory-rule-parent">' + escapeHTML(node.parent) + '</span>' +
+    (node.children?.length ? '<ul class="theory-rule-children">' + node.children.map(child => '<li>' + escapeHTML(child) + '</li>').join("") + '</ul>' : '') +
+    '</li>'
+  ).join("") + '</ol>';
+  const rulePoints = parseHierarchy(rules), exceptionPoints = parseHierarchy(exceptions);
   return (rulePoints.length ? '<section class="theory-note theory-rules"><h3>Reglas y usos</h3>' + renderList(rulePoints) + '</section>' : "") +
     (exceptionPoints.length ? '<section class="theory-note theory-exceptions"><h3>Excepciones e irregulares</h3>' + renderList(exceptionPoints) + '</section>' : "");
 }
@@ -2329,6 +2376,9 @@ function openTheoryTopic(index) {
   $("theory-category").textContent = activeTheoryCategory;
   $("theory-description").innerHTML = detailMarkup;
   bindSpeakerButtons($("theory-description"));
+  speech.stop();
+  const firstTargetAudio = $("theory-description").querySelector('[data-speak][data-locale="' + locale + '"]');
+  if (firstTargetAudio) speech.speak(firstTargetAudio.dataset.speak, locale, { automatic:true });
   $("theory-counter").textContent = (activeTheoryIndex + 1) + " / " + activeTheoryTopics.length;
   $("theory-prev").disabled = activeTheoryIndex === 0;
   $("theory-next").disabled = activeTheoryIndex === activeTheoryTopics.length - 1;
@@ -2353,7 +2403,6 @@ $("theory-list-back").addEventListener("click", () => {
   $("theory-grid").classList.remove("hidden");
 });
 $("theory-back").addEventListener("click", () => $("theory-detail").classList.add("hidden"));
-$("theory-close").addEventListener("click", () => $("theory-detail").classList.add("hidden"));
 $("theory-prev").addEventListener("click", () => openTheoryTopic(activeTheoryIndex - 1));
 $("theory-next").addEventListener("click", () => openTheoryTopic(activeTheoryIndex + 1));
 $("variant-close").addEventListener("click", () => $("variant-dialog").close());
