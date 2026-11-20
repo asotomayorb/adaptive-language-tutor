@@ -12,6 +12,8 @@ function speechMock(voices = []) {
       getVoices: () => voices,
       speak: utterance => spoken.push(utterance),
       cancel: () => { cancelled += 1; },
+      pause: () => { api.paused = true; },
+      resume: () => { api.paused = false; },
       pause: () => {},
       resume: () => {}
     }
@@ -115,4 +117,20 @@ test("speech preference storage failures do not break the tutor", () => {
   });
   assert.equal(controller.enabled, true);
   assert.equal(controller.speak("Olá", "pt-BR").spoken, true);
+});
+
+
+test("speech controller can pause and resume a passage", () => {
+  const mock = speechMock();
+  mock.api.paused = false;
+  const controller = createSpeechController({
+    synthesis: mock.api,
+    Utterance: MockUtterance,
+    storage: { getItem: () => null, setItem: () => {} }
+  });
+  assert.equal(controller.speak("Um texto de leitura", "pt-BR").spoken, true);
+  assert.equal(controller.pause(), true);
+  assert.equal(controller.paused, true);
+  assert.equal(controller.resume(), true);
+  assert.equal(controller.paused, false);
 });
