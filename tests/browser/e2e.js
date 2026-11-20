@@ -372,7 +372,7 @@ try {
   await page.locator("#route-start").click();
   assert.equal(await page.locator("#lesson-content .exercise-illustration").count(),1,"every activity must show its topic icon");
   assert.equal(await page.locator("#lesson-content").locator(":scope > :first-child").getAttribute("class"),"exercise-illustration","the topic icon must follow the question counter directly");
-  assert.match(await page.locator("#turn-count").innerText(),/Pregunta 1/);
+  assert.equal((await page.locator("#turn-count").innerText()).trim(),"1 / 5");
   await page.locator("#answer-area [data-choice]").last().click();
   await page.locator("#answer-area #continue-answer").click();
   await page.locator("#answer-area [data-choice]").first().evaluate(button => button.click());
