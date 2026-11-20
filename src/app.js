@@ -218,13 +218,16 @@ function getExerciseSpeechSegments(exercise) {
   }
   const segments = [];
   if (exercise?.instruction) segments.push({ text: exercise.instruction, locale: "es-CL" });
+  const spoken = getExerciseSpeech(exercise);
+  if (spoken.text && spoken.locale) {
+    if (spoken.text !== exercise?.instruction) segments.push(spoken);
+    return segments;
+  }
   const prompt = String(exercise?.prompt || "").trim();
-  const explicitLocale = exercise?.speechLocale || exercise?.promptLocale ||
+  const explicitLocale = exercise?.promptLocale ||
     (exercise?.promptLanguage === "source" || exercise?.promptLanguage === "native" ? "es-CL" :
       exercise?.promptLanguage === "target" ? (catalog?.locale || "") : "");
-  if (prompt && explicitLocale) segments.push({ text: prompt, locale: explicitLocale });
-  const spoken = getExerciseSpeech(exercise);
-  if (!segments.length && spoken.text && spoken.locale) segments.push(spoken);
+  if (prompt && explicitLocale) segments.push({ text:prompt, locale:explicitLocale });
   return segments;
 }
 function autoSpeak(text, locale = catalog?.locale) {
@@ -751,22 +754,27 @@ function renderAITutorTurn(result) {
     ? '<h3>' + renderClickableTargetText(aiCurrentExercise.prompt) + '</h3>'
     : '<h3>El tutor está preparando una actividad cerrada.</h3>';
   const targetLocale = session.config.languageLocale || session.config.languageId;
-  const targetSpeech = (result.speechSegments || []).filter(item =>
-    item && typeof item.text === "string" && item.text.trim() &&
-    String(item.locale || "").toLowerCase() === String(targetLocale).toLowerCase() &&
+  const questionSpeechSegments = (result.speechSegments || []).filter(item => {
+    if (!item || typeof item.text !== "string" || !item.text.trim() || !item.locale) return false;
+    const declaredLanguage = String(item.language || "").toLowerCase();
+    const localeLanguage = String(item.locale).split("-")[0].toLowerCase();
+    return !declaredLanguage || declaredLanguage === localeLanguage;
+  });
+  const targetSpeech = questionSpeechSegments.filter(item =>
+    String(item.locale).toLowerCase() === String(targetLocale).toLowerCase() &&
     item.languageRole !== "source" && item.role !== "instruction"
   );
   const questionSpeech = targetSpeech.length
-    ? { text: targetSpeech.map(item => item.text.trim()).join(" "), locale: targetLocale }
+    ? { text:targetSpeech.map(item => item.text.trim()).join(" "), locale:targetLocale }
     : null;
   const promptAudio = aiCurrentExercise.prompt && questionSpeech
-    ? speakerButton(questionSpeech.text, questionSpeech.locale)
+    ? speakerButton(questionSpeech.text,questionSpeech.locale)
     : "";
   $("lesson-content").innerHTML = getExerciseIllustration({ ...aiCurrentExercise, topic:session.config.topic }) + instructionMarkup + prompt + promptAudio;
   bindSpeakerButtons($("lesson-content"));
   bindVariantLinks($("lesson-content"));
   bindTargetWords($("lesson-content"));
-  if (questionSpeech) autoSpeak(questionSpeech.text, questionSpeech.locale);
+  if (questionSpeechSegments.length) speech.speakSequence(questionSpeechSegments, { automatic:true });
   $("feedback").classList.add("hidden");
   const aiOptions = Array.isArray(aiCurrentExercise.options) ? aiCurrentExercise.options : [];
   const aiShouldUseChoices = routeMode ? !routeIntegration && aiRoutePhase?.id !== "sentences" : session.turn < 3;
@@ -1278,13 +1286,15 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   // Source-language instructions/prompts stay readable but are never sent to
   // the target-language voice or given a target-language speaker button.
   const questionSpeechSegments = getExerciseSpeechSegments(currentExercise)
-    .filter(item => item.locale && item.locale.toLowerCase() === targetLocale.toLowerCase());
+    .filter(item => item.locale && item.text);
+  const targetQuestionSpeechSegments = questionSpeechSegments
+    .filter(item => item.locale.toLowerCase() === targetLocale.toLowerCase());
   const promptMarkup = currentExercise.promptLanguage === "target"
     ? renderClickableTargetText(currentExercise.prompt)
     : renderVariantTerms(currentExercise.prompt);
   const instructionMarkup = currentExercise.instruction
     ? '<p class="exercise-instruction">' + escapeHTML(currentExercise.instruction) + '</p>' : "";
-  const questionAudioMarkup = questionSpeechSegments.map(item => speakerButton(item.text, item.locale)).join(" ");
+  const questionAudioMarkup = targetQuestionSpeechSegments.map(item => speakerButton(item.text, item.locale)).join(" ");
   const readingMarkup = currentExercise.passage
     ? '<section class="reading-passage"><span class="reading-passage-kicker">Texto de lectura</span><h3>' + escapeHTML(currentExercise.passageTitle || "Lectura") + '</h3><p>' + escapeHTML(currentExercise.passage) + '</p><div class="reading-player"><button id="reading-tts-toggle" class="reading-player-play" type="button" aria-label="Reproducir lectura">▶</button><input id="reading-tts-progress" class="reading-player-progress" type="range" min="0" max="100" value="0" aria-label="Posición de lectura"><button id="reading-tts-restart" class="reading-player-restart" type="button" aria-label="Reiniciar lectura">↻</button></div></section>'
     : "";
