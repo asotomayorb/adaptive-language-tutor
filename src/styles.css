@@ -571,3 +571,20 @@
 .route-result-feedback{margin:0;font-size:16px;font-weight:750;color:#294b70}
 .route-reinforcement{margin-top:0}
 @media(max-width:620px){.back-control{width:40px;height:40px;min-width:40px}.subscreen-header{margin-bottom:14px}.theory-rule-children{gap:5px}.route-result{padding:14px 10px}}
+
+
+/* Shared activity header: section title and question counter precede progress and content */
+.activity-header{display:grid;grid-template-columns:42px minmax(0,1fr) auto 42px;align-items:center;gap:10px;margin-bottom:10px}
+.activity-header #session-mode-label{justify-self:start;font-size:16px;font-weight:750;line-height:1.2;color:#203a59}
+.activity-counter{justify-self:end;white-space:nowrap;font-size:13px;font-weight:750;font-variant-numeric:tabular-nums;color:#38536f}
+.activity-progress{height:6px;margin:0 0 18px;border-radius:99px;background:#e6edf4;overflow:hidden}
+.activity-progress #progress-bar{height:100%;width:0;border-radius:inherit;background:#3977ad;transition:width .2s ease}
+.activity-phase{margin:0 0 12px;text-align:center;font-size:11px;font-weight:800;letter-spacing:.055em;color:#71839a}
+.lesson-panel .lesson-content{padding-top:0}
+.lesson-panel .exercise-illustration{margin-bottom:8px}
+@media(max-width:420px){
+ .activity-header{grid-template-columns:38px minmax(0,1fr) auto 38px;gap:7px}
+ .activity-header #session-mode-label{font-size:14px}
+ .activity-counter{font-size:12px}
+ .activity-progress{margin-bottom:15px}
+}
