@@ -425,8 +425,10 @@ try {
   assert.equal(await aiPage.locator("#lesson-content h3").innerText(), "Choisissez la bonne forme.");
   assert.equal(await aiPage.locator("#lesson-content .target-word-link").count(), 0, "AI exercise text should not open word translations");
   await aiPage.waitForFunction(() => window.__spoken.some(item => item.text === "Bonjour" && item.lang === "fr-FR"));
-  assert.equal(await aiPage.evaluate(() => window.__spoken.some(item => item.text.includes("Instrucción en español"))), false,
-    "mixed AI speech must ignore source-language segments");
+  assert.equal(await aiPage.evaluate(() => window.__spoken.some(item => item.text.includes("Instrucción en español") && item.lang === "es-CL")), true,
+    "AI source instructions should use the Spanish voice");
+  assert.equal(await aiPage.evaluate(() => window.__spoken.some(item => item.text === "Bonjour" && item.lang === "fr-FR")), true,
+    "AI target content should use the target-language voice");
   await aiPage.locator("#answer-area [data-ai-choice]").first().evaluate(button => button.click());
   await aiPage.locator("#feedback .answer-status.correct").waitFor({ state: "visible" });
   await aiPage.locator("#answer-area #continue-answer").waitFor({ state: "visible" });
