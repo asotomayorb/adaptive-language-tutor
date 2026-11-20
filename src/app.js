@@ -1231,7 +1231,7 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
       : questionIndex < 3;
   if (useMultipleChoice) {
     const options = currentExercise.options || [];
-    $("answer-area").innerHTML = options.map((option,index) => '<div class="answer-option-row"><button class="answer-option" data-choice="' + index + '">' + renderClickableTargetText(option) + '</button>' + speakerButton(option, currentExercise.optionsLocale || (currentExercise.speechMode === "listening" ? "es-CL" : catalog.locale)) + '</div>').join("");
+    $("answer-area").innerHTML = options.map((option,index) => '<div class="answer-option-row"><button class="answer-option" data-choice="' + index + '">' + renderClickableTargetText(option) + '</button>' + (currentExercise.type === "reading" ? "" : speakerButton(option, currentExercise.optionsLocale || (currentExercise.speechMode === "listening" ? "es-CL" : catalog.locale))) + '</div>').join("");
     $("answer-area").querySelectorAll("[data-choice]").forEach(button => button.addEventListener("click", () => submitAnswer(options[Number(button.dataset.choice)])));
     bindSpeakerButtons($("answer-area"));
     bindTargetWords($("answer-area"));
