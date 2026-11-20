@@ -502,3 +502,36 @@ Para cada escenario registrar:
 - [x] Render Preview en estado LIVE: https://adaptive-language-tutor-preview-5b3d.onrender.com/
 - [ ] La prueba auditiva final debe ejecutarse en Android físico.
 - [ ] La revisión visual final de tablas, barra y cabecera debe ejecutarse en Android físico.
+
+## Nueva prueba humana — Iteración PT-BR 20-11-2026
+
+### Audio (Android físico)
+- [ ] Entrar en un ejercicio con consigna en español y texto objetivo en portugués: confirmar reproducción automática en orden origen → objetivo.
+- [ ] Comprobar que cada fragmento visible ofrece su propio icono manual y que el icono usa la voz correcta.
+- [ ] Probar Ejercicios, Ruta, integración, Comprensión lectora y Repaso; comprobar que ninguna sección queda sin audio/controles.
+- [ ] En Comprensión lectora, confirmar que el pasaje se reproduce automáticamente y que después se escucha la pregunta.
+- [ ] En Repaso, confirmar consigna, pronunciación objetivo y traducción tras responder.
+- [ ] Activar/desactivar audio y navegar entre pantallas; confirmar que nunca continúa una frase de la pantalla anterior.
+- [ ] En una actividad con ambos idiomas, confirmar el orden escuchado con las voces reales del dispositivo; revisar también una secuencia tras voiceschanged.
+
+### Presentación y mecánica
+- [ ] En cada actividad, comprobar cabecera (sección a izquierda, contador a derecha, audio), barra de progreso, icono/tema y consigna en ese orden.
+- [ ] Ruta: comprobar contador continuo que incluye la integración y barra hasta 7/7.
+- [ ] Lectura: probar duración 5 y 10; el contador debe respetar la selección y nunca superar el número de pasajes únicos.
+- [ ] Entrenamiento: confirmar orden Ejercicios, Comprensión lectora, Repaso.
+- [ ] Resumen con errores: solo palabras/frases incorrectas, pronunciación y traducción; sin temas/habilidades.
+- [ ] Resumen sin errores: no debe aparecer el subtítulo «Reforzar».
+- [ ] Probar volver al menú, reiniciar y siguiente ejercicio; en Ruta, la siguiente unidad solo aparece con estrellas suficientes y la última unidad vuelve al mapa.
+
+### Repaso recuperable
+- [ ] Crear varias palabras/frases pendientes y confirmar que aparecen todas en una misma sesión.
+- [ ] Responder una tarjeta y cerrar: el progreso debe guardarse inmediatamente.
+- [ ] Reabrir Repaso y confirmar que continúa con la siguiente tarjeta no completada, conservando el contador.
+- [ ] Recargar el navegador durante Repaso y confirmar el mismo comportamiento.
+- [ ] Completar todas las tarjetas: mostrar únicamente «Repaso finalizado» antes de las acciones.
+- [ ] Responder incorrectamente una tarjeta: debe seguir pendiente para otra pasada, sin repetirse indefinidamente en la misma sesión.
+
+### Alcance de idiomas
+- [ ] Ejecutar esta lista primero con portugués brasileño (pt-BR).
+- [ ] No aprobar ni propagar los cambios de contenido a otros idiomas hasta que PT-BR esté validado.
+
