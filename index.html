@@ -75,14 +75,14 @@
   </section>
 
   <section id="session-view" class="session-view hidden">
-    <header class="session-topbar">
+    <header class="session-topbar activity-header">
       <button id="session-close" class="icon-control back-control" type="button" aria-label="Volver" title="Volver">←</button>
-      <span id="session-mode-label">Práctica</span>
+      <span id="session-mode-label">Entrenamiento</span>
+      <span id="turn-count" class="activity-counter" aria-live="polite"></span>
       <button id="session-audio-toggle" class="icon-control audio-toggle" type="button" aria-pressed="true" aria-label="Desactivar audio">🔊</button>
     </header>
+    <div class="progress-track activity-progress" role="progressbar" aria-label="Progreso de la actividad" aria-valuemin="0" aria-valuemax="100"><div id="progress-bar"></div></div>
     <section id="lesson-panel" class="lesson-panel" aria-live="polite">
-      <div class="lesson-meta"><span class="eyebrow" id="lesson-phase">PRÁCTICA</span><span id="turn-count"></span></div>
-      <div class="progress-track"><div id="progress-bar"></div></div>
       <div class="stats" id="stats" hidden><span>Racha <strong id="streak">0</strong></span><span>Palabras <strong id="word-count">0</strong></span><span>Errores <strong id="error-count">0</strong></span></div>
       <div id="lesson-content" class="lesson-content"></div>
       <div id="answer-area" class="answer-area"></div>
