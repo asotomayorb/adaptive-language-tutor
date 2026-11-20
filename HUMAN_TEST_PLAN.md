@@ -494,3 +494,11 @@ Para cada escenario registrar:
 - [ ] TTS: al salir de una pantalla durante una secuencia o lectura, confirmar que no se reproduce ni actualiza contenido antiguo.
 
 - [ ] Android: probar el primer audio justo después de entrar desde el mapa y después de cambiar de pantalla; verificar que la primera utterance no se pierde.
+
+### Validación automatizada — 20-11-2026
+
+- [x] Unit tests y comprobación de código aprobados (90 pruebas): https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44781107121
+- [x] Browser E2E aprobado, incluyendo Ruta, desbloqueo persistente, cabecera común, resumen sin bloque vacío y tablas de teoría: https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44781107099
+- [x] Render Preview en estado LIVE: https://adaptive-language-tutor-preview-5b3d.onrender.com/
+- [ ] La prueba auditiva final debe ejecutarse en Android físico.
+- [ ] La revisión visual final de tablas, barra y cabecera debe ejecutarse en Android físico.
