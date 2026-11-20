@@ -86,8 +86,8 @@ export function createSpeechController({
   function speak(text, locale, { automatic = false, onEnd, onBoundary, allowSystemVoice = false } = {}) {
     const phrase = String(text || "").trim();
     if (!phrase || !supported || (automatic && !enabled)) return { spoken: false, reason: "unavailable" };
-    // Never let the browser silently substitute its default (often source-language)
-    // voice when the requested target-language voice is not installed.
+    // Always set utterance.lang; when no Voice object is exposed, let the OS TTS
+    // engine resolve that explicit locale rather than suppressing playback.
     if (locale && !getVoices().length && !allowSystemVoice) {
       if (waitForVoices({ type:"single", text:phrase, locale, options:{ automatic, onEnd, onBoundary } })) {
         onStatus({ enabled, supported, speaking:false, paused:false, waitingForVoices:true, locale });
@@ -116,15 +116,9 @@ export function createSpeechController({
       return { spoken:false, reason:requested.length ? "unavailable" : "empty" };
     }
     const voices = getVoices();
-    if (!voices.length && waitForVoices({ type:"sequence", segments:requested, options:{ automatic } })) {
+    if (!voices.length && !allowSystemVoice && waitForVoices({ type:"sequence", segments:requested, options:{ automatic } })) {
       onStatus({ enabled, supported, speaking:false, paused:false, waitingForVoices:true, locale:requested[0].locale });
       return { spoken:true, pending:true };
-    }
-    if (!voices.length && !allowSystemVoice && requested.some(item => !findVoice(item.locale))) {
-      if (waitForVoices({ type:"sequence", segments:requested, options:{ automatic } })) {
-        onStatus({ enabled, supported, speaking:false, paused:false, waitingForVoices:true, locale:requested[0].locale });
-        return { spoken:true, pending:true };
-      }
     }
     pendingRequest = null;
     try {
