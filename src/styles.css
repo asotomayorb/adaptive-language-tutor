@@ -606,6 +606,7 @@
 .summary-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:22px}
 .summary-action{display:flex;min-width:0;min-height:86px;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px 7px;border:1px solid #dfe6ee;border-radius:13px;background:#fff;color:#29425f;font:inherit;font-size:11px;font-weight:700;text-align:center;cursor:pointer}
 .summary-action:hover{border-color:#7193b8;background:#f7faff}
+.summary-action[hidden]{display:none}
 .summary-action-icon{display:grid;place-items:center;width:34px;height:34px;font-size:23px;line-height:1}
 .summary-reinforcement-list{display:grid;gap:12px;padding:0;margin:0;list-style:none}
 .summary-reinforcement-item{padding:12px;border:1px solid #e5eaf1;border-radius:11px}
