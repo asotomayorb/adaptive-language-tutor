@@ -413,3 +413,25 @@ Para cada escenario registrar:
 - [ ] Comprensión lectora: play/pause, reinicio desde el comienzo y desplazamiento con la barra de reproducción. La barra depende de los eventos de límite de palabra que soporte la voz del navegador.
 - [ ] Todas las actividades: sonido diferenciado de correcto/incorrecto en ejercicios, comprensión, repaso y evaluación final de Ruta.
 - [ ] Todas las sesiones: orden visual consistente: título del tema, icono/ilustración del tema y actividad.
+
+## 12. Regresiones y criterios nuevos — 20-11-2026
+
+- [ ] TTS portugués: una consigna escrita en español no debe pronunciarse con voz portuguesa.
+- [ ] TTS inglés: una consigna escrita en español no debe pronunciarse con voz inglesa.
+- [ ] TTS mixto: cuando el estímulo contiene español y frase objetivo, solo se reproduce el fragmento objetivo con su locale.
+- [ ] TTS sin voz objetivo instalada: no debe utilizarse la voz predeterminada del idioma origen.
+- [ ] TTS manual: cada botón debe reproducir únicamente el fragmento al que pertenece y mostrar/usar su locale real.
+- [ ] Teoría: revisar uno por uno todos los temas de Gramática, Vocabulario y Expresiones del portugués brasileño y del inglés.
+- [ ] Teoría pasado: comprobar que tabla, reglas, excepciones y ejemplos son exclusivamente de pasado.
+- [ ] Teoría futuro: comprobar que tabla, reglas, excepciones y ejemplos son exclusivamente de futuro.
+- [ ] Teoría: verificar jerarquía visual, orden tabla → reglas → excepciones → ejemplos y ausencia de párrafos convertidos en listas sin sentido.
+- [ ] Ruta: el resumen muestra solo estrellas y el único subtítulo «Reforzar:».
+- [ ] Ruta: los elementos de refuerzo coinciden con los errores reales (palabra, habilidad o tema).
+- [ ] Ruta: al completar una unidad con estrellas suficientes, el botón del resumen inicia inmediatamente la siguiente unidad.
+- [ ] Ruta: si la unidad siguiente está bloqueada, el resumen permite volver a Ruta y no deja al usuario atrapado.
+- [ ] Actividad: el contador aparece inmediatamente debajo de X/audio y el icono de tema inmediatamente debajo del contador.
+- [ ] Actividad: comprobar jerarquía anterior en Ruta, Entrenamiento, Comprensión lectora y Repaso.
+- [ ] Dificultad: mostrar Principiante · A1, Intermedio · B1 y Avanzado · C1 en selector y cabecera.
+- [ ] Navegación: no existe selector de cambio de idioma ni opción «Otro idioma»/entrada de idioma personalizado después del inicio.
+- [ ] Frontend: no mostrar mensajes de disponibilidad del tutor IA ni interfaces de texto generativo.
+- [ ] Android: repetir toda la revisión en viewport real; la automatización no sustituye la prueba auditiva ni de legibilidad.
