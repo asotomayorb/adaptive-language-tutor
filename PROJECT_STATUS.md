@@ -725,3 +725,5 @@ Implementación en curso en `feature/mobile-bottom-navigation`:
 - Verificar TTS en Android real, ya que la disponibilidad de voces exactas y los eventos de progreso dependen del navegador/dispositivo.
 - Confirmar que la barra de lectura avanza y permite saltar a otra posición con las voces instaladas.
 - Ejecutar npm run check, npm test y Browser E2E después de los cambios.
+
+- Corrección adicional: el puntaje final de Ruta ahora usa los contadores de intentos realmente evaluados (`session.attempted` / `session.correct`); los turnos conversacionales IA marcados `not_applicable` dejan de contabilizarse como respuestas incorrectas. Pendiente validar progresión de unidad con sesión IA real.
