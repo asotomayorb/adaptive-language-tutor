@@ -357,6 +357,44 @@ try {
   // The completed reading session is persisted as a full reading-only session.
   // Incomplete Exercises sessions are discarded; no partial session is persisted.
   await page.locator("#new-session").click();
+
+  // Review processes every due Portuguese word/phrase in one session and resumes after closing.
+  await page.locator('[data-mode="review"]').click();
+  assert.equal(await page.locator("#session-mode-label").innerText(),"Repaso");
+  assert.equal(await page.locator("#turn-count").innerText(),"1 / 5");
+  assert.ok(await page.locator("#lesson-content .exercise-illustration").count() === 1,"Review should share the topic illustration layout");
+  assert.ok(await page.locator("#lesson-content [data-speak]").count() >= 1,"Review should expose pronunciation controls for the target term");
+  await page.locator("#answer-area [data-review-choice]").first().click();
+  await page.locator("#answer-area #next-spaced").click();
+  await page.locator("#session-close").click();
+  await page.locator("#session-confirm").waitFor({state:"visible"});
+  await page.locator("#confirm-session-close").click();
+  const partialReview = await page.evaluate(() => JSON.parse(localStorage.getItem("adaptive-language-tutor.review-session:pt-BR") || "null"));
+  assert.equal(partialReview.completed,1,"a graded Review card should be saved immediately");
+  assert.equal(partialReview.remainingKeys.length,4,"closing Review should preserve all uncompleted cards");
+  assert.equal(partialReview.total,5,"the original Review session total should persist");
+  await page.reload({waitUntil:"networkidle"});
+  await page.locator("#welcome-start").click();
+  await page.locator('[data-screen="exercises"]').click();
+  await page.locator('[data-mode="review"]').click();
+  assert.equal(await page.locator("#turn-count").innerText(),"2 / 5","Review should resume at the first uncompleted card after reload");
+  while (await page.locator("#session-view").isVisible()) {
+    const choices = page.locator("#answer-area [data-review-choice]");
+    if (await choices.count()) await choices.first().click();
+    else {
+      await page.locator("#spaced-answer").fill("respuesta");
+      await page.locator("#check-spaced").click();
+    }
+    if (await page.locator("#answer-area #next-spaced").count()) await page.locator("#answer-area #next-spaced").click();
+    else break;
+  }
+  await page.locator("#summary-panel").waitFor({state:"visible"});
+  assert.equal(await page.locator("#summary-content h2").innerText(),"Repaso finalizado");
+  assert.equal(await page.locator("#summary-content h3").count(),0,"the completed Review summary should not add themes or a reinforcement list");
+  assert.equal(await page.locator("#route-summary-next").isVisible(),false,"Review completion has no next-unit action");
+  assert.equal(await page.evaluate(() => localStorage.getItem("adaptive-language-tutor.review-session:pt-BR")),null,"a fully completed Review queue should be cleared");
+  await page.locator("#new-session").click();
+
   await page.setViewportSize({width:390,height:844});
   await page.locator('[data-screen="stats"]').click();
   assert.equal(await page.locator("#statistics-content .stats-language-table").isVisible(), true, "statistics should show the cross-language metrics table");
