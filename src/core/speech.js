@@ -24,19 +24,22 @@ export function createSpeechController({
   let enabled = true;
   let pendingRequest = null;
   let listeningForVoices = false;
+  let voiceWaitTimer = null;
   try { enabled = storage?.getItem(preferenceKey) !== "false"; } catch {}
 
   function getVoices() {
     try { return synthesis?.getVoices?.() || []; } catch { return []; }
   }
-  function flushPendingRequest() {
+  function flushPendingRequest(forceSystemLocale = false) {
     if (!pendingRequest) return;
     const voices = getVoices();
-    if (!voices.length) return;
+    if (!voices.length && !forceSystemLocale) return;
     const request = pendingRequest;
     pendingRequest = null;
-    if (request.type === "single") speak(request.text, request.locale, request.options);
-    else speakSequence(request.segments, request.options);
+    if (voiceWaitTimer) clearTimeout(voiceWaitTimer);
+    voiceWaitTimer = null;
+    if (request.type === "single") speak(request.text, request.locale, { ...request.options, allowSystemVoice:true });
+    else speakSequence(request.segments, { ...request.options, allowSystemVoice:true });
   }
   function waitForVoices(request) {
     if (getVoices().length) return false;
@@ -53,13 +56,14 @@ export function createSpeechController({
         };
       }
     }
+    if (!voiceWaitTimer) voiceWaitTimer = setTimeout(() => flushPendingRequest(true), 900);
     return true;
   }
 
   function setEnabled(value) {
     enabled = Boolean(value);
     try { storage?.setItem(preferenceKey, String(enabled)); } catch {}
-    if (!enabled) { pendingRequest = null; try { synthesis?.cancel?.(); } catch {} }
+    if (!enabled) { pendingRequest = null; if (voiceWaitTimer) clearTimeout(voiceWaitTimer); voiceWaitTimer = null; try { synthesis?.cancel?.(); } catch {} }
     onStatus({ enabled, supported, speaking:false, paused:false });
     return enabled;
   }
@@ -73,18 +77,18 @@ export function createSpeechController({
     if (voice) onStatus({ enabled, supported });
     if (voice) utterance.voice = voice;
     else if (locale) onStatus({ enabled, supported, fallback: true, locale });
-    utterance.onerror = () => onStatus({ enabled, supported, error: true, locale, speaking:false, paused:false });
+    utterance.onerror = () => { onStatus({ enabled, supported, error:true, locale, speaking:false, paused:false }); onEnd?.(); };
     utterance.onboundary = event => onBoundary?.(event);
     utterance.onend = () => { onStatus({ enabled, supported, speaking:false, paused:false }); onEnd?.(); };
     return utterance;
   }
 
-  function speak(text, locale, { automatic = false, onEnd, onBoundary } = {}) {
+  function speak(text, locale, { automatic = false, onEnd, onBoundary, allowSystemVoice = false } = {}) {
     const phrase = String(text || "").trim();
     if (!phrase || !supported || (automatic && !enabled)) return { spoken: false, reason: "unavailable" };
     // Never let the browser silently substitute its default (often source-language)
     // voice when the requested target-language voice is not installed.
-    if (locale && !getVoices().length) {
+    if (locale && !getVoices().length && !allowSystemVoice) {
       if (waitForVoices({ type:"single", text:phrase, locale, options:{ automatic, onEnd, onBoundary } })) {
         onStatus({ enabled, supported, speaking:false, paused:false, waitingForVoices:true, locale });
         return { spoken:true, pending:true };
@@ -105,7 +109,7 @@ export function createSpeechController({
     }
   }
 
-  function speakSequence(segments, { automatic = false } = {}) {
+  function speakSequence(segments, { automatic = false, allowSystemVoice = false } = {}) {
     const requested = (Array.isArray(segments) ? segments : [])
       .filter(item => item && String(item.text || "").trim() && item.locale);
     if (!requested.length || !supported || (automatic && !enabled)) {
@@ -116,7 +120,7 @@ export function createSpeechController({
       onStatus({ enabled, supported, speaking:false, paused:false, waitingForVoices:true, locale:requested[0].locale });
       return { spoken:true, pending:true };
     }
-    if (!voices.length && requested.some(item => !findVoice(item.locale))) {
+    if (!voices.length && !allowSystemVoice && requested.some(item => !findVoice(item.locale))) {
       if (waitForVoices({ type:"sequence", segments:requested, options:{ automatic } })) {
         onStatus({ enabled, supported, speaking:false, paused:false, waitingForVoices:true, locale:requested[0].locale });
         return { spoken:true, pending:true };
@@ -152,7 +156,7 @@ export function createSpeechController({
     try { synthesis.resume(); onStatus({ enabled, supported, speaking:true, paused:false }); return true; } catch { return false; }
   }
 
-  function stop() { pendingRequest = null; try { synthesis?.cancel?.(); } catch {} onStatus({ enabled, supported, speaking:false, paused:false }); }
+  function stop() { pendingRequest = null; if (voiceWaitTimer) clearTimeout(voiceWaitTimer); voiceWaitTimer = null; try { synthesis?.cancel?.(); } catch {} onStatus({ enabled, supported, speaking:false, paused:false }); }
 
   onStatus({ enabled, supported });
   return {
