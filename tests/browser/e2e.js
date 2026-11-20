@@ -314,12 +314,12 @@ try {
   await page.locator("#start-session").click();
   const correctReadingChoices = [0,0,0,0,1,0];
   for (const choiceIndex of correctReadingChoices) {
-    assert.equal(await page.locator("#lesson-content .reading-question-type").innerText(),"Comprensión del texto");
+    assert.equal(await page.locator("#lesson-content .reading-question-type").evaluate(node => node.textContent.trim()),"Comprensión del texto");
     await page.locator("#answer-area [data-choice]").nth(choiceIndex).click();
     await page.locator("#answer-area #continue-answer").click();
   }
   assert.equal(await page.locator("#lesson-content .reading-passage").count(),0,"general practice should not retain a reading passage");
-  assert.equal(await page.locator("#lesson-content .reading-question-type").innerText(),"Práctica general");
+  assert.equal(await page.locator("#lesson-content .reading-question-type").evaluate(node => node.textContent.trim()),"Práctica general");
   assert.equal(await page.locator("#lesson-phase").innerText(),"PRÁCTICA GENERAL");
   assert.equal(await page.locator("#answer-area #free-answer").count(),1,"general practice should use a clearly stated written task after comprehension");
   await page.locator("#session-close").click();
