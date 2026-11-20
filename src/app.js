@@ -2017,7 +2017,7 @@ function renderTenseLesson(languageName, topicIndex) {
   const translation = isPast ? lesson.pastEs : lesson.futureEs;
   const rule = isPast ? lesson.pastRule : lesson.futureRule;
   return '<p class="theory-slide-text">' + (isPast ? "El pasado permite narrar acciones anteriores. Observa esta frase y la forma verbal utilizada:" : "El futuro expresa planes, predicciones e intenciones. Observa esta construcción:") + '</p>' +
-    renderGrammarRuleSections(rule,lesson.exceptions) +
+    renderGrammarRuleContent(rule,lesson.exceptions) +
     '<section class="theory-example"><span>' + (isPast ? "Ejemplo en pasado" : "Ejemplo en futuro") + '</span><p class="theory-target-word">' + escapeHTML(example) + ' ' + speakerButton(example, locale) + '</p><p>' + escapeHTML(translation) + '</p></section>';
 }
 function renderPronounTable(sample, languageName, locale) {
