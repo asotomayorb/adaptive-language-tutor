@@ -121,13 +121,14 @@ function updateReadingPassageControl() {
   if (slider) slider.value = String(readingPassageProgress);
   if (restart) restart.disabled = !speech.supported;
 }
-function startPassageSpeech(fromOffset = 0) {
+function startPassageSpeech(fromOffset = 0, { automatic = false, onEnd } = {}) {
   const passage = currentExercise?.passage || "";
   if (!passage || !speech.supported) return;
   readingPassageOffset = Math.max(0, Math.min(passage.length, fromOffset));
   readingPassageActive = true;
   readingPassagePaused = false;
   const result = speech.speak(passage.slice(readingPassageOffset), session?.config?.languageLocale || catalog?.locale, {
+    automatic,
     onBoundary: event => {
       if (Number.isFinite(event?.charIndex)) {
         readingPassageProgress = Math.min(100, Math.round((readingPassageOffset + event.charIndex) / passage.length * 100));
@@ -140,6 +141,7 @@ function startPassageSpeech(fromOffset = 0) {
       readingPassageOffset = 0;
       readingPassageProgress = 100;
       updateReadingPassageControl();
+      onEnd?.();
     }
   });
   if (!result.spoken) readingPassageActive = false;
@@ -1387,14 +1389,14 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   // the target-language voice or given a target-language speaker button.
   const questionSpeechSegments = getExerciseSpeechSegments(currentExercise)
     .filter(item => item.locale && item.text);
-  const targetQuestionSpeechSegments = questionSpeechSegments
-    .filter(item => item.locale.toLowerCase() === targetLocale.toLowerCase());
+  currentActivitySpeechSegments = questionSpeechSegments;
   const promptMarkup = currentExercise.promptLanguage === "target"
     ? renderClickableTargetText(currentExercise.prompt)
     : renderVariantTerms(currentExercise.prompt);
   const instructionMarkup = currentExercise.instruction
     ? '<p class="exercise-instruction">' + escapeHTML(currentExercise.instruction) + '</p>' : "";
-  const questionAudioMarkup = targetQuestionSpeechSegments.map(item => speakerButton(item.text, item.locale)).join(" ");
+  const questionAudioMarkup = questionSpeechSegments.filter(item => item.role !== "passage")
+    .map(item => speakerButton(item.text, item.locale)).join(" ");
   const readingMarkup = currentExercise.passage
     ? '<section class="reading-passage"><span class="reading-passage-kicker">Texto de lectura</span><h3>' + escapeHTML(currentExercise.passageTitle || "Lectura") + '</h3><p>' + escapeHTML(currentExercise.passage) + '</p><div class="reading-player"><button id="reading-tts-toggle" class="reading-player-play" type="button" aria-label="Reproducir lectura">▶</button><input id="reading-tts-progress" class="reading-player-progress" type="range" min="0" max="100" value="0" aria-label="Posición de lectura"><button id="reading-tts-restart" class="reading-player-restart" type="button" aria-label="Reiniciar lectura">↻</button></div></section>'
     : "";
@@ -1414,7 +1416,16 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
   readingPassageOffset = 0;
   readingPassageProgress = 0;
   updateReadingPassageControl();
-  speech.speakSequence(questionSpeechSegments, { automatic: true });
+  if (currentExercise.passage) {
+    const passageSpeech = questionSpeechSegments.find(item => item.role === "passage");
+    if (passageSpeech && speech.enabled) {
+      startPassageSpeech(0, { automatic:true, onEnd:() => {
+        speech.speakSequence(questionSpeechSegments.filter(item => item.role !== "passage"), { automatic:true });
+      }});
+    }
+  } else {
+    speech.speakSequence(questionSpeechSegments, { automatic:true });
+  }
   const useMultipleChoice = currentExercise.type === "reading"
     ? Array.isArray(currentExercise.options) && currentExercise.options.length >= 2
     : routeMode
