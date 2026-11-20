@@ -511,3 +511,10 @@
   .stats-chart-stage .stats-chart-scroll{min-height:0;display:block}
   .progress-chart-card{min-height:0}
 }
+
+/* Reading TTS controls: compact video-style player */
+.reading-player{display:flex;align-items:center;gap:12px;margin-top:16px;padding:10px 12px;border:1px solid #dfe6ee;border-radius:12px;background:#f8fafc}
+.reading-player button{display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;border:0;border-radius:50%;background:#183b66;color:#fff;font:700 17px/1 inherit;cursor:pointer}
+.reading-player button:disabled{opacity:.45;cursor:not-allowed}
+.reading-player .reading-player-restart{background:transparent;color:#29425f;font-size:23px}
+.reading-player-progress{flex:1;min-width:0;accent-color:#315f91;cursor:pointer}
