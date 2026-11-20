@@ -777,3 +777,16 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - [ ] Build y deploy manual Render; auto-deploy permanece desactivado.
 - [ ] Prueba humana Android: verificar voces disponibles y acento correcto en contenido de actividad y teoría.
 - [ ] Prueba humana: recorrer las cuatro unidades, incluyendo el caso de puntaje insuficiente para el desbloqueo.
+
+
+### Verificación final — 20-11-2026
+- [x] `npm run check` y `npm test` aprobados en run [44771349574](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44771349574).
+- [x] `npm run test:e2e` aprobado en run [44771349707](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44771349707).
+- [x] E2E de Ruta: calificación/valoración, continuidad real a unidad 2 y retorno al mapa desde la última unidad sin repetirla.
+- [x] E2E de Teoría: subcategorías anidadas para excepciones de pasado y futuro.
+- [x] E2E de TTS: reproducción automática y manual en locale objetivo; test unitario de espera a `voiceschanged`.
+- [x] E2E de navegación: flecha superior común en sesión y detalles de teoría.
+- [x] Render Preview LIVE: `dep-dc0749ss728c73clirf0`, commit `6b1f36f`.
+- [ ] Prueba humana en Android: confirmar voces instaladas, acento y reproducción en actividad y teoría.
+- [ ] Prueba humana en Android: comprobar visualmente la flecha y el espaciado en pantallas reales.
+- [ ] Prueba pedagógica: recorrer todas las unidades con distintos porcentajes y comprobar que los errores de «Reforzar» sean representativos.
