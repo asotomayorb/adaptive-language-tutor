@@ -38,7 +38,7 @@
   <section id="screen-exercises" class="app-screen hidden">
     <div class="screen-heading"><h1>Entrenamiento</h1></div>
     <div id="exercise-choice-panel" class="exercise-choices">
-      <button id="practice-toggle" class="choice-card selected" type="button" data-mode="practice" aria-expanded="false" aria-controls="setup-panel"><span class="choice-icon">◎</span><span><strong>Ejercicio</strong><small>Elegir duración, nivel y tema</small></span><span class="choice-arrow">⌄</span></button>
+      <button id="practice-toggle" class="choice-card selected" type="button" data-mode="practice" aria-expanded="false" aria-controls="setup-panel"><span class="choice-icon">◎</span><span><strong>Ejercicios</strong><small>Elegir duración, nivel y tema</small></span><span class="choice-arrow">⌄</span></button>
       <button class="choice-card review-choice" type="button" data-mode="review"><span class="choice-icon">↻</span><span><strong>Repaso</strong><small>Repetir respuestas que necesitas reforzar</small><em id="review-count" class="tab-count">0</em></span><span class="choice-arrow">›</span></button>
       <button class="choice-card reading-choice" type="button" data-mode="reading"><span class="choice-icon">▤</span><span><strong>Comprensión lectora</strong><small>Leer textos y responder preguntas de comprensión</small></span><span class="choice-arrow">›</span></button>
     </div>
@@ -89,7 +89,7 @@
       <div class="lesson-actions"><button id="hint-btn" class="secondary" type="button">Pista</button></div>
       <div id="feedback" class="feedback hidden"></div>
     </section>
-    <section id="summary-panel" class="panel hidden" aria-live="polite"><div id="summary-content"></div><button id="route-summary-next" class="primary" type="button" hidden>Continuar →</button><button id="new-session" class="primary" type="button">Volver a entrenamiento</button></section>
+    <section id="summary-panel" class="panel hidden" aria-live="polite"><div id="summary-content"></div><div id="summary-actions" class="summary-actions"><button id="new-session" class="summary-action" type="button"><span class="summary-action-icon">⌂</span><span id="summary-return-label">Volver a Entrenamiento</span></button><button id="summary-restart" class="summary-action" type="button"><span class="summary-action-icon">↻</span><span>Reiniciar sesión</span></button><button id="route-summary-next" class="summary-action" type="button" hidden><span class="summary-action-icon">→</span><span id="summary-next-label">Siguiente ejercicio</span></button></div></section>
   </section>
 
   <footer class="app-footer hidden"><span id="session-status"></span></footer>
