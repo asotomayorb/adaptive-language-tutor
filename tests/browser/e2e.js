@@ -167,8 +167,11 @@ try {
     const table = root.querySelector(".theory-pronoun-table"), example = root.querySelector(".theory-example");
     return Boolean(table && example && (table.compareDocumentPosition(example) & Node.DOCUMENT_POSITION_FOLLOWING));
   }), true, "article examples should follow the comparison table");
+  assert.ok(await page.locator("#theory-description .theory-rule-list li").count() >= 2, "article rules should be split into readable points");
   await page.locator("#theory-next").click();
   assert.match(await page.locator("#theory-description").innerText(), /Eu sou|SER|ESTAR/i, "verb theory should include applied conjugation");
+  assert.equal(await page.locator("#theory-description .theory-note").count(),2,"verb rules and exceptions should use separate sections");
+  assert.ok(await page.locator("#theory-description .theory-rule-list li").count() >= 3,"verb rules and exceptions should be listed one point per line");
   await page.locator("#theory-next").click();
   assert.equal(await page.locator("#theory-title").innerText(), "Tiempo presente");
   assert.ok(await page.locator("#theory-description .theory-pronoun-table tbody tr").count() >= 4, "present tense should show conjugated forms");
