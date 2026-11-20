@@ -89,14 +89,14 @@
       <div class="lesson-actions"><button id="hint-btn" class="secondary" type="button">Pista</button></div>
       <div id="feedback" class="feedback hidden"></div>
     </section>
-    <section id="summary-panel" class="panel hidden" aria-live="polite"><div id="summary-content"></div><button id="new-session" class="primary" type="button">Volver a entrenamiento</button></section>
+    <section id="summary-panel" class="panel hidden" aria-live="polite"><div id="summary-content"></div><button id="route-summary-next" class="primary" type="button" hidden>Continuar →</button><button id="new-session" class="primary" type="button">Volver a entrenamiento</button></section>
   </section>
 
   <footer class="app-footer hidden"><span id="session-status"></span></footer>
   <nav class="bottom-nav" aria-label="Navegación principal">
     <button class="nav-item active" type="button" data-screen="route" aria-label="Ruta" aria-current="page"><span class="nav-icon route-treasure-icon"><svg viewBox="0 0 40 40" role="img" aria-label="Mapa del tesoro"><path d="M5 9 14 5l12 4 9-4v26l-9 4-12-4-9 4Z" fill="#e6c98a" stroke="#755b32" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 5v26M26 9v26" fill="none" stroke="#9a7846" stroke-width="1.5"/><path d="M8 25c4-8 8 5 12-3s7 2 10-7" fill="none" stroke="#8c542c" stroke-width="2" stroke-dasharray="2.5 2.5" stroke-linecap="round"/><path d="m26 12 4 3-1-5Z" fill="#8c542c"/><path d="m30 5 1.5 3 3 .4-2.2 2.1.5 3-2.8-1.5-2.7 1.5.5-3-2.2-2.1 3-.4Z" fill="#c54c37" stroke="#8b3529" stroke-width=".7"/></svg></span></button>
     <button class="nav-item" type="button" data-screen="exercises" aria-label="Entrenamiento"><span class="nav-icon">🏋️</span></button>
-    <button class="nav-language" id="open-language-picker" type="button" aria-label="Cambiar idioma objetivo"><span class="language-globe">🌐</span><span id="selected-language-flag" class="selected-language-flag">🇧🇷</span></button>
+    <span class="nav-language-placeholder" aria-hidden="true"></span>
     <button class="nav-item" type="button" data-screen="theory" aria-label="Teoría"><span class="nav-icon">📖</span></button>
     <button class="nav-item" type="button" data-screen="stats" aria-label="Estadísticas"><span class="nav-icon">📊</span></button>
   </nav>
@@ -128,7 +128,7 @@
     <button type="button" data-language="Vietnamita"><span>🇻🇳</span><strong>Vietnamita</strong><small>Vietnam</small></button>
     <button type="button" data-language="Indonesio"><span>🇮🇩</span><strong>Indonesio</strong><small>Indonesia</small></button>
     <button type="button" data-language="Tailandés"><span>🇹🇭</span><strong>Tailandés</strong><small>Tailandia</small></button>
-    <button type="button" data-language="other"><span>🌐</span><strong>Otro idioma</strong><small>Escribir nombre</small></button>
+    
   </div>
   <select id="language" class="hidden" aria-hidden="true" tabindex="-1">
     <option value="Portugués brasileño">Portugués</option><option value="Inglés">Inglés</option>
@@ -136,12 +136,8 @@
     <option value="Francés">Francés</option><option value="Español">Español</option><option value="Japonés">Japonés</option>
     <option value="Chino mandarín">Chino mandarín</option><option value="Coreano">Coreano</option><option value="Neerlandés">Neerlandés</option>
     <option value="Árabe">Árabe</option><option value="Hindi">Hindi</option><option value="Turco">Turco</option><option value="Griego">Griego</option><option value="Polaco">Polaco</option>
-    <option value="Sueco">Sueco</option><option value="Noruego">Noruego</option><option value="Danés">Danés</option><option value="Hebreo">Hebreo</option><option value="Vietnamita">Vietnamita</option><option value="Indonesio">Indonesio</option><option value="Tailandés">Tailandés</option><option value="other">Otro idioma</option>
+    <option value="Sueco">Sueco</option><option value="Noruego">Noruego</option><option value="Danés">Danés</option><option value="Hebreo">Hebreo</option><option value="Vietnamita">Vietnamita</option><option value="Indonesio">Indonesio</option><option value="Tailandés">Tailandés</option>
   </select>
-  <div id="custom-language-fields" class="custom-language-fields hidden">
-    <label>Nombre del idioma<input id="custom-language-name" placeholder="Ej. Suajili" autocomplete="off"></label>
-  </div>
-  <button id="language-apply" class="primary hidden" type="button">Confirmar idioma</button>
   <button id="language-cancel" class="text-button language-cancel" type="button">Cancelar</button>
 </dialog>
 
