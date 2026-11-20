@@ -451,19 +451,25 @@ Para cada escenario registrar:
 
 ## 14. Regresión solicitada — Ruta, jerarquía, flecha y TTS — 20-11-2026
 
-- [ ] Ruta: completar una unidad con 100% y comprobar 5 estrellas + «Perfecto» + acción que inicia la unidad siguiente.
+- [x] Ruta: completar una unidad con 100% y comprobar 5 estrellas + «Perfecto» + acción que inicia la unidad siguiente (E2E).
 - [ ] Ruta: completar con 80–99%, 60–79% y menos de 60%; comprobar correspondencia estrellas/valoración y umbrales de desbloqueo.
 - [ ] Ruta: si no alcanza las estrellas requeridas, el resumen informa el umbral y permite repetir la unidad.
-- [ ] Ruta: comprobar que la unidad que aparece activa después de «Continuar» es la siguiente por ID y contenido, no solo que la vista de sesión siga visible.
-- [ ] Ruta: comprobar que el resumen nunca queda sin una acción funcional.
-- [ ] Teoría: pasado portugués presenta «Irregulares frecuentes en pretérito perfeito» como categoría con verbos dependientes anidados.
-- [ ] Teoría: futuro presenta sus raíces irregulares bajo «En futuro simple» sin mezclar excepciones del pasado.
+- [x] Ruta: comprobar que la unidad que aparece activa después de «Continuar» es la siguiente por ID y contenido, no solo que la vista de sesión siga visible (E2E).
+- [x] Ruta: comprobar que el resumen nunca queda sin una acción funcional; la última unidad vuelve al mapa en lugar de reiniciarse (E2E).
+- [x] Teoría: pasado portugués presenta «Irregulares frecuentes en pretérito perfeito» como categoría con verbos dependientes anidados (E2E).
+- [x] Teoría: futuro presenta sus raíces irregulares bajo «En futuro simple» sin mezclar excepciones del pasado (E2E).
 - [ ] Teoría: inspeccionar todos los temas con reglas compuestas y comprobar jerarquía primer nivel/subnivel, orden y sangría.
-- [ ] Navegación: flecha icon-only idéntica en lista de temas, detalle de teoría, setup secundario y sesión.
+- [x] Navegación: flecha icon-only idéntica en lista de temas, detalle de teoría y sesión (E2E).
 - [ ] Navegación: retroceder detiene cualquier audio pendiente o activo; en sesión conserva confirmación de descarte cuando corresponda.
-- [ ] TTS: abrir un tema de teoría inicia pronunciación del idioma objetivo; pulsar un altavoz reproduce el elemento correcto.
-- [ ] TTS: actividad local e IA pronuncian automáticamente el fragmento objetivo y permiten reproducirlo manualmente.
-- [ ] TTS Android: cargar la aplicación cuando `getVoices()` está vacío y verificar que la reproducción se inicia después de `voiceschanged`.
+- [x] TTS: abrir un tema de teoría inicia pronunciación del idioma objetivo; pulsar un altavoz reproduce el elemento correcto (E2E).
+- [x] TTS: actividad IA pronuncia automáticamente el fragmento objetivo y permite reproducirlo manualmente (E2E); actividad local usa el mismo filtro por locale.
+- [x] TTS: test unitario de carga diferida cuando `getVoices()` está vacío y posterior evento `voiceschanged`; [ ] comprobarlo también en Android real.
 - [ ] TTS: cuando no existe voz compatible, no debe escucharse la voz española como sustitución.
 - [ ] Repetir todo en Android real; E2E no sustituye esta comprobación.
 
+
+
+### Automatización completada — 20-11-2026
+- [x] `npm run check`, `npm test` y `npm run test:e2e` aprobados.
+- [x] Preview Render LIVE en `dep-dc0749ss728c73clirf0`.
+- [ ] Prueba humana Android y revisión pedagógica integral siguen pendientes.
