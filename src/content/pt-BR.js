@@ -7,9 +7,9 @@ export const ptBR = {
     { id:"pt-verb-01", level:"A1", topic:"daily", skill:"Verbo ser", instruction:"Completa la frase:", prompt:"Eu ___ chileno.", promptLocale:"pt-BR", target:"sou", term:"sou", meaning:"soy", options:["sou","estou","é"], hint:"Para identidad u origen, usa el verbo ser.", hintSpeechSegments:[], explanationSpeechSegments:["Eu sou","Estou"], explanation:"Eu sou significa yo soy. Estou suele expresar estado o ubicación." },
     { id:"pt-travel-01", level:"A1", topic:"travel", skill:"Preguntas útiles", instruction:"¿Cómo se pregunta esto en portugués?", prompt:"¿Dónde está el baño?", promptLocale:"es-CL", target:"Onde fica o banheiro?", acceptedAnswers:["Onde está o banheiro?"], term:"banheiro", meaning:"baño", options:["Quanto custa?","Onde fica o banheiro?","Que horas são?"], hint:"Empieza con Onde (dónde).", hintSpeechSegments:["Onde"], explanationSpeechSegments:["Onde fica"], explanation:"Onde fica...? pregunta dónde se encuentra algo." },
     { id:"pt-food-01", level:"A1", topic:"food", skill:"Pedir comida", instruction:"¿Qué expresión usarías en portugués para pedir esto?", prompt:"Quisiera un café.", promptLocale:"es-CL", target:"Eu gostaria de um café", acceptedAnswers:["Gostaria de um café"], term:"café", meaning:"café", options:["Eu gostaria de um café","Estou com fome","A conta, por favor"], hint:"Gostaria es una forma cortés de pedir.", hintSpeechSegments:["Gostaria"], explanationSpeechSegments:["Eu gostaria de"], explanation:"Eu gostaria de... equivale a quisiera..." },
-    { id:"pt-work-01", level:"A1", topic:"work", skill:"Presentaciones", prompt:"Completa: Meu nome ___ Ana.", target:"é", term:"nome", meaning:"nombre", options:["sou","é","estou"], hint:"Meu nome significa mi nombre.", hintSpeechSegments:["Meu nome"], explanationSpeechSegments:["Meu nome é"], explanation:"Meu nome é... significa Mi nombre es..." },
+    { id:"pt-work-01", level:"A1", topic:"work", skill:"Presentaciones", instruction:"Completa la frase en portugués.", prompt:"Meu nome ___ Ana.", promptLocale:"pt-BR", target:"é", term:"nome", meaning:"nombre", options:["sou","é","estou"], hint:"Meu nome significa mi nombre.", hintSpeechSegments:["Meu nome"], explanationSpeechSegments:["Meu nome é"], explanation:"Meu nome é... significa Mi nombre es..." },
     { id:"pt-greet-02", level:"A2", topic:"daily", skill:"Conversación", prompt:"¿Cómo respondes “Muito prazer” (mucho gusto)?", speechSegments:[{text:"¿Cómo respondes",locale:"es-CL"},{text:"Muito prazer",locale:"pt-BR"}], target:"O prazer é meu", acceptedAnswers:["Prazer é meu"], term:"O prazer é meu", meaning:"El gusto es mío", options:["O prazer é meu","Até amanhã","Com licença"], hint:"La respuesta expresa que el placer también es tuyo.", hintSpeechSegments:[], explanationSpeechSegments:["O prazer é meu"], explanation:"O prazer é meu es una respuesta natural a Muito prazer." },
-    { id:"pt-travel-02", level:"A2", topic:"travel", skill:"Transporte", prompt:"Traduce: “Quiero comprar un billete.”", target:"Quero comprar uma passagem", acceptedAnswers:["Eu quero comprar uma passagem"], term:"passagem", meaning:"billete / pasaje", options:["Quero comprar uma passagem","Quero fechar a conta","Onde fica a praia"], hint:"Quero significa quiero; passagem es pasaje.", hintSpeechSegments:["Quero","passagem"], explanationSpeechSegments:["Quero comprar uma passagem"], explanation:"Quero comprar uma passagem es una forma habitual de expresar esta necesidad." }
+    { id:"pt-travel-02", level:"A2", topic:"travel", skill:"Transporte", prompt:"Traduce: “Quiero comprar un billete.”", promptLocale:"es-CL", target:"Quero comprar uma passagem", acceptedAnswers:["Eu quero comprar uma passagem"], term:"passagem", meaning:"billete / pasaje", options:["Quero comprar uma passagem","Quero fechar a conta","Onde fica a praia"], hint:"Quero significa quiero; passagem es pasaje.", hintSpeechSegments:["Quero","passagem"], explanationSpeechSegments:["Quero comprar uma passagem"], explanation:"Quero comprar uma passagem es una forma habitual de expresar esta necesidad." }
   ,
       {
         "id": "pt-daily-02",
@@ -17,6 +17,7 @@ export const ptBR = {
         "topic": "daily",
         "skill": "Preguntas cotidianas",
         "prompt": "¿Cómo preguntas “¿Cómo estás?” en portugués brasileño?",
+        "promptLocale": "es-CL",
         "target": "Como você está?",
         "acceptedAnswers": [
           "Como vai você?"
@@ -36,7 +37,9 @@ export const ptBR = {
         "level": "A1",
         "topic": "daily",
         "skill": "Verbo morar",
-        "prompt": "Completa: Eu ___ em Santiago. (Vivo en Santiago.)",
+        "instruction": "Completa la frase en portugués.",
+        "prompt": "Eu ___ em Santiago.",
+        "promptLocale": "pt-BR",
         "target": "moro",
         "term": "morar",
         "meaning": "vivir / residir",
@@ -54,6 +57,7 @@ export const ptBR = {
         "topic": "travel",
         "skill": "Precios",
         "prompt": "¿Cómo preguntas “¿Cuánto cuesta?”",
+        "promptLocale": "es-CL",
         "target": "Quanto custa?",
         "term": "Quanto custa?",
         "meaning": "¿Cuánto cuesta?",
@@ -72,6 +76,7 @@ export const ptBR = {
         "skill": "Alojamiento",
         "finalPractice": true,
         "prompt": "Traduce al portugués esta frase concreta: «Necesito una habitación para dos personas».",
+        "promptLocale": "es-CL",
         "target": "Preciso de um quarto para duas pessoas",
         "acceptedAnswers": [
           "Eu preciso de um quarto para duas pessoas"
@@ -92,6 +97,7 @@ export const ptBR = {
         "topic": "food",
         "skill": "En restaurantes",
         "prompt": "¿Cómo pides “La cuenta, por favor”?",
+        "promptLocale": "es-CL",
         "target": "A conta, por favor",
         "term": "A conta",
         "meaning": "la cuenta",
@@ -110,6 +116,7 @@ export const ptBR = {
         "skill": "Preferencias alimentarias",
         "finalPractice": true,
         "prompt": "Traduce al portugués esta frase concreta: «Sin cebolla, por favor».",
+        "promptLocale": "es-CL",
         "target": "Sem cebola, por favor",
         "acceptedAnswers": ["Sem cebola por favor"],
         "term": "sem cebola",
@@ -127,7 +134,9 @@ export const ptBR = {
         "level": "A1",
         "topic": "work",
         "skill": "Ocupaciones",
-        "prompt": "Completa: Eu ___ em um escritório. (Trabajo en una oficina.)",
+        "instruction": "Completa la frase en portugués.",
+        "prompt": "Eu ___ em um escritório.",
+        "promptLocale": "pt-BR",
         "target": "trabalho",
         "term": "trabalhar",
         "meaning": "trabajar",
@@ -146,6 +155,7 @@ export const ptBR = {
         "skill": "Pedir aclaraciones",
         "finalPractice": true,
         "prompt": "Traduce al portugués esta frase concreta: «¿Puede repetir, por favor?».",
+        "promptLocale": "es-CL",
         "target": "Pode repetir, por favor?",
         "acceptedAnswers": [
           "Você pode repetir, por favor?"
@@ -166,6 +176,7 @@ export const ptBR = {
         "topic": "daily",
         "skill": "Traducción de frase en pasado",
         "prompt": "Traduce al portugués esta frase concreta: «Ayer fui al mercado».",
+        "promptLocale": "es-CL",
         "target": "Ontem fui ao mercado.",
         "acceptedAnswers": ["Ontem eu fui ao mercado."],
         "finalPractice": true,
@@ -185,6 +196,7 @@ export const ptBR = {
         "topic": "travel",
         "skill": "Direcciones",
         "prompt": "¿Cómo dices “Siga todo recto”?",
+        "promptLocale": "es-CL",
         "target": "Siga em frente",
         "acceptedAnswers": [
           "Vá em frente"
