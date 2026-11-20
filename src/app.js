@@ -552,10 +552,7 @@ function renderSpacedReview() {
 
   if (card.cardType === "pattern") {
     $("hint-btn").hidden = true;
-    const readingMarkup = currentExercise.passage
-    ? '<section class="reading-passage"><span class="reading-passage-kicker">Texto de lectura</span><h3>' + escapeHTML(currentExercise.passageTitle || "Lectura") + '</h3><p>' + escapeHTML(currentExercise.passage) + '</p></section>'
-    : "";
-  $("lesson-content").innerHTML = readingMarkup +  '<p class="eyebrow">REPASO DE PATRÓN</p><h3>' + escapeHTML(card.pattern) + '</h3><p>Intenta recordar una frase propia que aplique este patrón. Este repaso no consume turnos de práctica.</p>';
+    $("lesson-content").innerHTML = '<p class="eyebrow">REPASO DE PATRÓN</p><h3>' + escapeHTML(card.pattern) + '</h3><p>Intenta recordar una frase propia que aplique este patrón. Este repaso no consume turnos de práctica.</p>';
     $("answer-area").innerHTML = '<p class="muted">¿Pudiste recordar y aplicar el patrón?</p><button id="pattern-recalled" class="primary" type="button">Lo recordé</button><button id="pattern-practice" class="secondary" type="button">Necesito practicarlo</button>';
     const gradePattern = recalled => {
       const result = gradeReview(reviewProgressDraft || progress, card.key, recalled);
@@ -1218,7 +1215,10 @@ function renderLesson({ exercise: exerciseOverride = null, answered = false } = 
     ? '<p class="exercise-instruction">' + escapeHTML(currentExercise.instruction) + '</p>' : "";
   const targetLocale = session.config.languageLocale || session.config.languageId;
   const questionAudioMarkup = questionSpeechSegments.filter(item => item.locale === targetLocale).map(item => speakerButton(item.text, item.locale)).join(" ");
-  $("lesson-content").innerHTML = getExerciseIllustration(currentExercise) + instructionMarkup + '<h3>' + promptMarkup + '</h3>' + questionAudioMarkup;
+  const readingMarkup = currentExercise.passage
+    ? '<section class="reading-passage"><span class="reading-passage-kicker">Texto de lectura</span><h3>' + escapeHTML(currentExercise.passageTitle || "Lectura") + '</h3><p>' + escapeHTML(currentExercise.passage) + '</p></section>'
+    : "";
+  $("lesson-content").innerHTML = readingMarkup + getExerciseIllustration(currentExercise) + instructionMarkup + '<h3>' + promptMarkup + '</h3>' + questionAudioMarkup;
   bindVariantLinks($("lesson-content"));
   bindSpeakerButtons($("lesson-content"));
   bindTargetWords($("lesson-content"));
