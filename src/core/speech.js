@@ -22,7 +22,39 @@ export function createSpeechController({
     try { return findVoiceForLocale(synthesis?.getVoices?.() || [], locale); } catch { return null; }
   };
   let enabled = true;
+  let pendingRequest = null;
+  let listeningForVoices = false;
   try { enabled = storage?.getItem(preferenceKey) !== "false"; } catch {}
+
+  function getVoices() {
+    try { return synthesis?.getVoices?.() || []; } catch { return []; }
+  }
+  function flushPendingRequest() {
+    if (!pendingRequest) return;
+    const voices = getVoices();
+    if (!voices.length) return;
+    const request = pendingRequest;
+    pendingRequest = null;
+    if (request.type === "single") speak(request.text, request.locale, request.options);
+    else speakSequence(request.segments, request.options);
+  }
+  function waitForVoices(request) {
+    if (getVoices().length) return false;
+    pendingRequest = request;
+    if (!listeningForVoices) {
+      listeningForVoices = true;
+      if (typeof synthesis?.addEventListener === "function") {
+        synthesis.addEventListener("voiceschanged", flushPendingRequest);
+      } else if (synthesis) {
+        const previous = synthesis.onvoiceschanged;
+        synthesis.onvoiceschanged = event => {
+          try { previous?.call(synthesis, event); } catch {}
+          flushPendingRequest();
+        };
+      }
+    }
+    return true;
+  }
 
   function setEnabled(value) {
     enabled = Boolean(value);
@@ -53,9 +85,14 @@ export function createSpeechController({
     // Never let the browser silently substitute its default (often source-language)
     // voice when the requested target-language voice is not installed.
     if (locale && !findVoice(locale)) {
+      if (waitForVoices({ type:"single", text:phrase, locale, options:{ automatic, onEnd, onBoundary } })) {
+        onStatus({ enabled, supported, speaking:false, paused:false, waitingForVoices:true, locale });
+        return { spoken:true, pending:true };
+      }
       onStatus({ enabled, supported, speaking:false, paused:false, missingVoice:true, locale });
       return { spoken:false, reason:"voice-unavailable" };
     }
+    pendingRequest = null;
     try {
       synthesis.cancel?.();
       synthesis.speak(createUtterance(phrase, locale, onEnd, onBoundary));
@@ -70,11 +107,21 @@ export function createSpeechController({
   function speakSequence(segments, { automatic = false } = {}) {
     const requested = (Array.isArray(segments) ? segments : [])
       .filter(item => item && String(item.text || "").trim() && item.locale);
-    const valid = requested.filter(item => findVoice(item.locale));
-    if (!valid.length || !supported || (automatic && !enabled)) {
-      if (requested.length && !valid.length) onStatus({ enabled, supported, speaking:false, paused:false, missingVoice:true, locale:requested[0].locale });
-      return { spoken:false, reason:requested.length ? "voice-unavailable" : "unavailable" };
+    if (!requested.length || !supported || (automatic && !enabled)) {
+      return { spoken:false, reason:requested.length ? "unavailable" : "empty" };
     }
+    const voices = getVoices();
+    if (!voices.length && waitForVoices({ type:"sequence", segments:requested, options:{ automatic } })) {
+      onStatus({ enabled, supported, speaking:false, paused:false, waitingForVoices:true, locale:requested[0].locale });
+      return { spoken:true, pending:true };
+    }
+    const valid = requested.filter(item => findVoice(item.locale));
+    if (!valid.length || valid.length !== requested.length) {
+      const missing = requested.find(item => !findVoice(item.locale));
+      if (missing) onStatus({ enabled, supported, speaking:false, paused:false, missingVoice:true, locale:missing.locale });
+      return { spoken:false, reason:"voice-unavailable" };
+    }
+    pendingRequest = null;
     try {
       synthesis.cancel?.();
       valid.forEach(item => synthesis.speak(createUtterance(item.text, item.locale)));
