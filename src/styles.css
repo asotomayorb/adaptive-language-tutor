@@ -358,7 +358,7 @@
 .stats-chart-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
 .stats-chart-heading h2{margin:0}
 .stats-view-picker select{max-width:230px;min-height:40px;padding:8px 32px 8px 11px;border:1px solid #dce3ec;border-radius:10px;background:#fff;color:#29425f;font:inherit;font-size:13px;font-weight:650}
-.stats-bar-chart,.stats-language-chart{display:block;width:100%;min-width:680px;height:auto;overflow:visible}.stats-bar-chart{min-width:0!important}.stats-flag-label{font-size:22px;dominant-baseline:auto}.stats-bar{min-height:2px}
+.stats-bar-chart,.stats-language-chart{display:block;width:100%;min-width:0!important;height:340px;max-height:340px;overflow:visible}.stats-flag-label{font-size:22px;dominant-baseline:auto}.stats-chart-stage{height:390px;min-height:390px;display:flex;flex-direction:column;justify-content:flex-start}.stats-chart-stage .stats-chart-scroll{flex:1;min-height:340px;display:flex;align-items:flex-start}.stats-chart-stage .stats-chart-scroll svg{flex:1}.progress-chart-card{min-height:470px}.theory-vocab-group{margin:20px 0}.theory-vocab-group h3{font-size:16px;margin:0 0 9px;color:#344a64}.reading-passage{padding:17px 18px;margin:0 0 20px;border:1px solid #dce6f0;border-radius:15px;background:#f5f8fc}.reading-passage-kicker{font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:#68809b}.reading-passage h3{font-size:18px;margin:7px 0 10px}.reading-passage p{font-size:16px;line-height:1.75;color:#293e56;margin:0}.stats-bar{min-height:2px}
 .stats-average-line{stroke:#596a80;stroke-width:1.8;stroke-dasharray:5 5}
 .chart-average-label{fill:#596a80;font-size:14px;font-weight:800}
 .chart-value-label{fill:#344a64;font-size:15px;font-weight:800}
