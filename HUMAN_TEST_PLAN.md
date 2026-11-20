@@ -400,3 +400,16 @@ Para cada escenario registrar:
 - [ ] TTS: reproducir manualmente una instrucción en español y un texto objetivo en portugués; confirmar que se usan voces/idiomas distintos y correctos en cada control.
 - [ ] TTS: revisar audio automático, lectura del pasaje y botones de pronunciación en Ruta, Teoría y Entrenamiento.
 - [ ] Teoría: revisar artículos, ser/estar, presente, pasado y futuro; reglas/excepciones deben quedar separadas y legibles en pantalla vertical.
+
+
+## 11. Regresiones reportadas — 20-11-2026
+
+- [ ] TTS: texto de instrucciones/preguntas en español no debe recibir botón ni reproducción con voz del idioma objetivo.
+- [ ] TTS: los botones de pronunciación solo aparecen junto a fragmentos del idioma objetivo; comprobar ejercicios de traducción y escucha.
+- [ ] TTS: comprobar locales mixtos dentro de una misma actividad y que nunca se reutilice una voz portuguesa para texto español.
+- [ ] Ruta: responder la evaluación integradora con cada respuesta aceptada y verificar que se registre la unidad, puntuación y desbloqueo de la siguiente.
+- [ ] Ruta: comprobar respuestas incorrectas, reintento y persistencia al recargar.
+- [ ] Comprensión lectora: completar las seis preguntas disponibles y confirmar que ninguna pregunta se repite; al agotarse el banco, finalizar sin reciclar preguntas.
+- [ ] Comprensión lectora: play/pause, reinicio desde el comienzo y desplazamiento con la barra de reproducción. La barra depende de los eventos de límite de palabra que soporte la voz del navegador.
+- [ ] Todas las actividades: sonido diferenciado de correcto/incorrecto en ejercicios, comprensión, repaso y evaluación final de Ruta.
+- [ ] Todas las sesiones: orden visual consistente: título del tema, icono/ilustración del tema y actividad.
