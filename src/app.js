@@ -1683,10 +1683,18 @@ $("route-summary-next")?.addEventListener("click", () => {
     return;
   }
   if (routeMode && activeRouteUnit && session) {
-    selectedRouteUnitId = activeRouteUnit.id;
-    routeSelectionTouched = true;
-    startRouteSession(false);
-    return;
+    const units = getRouteUnitsForCatalog(catalog);
+    const activeIndex = units.findIndex(unit => unit.id === activeRouteUnit.id);
+    const nextUnit = units[activeIndex + 1];
+    const state = getRouteProgressForLanguage(session.config.languageId);
+    const needsRetry = !session.routeIntegrationComplete ||
+      Boolean(nextUnit && !isRouteUnitUnlocked(units,activeIndex + 1,state));
+    if (needsRetry) {
+      selectedRouteUnitId = activeRouteUnit.id;
+      routeSelectionTouched = true;
+      startRouteSession(false);
+      return;
+    }
   }
   closeSessionAndReturn();
   showScreen("route");
