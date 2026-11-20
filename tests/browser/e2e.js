@@ -568,6 +568,8 @@ try {
   assert.match(await routePage.locator("#lesson-content .activity-phase").innerText(),/CAPÍTULO 2 · ACTIVIDAD INTEGRADORA/);
   assert.equal(await routePage.locator("#session-close").innerText(),"←","active sessions should use the shared top-left back arrow");
   assert.match(await routePage.locator("#lesson-content h3").innerText(), /Traduce al portugués esta frase concreta: «Mañana estudio en casa»/i, "the route milestone should request one specific translation");
+  assert.ok(await routePage.locator("#lesson-content [data-speak]").evaluateAll(nodes => nodes.some(node => node.dataset.locale === "es-CL")),"Route integration should expose its source-language pronunciation control");
+  assert.ok(await routePage.evaluate(() => window.__spoken.some(item => item.text.includes("Mañana estudio en casa") && item.lang === "es-CL")),"Route integration should automatically pronounce its source prompt");
   await routePage.locator("#route-integration-answer").fill("ola");
   await routePage.locator("#route-integration-submit").click();
   assert.match(await routePage.locator("#feedback").innerText(), /Pista:/);
