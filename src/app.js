@@ -736,15 +736,15 @@ function renderAITutorTurn(result) {
   );
   const questionSpeech = targetSpeech.length
     ? { text: targetSpeech.map(item => item.text.trim()).join(" "), locale: targetLocale }
-    : getExerciseSpeech(aiCurrentExercise);
-  const promptAudio = aiCurrentExercise.prompt && questionSpeech.locale === targetLocale
+    : null;
+  const promptAudio = aiCurrentExercise.prompt && questionSpeech
     ? speakerButton(questionSpeech.text, questionSpeech.locale)
     : "";
   $("lesson-content").innerHTML = getExerciseIllustration(aiCurrentExercise) + instructionMarkup + prompt + promptAudio;
   bindSpeakerButtons($("lesson-content"));
   bindVariantLinks($("lesson-content"));
   bindTargetWords($("lesson-content"));
-  autoSpeak(questionSpeech.text, questionSpeech.locale);
+  if (questionSpeech) autoSpeak(questionSpeech.text, questionSpeech.locale);
   $("feedback").classList.add("hidden");
   const aiOptions = Array.isArray(aiCurrentExercise.options) ? aiCurrentExercise.options : [];
   const aiShouldUseChoices = routeMode ? !routeIntegration && aiRoutePhase?.id !== "sentences" : session.turn < 3;
@@ -1129,7 +1129,9 @@ function renderRouteIntegration() {
   $("answer-area").innerHTML = '<textarea id="route-integration-answer" class="answer-input" rows="3" placeholder="Escribe tu respuesta completa…"></textarea><button id="route-integration-submit" class="primary" type="button">Comprobar actividad</button>';
   $("route-integration-submit").addEventListener("click", () => {
     const answer = $("route-integration-answer").value.trim();
-    if (evaluateAnswer(answer, currentExercise)) {
+    const integrationCorrect = evaluateAnswer(answer, currentExercise);
+    playAnswerFeedbackSound(integrationCorrect);
+    if (integrationCorrect) {
       session.routeIntegrationComplete = true;
       routeDraft = null;
       try { localStorage.removeItem(ROUTE_STORAGE_KEY + ":" + session.config.languageId); } catch {}
@@ -1395,6 +1397,7 @@ function continueAfterAnswer() {
     aiPendingTurn = null;
     const evaluation = pending.evaluation || {};
     if (routeMode && pending.routeIntegrationQuestion) {
+      playAnswerFeedbackSound(evaluation.status === "correct");
       if (evaluation.status === "correct") {
         session.routeIntegrationComplete = true;
         pendingFeedback = { text: evaluation.feedback || "Actividad integradora completada.", expected: pending.exercise.expectedAnswer || "" };
