@@ -101,6 +101,7 @@ test("disabling audio cancels current speech and unsupported browsers degrade sa
     Utterance: MockUtterance,
     storage: { getItem: () => null, setItem: () => {} }
   });
+  mock.api.speaking = true;
   controller.setEnabled(false);
   assert.equal(mock.cancelled, 1);
   const unsupported = createSpeechController({
