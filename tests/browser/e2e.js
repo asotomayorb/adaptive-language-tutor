@@ -255,7 +255,7 @@ try {
   const turnBeforeExtraHint = await aiPage.locator("#turn-count").innerText();
   const cancellationsBeforeExtraHint = await aiPage.evaluate(() => window.__speechCancelled);
   await aiPage.locator("#hint-btn").click();
-  await aiPage.locator("#feedback").waitFor({ state: "visible" });
+  await aiPage.waitForFunction(() => document.querySelector("#feedback")?.innerText.includes("saludo matinal"));
   assert.match(await aiPage.locator("#feedback").innerText(), /saludo matinal/);
   assert.ok(await aiPage.evaluate(count => window.__spoken.length > count && window.__spoken.at(-1)?.text === "parlare" && window.__spoken.at(-1)?.lang === "it-IT", spokenBeforeFirstHint), "the additional AI hint should pronounce its target-language fragment");
   assert.ok(await aiPage.evaluate(count => window.__speechCancelled > count, cancellationsBeforeExtraHint), "requesting another hint should cancel any previous speech");
