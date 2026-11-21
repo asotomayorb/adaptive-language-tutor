@@ -167,3 +167,10 @@ Replit queda aplazado hasta que las etapas de auditoría, proveedor real y prueb
 - Son dos previews distintos y no deben intercambiarse ni presentarse como equivalentes. La rama modular desplegada no es una restauración visual fiel de la interfaz de `feature/mobile-bottom-navigation`; por ello el deploy LIVE del servicio rebuild no demuestra que se haya cumplido la conservación visual solicitada.
 - Incidencia reconocida: se compartió el enlace rebuild como si validara los cambios visuales acordados sin comprobar la interfaz servida en dispositivo. El usuario informó que la vista seguía igual al preview original. No declarar la interfaz corregida ni el preview aceptado hasta inspeccionar el resultado real y desplegar la base visual acordada.
 - Próxima acción: tomar `feature/mobile-bottom-navigation` como referencia visual primaria, integrar sobre ella únicamente los cambios funcionales acordados (selector central de Idiomas; Ruta y Entrenamiento bloqueados; Teoría y Estadísticas conservadas), limpiar duplicados solo tras verificar equivalencia, y decidir cuál servicio quedará como único preview. No eliminar ramas ni servicios sin confirmación y capacidad administrativa adecuada.
+
+
+## Archivo de la reconstrucción — 21-11-2026
+- Esta rama queda conservada como respaldo histórico de la arquitectura modular y sus módulos originales. No usarla como rama activa ni como preview de usuario.
+- Se guardó el punto de entrada original en `archive/rebuild-functional-baseline-index.html`; el resto del código y commits de la rama se mantienen.
+- El `index.html` de esta rama ahora redirige al preview canónico `https://adaptive-language-tutor-preview-5b3d.onrender.com`. Así, el servicio Render duplicado deja de mostrar una interfaz alternativa y actúa como alias hacia la versión vigente.
+- La rama no se elimina; queda como respaldo recuperable. No se borran datos de usuario ni servicios de infraestructura.
