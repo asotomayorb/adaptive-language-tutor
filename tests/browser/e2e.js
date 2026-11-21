@@ -61,6 +61,7 @@ try {
 
   await page.goto(baseUrl, { waitUntil: "networkidle" });
   assert.match(await page.title(), /Adaptive Language Tutor/);
+  await page.locator("#welcome-continue").click();
   assert.equal(await page.locator("#screen-languages h1").innerText(), "IDIOMAS");
   const homeSize = await page.evaluate(() => ({
     width: document.documentElement.scrollWidth,
@@ -70,7 +71,6 @@ try {
   }));
   assert.equal(homeSize.width, homeSize.clientWidth, "mobile home must not scroll horizontally");
   assert.ok(homeSize.height <= homeSize.clientHeight + 2, "mobile welcome screen should fit without vertical scrolling");
-  await page.locator("#welcome-continue").click();
   await page.locator("#select-language").click();
   assert.equal(await page.locator("#language-selector").evaluate(dialog => dialog.open), true, "central language icon should open the language selector");
   assert.equal(await page.locator("#language-selector .language-option strong").innerText(), "Italiano");
