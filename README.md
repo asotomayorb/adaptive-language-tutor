@@ -4,9 +4,9 @@ Aplicación web de aprendizaje de idiomas con tutor conversacional de IA y modo 
 
 ## Estado actual
 
-**Reconstrucción funcional en curso.** La rama `rebuild/functional-baseline` se creó desde la base modular `feature/ai-tutor-pedagogy`. Ya incluye un shell móvil inicial con cinco secciones, Italiano como único idioma objetivo, fixtures locales mínimos y TTS segmentado en el tutor IA. `npm run check`, `npm test` y Browser E2E están aprobados en el commit `95de77c`. Aún no está listo para producción ni se ha realizado la prueba humana Android.
+**Reconstrucción funcional en curso.** La rama `rebuild/functional-baseline` se creó desde la base modular `feature/ai-tutor-pedagogy`. Ya incluye un shell móvil de cinco secciones, Italiano como único idioma objetivo, fixtures locales mínimos, TTS segmentado en el tutor IA y la distribución visual recuperada de la rama anterior. Estadísticas vuelve a incluir tabla comparativa, selector Global/idioma, barras horizontales globales y gráfico diario de preguntas/precisión. `npm run check`, `npm test` y Browser E2E están aprobados en el commit `95de77c`. Aún no está listo para producción ni se ha realizado la prueba humana Android.
 
-**Próximo paso:** cerrar CI/Browser E2E, verificar el preview Render de esta rama y continuar con persistencia, navegación y ciclo de vida en todos los flujos. El detalle de etapas, verificaciones y pendientes está en [PROJECT_STATUS.md](PROJECT_STATUS.md). El procedimiento de validación manual está preparado en [HUMAN_TEST_PLAN.md](HUMAN_TEST_PLAN.md).
+**Próximo paso:** cerrar CI/Browser E2E de la restauración visual, verificar el preview Render y continuar con persistencia, navegación y ciclo de vida en todos los flujos. El detalle de etapas, verificaciones y pendientes está en [PROJECT_STATUS.md](PROJECT_STATUS.md). El procedimiento de validación manual está preparado en [HUMAN_TEST_PLAN.md](HUMAN_TEST_PLAN.md).
 
 Rama de trabajo: `rebuild/functional-baseline`. PR #2 y PR #3 permanecen intactos y sin fusionar.
 
@@ -80,3 +80,13 @@ Nunca subir claves API al repositorio. Para pruebas iniciales con proveedores ex
 ## Replit
 
 Replit queda aplazado hasta que las etapas de auditoría, proveedor real y prueba humana estén aprobadas. El desarrollo y las correcciones se realizan primero en GitHub.
+
+## Restauración visual y Estadísticas — 21-11-2026
+
+- Se recupera la navegación inferior de cinco posiciones, con iconos familiares y etiquetas visibles: Ruta, Entrenamiento, Idiomas (centro destacado), Teoría y Estadísticas. Ruta y Teoría siguen deshabilitadas hasta implementar sus flujos; no se reactiva funcionalidad incompleta.
+- Se recupera la jerarquía de pantalla anterior: títulos centrados, tarjetas blancas, paneles redondeados y espacios compactos para móvil.
+- Estadísticas vuelve a mostrar tabla por idioma (sesiones, palabras, precisión y progreso de Ruta), selector de vista Global/idioma, barras horizontales globales de ancho completo y gráfico diario por idioma con dos series: preguntas respondidas y precisión. El eje X usa días practicados consecutivos (1…15), sin fechas de calendario ni huecos por inactividad.
+- El gráfico diario conserva leyenda y puntos legibles, usa desplazamiento horizontal interno solo cuando sea necesario para mantener legibilidad; la vista global prioriza filas horizontales que caben en el ancho móvil.
+- Como Ruta aún no está habilitada en esta reconstrucción, su indicador se muestra como no disponible (—), nunca como progreso inventado.
+- [ ] Ejecutar npm run check, npm test y Browser E2E con los nuevos controles y gráficos; no marcar validado hasta ver los resultados.
+- [ ] Revisar el preview Render actualizado en móvil y confirmar la distribución visual.
