@@ -570,10 +570,8 @@ $("language").addEventListener("change", () => {
 });
 try {
   const savedSettings = JSON.parse(localStorage.getItem("adaptive-language-tutor.settings") || "{}");
-  if (savedSettings.selectedLanguage) {
+  if (savedSettings.selectedLanguage && [...$("language").options].some(option => option.value === savedSettings.selectedLanguage)) {
     $("language").value = savedSettings.selectedLanguage;
-    $("welcome-screen").classList.remove("hidden");
-    $("app-shell").classList.add("hidden");
   }
   if (savedSettings.duration) $("duration").value = String(savedSettings.duration);
   if (savedSettings.level) $("level").value = savedSettings.level;
@@ -581,6 +579,7 @@ try {
 
 } catch { /* Ignore malformed optional settings; progress storage remains independent. */ }
 updateLanguageFlag();
+showScreen("theory");
 refreshDashboard();
 routeDraft = getRouteDraftForLanguage(getSelectedCatalog()?.id);
 $("route-resume").classList.add("hidden");
