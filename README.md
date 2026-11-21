@@ -4,9 +4,9 @@ Aplicación web de aprendizaje de idiomas con tutor conversacional de IA y modo 
 
 ## Estado actual
 
-**Reconstrucción funcional en curso.** La rama `rebuild/functional-baseline` se creó desde la base modular `feature/ai-tutor-pedagogy`. Ya incluye un shell móvil de cinco secciones, Italiano como único idioma objetivo, fixtures locales mínimos, TTS segmentado en el tutor IA y la distribución visual recuperada de la rama anterior. Estadísticas vuelve a incluir tabla comparativa, selector Global/idioma, barras horizontales globales y gráfico diario de preguntas/precisión. `npm run check`, `npm test` y Browser E2E están aprobados en el commit `95de77c`. Aún no está listo para producción ni se ha realizado la prueba humana Android.
+**ARCHIVADA COMO RESPALDO.** Esta rama no es la versión de preview activa; conserva los módulos y el trabajo modular histórico. La rama `rebuild/functional-baseline` se creó desde la base modular `feature/ai-tutor-pedagogy`. Ya incluye un shell móvil de cinco secciones, Italiano como único idioma objetivo, fixtures locales mínimos, TTS segmentado en el tutor IA y la distribución visual recuperada de la rama anterior. Estadísticas vuelve a incluir tabla comparativa, selector Global/idioma, barras horizontales globales y gráfico diario de preguntas/precisión. `npm run check`, `npm test` y Browser E2E están aprobados en el commit `95de77c`. Aún no está listo para producción ni se ha realizado la prueba humana Android.
 
-**Próximo paso:** cerrar CI/Browser E2E de la restauración visual, verificar el preview Render y continuar con persistencia, navegación y ciclo de vida en todos los flujos. El detalle de etapas, verificaciones y pendientes está en [PROJECT_STATUS.md](PROJECT_STATUS.md). El procedimiento de validación manual está preparado en [HUMAN_TEST_PLAN.md](HUMAN_TEST_PLAN.md).
+**Uso:** respaldo técnico exclusivo. El preview de esta rama redirige al preview canónico de feature/mobile-bottom-navigation. El detalle de etapas, verificaciones y pendientes está en [PROJECT_STATUS.md](PROJECT_STATUS.md). El procedimiento de validación manual está preparado en [HUMAN_TEST_PLAN.md](HUMAN_TEST_PLAN.md).
 
 Rama de trabajo: `rebuild/functional-baseline`. PR #2 y PR #3 permanecen intactos y sin fusionar.
 
