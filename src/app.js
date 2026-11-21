@@ -136,13 +136,61 @@ function refreshDashboard() {
     '<span><strong>' + stats.averageAccuracy + '%</strong> precisión media</span></div>' +
     '<p class="muted">' + due.length + ' repasos pendientes para este idioma.</p>' +
     (due.length ? '<button id="start-spaced-review" class="secondary" type="button">Iniciar repaso (' + due.length + ') →</button>' : '');
-  $("statistics-content").innerHTML =
-    '<div class="stat-card"><span>Sesiones completadas</span><strong>' + stats.sessions + '</strong></div>' +
-    '<div class="stat-card"><span>Vocabulario</span><strong>' + stats.vocabulary + '</strong></div>' +
-    '<div class="stat-card"><span>Precisión media</span><strong>' + stats.averageAccuracy + '%</strong></div>' +
-    '<div class="stat-card"><span>Repasos pendientes</span><strong>' + due.length + '</strong></div>';
   const reviewButton = $("start-spaced-review");
   if (reviewButton) reviewButton.addEventListener("click", startSpacedReview);
+
+  const root = $("statistics-content");
+  if (!root) return;
+  const selectedView = root.querySelector("#stats-view-select")?.value || "global";
+  const sessions = progress.sessions.filter(item => item.languageId === languageId);
+  const attempted = sessions.reduce((sum,item) => sum + (Number(item.attempted) || 0), 0);
+  const correct = sessions.reduce((sum,item) => sum + (Number(item.correct) || 0), 0);
+  const accuracy = attempted ? Math.round(correct / attempted * 100) : stats.averageAccuracy;
+  const languageName = "Italiano";
+  const languageFlag = "🇮🇹";
+  const table = '<section class="stats-table-card"><h2>Progreso por idioma</h2>' +
+    '<div class="stats-table-wrap"><table class="stats-language-table"><thead><tr><th>Indicador</th><th title="' + languageName + '">' + languageFlag + '</th></tr></thead><tbody>' +
+    '<tr><th scope="row">Sesiones</th><td>' + stats.sessions + '</td></tr>' +
+    '<tr><th scope="row">Palabras</th><td>' + stats.vocabulary + '</td></tr>' +
+    '<tr><th scope="row">Precisión</th><td>' + accuracy + '%</td></tr></tbody></table></div></section>';
+
+  const daily = new Map();
+  for (const item of sessions) {
+    if (!item.completedAt) continue;
+    const day = String(item.completedAt).slice(0,10);
+    if (!daily.has(day)) daily.set(day,{attempted:0,correct:0});
+    const record = daily.get(day);
+    record.attempted += Number(item.attempted) || 0;
+    record.correct += Number(item.correct) || 0;
+  }
+  const practicedDays = [...daily.entries()].sort(([a],[b]) => a.localeCompare(b)).slice(-15);
+  let chartMarkup = "";
+  if (selectedView === "global") {
+    chartMarkup = attempted
+      ? '<div class="stats-horizontal-list" role="list" aria-label="Precisión por idioma"><div class="stats-horizontal-row" role="listitem"><div class="stats-horizontal-label"><span>' + languageFlag + ' ' + languageName + '</span><strong>' + accuracy + '%</strong></div><div class="stats-horizontal-track" role="img" aria-label="' + languageName + ': ' + accuracy + '%"><span style="width:' + accuracy + '%"></span></div></div></div><p class="chart-note">Precisión acumulada por idioma.</p>'
+      : '<p class="empty-chart">Completa una sesión para ver la precisión acumulada.</p>';
+  } else if (!practicedDays.length) {
+    chartMarkup = '<p class="empty-chart">Todavía no hay días de práctica registrados para ' + languageName + '.</p>';
+  } else {
+    const width=760,height=340,left=42,right=42,top=28,bottom=62;
+    const plotWidth=width-left-right,plotHeight=height-top-bottom;
+    const maxQuestions=Math.max(1,...practicedDays.map(([,item])=>item.attempted));
+    const questionMax=Math.max(5,Math.ceil(maxQuestions/5)*5);
+    const xAt=i=>practicedDays.length===1?left+plotWidth/2:left+i*plotWidth/(practicedDays.length-1);
+    const yAccuracy=value=>top+(100-value)*plotHeight/100;
+    const yQuestions=value=>top+(questionMax-value)*plotHeight/questionMax;
+    const grid=[0,25,50,75,100].map(value=>'<line x1="'+left+'" y1="'+yAccuracy(value)+'" x2="'+(width-right)+'" y2="'+yAccuracy(value)+'" class="chart-gridline"/><text x="3" y="'+(yAccuracy(value)+4)+'" class="chart-axis-label">'+Math.round(questionMax*value/100)+'</text><text x="'+(width-right+5)+'" y="'+(yAccuracy(value)+4)+'" class="chart-axis-label">'+value+'%</text>').join("");
+    const questionPoints=practicedDays.map(([,item],i)=>xAt(i)+","+yQuestions(item.attempted)).join(" ");
+    const accuracyPoints=practicedDays.map(([,item],i)=>xAt(i)+","+yAccuracy(item.attempted?item.correct/item.attempted*100:0)).join(" ");
+    const dots=practicedDays.map(([,item],i)=>{
+      const pct=item.attempted?Math.round(item.correct/item.attempted*100):0;
+      return '<circle cx="'+xAt(i)+'" cy="'+yQuestions(item.attempted)+'" r="7" class="stats-question-dot"><title>'+item.attempted+' preguntas</title></circle><circle cx="'+xAt(i)+'" cy="'+yAccuracy(pct)+'" r="7" class="stats-accuracy-dot"><title>'+pct+'% precisión</title></circle><text x="'+xAt(i)+'" y="'+(height-25)+'" text-anchor="middle" class="chart-axis-label">'+(i+1)+'</text>';
+    }).join("");
+    chartMarkup='<div class="stats-chart-scroll"><svg class="stats-line-chart stats-language-chart" viewBox="0 0 '+width+' '+height+'" role="img" aria-label="Preguntas respondidas y precisión por día practicado">'+grid+'<polyline class="stats-question-line" points="'+questionPoints+'"/><polyline class="stats-accuracy-line" points="'+accuracyPoints+'"/>'+dots+'<text x="'+(left+plotWidth/2)+'" y="'+(height-4)+'" text-anchor="middle" class="chart-axis-title">Días</text></svg></div><div class="stats-chart-legend"><span><i class="legend-question"></i>Preguntas respondidas</span><span><i class="legend-accuracy"></i>Precisión (%)</span></div><p class="chart-note">Últimos '+practicedDays.length+' días practicados · sin días de inactividad.</p>';
+  }
+  root.innerHTML=table+'<section class="progress-chart-card"><div class="stats-chart-heading"><h2>Evolución</h2><label class="stats-view-picker"><span class="visually-hidden">Vista del gráfico</span><select id="stats-view-select" aria-label="Seleccionar vista de estadísticas"><option value="global">🌐 Global</option><option value="'+languageId+'">'+languageFlag+' '+languageName+'</option></select></label></div><div class="stats-chart-stage">'+chartMarkup+'</div></section>';
+  root.querySelector("#stats-view-select").value=selectedView;
+  root.querySelector("#stats-view-select").addEventListener("change", refreshDashboard);
 }
 refreshDashboard();
 checkTutorHealth().then(status => {
