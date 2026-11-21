@@ -19,7 +19,7 @@ Rama de trabajo: `feature/ai-tutor-pedagogy` · [PR #2](https://github.com/asoto
 - La rama de reconstrucción prioriza funcionamiento, contratos verificables, estado y ciclo de vida. No se amplía contenido ni catálogo por ahora.
 
 ### Auditoría de interfaz y comportamiento
-- La base elegida todavía muestra una pantalla de configuración/sesión; no contiene la navegación completa acordada (Ruta, Entrenamiento, Idiomas, Teoría y Estadísticas). No debe presentarse como interfaz final.
+- La reconstrucción ya incorpora una primera carcasa móvil de cinco secciones: Ruta, Entrenamiento, Idiomas, Teoría y Estadísticas. Idiomas es la pantalla inicial y ocupa la posición central en la navegación; Ruta y Teoría permanecen deshabilitadas hasta implementar sus flujos. Entrenamiento, Idiomas y Estadísticas están accesibles.
 - Los catálogos visibles de esta base son portugués brasileño e inglés; el alcance vigente de la reconstrucción deberá quedar limitado a italiano como idioma objetivo.
 - En la auditoría inicial, el contrato de audio solo devolvía fragmentos del idioma objetivo. La nueva implementación añade `questionSegments` con texto, idioma, locale e indicador `isTarget`; el servidor exige reconstrucción exacta de la consigna y valida locales cuando se proporcionan.
 - El flujo conversacional de esta base sí incluye el resultado inicial del tutor en el historial que se envía junto con la primera respuesta del alumno. Este comportamiento debe conservarse y mantenerse cubierto por pruebas.
@@ -32,11 +32,14 @@ Rama de trabajo: `feature/ai-tutor-pedagogy` · [PR #2](https://github.com/asoto
 - [x] Consigna completa validada al concatenar segmentos; se rechazan omisiones, texto añadido y locale incorrecto para los idiomas origen/destino configurados.
 - [x] Prompt pedagógico: instrucciones por defecto en idioma nativo; fragmento objetivo solo cuando es el elemento que se evalúa.
 - [x] Interfaz de tutor IA: reproduce los segmentos en orden; subraya únicamente `isTarget=true`; al pulsarlo reproduce solo ese fragmento.
+- [x] Ejercicios locales: lectura de la consigna en español; sin TTS en alternativas ni en feedback/respuestas.
+- [x] Sección IDIOMAS inicial y central, Entrenamiento y Estadísticas accesibles; Ruta y Teoría visibles pero deshabilitadas.
+- [x] Sesión de entrenamiento sin navegación inferior, con control de audio y confirmación antes de descartar una sesión.
 - [x] Locale nativo predeterminado provisional `es-CL`; falta integrarlo con la configuración global para que sea modificable.
 - [x] Prueba Browser E2E agregada para consigna mixta español/francés, orden de voces, subrayado y replay del fragmento objetivo.
 - [ ] CI de esta iteración y Browser E2E pendientes de resultado final tras correcciones.
-- [ ] Extender la regla a Ruta, Entrenamiento y Teoría; verificar que opciones y respuestas no reciban TTS.
-- [ ] El selector y los catálogos todavía no están limitados a italiano; no se considera completado el alcance de idioma objetivo.
+- [ ] Extender la segmentación mixta a todos los tipos de consigna y futuras pantallas; verificar que opciones y respuestas no reciban TTS.
+- [x] Selector y catálogo activo limitados a italiano. Los archivos de portugués e inglés permanecen en el repositorio como contenido histórico, pero ya no se ofrecen en la interfaz.
 
 ### Orden de reconstrucción
 1. Asegurar contratos de datos y flujos conversacionales.
