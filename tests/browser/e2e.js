@@ -113,7 +113,7 @@ try {
 
   await page.locator('.nav-item[data-screen="stats"]').click();
   await page.locator("#screen-stats").waitFor({ state: "visible" });
-  assert.equal(await page.locator("#statistics-content .stats-language-table tbody tr").count(), 3, "statistics should show sessions, vocabulary and accuracy by language");
+  assert.equal(await page.locator("#statistics-content .stats-language-table tbody tr").count(), 4, "statistics should show sessions, vocabulary and accuracy by language");
   assert.equal(await page.locator("#stats-view-select").inputValue(), "global", "statistics should open on the global chart");
   assert.equal(await page.locator(".stats-horizontal-row").count(), 1, "global statistics should show the Italian accuracy bar");
   await page.locator("#stats-view-select").selectOption("it-IT");
