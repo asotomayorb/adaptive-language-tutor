@@ -6,7 +6,7 @@ const tutorJson = JSON.stringify({
   message: "Vamos a practicar.",
   exercise: {
     type: "conversation",
-    prompt: "Como você se chama?",
+    prompt: "¿Qué significa buongiorno?",
     expectedAnswer: "Meu nome é ...",
     acceptedAnswers: ["Eu me chamo ..."],
     hint: "Usa a expressão meu nome é."
@@ -22,7 +22,11 @@ const tutorJson = JSON.stringify({
     vocabulary: [],
     errorsToReview: []
   },
-  questionSegments: [{ text: "Como você se chama?", language: "pt", locale: "pt-BR", isTarget: true }],
+  questionSegments: [
+    { text: "¿Qué significa ", language: "es", locale: "es-CL", isTarget: false },
+    { text: "buongiorno", language: "it", locale: "it-IT", isTarget: true },
+    { text: "?", language: "es", locale: "es-CL", isTarget: false }
+  ],
   speechSegments: [{ text: "Bom dia", language: "pt", locale: "pt-BR" }],
   nextAction: "answer"
 });
@@ -50,9 +54,17 @@ test("OpenAI adapter uses strict structured outputs and server-side credentials"
       assert.equal(body.response_format.json_schema.name, "adaptive_language_tutor_turn");
     })
   );
-  const result = await provider.generateTutorTurn({ userMessage: "Olá" });
+  const result = await provider.generateTutorTurn({
+    userMessage: "¿Qué significa buongiorno?",
+    learner: { nativeLanguageLocale: "es-CL", targetLanguageLocale: "it-IT" }
+  });
   assert.equal(result.message, "Vamos a practicar.");
   assert.equal(result.exercise.type, "conversation");
+  assert.deepEqual(result.questionSegments.map(item => [item.text, item.locale, item.isTarget]), [
+    ["¿Qué significa ", "es-CL", false],
+    ["buongiorno", "it-IT", true],
+    ["?", "es-CL", false]
+  ]);
   assert.equal(provider.configured, true);
 });
 
