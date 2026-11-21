@@ -53,7 +53,10 @@ function toggleAudio() {
     const visibleSegments = [...document.querySelectorAll("#lesson-content [data-speak], #answer-area [data-speak], #feedback [data-speak], #summary-content [data-speak]")]
       .filter(button => !button.closest(".hidden") && button.getClientRects().length > 0)
       .map(button => ({ text: button.dataset.speak, locale: button.dataset.locale }));
-    speech.speakSequence(activeQuestionAudio.length ? activeQuestionAudio : visibleSegments, { automatic: true });
+    const questionSegments = [...document.querySelectorAll("#lesson-content [data-question-segment]")]
+      .filter(node => node.getClientRects().length > 0)
+      .map(node => ({ text: node.dataset.audioText, locale: node.dataset.locale }));
+    speech.speakSequence(questionSegments.length ? questionSegments : visibleSegments.length ? visibleSegments : activeQuestionAudio, { automatic: true });
   }
 }
 $("audio-toggle").addEventListener("click", toggleAudio);
@@ -329,8 +332,8 @@ function renderAITutorTurn(result) {
   const prompt = aiCurrentExercise.prompt
     ? '<h3 class="mixed-question" aria-label="' + escapeHTML(aiCurrentExercise.prompt) + '">' + (questionSegments.length
         ? questionSegments.map(item => item.isTarget
-          ? '<button class="target-fragment" type="button" data-speak="' + escapeHTML(item.text) + '" data-locale="' + escapeHTML(item.locale) + '" aria-label="Reproducir fragmento en idioma objetivo">' + escapeHTML(item.text) + '</button>'
-          : '<span>' + escapeHTML(item.text) + '</span>'
+          ? '<button class="target-fragment" type="button" data-question-segment="true" data-audio-text="' + escapeHTML(item.text) + '" data-speak="' + escapeHTML(item.text) + '" data-locale="' + escapeHTML(item.locale) + '" aria-label="Reproducir fragmento en idioma objetivo">' + escapeHTML(item.text) + '</button>'
+          : '<span data-question-segment="true" data-audio-text="' + escapeHTML(item.text) + '" data-locale="' + escapeHTML(item.locale) + '">' + escapeHTML(item.text) + '</span>'
         ).join("")
         : escapeHTML(aiCurrentExercise.prompt)) + '</h3>'
     : '<p class="muted">Responde libremente para continuar la conversación.</p>';
@@ -540,7 +543,7 @@ function renderDiagnosticQuestion() {
   $("turn-count").textContent = "Evaluación inicial";
   $("progress-bar").style.width = (diagnostic.index / 4 * 100) + "%";
   $("stats").hidden = true;
-  $("lesson-content").innerHTML = '<h3>' + escapeHTML(exercise.prompt) + '</h3><p>Responde según lo que ya sabes. Estas preguntas no cuentan en los turnos de práctica.</p>';
+  $("lesson-content").innerHTML = '<h3 data-question-segment="true" data-audio-text="' + escapeHTML(exercise.prompt) + '" data-locale="es-CL">' + escapeHTML(exercise.prompt) + '</h3><p>Responde según lo que ya sabes. Estas preguntas no cuentan en los turnos de práctica.</p>';
   speech.stop();
   $("answer-area").innerHTML = exercise.options.map((option,index) =>
     '<button class="answer-option" data-diagnostic="' + index + '">' + escapeHTML(option) + '</button>'
@@ -590,7 +593,7 @@ function renderLesson() {
   $("streak").textContent = session.streak;
   $("word-count").textContent = session.vocabulary.length;
   $("error-count").textContent = session.errors.length;
-  $("lesson-content").innerHTML = '<p class="eyebrow">TEMA: ' + escapeHTML(topicLabels[session.config.topic].toUpperCase()) + ' · NIVEL ' + escapeHTML(levelLabel(session.config.level).toUpperCase()) + '</p><h3>' + escapeHTML(currentExercise.prompt) + '</h3><p>' + escapeHTML(adaptation.message || "Elige una respuesta o escribe la tuya.") + '</p>';
+  $("lesson-content").innerHTML = '<p class="eyebrow">TEMA: ' + escapeHTML(topicLabels[session.config.topic].toUpperCase()) + ' · NIVEL ' + escapeHTML(levelLabel(session.config.level).toUpperCase()) + '</p><h3 data-question-segment="true" data-audio-text="' + escapeHTML(currentExercise.prompt) + '" data-locale="es-CL">' + escapeHTML(currentExercise.prompt) + '</h3><p>' + escapeHTML(adaptation.message || "Elige una respuesta o escribe la tuya.") + '</p>';
   speech.stop();
   const options = currentExercise.options.map((option,index) => '<button class="answer-option" data-choice="' + index + '">' + escapeHTML(option) + '</button>').join("");
   $("answer-area").innerHTML = options + '<input id="free-answer" class="answer-input" placeholder="También puedes escribir tu respuesta…"><button id="submit-free" class="secondary" type="button">Comprobar respuesta escrita</button>';
