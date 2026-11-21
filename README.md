@@ -137,4 +137,14 @@ Replit queda aplazado hasta que las etapas de auditoría, proveedor real y prueb
 - [x] Ruta y Entrenamiento quedan deshabilitados en la navegación; el botón de acceso a Entrenamiento también queda bloqueado. No se borran sus módulos ni datos.
 - [x] Teoría permanece temporalmente deshabilitada hasta portar y validar su pantalla funcional desde `feature/mobile-bottom-navigation`; se evita abrir una pantalla vacía.
 - [x] Estadísticas y su implementación no se modifican.
+- [x] El módulo Teoría se integra desde `feature/mobile-bottom-navigation`, con sus categorías, listado de temas, vistas detalladas, navegación anterior/siguiente y reproducción de pronunciación; se limita el idioma activo a Italiano.
+- [x] Se recupera la estructura y los estilos originales de Teoría sin reemplazar el shell modular ni tocar la implementación de Estadísticas.
 - [ ] Ejecutar CI/E2E y verificar el preview Render asociado a `rebuild/functional-baseline`.
+
+
+## Restauración de Teoría — 21-11-2026
+- [x] Se porta la pantalla de Teoría desde la rama de referencia: Gramática, Vocabulario y Expresiones; navegación por temas; detalle tipo diapositiva; anterior/siguiente; tablas y controles de pronunciación.
+- [x] La restauración conserva el contenido aplicado de Italiano y sus ayudas de pronunciación. Se mantiene la rama modular como base; no se sustituye `src/app.js` completo por la versión monolítica anterior.
+- [x] Se habilita Teoría en la barra inferior y se reinicia su navegación interna al volver a entrar.
+- [x] Estadísticas y sus componentes no se modifican en esta etapa.
+- [ ] Verificar CI, E2E y el deploy de Render del commit de esta restauración.
