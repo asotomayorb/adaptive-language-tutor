@@ -6,16 +6,36 @@ import { escapeHTML } from "./core/html.js";
 import { createSpeechController } from "./core/speech.js";
 
 const $ = id => document.getElementById(id);
+function setActiveScreen(name) {
+  document.querySelectorAll(".app-screen").forEach(screen => {
+    screen.classList.toggle("hidden", screen.id !== "screen-" + name);
+  });
+  document.querySelectorAll(".nav-item[data-screen]").forEach(button => {
+    const active = button.dataset.screen === name;
+    button.classList.toggle("active", active);
+    if (active) button.setAttribute("aria-current", "page");
+    else button.removeAttribute("aria-current");
+  });
+  if (name === "stats") refreshDashboard();
+}
+function setSessionView(active) {
+  $("app-shell").classList.toggle("session-active", Boolean(active));
+}
 const catalogs = { "Italiano": italian };
 const speech = createSpeechController({ onStatus: updateAudioStatus });
 function updateAudioStatus(status) {
   const toggle = document.getElementById("audio-toggle");
-  const label = document.getElementById("audio-status");
+  const sessionToggle = document.getElementById("session-audio-toggle");\n  const label = document.getElementById("audio-status");
   if (toggle) {
     toggle.textContent = status.enabled ? "🔊" : "🔇";
     toggle.setAttribute("aria-pressed", String(status.enabled));
     toggle.setAttribute("aria-label", status.enabled ? "Desactivar lectura automática" : "Activar lectura automática");
     toggle.title = status.enabled ? "Lectura automática activada" : "Lectura automática desactivada";
+  }
+  if (sessionToggle) {
+    sessionToggle.textContent = status.enabled ? "🔊" : "🔇";
+    sessionToggle.setAttribute("aria-pressed", String(status.enabled));
+    sessionToggle.setAttribute("aria-label", status.enabled ? "Desactivar lectura automática" : "Activar lectura automática");
   }
   if (label) {
     label.textContent = !status.supported
@@ -25,7 +45,7 @@ function updateAudioStatus(status) {
         : status.error ? "La voz seleccionada no pudo reproducir este fragmento." : "";
   }
 }
-document.getElementById("audio-toggle")?.addEventListener("click", () => {
+function toggleAudio() {
   const enabled = speech.setEnabled(!speech.enabled);
   if (enabled) {
     const visibleSegments = [...document.querySelectorAll("#lesson-content [data-speak], #answer-area [data-speak], #feedback [data-speak], #summary-content [data-speak]")]
@@ -33,7 +53,14 @@ document.getElementById("audio-toggle")?.addEventListener("click", () => {
       .map(button => ({ text: button.dataset.speak, locale: button.dataset.locale }));
     speech.speakSequence(visibleSegments, { automatic: true });
   }
+}
+$("audio-toggle").addEventListener("click", toggleAudio);
+$("session-audio-toggle").addEventListener("click", toggleAudio);
+document.querySelectorAll(".nav-item[data-screen]:not([disabled])").forEach(button => {
+  button.addEventListener("click", () => setActiveScreen(button.dataset.screen));
 });
+$("open-training").addEventListener("click", () => setActiveScreen("training"));
+
 function speakerButton(text, locale) {
   return '<button class="speak-button" type="button" data-speak="' + escapeHTML(text) + '" data-locale="' + escapeHTML(locale || "") + '" aria-label="Reproducir pronunciación" title="Escuchar">▶</button>';
 }
@@ -126,7 +153,7 @@ function startSpacedReview() {
   if (!catalog) { $("ai-status").textContent = "Indica el nombre del idioma y un locale válido (por ejemplo, fr-FR)."; return; }
   dueReviewCards = getDueCards(progress, Date.now(), catalog.id);
   reviewIndex = 0;
-  if (!dueReviewCards.length) { refreshDashboard(); return; }
+  if (!dueReviewCards.length) { refreshDashboard(); return; }\n  setActiveScreen("training");\n  setSessionView(true);
   $("setup-panel").classList.add("hidden");
   $("summary-panel").classList.add("hidden");
   $("lesson-panel").classList.remove("hidden");
@@ -673,7 +700,21 @@ $("new-session").addEventListener("click", () => {
   $("session-status").textContent = "Nueva sesión";
   refreshDashboard();
 });
-$("export-btn").addEventListener("click", () => {
+
+$("session-close").addEventListener("click", () => $("session-confirm").showModal());
+$("cancel-session-close").addEventListener("click", () => $("session-confirm").close());
+$("confirm-session-close").addEventListener("click", () => {
+  $("session-confirm").close();
+  speech.stop();
+  setSessionView(false);
+  $("lesson-panel").classList.add("hidden");
+  $("summary-panel").classList.add("hidden");
+  $("setup-panel").classList.remove("hidden");
+  $("session-status").textContent = "Sesión descartada";
+  setActiveScreen("training");
+  refreshDashboard();
+});
+\n$("export-btn").addEventListener("click", () => {
   const data = { exportedAt:new Date().toISOString(), summary:buildSummary(session), config:session.config, answers:session.answers };
   const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
   const url = URL.createObjectURL(blob);
