@@ -106,3 +106,10 @@ Replit queda aplazado hasta que las etapas de auditoría, proveedor real y prueb
 - La reconstrucción actual no es una restauración visual fiel: se simplificó la interfaz y se reimplementó Estadísticas, por lo que el gráfico previo puede no estar reproducido íntegramente. No afirmar que el diseño o sus gráficos se recuperaron hasta comparar la implementación de referencia y validar en el preview correcto.
 - Preview indicado por el README de la rama de referencia: https://adaptive-language-tutor-preview-5b3d.onrender.com. Debe comprobarse que corresponda al servicio y commit esperados antes de compartirlo como preview actualizado.
 - Acción correctiva pendiente: comparar la rama de referencia con la reconstrucción, recuperar de ella la interfaz/gráficos acordados sin perder la base funcional, y asociar/desplegar el preview correcto. No se modificó ni eliminó ninguna rama en esta auditoría.
+
+
+## Alcance confirmado para la siguiente etapa — 21-11-2026
+- Se toma la interfaz visual recuperada como base y se conserva; no se rediseña durante la restauración funcional.
+- Añadir/confirmar el acceso central de la barra inferior como selector de idiomas, con italiano como única opción visible por ahora.
+- A partir de esa base, retrotraer el funcionamiento por etapas según los contratos y decisiones ya definidos, priorizando comportamiento sobre ampliación de contenido.
+- Cada etapa debe ser acotada, probada y registrada antes de continuar; no declarar cambios desplegados sin verificar el commit servido por Render.
