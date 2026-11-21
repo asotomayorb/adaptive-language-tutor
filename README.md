@@ -4,11 +4,11 @@ Aplicación web de aprendizaje de idiomas con tutor conversacional de IA y modo 
 
 ## Estado actual
 
-**Etapa 4 de 8: auditoría funcional y técnica en GitHub.** Gemini 3.5 Flash-Lite completó sesiones reales de 3 turnos en portugués brasileño (`pt-BR`) y francés (`fr-FR`), con 5 fragmentos de voz por idioma. Una sesión real adicional desde Chromium completó 3 turnos en francés, guardó el progreso y exportó el JSON. Tests y Browser E2E están aprobados. Se restringió el acceso a archivos públicos, se añadieron cabeceras de seguridad y se corrigieron los reintentos duplicados. Falta validar voces en dispositivos reales, completar la auditoría funcional y cerrar aspectos de seguridad antes de la prueba humana; no está listo para despliegue público.
+**Reconstrucción funcional en curso.** La rama `rebuild/functional-baseline` se creó desde la base modular `feature/ai-tutor-pedagogy`. Ya incluye un shell móvil inicial con cinco secciones, Italiano como único idioma objetivo, fixtures locales mínimos y TTS segmentado en el tutor IA. La validación automatizada se está ejecutando sobre esta rama. Aún no está listo para producción ni se ha realizado la prueba humana Android.
 
-**Próximo paso:** completar la cobertura de audio en todas las vistas, probar navegadores/dispositivos reales y cerrar los hallazgos de auditoría. El detalle de etapas, verificaciones y pendientes está en [PROJECT_STATUS.md](PROJECT_STATUS.md). El procedimiento de validación manual está preparado en [HUMAN_TEST_PLAN.md](HUMAN_TEST_PLAN.md).
+**Próximo paso:** cerrar CI/Browser E2E, verificar el preview Render de esta rama y continuar con persistencia, navegación y ciclo de vida en todos los flujos. El detalle de etapas, verificaciones y pendientes está en [PROJECT_STATUS.md](PROJECT_STATUS.md). El procedimiento de validación manual está preparado en [HUMAN_TEST_PLAN.md](HUMAN_TEST_PLAN.md).
 
-Rama de trabajo: `feature/ai-tutor-pedagogy` · [PR #2](https://github.com/asotomayorb/adaptive-language-tutor/pull/2).
+Rama de trabajo: `rebuild/functional-baseline`. PR #2 y PR #3 permanecen intactos y sin fusionar.
 
 ## Reconstrucción funcional — 21-11-2026
 
