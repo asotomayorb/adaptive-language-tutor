@@ -305,7 +305,7 @@ function renderAITutorTurn(result) {
     typeof item.isTarget === "boolean"
   );
   const prompt = aiCurrentExercise.prompt
-    ? '<h3 class="mixed-question">' + (questionSegments.length
+    ? '<h3 class="mixed-question" aria-label="' + escapeHTML(aiCurrentExercise.prompt) + '">' + (questionSegments.length
         ? questionSegments.map(item => item.isTarget
           ? '<button class="target-fragment" type="button" data-speak="' + escapeHTML(item.text) + '" data-locale="' + escapeHTML(item.locale) + '" aria-label="Reproducir fragmento en idioma objetivo">' + escapeHTML(item.text) + '</button>'
           : '<span>' + escapeHTML(item.text) + '</span>'
