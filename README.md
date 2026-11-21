@@ -122,3 +122,11 @@ Replit queda aplazado hasta que las etapas de auditoría, proveedor real y prueb
 - Conservar Teoría y Estadísticas sin cambios de estética ni funcionamiento.
 - Después de validar estos cambios, auditar rutas, archivos y ramas duplicados o similares. Eliminar solo duplicados confirmados; mantener cualquier trabajo único como respaldo con nombre y documentación explícitos para evitar confusión.
 - Validar el resultado antes de continuar con la restauración funcional progresiva. No se ha realizado aún esta implementación ni limpieza.
+
+
+## Ejecución del ajuste inicial — 21-11-2026
+- Se inició la implementación, pero la inspección del código detectó que `rebuild/functional-baseline` no contiene una pantalla ni módulo de Teoría: su botón está deshabilitado y no existe `#screen-theory`. Por tanto, no es posible cumplir «conservar Teoría tal como está» aplicando solo un bloqueo de Ruta/Entrenamiento; primero debe portarse la implementación funcional de Teoría desde `feature/mobile-bottom-navigation` o acordarse usar esa rama como referencia visual primaria.
+- En `rebuild/functional-baseline`, Estadísticas sí existe y su implementación está en `src/app.js` y `index.html`; no se modificó.
+- No se modificó código de interfaz ni se desplegó un commit nuevo en esta etapa, para evitar publicar una versión que omita Teoría o rompa la validación E2E de Entrenamiento/Estadísticas.
+- Render tiene dos servicios activos: `adaptive-language-tutor-rebuild-preview` (rama `rebuild/functional-baseline`, autoDeploy) y `adaptive-language-tutor-preview-5b3d` (rama `feature/mobile-bottom-navigation`, autoDeploy desactivado). Las acciones Render conectadas disponibles permiten listar/consultar/desplegar, pero no eliminar servicios ni cambiar la rama del servicio existente. No se puede garantizar un único preview desde estas acciones sin intervenir en el Dashboard.
+- Las ramas `feature/mobile-bottom-navigation` y `rebuild/functional-baseline` contienen implementaciones únicas (Teoría y módulos pedagógicos modulares, respectivamente); no se borran ni se marcan como duplicados. Próximo paso seguro: integrar Teoría de referencia en la base modular, adaptar E2E a Ruta/Entrenamiento bloqueados y verificar Estadísticas, luego consolidar el servicio único desde Render Dashboard.
