@@ -1,10 +1,98 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#172b4d"><title>Adaptive Language Tutor</title><link rel="stylesheet" href="./src/styles.css"><script type="module" src="./src/app.js"></script></head>
-<body><main class="app-shell">
-<header class="topbar"><a class="brand" href="./"><span class="brand-mark">A</span><span><strong>Language Tutor</strong><small>Aprendizaje adaptativo</small></span></a><div class="header-actions"><button id="audio-toggle" class="audio-toggle" type="button" aria-pressed="true" aria-label="Desactivar lectura automática" title="Lectura automática activada">🔊</button><span class="status" id="session-status">Nueva sesión</span></div></header><p id="audio-status" class="audio-status" role="status" aria-live="polite"></p>
-<section class="hero"><p class="eyebrow">APRENDIZAJE PERSONALIZADO</p><h1>Aprende un idioma<br><span>a través de la conversación.</span></h1><p class="intro">Práctica guiada que ajusta la dificultad, corrige errores y refuerza lo aprendido.</p></section>
-<section id="setup-panel" class="panel"><div id="progress-dashboard" class="progress-dashboard" aria-live="polite"></div><p id="ai-status" class="muted" role="status">Comprobando disponibilidad del tutor IA…</p><div class="section-heading"><div><p class="eyebrow">CONFIGURACIÓN</p><h2>Tu sesión</h2></div><span class="step">01 / 03</span></div>
-<form id="setup-form" class="setup-grid"><label>Idioma<select id="language"><option value="Italiano" selected>Italiano</option></select></label><label>Duración<select id="duration"><option value="8">8 turnos</option><option value="15" selected>15 turnos</option><option value="25">25 turnos</option></select></label><label>Nivel<select id="level"><option value="zero">Desde cero</option><option value="basic" selected>Básico / intermedio</option><option value="diagnostic">Diagnóstico (4 preguntas)</option></select></label><label>Tema<select id="topic"><option value="daily">Vida cotidiana</option><option value="travel">Viajes</option><option value="food">Comida y restaurantes</option><option value="work">Trabajo y estudios</option><option value="random">Aleatorio</option></select></label><div class="form-footer"><p>Podrás pedir pistas o escribir respuestas libres.</p><button id="start-session" class="primary" type="submit" disabled>Comenzar sesión →</button></div></form></section>
-<section id="lesson-panel" class="panel hidden" aria-live="polite"><div class="lesson-meta"><span class="eyebrow" id="lesson-phase">PRÁCTICA</span><span id="turn-count"></span></div><div class="progress-track"><div id="progress-bar"></div></div><div class="stats" id="stats"><span>Racha <strong id="streak">0</strong></span><span>Palabras <strong id="word-count">0</strong></span><span>Errores <strong id="error-count">0</strong></span></div><div id="lesson-content" class="lesson-content"></div><div id="answer-area" class="answer-area"></div><div class="lesson-actions"><button id="hint-btn" class="secondary" type="button">Ver una pista</button><button id="review-btn" class="text-button" type="button">REPASO</button></div><div id="feedback" class="feedback hidden"></div></section>
-<section id="summary-panel" class="panel hidden" aria-live="polite"><p class="eyebrow">SESIÓN COMPLETADA</p><h2>Tu progreso</h2><div id="summary-content"></div><div class="form-footer"><button id="new-session" class="primary" type="button">Nueva sesión →</button><button id="export-btn" class="secondary" type="button">Exportar progreso</button></div></section>
-<footer><span>ADAPTIVE LANGUAGE TUTOR</span><span>Versión inicial</span></footer></main></body></html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f3f5f8">
+  <title>Adaptive Language Tutor</title>
+  <link rel="stylesheet" href="./src/styles.css">
+  <script type="module" src="./src/app.js"></script>
+</head>
+<body>
+<main id="app-shell" class="app-shell">
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="Adaptive Language Tutor">
+      <span class="brand-mark">A</span>
+      <span><strong>Adaptive Language Tutor</strong><small id="session-status">Aprendizaje adaptativo</small></span>
+    </a>
+    <div class="header-actions">
+      <button id="audio-toggle" class="audio-toggle" type="button" aria-pressed="true" aria-label="Desactivar lectura automática" title="Lectura automática activada">🔊</button>
+    </div>
+  </header>
+  <p id="audio-status" class="audio-status" role="status" aria-live="polite"></p>
+
+  <section id="screen-languages" class="app-screen">
+    <div class="screen-heading"><p class="eyebrow">IDIOMA OBJETIVO</p><h1>IDIOMAS</h1></div>
+    <div class="language-card selected" aria-current="true">
+      <span class="language-flag" aria-hidden="true">🇮🇹</span>
+      <span><strong>Italiano</strong><small>Italia · it-IT</small></span>
+      <span class="language-check" aria-hidden="true">✓</span>
+    </div>
+    <div class="language-origin">
+      <span class="eyebrow">IDIOMA DE ORIGEN</span>
+      <strong>Español (Chile)</strong>
+      <small>Se utiliza para consignas y explicaciones.</small>
+    </div>
+    <button id="open-training" class="primary wide-action" type="button">Entrenamiento →</button>
+  </section>
+
+  <section id="screen-training" class="app-screen hidden">
+    <div class="screen-heading"><p class="eyebrow">PRÁCTICA GUIADA</p><h1>Entrenamiento</h1></div>
+    <section id="setup-panel" class="panel">
+      <div id="ai-status" class="muted" role="status">Comprobando disponibilidad del tutor IA…</div>
+      <div class="section-heading"><div><p class="eyebrow">CONFIGURACIÓN</p><h2>Tu sesión</h2></div><span class="step">01 / 03</span></div>
+      <form id="setup-form" class="setup-grid">
+        <label>Idioma<select id="language"><option value="Italiano" selected>Italiano</option></select></label>
+        <label>Duración<select id="duration"><option value="8">8 turnos</option><option value="15" selected>15 turnos</option><option value="25">25 turnos</option></select></label>
+        <label>Nivel<select id="level"><option value="zero">Desde cero</option><option value="basic" selected>Básico / intermedio</option><option value="diagnostic">Diagnóstico (4 preguntas)</option></select></label>
+        <label>Tema<select id="topic"><option value="daily">Vida cotidiana</option><option value="travel">Viajes</option><option value="food">Comida y restaurantes</option><option value="work">Trabajo y estudios</option><option value="random">Aleatorio</option></select></label>
+        <div class="form-footer"><p>Las respuestas y el progreso se guardan en este dispositivo.</p><button id="start-session" class="primary" type="submit" disabled>Comenzar sesión →</button></div>
+      </form>
+    </section>
+
+    <section id="lesson-panel" class="panel lesson-panel hidden" aria-live="polite">
+      <div class="session-topbar">
+        <button id="session-close" class="icon-control" type="button" aria-label="Cerrar sesión">×</button>
+        <span id="lesson-phase" class="eyebrow">PRÁCTICA</span>
+        <span id="turn-count" class="activity-counter"></span>
+        <button id="session-audio-toggle" class="icon-control audio-toggle" type="button" aria-pressed="true" aria-label="Desactivar lectura automática">🔊</button>
+      </div>
+      <div class="progress-track"><div id="progress-bar"></div></div>
+      <div class="stats" id="stats"><span>Racha <strong id="streak">0</strong></span><span>Palabras <strong id="word-count">0</strong></span><span>Errores <strong id="error-count">0</strong></span></div>
+      <div id="lesson-content" class="lesson-content"></div>
+      <div id="answer-area" class="answer-area"></div>
+      <div class="lesson-actions"><button id="hint-btn" class="secondary" type="button">Pista</button><button id="review-btn" class="text-button" type="button">REPASO</button></div>
+      <div id="feedback" class="feedback hidden"></div>
+    </section>
+
+    <section id="summary-panel" class="panel hidden" aria-live="polite">
+      <p class="eyebrow">SESIÓN COMPLETADA</p><h2>Tu progreso</h2>
+      <div id="summary-content"></div>
+      <div class="form-footer"><button id="new-session" class="primary" type="button">Nueva sesión →</button><button id="export-btn" class="secondary" type="button">Exportar progreso</button></div>
+    </section>
+  </section>
+
+  <section id="screen-stats" class="app-screen hidden">
+    <div class="screen-heading"><p class="eyebrow">SEGUIMIENTO</p><h1>Estadísticas</h1></div>
+    <section class="panel">
+      <div id="progress-dashboard" class="progress-dashboard" aria-live="polite"></div>
+      <div id="statistics-content" class="statistics-grid"></div>
+    </section>
+  </section>
+
+  <nav class="bottom-nav" aria-label="Navegación principal">
+    <button class="nav-item unavailable" type="button" data-screen="route" aria-label="Ruta" aria-disabled="true" disabled><span class="nav-icon">⌁</span></button>
+    <button class="nav-item" type="button" data-screen="training" aria-label="Entrenamiento"><span class="nav-icon">◎</span></button>
+    <button class="nav-item active languages-tab" type="button" data-screen="languages" aria-label="Idiomas" aria-current="page"><span class="nav-icon">文</span></button>
+    <button class="nav-item unavailable" type="button" data-screen="theory" aria-label="Teoría" aria-disabled="true" disabled><span class="nav-icon">▤</span></button>
+    <button class="nav-item" type="button" data-screen="stats" aria-label="Estadísticas"><span class="nav-icon">▥</span></button>
+  </nav>
+</main>
+
+<dialog id="session-confirm" class="confirm-dialog">
+  <h2>¿Cerrar la sesión?</h2>
+  <p>El progreso de esta sesión incompleta no se guardará.</p>
+  <div class="dialog-actions"><button id="cancel-session-close" class="secondary" type="button">Continuar</button><button id="confirm-session-close" class="primary" type="button">Cerrar sesión</button></div>
+</dialog>
+</body>
+</html>
