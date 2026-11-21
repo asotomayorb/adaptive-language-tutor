@@ -249,7 +249,8 @@ try {
   assert.deepEqual(await aiPage.evaluate(() => window.__spoken.at(-1) && [window.__spoken.at(-1).text, window.__spoken.at(-1).lang]), ["buongiorno", "it-IT"], "manual replay should pronounce only the selected target fragment");
   const spokenBeforeFirstHint = await aiPage.evaluate(() => window.__spoken.length);
   await aiPage.locator("#hint-btn").click();
-  await aiPage.locator("#feedback").getByText(/saludo matinal/).waitFor();
+  await aiPage.locator("#feedback").waitFor({ state: "visible" });
+  assert.match(await aiPage.locator("#feedback").innerText(), /saludo matinal/);
   assert.ok(await aiPage.evaluate(count => window.__spoken.length > count && window.__spoken.at(-1)?.text === "parlare" && window.__spoken.at(-1)?.lang === "it-IT", spokenBeforeFirstHint), "the first AI hint should automatically pronounce its target-language fragment");
   const turnBeforeExtraHint = await aiPage.locator("#turn-count").innerText();
   const cancellationsBeforeExtraHint = await aiPage.evaluate(() => window.__speechCancelled);
