@@ -147,3 +147,17 @@ body{min-height:100svh;background:#f3f5f8}
 .nav-item.languages-tab .nav-icon{font-size:24px}
 .nav-label{font-size:9px}
 @media(max-width:390px){.nav-label{font-size:8px}.bottom-nav{left:7px;right:7px;padding-inline:4px}.nav-icon{font-size:20px}}
+
+
+/* Selector central de idiomas y módulos temporalmente bloqueados */
+.nav-item:disabled{cursor:not-allowed;pointer-events:none}
+.nav-item.unavailable{opacity:.34}
+#open-training:disabled{opacity:.48;cursor:not-allowed;filter:saturate(.35)}
+.language-selector{width:min(360px,calc(100% - 32px));padding:22px;border:1px solid #e1e7ef;border-radius:20px;background:#fff;color:#263c59;box-shadow:0 18px 55px #152a4433}
+.language-selector::backdrop{background:#13243b66;backdrop-filter:blur(3px)}
+.language-selector h2{margin:0 0 8px;font-size:20px}
+.language-selector p{margin:0 0 18px;color:#718096;font-size:13px}
+.language-selector form{display:grid;gap:10px}
+.language-option{display:grid;grid-template-columns:32px 1fr 20px;align-items:center;gap:10px;width:100%;min-height:58px;padding:12px;border:1px solid #9bb1ca;border-radius:13px;background:#f2f6fb;color:#183b66;text-align:left;font:inherit}
+.language-option>span:first-child{font-size:23px}
+.language-option>span:last-child{font-weight:800;color:#28734d}
