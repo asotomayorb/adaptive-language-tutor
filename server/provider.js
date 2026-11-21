@@ -160,10 +160,10 @@ function validateTutorResult(result) {
       !result.learnerUpdate.errorsToReview.every(item => typeof item === "string"))) {
     throw contractError("The AI provider returned an invalid learner update.");
   }
-  if (result.questionSegments !== undefined && (!Array.isArray(result.questionSegments) ||
+  if (!Array.isArray(result.questionSegments) ||
       !result.questionSegments.every(item => isRecord(item) &&
         typeof item.text === "string" && typeof item.language === "string" &&
-        typeof item.locale === "string" && typeof item.isTarget === "boolean"))) {
+        typeof item.locale === "string" && typeof item.isTarget === "boolean")) {
     throw contractError("The AI provider returned invalid question segments.");
   }
   if (result.exercise?.prompt && result.questionSegments?.length) {
