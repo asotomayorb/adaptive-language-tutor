@@ -223,7 +223,7 @@ try {
   const spokenBeforeFirstHint = await aiPage.evaluate(() => window.__spoken.length);
   await aiPage.locator("#hint-btn").click();
   await aiPage.locator("#feedback").getByText(/saludo matinal/).waitFor();
-  assert.ok(await aiPage.evaluate(count => window.__spoken.length > count && window.__spoken.at(-1)?.text === "Vorrei" && window.__spoken.at(-1)?.lang === "it-IT", spokenBeforeFirstHint), "the first AI hint should automatically pronounce its target-language fragment");
+  assert.ok(await aiPage.evaluate(count => window.__spoken.length > count && window.__spoken.at(-1)?.text === "parlare" && window.__spoken.at(-1)?.lang === "it-IT", spokenBeforeFirstHint), "the first AI hint should automatically pronounce its target-language fragment");
   const turnBeforeExtraHint = await aiPage.locator("#turn-count").innerText();
   const cancellationsBeforeExtraHint = await aiPage.evaluate(() => window.__speechCancelled);
   await aiPage.locator("#hint-btn").click();
