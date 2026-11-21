@@ -1,13 +1,13 @@
 import { createSession, recordAnswer, recordTutorEvaluation, evaluateAnswer, buildSummary, getAdaptation, applyLearnerUpdate } from "./core/pedagogy.js";
 import { loadProgress, saveProgress, persistSession, getDueCards, gradeReview, getProgressStats } from "./core/storage.js";
 import { ptBR } from "./content/pt-BR.js";
-import { english } from "./content/en.js";
+import { italian } from "./content/it.js";
 import { checkTutorHealth, requestTutorTurn } from "./core/tutor-client.js";
 import { escapeHTML } from "./core/html.js";
 import { createSpeechController } from "./core/speech.js";
 
 const $ = id => document.getElementById(id);
-const catalogs = { "Portugués brasileño": ptBR, "Inglés": english };
+const catalogs = { "Italiano": italian };
 const speech = createSpeechController({ onStatus: updateAudioStatus });
 function updateAudioStatus(status) {
   const toggle = document.getElementById("audio-toggle");
@@ -73,12 +73,7 @@ function autoSpeak(text, locale = catalog?.locale) {
 }
 const topicLabels = { daily:"vida cotidiana", travel:"viajes", food:"comida y restaurantes", work:"trabajo y estudios", random:"tema sorpresa" };
 function getSelectedCatalog() {
-  const selected = $("language").value;
-  if (selected !== "other") return catalogs[selected] || null;
-  const label = $("custom-language-name").value.trim();
-  const locale = $("custom-language-locale").value.trim();
-  if (!label || !/^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/i.test(locale)) return null;
-  return { id: locale, label, locale, exercises: [] };
+  return catalogs[$("language").value] || null;
 }
 function updateCustomLanguageFields() {
   const custom = $("language").value === "other";
