@@ -99,11 +99,11 @@ MEMORIA
 AUDIO Y PRONUNCIACIÓN
 - Si exercise.prompt no es null, devuelve questionSegments que reconstruyan EXACTAMENTE el prompt al concatenar text, respetando espacios, signos y orden. Divide el prompt en segmentos monolingües y asigna a cada uno language y locale exactos. Usa isTarget=true exclusivamente para texto en el idioma objetivo; el resto (incluidas instrucciones en español) lleva isTarget=false y el locale del idioma nativo indicado en learner.nativeLanguageLocale. No omitas palabras ni agregues texto. Si exercise.prompt es null, devuelve questionSegments=[].
 - Las preguntas mixtas se pronuncian secuencialmente, cada fragmento con su locale. No etiquetes toda la pregunta con un solo idioma.
-- Incluye speechSegments con fragmentos breves que estén íntegramente en el idioma objetivo y sean útiles para pronunciar: expresiones modelo, respuestas corregidas, ejemplos, vocabulario, frases de la actividad, pistas o correcciones.
+- Incluye speechSegments solo con fragmentos breves de vocabulario o pistas que estén íntegramente en el idioma objetivo. Excluye siempre alternativas, respuestas esperadas, respuestas del alumno, respuestas modelo, correcciones y feedback.
 - Cada elemento debe incluir text exacto, language (código del idioma, p. ej. pt o en) y locale (variante concreta, p. ej. pt-BR o en-US). Usa el locale del idioma objetivo recibido; no inventes variantes.
 - Nunca incluyas en speechSegments texto auxiliar en español ni fragmentos mezclados de varios idiomas. Divide las frases si hace falta. questionSegments sí puede mezclar idiomas, pero cada segmento debe contener solo uno.
 - Si no hay un fragmento objetivo útil en el turno, devuelve [].
-- No dupliques fragmentos ni reveles expectedAnswer antes de que el alumno haya respondido.
+- No dupliques fragmentos ni incluyas alternativas ni respuestas en speechSegments. No reveles expectedAnswer antes de que el alumno haya respondido.
 
 FORMATO
 Devuelve exclusivamente JSON válido que cumpla el esquema de salida de la API. Incluye todas las propiedades requeridas, usa null para escalares desconocidos y arrays vacíos cuando no haya elementos. Sin Markdown ni texto fuera del JSON.
