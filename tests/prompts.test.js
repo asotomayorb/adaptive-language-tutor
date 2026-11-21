@@ -12,7 +12,7 @@ test("tutor prompt defines adaptive, communicative teaching rules", () => {
 test("OpenAI response schema is strict and contains the complete tutor contract", () => {
   assert.equal(TUTOR_RESPONSE_SCHEMA.type, "object");
   assert.equal(TUTOR_RESPONSE_SCHEMA.additionalProperties, false);
-  assert.deepEqual(TUTOR_RESPONSE_SCHEMA.required, ["message", "exercise", "evaluation", "learnerUpdate", "speechSegments", "nextAction"]);
+  assert.deepEqual(TUTOR_RESPONSE_SCHEMA.required, ["message", "exercise", "evaluation", "learnerUpdate", "questionSegments", "speechSegments", "nextAction"]);
   assert.equal(TUTOR_RESPONSE_SCHEMA.properties.nextAction.enum.includes("finish"), true);
 });
 
@@ -38,6 +38,9 @@ test("buildTutorMessages preserves learner, active exercise and recent conversat
 
 
 test("tutor prompt defines a non-advancing progressive hint request", () => {
+  assert.match(TUTOR_SYSTEM_PROMPT, /questionSegments/i);
+  assert.match(TUTOR_SYSTEM_PROMPT, /reconstruyan EXACTAMENTE el prompt/i);
+  assert.match(TUTOR_SYSTEM_PROMPT, /isTarget=true/i);
   assert.match(TUTOR_SYSTEM_PROMPT, /request_hint/i);
   assert.match(TUTOR_SYSTEM_PROMPT, /no cambies de actividad/i);
   assert.match(TUTOR_SYSTEM_PROMPT, /no avances el turno/i);
