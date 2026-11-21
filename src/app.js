@@ -239,7 +239,8 @@ $("setup-form").addEventListener("submit", event => {
 
 function getAILearnerContext(config = session.config) {
   return {
-    nativeLanguage: "es",\n    nativeLanguageLocale: config.nativeLanguageLocale || "es-CL",
+    nativeLanguage: "es",
+    nativeLanguageLocale: config.nativeLanguageLocale || "es-CL",
     targetLanguage: config.languageId,
     targetLanguageLabel: config.language,
     targetLanguageLocale: config.languageLocale || catalog?.locale || config.languageId,
