@@ -817,3 +817,10 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Rama de Preview: feature/mobile-bottom-navigation. Replit permanece intacto.
 - Validación humana de sonido en Android físico sigue pendiente; no se considera resuelta por la prueba automatizada.
 
+
+## Cambio de base de trabajo — 21-11-2026
+- Decisión vigente: continuar el desarrollo desde `feature/mobile-bottom-navigation`, cuyo Preview es la referencia visual preferida. No usar `rebuild/functional-baseline` como base de interfaz ni desplegarla como Preview principal.
+- La rama `rebuild/functional-baseline` se conserva temporalmente como respaldo aislado para rescatar componentes o lógica útil; no se mezclan sus estilos ni su shell visual con la rama móvil.
+- Próximo alcance inicial sobre esta rama: (1) incorporar/confirmar selector central de idiomas con Italiano como única opción habilitada/visible por ahora; (2) bloquear Ruta y Entrenamiento sin borrar sus implementaciones; (3) mantener Teoría y Estadísticas sin cambios visuales ni funcionales.
+- Antes de editar, comparar el estado real de `index.html`, `src/app.js`, estilos y pruebas. Después validar con `npm run check`, `npm test` y Browser E2E. No afirmar despliegue hasta verificar el commit live.
+- Consolidación de Preview: mantener como Preview de referencia `https://adaptive-language-tutor-preview-5b3d.onrender.com/`. El servicio `adaptive-language-tutor-rebuild-preview` es alternativo y debe retirarse desde Render Dashboard después de verificar que no es necesario; no borrar ramas con contenido único.
