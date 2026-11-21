@@ -68,6 +68,21 @@ test("OpenAI adapter uses strict structured outputs and server-side credentials"
   assert.equal(provider.configured, true);
 });
 
+test("provider rejects incomplete question segmentation", async () => {
+  const incomplete = JSON.parse(tutorJson);
+  incomplete.questionSegments = incomplete.questionSegments.slice(0, 2);
+  const provider = createAIProvider(
+    { AI_PROVIDER: "openai", AI_API_KEY: "secret", AI_MODEL: "test-model" },
+    fakeFetch("https://api.openai.com/v1/chat/completions", {}, {
+      choices: [{ message: { content: JSON.stringify(incomplete) } }]
+    })
+  );
+  await assert.rejects(
+    () => provider.generateTutorTurn({ learner: { nativeLanguageLocale: "es-CL", targetLanguageLocale: "it-IT" } }),
+    /do not reproduce the complete exercise prompt/i
+  );
+});
+
 test("Anthropic adapter uses its native messages format", async () => {
   const provider = createAIProvider(
     { AI_PROVIDER: "anthropic", AI_API_KEY: "secret", AI_MODEL: "test-model" },
