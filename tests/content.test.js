@@ -1,9 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { ptBR } from "../src/content/pt-BR.js";
-import { english } from "../src/content/en.js";
+import { italian } from "../src/content/it.js";
 
-const catalogs = [ptBR, english];
+const catalogs = [italian];
 
 test("each language catalog has unique exercise IDs", () => {
   for (const catalog of catalogs) {
