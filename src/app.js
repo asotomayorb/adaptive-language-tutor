@@ -70,7 +70,10 @@ $("session-audio-toggle").addEventListener("click", toggleAudio);
 document.querySelectorAll(".nav-item[data-screen]:not([disabled])").forEach(button => {
   button.addEventListener("click", () => setActiveScreen(button.dataset.screen));
 });
-$("select-language").addEventListener("click", () => $("language-selector").showModal());
+$("select-language").addEventListener("click", () => {
+  setActiveScreen("languages");
+  $("language-selector").showModal();
+});
 $("language-selector").querySelector("form").addEventListener("click", event => {
   if (event.target.closest(".language-option")) {
     event.preventDefault();
