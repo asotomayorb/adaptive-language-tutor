@@ -25,7 +25,8 @@ const catalogs = { "Italiano": italian };
 const speech = createSpeechController({ onStatus: updateAudioStatus });
 function updateAudioStatus(status) {
   const toggle = document.getElementById("audio-toggle");
-  const sessionToggle = document.getElementById("session-audio-toggle");\n  const label = document.getElementById("audio-status");
+  const sessionToggle = document.getElementById("session-audio-toggle");
+  const label = document.getElementById("audio-status");
   if (toggle) {
     toggle.textContent = status.enabled ? "🔊" : "🔇";
     toggle.setAttribute("aria-pressed", String(status.enabled));
@@ -153,7 +154,9 @@ function startSpacedReview() {
   if (!catalog) { $("ai-status").textContent = "Indica el nombre del idioma y un locale válido (por ejemplo, fr-FR)."; return; }
   dueReviewCards = getDueCards(progress, Date.now(), catalog.id);
   reviewIndex = 0;
-  if (!dueReviewCards.length) { refreshDashboard(); return; }\n  setActiveScreen("training");\n  setSessionView(true);
+  if (!dueReviewCards.length) { refreshDashboard(); return; }
+  setActiveScreen("training");
+  setSessionView(true);
   $("setup-panel").classList.add("hidden");
   $("summary-panel").classList.add("hidden");
   $("lesson-panel").classList.remove("hidden");
@@ -714,7 +717,8 @@ $("confirm-session-close").addEventListener("click", () => {
   setActiveScreen("training");
   refreshDashboard();
 });
-\n$("export-btn").addEventListener("click", () => {
+
+$("export-btn").addEventListener("click", () => {
   const data = { exportedAt:new Date().toISOString(), summary:buildSummary(session), config:session.config, answers:session.answers };
   const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
   const url = URL.createObjectURL(blob);
