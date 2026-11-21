@@ -16,15 +16,16 @@ Aplicación móvil-first para aprender idiomas mediante una ruta progresiva, eje
 
 ## 2. Estructura principal de navegación
 
-La aplicación tiene exactamente **cuatro secciones principales**:
+La navegación visible mantiene cinco posiciones: Ruta, Entrenamiento, selector central de Idiomas, Teoría y Estadísticas. En el alcance temporal actual, Ruta y Entrenamiento están bloqueados; Teoría y Estadísticas son las únicas secciones navegables.
 
-1. **Ruta** — recorrido de aprendizaje guiado, con estructura de historia/progresión por etapas. Es la pantalla inicial. Nombre visible recomendado: “Ruta”; puede describirse internamente como “modo historia”. No crear una sección adicional llamada Inicio.
-2. **Ejercicios** — práctica independiente con dos modalidades: **Global** y **Repaso**.
-3. **Teoría** — explicaciones y material de consulta organizados por idioma, nivel y tema; debe poder consultarse sin iniciar una sesión.
-4. **Estadísticas** — historial y métricas del aprendizaje.
+1. **Ruta** — visible pero temporalmente no seleccionable.
+2. **Entrenamiento** — visible pero temporalmente no seleccionable.
+3. **Idiomas** — selector central destacado; Italiano es la única opción habilitada actualmente.
+4. **Teoría** — accesible y conservada.
+5. **Estadísticas** — accesible y conservada.
 
 Reglas de navegación:
-- Barra inferior fija, optimizada para móvil, con **solo iconos**: sin texto visible bajo los iconos.
+- Barra inferior fija, optimizada para móvil, con cinco posiciones y **solo iconos**: sin texto visible bajo los iconos. El selector central de Idiomas es un botón elevado y destacado.
 - Los iconos deben ser claros y distinguibles. El seleccionado puede mostrarse ligeramente más grande y/o con mayor grosor/contraste.
 - El nombre de la sección se muestra dentro del contenido de la pantalla, nunca como etiqueta bajo el icono.
 - No incluir una sección “Configuración”.
@@ -104,8 +105,7 @@ Errores y cambio de contexto:
 
 ## 8. Idiomas y audio
 
-- Idiomas locales iniciales: portugués brasileño (`pt-BR`) e inglés (`en`).
-- Permitir idioma personalizado mediante nombre y locale válido (por ejemplo, francés `fr-FR`) con tutor IA cuando exista proveedor compatible.
+- Alcance activo del selector: Italiano únicamente. Los otros catálogos y datos históricos permanecen en el repositorio, pero no se ofrecen en la interfaz hasta una etapa posterior.
 - El locale objetivo debe mantenerse consistente en las actividades, historial y síntesis de voz.
 - La lectura automática puede activarse/desactivarse desde el icono superior.
 - Audio desactivado no debe impedir practicar por escrito.
@@ -824,3 +824,11 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Próximo alcance inicial sobre esta rama: (1) incorporar/confirmar selector central de idiomas con Italiano como única opción habilitada/visible por ahora; (2) bloquear Ruta y Entrenamiento sin borrar sus implementaciones; (3) mantener Teoría y Estadísticas sin cambios visuales ni funcionales.
 - Antes de editar, comparar el estado real de `index.html`, `src/app.js`, estilos y pruebas. Después validar con `npm run check`, `npm test` y Browser E2E. No afirmar despliegue hasta verificar el commit live.
 - Consolidación de Preview: mantener como Preview de referencia `https://adaptive-language-tutor-preview-5b3d.onrender.com/`. El servicio `adaptive-language-tutor-rebuild-preview` es alternativo y debe retirarse desde Render Dashboard después de verificar que no es necesario; no borrar ramas con contenido único.
+
+
+### Ajuste de alcance y navegación — 21-11-2026
+- Se conserva `feature/mobile-bottom-navigation` como base visual canónica; no se rediseña la bienvenida, tarjetas, Teoría ni Estadísticas.
+- La barra inferior queda en cinco posiciones: Ruta bloqueada, Entrenamiento bloqueado, selector central de Idiomas, Teoría disponible y Estadísticas disponible.
+- Italiano es la única opción visible y seleccionable en el selector central. Al iniciar o cambiar el idioma, se abre Teoría como primera sección disponible; Estadísticas permanece accesible.
+- Ruta y Entrenamiento no se borran: sus módulos se conservan como respaldo interno, pero no se puede acceder a ellos desde la navegación y `showScreen` rechaza su apertura.
+- Preview canónico: `https://adaptive-language-tutor-preview-5b3d.onrender.com`. El servicio rebuild queda marcado como respaldo histórico y no debe compartirse como preview de usuario.
