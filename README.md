@@ -155,7 +155,7 @@ Replit queda aplazado hasta que las etapas de auditoría, proveedor real y prueb
 - [x] Ruta y Entrenamiento permanecen bloqueados desde la interfaz. El test E2E desbloquea el botón solo dentro del navegador de pruebas para mantener cobertura del flujo pedagógico sin habilitarlo a usuarios.
 - [x] Teoría restaurada y accesible; se reinicia su navegación interna al volver a entrar. Estadísticas no se modificó.
 - [x] Se ajusta el alto de la bienvenida y E2E mide la pantalla Idiomas después de continuar.
-- [x] Tests unitarios aprobados en `27965dbe0f53dbe5bf12aab77552c538ef594cf7`.
-- [ ] Browser E2E del commit `27965dbe0f53dbe5bf12aab77552c538ef594cf7` pendiente de finalización (run [44962365893](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44962365893)).
+- [x] Tests unitarios aprobados en `67badac16a15546661c7cef52ddbd213f111f6bf` (run [44962433007](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44962433007)).
+- [ ] Browser E2E del commit `67badac16a15546661c7cef52ddbd213f111f6bf` en ejecución (run [44962432997](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44962432997)); se actualizaron las expectativas para reflejar el bloqueo intencional de Entrenamiento y normalizar los espacios de la leyenda de Estadísticas.
 - [x] Render Preview desplegado y en estado `live` desde `c8f6930a4bb759e58dd84221694cfa9443583b28`: https://adaptive-language-tutor-rebuild-preview.onrender.com.
 - [ ] Revisión visual humana en móvil pendiente; el estado `live` confirma el deploy, no sustituye la inspección de la interfaz en el dispositivo.
