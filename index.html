@@ -40,7 +40,7 @@
       <strong>Español (Chile)</strong>
       <small>Se utiliza para consignas y explicaciones.</small>
     </div>
-    <button id="open-training" class="primary wide-action" type="button">Entrenamiento →</button>
+    <button id="open-training" class="primary wide-action" type="button" disabled aria-disabled="true">Entrenamiento no disponible</button>
   </section>
 
   <section id="screen-training" class="app-screen hidden">
@@ -89,12 +89,14 @@
 
   <nav class="bottom-nav hidden" aria-label="Navegación principal">
     <button class="nav-item unavailable" type="button" data-screen="route" aria-label="Ruta" aria-disabled="true" disabled><span class="nav-icon route-icon">🗺️</span><span class="nav-label">Ruta</span></button>
-    <button class="nav-item" type="button" data-screen="training" aria-label="Entrenamiento"><span class="nav-icon">🏋️</span><span class="nav-label">Entrenamiento</span></button>
-    <button class="nav-item active languages-tab" type="button" data-screen="languages" aria-label="Idiomas" aria-current="page"><span class="nav-icon">🌐🇮🇹</span><span class="nav-label">Idiomas</span></button>
-    <button class="nav-item unavailable" type="button" data-screen="theory" aria-label="Teoría" aria-disabled="true" disabled><span class="nav-icon">📖</span><span class="nav-label">Teoría</span></button>
+    <button class="nav-item unavailable" type="button" data-screen="training" aria-label="Entrenamiento no disponible" aria-disabled="true" disabled><span class="nav-icon">🏋️</span><span class="nav-label">Entrenamiento</span></button>
+    <button id="select-language" class="nav-item active languages-tab" type="button" aria-label="Seleccionar idioma" aria-haspopup="dialog" aria-current="page"><span class="nav-icon">🌐🇮🇹</span><span class="nav-label">Idiomas</span></button>
+    <button class="nav-item" type="button" data-screen="theory" aria-label="Teoría"><span class="nav-icon">📖</span><span class="nav-label">Teoría</span></button>
     <button class="nav-item" type="button" data-screen="stats" aria-label="Estadísticas"><span class="nav-icon">📊</span><span class="nav-label">Estadísticas</span></button>
   </nav>
 </main>
+
+<dialog id="language-selector" class="confirm-dialog language-selector"><h2>Idioma objetivo</h2><p>Selecciona el idioma que quieres estudiar.</p><form method="dialog"><button class="language-option selected" value="italian"><span>🇮🇹</span><strong>Italiano</strong><span aria-label="Seleccionado">✓</span></button><button class="secondary" value="cancel">Cerrar</button></form></dialog>
 
 <dialog id="session-confirm" class="confirm-dialog">
   <h2>¿Cerrar la sesión?</h2>
