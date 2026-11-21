@@ -27,7 +27,7 @@ const tutorJson = JSON.stringify({
     { text: "buongiorno", language: "it", locale: "it-IT", isTarget: true },
     { text: "?", language: "es", locale: "es-CL", isTarget: false }
   ],
-  speechSegments: [{ text: "Bom dia", language: "pt", locale: "pt-BR" }],
+  speechSegments: [{ text: "Buongiorno", language: "it", locale: "it-IT" }],
   nextAction: "answer"
 });
 
