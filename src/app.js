@@ -511,7 +511,7 @@ function renderDiagnosticQuestion() {
   $("lesson-content").innerHTML = '<h3>' + escapeHTML(exercise.prompt) + '</h3><p>Responde según lo que ya sabes. Estas preguntas no cuentan en los turnos de práctica.</p>';
   speech.stop();
   $("answer-area").innerHTML = exercise.options.map((option,index) =>
-    '<div class="answer-option-row"><button class="answer-option" data-diagnostic="' + index + '">' + escapeHTML(option) + '</button>' + speakerButton(option, catalog.locale) + '</div>'
+    '<button class="answer-option" data-diagnostic="' + index + '">' + escapeHTML(option) + '</button>'
   ).join("");
   $("answer-area").querySelectorAll("[data-diagnostic]").forEach(button => button.addEventListener("click", event => {
     if (event.target.closest("[data-speak]")) return;
@@ -559,7 +559,7 @@ function renderLesson() {
   $("error-count").textContent = session.errors.length;
   $("lesson-content").innerHTML = '<p class="eyebrow">TEMA: ' + escapeHTML(topicLabels[session.config.topic].toUpperCase()) + ' · NIVEL ' + escapeHTML(levelLabel(session.config.level).toUpperCase()) + '</p><h3>' + escapeHTML(currentExercise.prompt) + '</h3><p>' + escapeHTML(adaptation.message || "Elige una respuesta o escribe la tuya.") + '</p>';
   speech.stop();
-  const options = currentExercise.options.map((option,index) => '<div class="answer-option-row"><button class="answer-option" data-choice="' + index + '">' + escapeHTML(option) + '</button>' + speakerButton(option, catalog.locale) + '</div>').join("");
+  const options = currentExercise.options.map((option,index) => '<button class="answer-option" data-choice="' + index + '">' + escapeHTML(option) + '</button>').join("");
   $("answer-area").innerHTML = options + '<input id="free-answer" class="answer-input" placeholder="También puedes escribir tu respuesta…"><button id="submit-free" class="secondary" type="button">Comprobar respuesta escrita</button>';
   $("answer-area").querySelectorAll("[data-choice]").forEach(button => button.addEventListener("click", event => {
     if (event.target.closest("[data-speak]")) return;
