@@ -28,6 +28,7 @@ try {
   browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({ acceptDownloads: true });
   const page = await context.newPage();
+  await page.setViewportSize({ width: 390, height: 844 });
   const pageErrors = [];
   page.on("pageerror", error => {
     pageErrors.push(error.message);
@@ -61,6 +62,14 @@ try {
   await page.goto(baseUrl, { waitUntil: "networkidle" });
   assert.match(await page.title(), /Adaptive Language Tutor/);
   assert.equal(await page.locator("#screen-languages h1").innerText(), "IDIOMAS");
+  const homeSize = await page.evaluate(() => ({
+    width: document.documentElement.scrollWidth,
+    clientWidth: document.documentElement.clientWidth,
+    height: document.documentElement.scrollHeight,
+    clientHeight: document.documentElement.clientHeight
+  }));
+  assert.equal(homeSize.width, homeSize.clientWidth, "mobile home must not scroll horizontally");
+  assert.ok(homeSize.height <= homeSize.clientHeight + 2, "mobile Languages home should fit without vertical scrolling");
   await page.locator("#open-training").click();
   await page.locator("#ai-status").waitFor({ state: "visible" });
   await page.locator("#start-session").waitFor({ state: "visible" });
