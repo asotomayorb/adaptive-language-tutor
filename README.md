@@ -88,5 +88,7 @@ Replit queda aplazado hasta que las etapas de auditoría, proveedor real y prueb
 - Estadísticas vuelve a mostrar tabla por idioma (sesiones, palabras, precisión y progreso de Ruta), selector de vista Global/idioma, barras horizontales globales de ancho completo y gráfico diario por idioma con dos series: preguntas respondidas y precisión. El eje X usa días practicados consecutivos (1…15), sin fechas de calendario ni huecos por inactividad.
 - El gráfico diario conserva leyenda y puntos legibles, usa desplazamiento horizontal interno solo cuando sea necesario para mantener legibilidad; la vista global prioriza filas horizontales que caben en el ancho móvil.
 - Como Ruta aún no está habilitada en esta reconstrucción, su indicador se muestra como no disponible (—), nunca como progreso inventado.
-- [ ] Ejecutar npm run check, npm test y Browser E2E con los nuevos controles y gráficos; no marcar validado hasta ver los resultados.
-- [ ] Revisar el preview Render actualizado en móvil y confirmar la distribución visual.
+- [x] `npm test` aprobó en el commit `e5d864b`; Browser E2E detectó que el inicio quedaba más alto que el viewport al agregar etiquetas de navegación.
+- [x] Se redujo la altura mínima de la pantalla Idiomas para conservar el inicio compacto en móvil.
+- [ ] Browser E2E de la corrección de altura y de la tabla/gráficos sigue pendiente; ver el último run en GitHub Actions antes de declarar validado.
+- [ ] Revisar el preview Render actualizado en móvil y confirmar la distribución visual. El servicio Render aún muestra el deploy anterior; no asumir que ya contiene estos cambios hasta verificar el commit desplegado.
