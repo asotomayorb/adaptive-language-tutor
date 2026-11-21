@@ -61,19 +61,6 @@ const GEMINI_RESPONSE_SCHEMA = {
         required: ["text", "language", "locale", "isTarget"]
       }
     },
-    questionSegments: {
-      type: "ARRAY",
-      items: {
-        type: "OBJECT",
-        properties: {
-          text: { type: "STRING" },
-          language: { type: "STRING" },
-          locale: { type: "STRING" },
-          isTarget: { type: "BOOLEAN" }
-        },
-        required: ["text", "language", "locale", "isTarget"]
-      }
-    },
     speechSegments: {
       type: "ARRAY",
       items: {
