@@ -22,6 +22,7 @@ function setSessionView(active) {
   $("app-shell").classList.toggle("session-active", Boolean(active));
 }
 const catalogs = { "Italiano": italian };
+let activeQuestionAudio = [];
 const speech = createSpeechController({ onStatus: updateAudioStatus });
 function updateAudioStatus(status) {
   const toggle = document.getElementById("audio-toggle");
@@ -52,7 +53,7 @@ function toggleAudio() {
     const visibleSegments = [...document.querySelectorAll("#lesson-content [data-speak], #answer-area [data-speak], #feedback [data-speak], #summary-content [data-speak]")]
       .filter(button => !button.closest(".hidden") && button.getClientRects().length > 0)
       .map(button => ({ text: button.dataset.speak, locale: button.dataset.locale }));
-    speech.speakSequence(visibleSegments, { automatic: true });
+    speech.speakSequence(activeQuestionAudio.length ? activeQuestionAudio : visibleSegments, { automatic: true });
   }
 }
 $("audio-toggle").addEventListener("click", toggleAudio);
@@ -344,6 +345,7 @@ function renderAITutorTurn(result) {
   $("lesson-content").innerHTML = message + feedback + prompt + vocabularyMarkup;
   bindSpeakerButtons($("lesson-content"));
   const initialQuestionAudio = questionSegments.map(item => ({ text: item.text, locale: item.locale }));
+  activeQuestionAudio = initialQuestionAudio;
   speech.speakSequence(initialQuestionAudio, { automatic: true });
   $("feedback").classList.add("hidden");
   $("hint-btn").hidden = false;
@@ -553,6 +555,7 @@ function renderDiagnosticQuestion() {
     event.stopPropagation();
     speech.speak(button.dataset.speak, catalog.locale);
   }));
+  activeQuestionAudio = [{ text: exercise.prompt, locale: "es-CL" }];
   autoSpeak(exercise.prompt, "es-CL");
   $("hint-btn").hidden = true;
   $("review-btn").hidden = true;
@@ -598,6 +601,7 @@ function renderLesson() {
     event.stopPropagation();
     speech.speak(button.dataset.speak, catalog.locale);
   }));
+  activeQuestionAudio = [{ text: currentExercise.prompt, locale: "es-CL" }];
   autoSpeak(currentExercise.prompt, "es-CL");
   $("submit-free").addEventListener("click", () => submitAnswer($("free-answer").value));
   $("feedback").classList.add("hidden");
