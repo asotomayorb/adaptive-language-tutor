@@ -866,3 +866,14 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Tras bienvenida/selección de idioma se abre Teoría como primera sección disponible. Estadísticas conserva su implementación.
 - Los módulos de Ruta y Entrenamiento no se eliminan ni refactorizan; quedan temporalmente inaccesibles desde la navegación.
 - Preview canónico previsto: `https://adaptive-language-tutor-preview-5b3d.onrender.com`; verificar el commit LIVE antes de compartir.
+
+
+## Implementación y preview canónico — 21-11-2026
+- [x] Se conserva la estética de feature/mobile-bottom-navigation; la aplicación abre directamente en Teoría, sin pantalla de bienvenida intermedia.
+- [x] Barra inferior de cinco posiciones: Ruta bloqueada, Entrenamiento bloqueado, Idiomas central destacado, Teoría y Estadísticas disponibles.
+- [x] Selector central limitado a Italiano; el idioma activo se muestra como bandera sobre el globo.
+- [x] Teoría y Estadísticas mantienen sus implementaciones existentes. Los módulos bloqueados no se borran.
+- [x] npm run check y npm test aprobados en 7fc2cf5; Browser E2E aprobado en run https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44964132590.
+- [x] Render preview canónico LIVE: 7fc2cf5404fa637722e78060a12df9b8ef11f394, deploy dep-dc12va0u01pc738jrqtg, URL https://adaptive-language-tutor-preview-5b3d.onrender.com.
+- [x] Preview duplicado de reconstrucción archivado: rama preservada como respaldo, entrypoint original guardado en archive/rebuild-functional-baseline-index.html, servicio redirigido al preview canónico (deploy dep-dc12u5ou01pc738jnm40).
+- [ ] Revisión humana final en dispositivo Android: apariencia, toque, reproducción de pronunciación y navegación.
