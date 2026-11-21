@@ -130,3 +130,11 @@ Replit queda aplazado hasta que las etapas de auditoría, proveedor real y prueb
 - No se modificó código de interfaz ni se desplegó un commit nuevo en esta etapa, para evitar publicar una versión que omita Teoría o rompa la validación E2E de Entrenamiento/Estadísticas.
 - Render tiene dos servicios activos: `adaptive-language-tutor-rebuild-preview` (rama `rebuild/functional-baseline`, autoDeploy) y `adaptive-language-tutor-preview-5b3d` (rama `feature/mobile-bottom-navigation`, autoDeploy desactivado). Las acciones Render conectadas disponibles permiten listar/consultar/desplegar, pero no eliminar servicios ni cambiar la rama del servicio existente. No se puede garantizar un único preview desde estas acciones sin intervenir en el Dashboard.
 - Las ramas `feature/mobile-bottom-navigation` y `rebuild/functional-baseline` contienen implementaciones únicas (Teoría y módulos pedagógicos modulares, respectivamente); no se borran ni se marcan como duplicados. Próximo paso seguro: integrar Teoría de referencia en la base modular, adaptar E2E a Ruta/Entrenamiento bloqueados y verificar Estadísticas, luego consolidar el servicio único desde Render Dashboard.
+
+
+## Ajuste de navegación — 21-11-2026
+- [x] Se mantiene Idiomas como acceso central y se convierte en selector modal del idioma activo (Italiano). La selección no cambia el catálogo porque Italiano es el único idioma habilitado actualmente.
+- [x] Ruta y Entrenamiento quedan deshabilitados en la navegación; el botón de acceso a Entrenamiento también queda bloqueado. No se borran sus módulos ni datos.
+- [x] Teoría permanece temporalmente deshabilitada hasta portar y validar su pantalla funcional desde `feature/mobile-bottom-navigation`; se evita abrir una pantalla vacía.
+- [x] Estadísticas y su implementación no se modifican.
+- [ ] Ejecutar CI/E2E y verificar el preview Render asociado a `rebuild/functional-baseline`.
