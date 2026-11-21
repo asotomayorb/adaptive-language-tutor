@@ -37,7 +37,8 @@ Rama de trabajo: `rebuild/functional-baseline`. PR #2 y PR #3 permanecen intacto
 - [x] Sesión de entrenamiento sin navegación inferior, con control de audio y confirmación antes de descartar una sesión.
 - [x] Locale nativo predeterminado provisional `es-CL`; falta integrarlo con la configuración global para que sea modificable.
 - [x] Prueba Browser E2E agregada para consigna mixta español/francés, orden de voces, subrayado y replay del fragmento objetivo.
-- [ ] CI de esta iteración y Browser E2E pendientes de resultado final tras correcciones.
+- [x] `npm run check` y `npm test` aprobados en el commit `768e98e`.
+- [ ] Browser E2E del commit `768e98e` pendiente de resultado final.
 - [ ] Extender la segmentación mixta a todos los tipos de consigna y futuras pantallas; verificar que opciones y respuestas no reciban TTS.
 - [x] Selector y catálogo activo limitados a italiano. Los archivos de portugués e inglés permanecen en el repositorio como contenido histórico, pero ya no se ofrecen en la interfaz.
 
