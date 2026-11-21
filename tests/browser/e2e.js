@@ -83,7 +83,8 @@ try {
   await page.locator("[data-theory=\"grammar\"]").click();
   await page.locator("#theory-topic-list").waitFor({ state: "visible" });
   await page.locator("#theory-list-back").click();
-  await page.locator(".nav-item[data-screen=\"languages\"]").click();
+  await page.locator("#select-language").click();
+  await page.locator("#language-selector .secondary").click();
   await page.locator("#open-training").evaluate(button => { button.disabled = false; });
   await page.locator("#open-training").click();
   await page.locator("#ai-status").waitFor({ state: "visible" });
