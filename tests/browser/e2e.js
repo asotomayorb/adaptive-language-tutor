@@ -263,9 +263,11 @@ try {
   assert.equal(hintCalls, 1, "a second hint should call the AI tutor once");
   await aiPage.locator("#ai-answer").fill("Buongiorno");
   const cancellationsBeforeAnswer = await aiPage.evaluate(() => window.__speechCancelled);
+  const spokenBeforeAnswer = await aiPage.evaluate(() => window.__spoken.length);
   await aiPage.locator("#submit-ai-answer").click();
   assert.ok(await aiPage.evaluate(count => window.__speechCancelled > count, cancellationsBeforeAnswer), "submitting an answer should immediately cancel speech from the previous turn");
   await aiPage.getByRole("button", { name: "Reintentar envío" }).click();
+  assert.equal(await aiPage.evaluate(() => window.__spoken.length), spokenBeforeAnswer, "answer evaluation and response feedback must not trigger TTS");
   assert.equal(await aiPage.locator("#retry-ai").isDisabled(), true, "retry control should disable immediately to prevent duplicate requests");
   await aiPage.getByRole("button", { name: "Ver resumen →" }).click();
   await aiPage.locator("#summary-panel").waitFor({ state: "visible" });
