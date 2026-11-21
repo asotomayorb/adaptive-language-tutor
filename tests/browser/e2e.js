@@ -336,7 +336,7 @@ try {
     hasTouch: true
   });
   await mobileContext.addInitScript(() => {
-    const synth = { getVoices: () => [{ name: "Portuguese", lang: "pt-BR" }], speak: () => {}, cancel: () => {} };
+    const synth = { getVoices: () => [{ name: "Italian", lang: "it-IT" }, { name: "Spanish Chile", lang: "es-CL" }], speak: () => {}, cancel: () => {} };
     Object.defineProperty(window, "speechSynthesis", { configurable: true, value: synth });
     window.SpeechSynthesisUtterance = class { constructor(text) { this.text = text; this.lang = ""; this.voice = null; } };
   });
@@ -344,6 +344,7 @@ try {
   const mobileErrors = [];
   mobilePage.on("pageerror", error => mobileErrors.push(error.message));
   await mobilePage.goto(baseUrl, { waitUntil: "networkidle" });
+  await mobilePage.locator("#open-training").click();
   await mobilePage.waitForFunction(() => {
     const button = document.querySelector("#start-session");
     return button && !button.disabled;
