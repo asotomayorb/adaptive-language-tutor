@@ -46,7 +46,7 @@ try {
   await page.locator("#welcome-start").click();
   assert.equal(await page.locator("#language-picker").isVisible(), true, "welcome should open language selection");
 
-  const languageOptions = page.locator("#language-mosaic [data-language]");
+  const languageOptions = page.locator(".language-mosaic [data-language]");
   assert.equal(await languageOptions.count(), 1, "Italian should be the only visible language option");
   assert.equal(await languageOptions.first().getAttribute("data-language"), "Italiano");
   await languageOptions.first().click();
@@ -63,7 +63,7 @@ try {
 
   await page.locator("#nav-language-button").click();
   assert.equal(await page.locator("#language-picker").isVisible(), true, "central icon should open the language picker");
-  assert.equal(await page.locator("#language-mosaic [data-language]").count(), 1);
+  assert.equal(await page.locator(".language-mosaic [data-language]").count(), 1);
   await page.locator("#language-cancel").click();
   assert.equal(await page.locator("#screen-theory").isVisible(), true, "cancel should keep the current section");
 
