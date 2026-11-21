@@ -113,3 +113,12 @@ Replit queda aplazado hasta que las etapas de auditoría, proveedor real y prueb
 - Añadir/confirmar el acceso central de la barra inferior como selector de idiomas, con italiano como única opción visible por ahora.
 - A partir de esa base, retrotraer el funcionamiento por etapas según los contratos y decisiones ya definidos, priorizando comportamiento sobre ampliación de contenido.
 - Cada etapa debe ser acotada, probada y registrada antes de continuar; no declarar cambios desplegados sin verificar el commit servido por Render.
+
+
+## Próximo ajuste de interfaz y limpieza — 21-11-2026
+- Mantener el formato visual actual como base; no rediseñar la interfaz durante este ajuste.
+- Asegurar el acceso/icono central de Idiomas en la barra inferior como selector, con Italiano como única opción visible.
+- Deshabilitar la selección y el acceso a Ruta y Entrenamiento; no borrar sus módulos ni sus datos en esta etapa.
+- Conservar Teoría y Estadísticas sin cambios de estética ni funcionamiento.
+- Después de validar estos cambios, auditar rutas, archivos y ramas duplicados o similares. Eliminar solo duplicados confirmados; mantener cualquier trabajo único como respaldo con nombre y documentación explícitos para evitar confusión.
+- Validar el resultado antes de continuar con la restauración funcional progresiva. No se ha realizado aún esta implementación ni limpieza.
