@@ -161,3 +161,50 @@ La segmentación debe funcionar aunque el fragmento insertado esté en el idioma
 - Verificar que Ruta, Entrenamiento y las demás actividades utilicen contenidos coherentes con el repositorio de Teoría.
 - Las decisiones aquí registradas son requisitos acordados; su inclusión en este documento no implica que ya estén implementadas o probadas en la aplicación.
 
+## Auditoría funcional y criterio de reconstrucción (21-11-2026)
+
+### Criterio rector
+
+La prioridad de esta etapa es **recuperar una base estable y funcional**, no ampliar temarios, idiomas, ejemplos ni volumen de contenido. No se deben seguir construyendo módulos sobre flujos que todavía no estén validados. La restauración debe conservar el historial Git y realizarse de forma incremental, con pruebas de regresión por cada capa.
+
+### Hallazgos en `main`
+
+La rama `main` contiene actualmente una versión simplificada del producto y no representa por sí sola la experiencia funcional completa descrita en las decisiones anteriores:
+
+- La pantalla principal sigue siendo un formulario de configuración de sesión; no contiene la navegación principal acordada (Ruta, Entrenamiento, Idiomas, Teoría y Estadísticas).
+- El selector de idioma permite portugués brasileño e inglés, aunque la decisión vigente para esta etapa establece italiano como único idioma objetivo.
+- No existe un módulo TTS en esta rama: no aparece `src/core/speech.js` ni hay controles de reproducción segmentada en la interfaz.
+- No están implementadas en esta rama las pantallas de Ruta, Teoría y Estadísticas descritas en los requisitos.
+- El progreso se conserva en `localStorage`; no existe sincronización remota.
+- El flujo IA y el modo local conviven, pero requieren pruebas de integración y regresión de extremo a extremo.
+- La conversación IA no incorpora explícitamente el resultado inicial del tutor al historial enviado con la primera respuesta del usuario; debe corregirse y cubrirse con pruebas.
+- La suite de `main` cubre módulos y API, pero no incluye Browser E2E ni validación visual/auditiva en dispositivo real.
+
+El CI de `main` aprobó el commit de documentación de esta auditoría. Esto solo confirma que las pruebas existentes pasan; no acredita que los flujos de producto descritos estén implementados.
+
+### Rama funcional de referencia
+
+Existe una rama no fusionada, `feature/mobile-bottom-navigation`, con un PR abierto (#3) sobre `feature/ai-tutor-pedagogy`. Esa rama conserva una implementación mucho más extensa que `main`, incluyendo navegación móvil, flujo de ejercicios, teoría, estadísticas, persistencia, módulo TTS (`src/core/speech.js`), pruebas de voz y Browser E2E, además de `PROJECT_STATUS.md` y `HUMAN_TEST_PLAN.md`.
+
+Sus ejecuciones de CI y Browser E2E más recientes consultadas aparecen aprobadas. Esto la convierte en la principal referencia para recuperar comportamiento ya desarrollado, pero **no debe fusionarse ni restaurarse a ciegas**: contiene requisitos de contenido y una regla anterior de TTS que queda reemplazada por la especificación de segmentación por idioma registrada arriba.
+
+### Orden obligatorio de reconstrucción
+
+1. **Establecer una base reproducible:** identificar el commit funcional de referencia, preservar ramas e historial, instalar dependencias de forma limpia y confirmar arranque local.
+2. **Navegación y ciclo de vida:** bienvenida, navegación entre secciones, volver/cerrar, estados iniciales, carga, errores y recuperación. Evitar pantallas sin salida y estados residuales al cambiar de sección.
+3. **Estado y persistencia:** separar estado temporal de actividad y progreso persistente; impedir que cambios de idioma/modalidad mezclen preguntas, respuestas, audio o solicitudes anteriores.
+4. **Motor común de actividades:** unificar presentación, respuesta, feedback, avance y cancelación. Primero validar una actividad mínima de principio a fin.
+5. **Audio/TTS:** recuperar el controlador existente y sustituir la lógica antigua de preguntas mixtas por segmentos explícitos con locale propio. La consigna se reproduce en orden: fragmentos de origen con voz de origen y fragmentos objetivo con voz objetivo; solo los fragmentos objetivo quedan subrayados y reproducibles individualmente. Excluir alternativas y respuestas por ahora.
+6. **Integración IA:** validar contrato, contexto, historial, turnos, errores, reintentos, timeout y cancelación. El modo local debe seguir siendo utilizable si el proveedor no está configurado o falla.
+7. **Pruebas de regresión:** pruebas unitarias para lógica y estado; API para backend; Browser E2E para navegación y flujos completos; prueba manual en Android para teclado, audio, selector, áreas táctiles y ciclo de vida.
+8. **Contenido y expansión:** solo después de estabilizar los puntos anteriores, revisar Teoría, Ruta, catálogos y amplitud de idiomas.
+
+### Regla de alcance
+
+Durante la reconstrucción:
+- No ampliar catálogos ni añadir idiomas por anticipado.
+- No priorizar ilustraciones, textos extensos, variedad de ejercicios ni perfeccionamiento visual sobre los flujos funcionales.
+- Usar contenido mínimo y controlado como fixture para probar navegación, renderizado, evaluación, persistencia y audio.
+- Cada función se considera implementada solo cuando existe una prueba que cubre su comportamiento y no introduce regresiones.
+- No fusionar ramas, sobrescribir la rama funcional de referencia ni eliminar historial sin una revisión explícita del commit de partida.
+
