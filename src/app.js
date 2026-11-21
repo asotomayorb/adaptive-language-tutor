@@ -304,6 +304,10 @@ function getSelectedCatalog() {
 }
 function updateLanguageFlag() {
   const selected = $("language").value;
+  const flagBadge = $("selected-language-flag");
+  if (flagBadge) flagBadge.textContent = languageDefinitions[selected]?.flag || "🌐";
+  const languageButton = $("nav-language-button");
+  if (languageButton) languageButton.setAttribute("aria-label", "Idioma seleccionado: " + (languageDefinitions[selected]?.label || selected || "sin seleccionar") + ". Cambiar idioma");
   const readingAvailable = Boolean(getSelectedCatalog()?.exercises?.some(exercise => exercise.type === "reading"));
   document.querySelector('[data-mode="reading"]')?.classList.toggle("hidden", !readingAvailable);
   if (typeof ROUTE_STORAGE_KEY !== "undefined") {
@@ -1912,7 +1916,7 @@ $("route-summary-next")?.addEventListener("click",() => {
     if (activeRouteUnit?.id !== routeSummaryNextUnitId || !session || session.config.routeUnitId !== routeSummaryNextUnitId) {
       routeSelectionTouched = false;
       closeSessionAndReturn();
-      showScreen("route");
+      showScreen("theory");
     }
     return;
   }
@@ -1921,6 +1925,7 @@ $("route-summary-next")?.addEventListener("click",() => {
 
 // Main navigation and language onboarding
 function showScreen(name) {
+  if (name === "route" || name === "exercises") return;
   speech.stop();
   currentActivitySpeechSegments = [];
   currentExercise = null;
@@ -1986,12 +1991,13 @@ function closeSessionAndReturn() {
   $("app-shell").classList.remove("session-active");
   $("exercise-choice-panel").classList.remove("hidden");
   $("review-exercises").classList.add("hidden");
-  const returnScreen = routeMode ? "route" : "exercises";
+  const returnScreen = "theory";
   routeMode = false;
   showScreen(returnScreen);
 }
 
- document.querySelectorAll("[data-screen]").forEach(button => button.addEventListener("click", () => showScreen(button.dataset.screen)));
+ $("nav-language-button")?.addEventListener("click", () => $("language-picker").showModal());
+document.querySelectorAll("[data-screen]").forEach(button => button.addEventListener("click", () => showScreen(button.dataset.screen)));
 document.querySelectorAll("[data-mode]").forEach(button => button.addEventListener("click", () => {
   selectedExerciseMode = button.dataset.mode;
   document.querySelectorAll("[data-mode]").forEach(item => item.classList.toggle("selected", item === button));
