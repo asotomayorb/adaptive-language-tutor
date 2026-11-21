@@ -132,6 +132,11 @@ function refreshDashboard() {
     '<span><strong>' + stats.averageAccuracy + '%</strong> precisión media</span></div>' +
     '<p class="muted">' + due.length + ' repasos pendientes para este idioma.</p>' +
     (due.length ? '<button id="start-spaced-review" class="secondary" type="button">Iniciar repaso (' + due.length + ') →</button>' : '');
+  $("statistics-content").innerHTML =
+    '<div class="stat-card"><span>Sesiones completadas</span><strong>' + stats.sessions + '</strong></div>' +
+    '<div class="stat-card"><span>Vocabulario</span><strong>' + stats.vocabulary + '</strong></div>' +
+    '<div class="stat-card"><span>Precisión media</span><strong>' + stats.averageAccuracy + '%</strong></div>' +
+    '<div class="stat-card"><span>Repasos pendientes</span><strong>' + due.length + '</strong></div>';
   const reviewButton = $("start-spaced-review");
   if (reviewButton) reviewButton.addEventListener("click", startSpacedReview);
 }
@@ -174,6 +179,7 @@ function renderSpacedReview() {
   if (reviewIndex >= dueReviewCards.length) {
     $("lesson-panel").classList.add("hidden");
     $("setup-panel").classList.remove("hidden");
+    setSessionView(false);
     $("session-status").textContent = "Repaso completado";
     refreshDashboard();
     return;
@@ -234,6 +240,8 @@ $("setup-form").addEventListener("submit", event => {
   }
   const config = { language:catalog.label, languageId:catalog.id, languageLocale:catalog.locale || catalog.id, duration:Number($("duration").value), level:$("level").value, topic:$("topic").value };
   session = createSession(config);
+  setActiveScreen("training");
+  setSessionView(true);
   sessionFinished = false;
   reviewMode = false;
   $("setup-panel").classList.add("hidden");
@@ -671,6 +679,7 @@ $("review-btn").addEventListener("click", () => {
 function finishSession() {
   if (!session || sessionFinished) return;
   sessionFinished = true;
+  setSessionView(false);
   speech.stop();
   $("lesson-panel").classList.add("hidden");
   $("summary-panel").classList.remove("hidden");
@@ -698,6 +707,8 @@ $("new-session").addEventListener("click", () => {
   speech.stop();
   aiMode = false;
   sessionFinished = false;
+  setSessionView(false);
+  setActiveScreen("training");
   $("summary-panel").classList.add("hidden");
   $("setup-panel").classList.remove("hidden");
   $("session-status").textContent = "Nueva sesión";
