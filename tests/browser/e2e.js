@@ -150,12 +150,12 @@ try {
         status: 200,
         contentType: "application/json",
         body: JSON.stringify({
-          message: "Vamos praticar uma situação cotidiana.",
-          exercise: { type: "production", prompt: "¿Cómo se dice bonjour?", expectedAnswer: "Buongiorno", acceptedAnswers: ["Buongiorno"], hint: "Usa la expresión Je m’appelle..." },
+          message: "Vamos a practicar una situación cotidiana.",
+          exercise: { type: "production", prompt: "¿Qué significa buongiorno?", expectedAnswer: "Buongiorno", acceptedAnswers: ["Buongiorno"], hint: "Usa la expresión buongiorno para saludar por la mañana" },
           evaluation: null,
           learnerUpdate: { estimatedLevel: "A1", vocabulary: [{ term: "parlare", meaning: "hablar" }], errorsToReview: [] },
           questionSegments: [
-            { text: "¿Cómo se dice ", language: "es", locale: "es-CL", isTarget: false },
+            { text: "¿Qué significa ", language: "es", locale: "es-CL", isTarget: false },
             { text: "buongiorno", language: "it", locale: "it-IT", isTarget: true },
             { text: "?", language: "es", locale: "es-CL", isTarget: false }
           ],
@@ -167,17 +167,17 @@ try {
     if (input.task === "request_hint") {
       hintCalls += 1;
       assert.equal(input.session.turn, 0, "asking for a hint must not consume a practice turn");
-      assert.equal(input.session.currentExercise.prompt, "¿Cómo se dice bonjour?", "hint request must preserve the active exercise");
+      assert.equal(input.session.currentExercise.prompt, "¿Qué significa buongiorno?", "hint request must preserve the active exercise");
       return route.fulfill({
         status: 200,
         contentType: "application/json",
         body: JSON.stringify({
           message: "Pista adicional.",
-          exercise: { type: "production", prompt: "¿Cómo se dice bonjour?", expectedAnswer: "Buongiorno", acceptedAnswers: ["Buongiorno"], hint: "Piensa en el verbo que expresa tu nombre." },
+          exercise: { type: "production", prompt: "¿Qué significa buongiorno?", expectedAnswer: "Buongiorno", acceptedAnswers: ["Buongiorno"], hint: "Piensa en el saludo matinal." },
           evaluation: null,
           learnerUpdate: null,
           questionSegments: [
-            { text: "¿Cómo se dice ", language: "es", locale: "es-CL", isTarget: false },
+            { text: "¿Qué significa ", language: "es", locale: "es-CL", isTarget: false },
             { text: "buongiorno", language: "it", locale: "it-IT", isTarget: true },
             { text: "?", language: "es", locale: "es-CL", isTarget: false }
           ],
@@ -195,11 +195,11 @@ try {
       status: 200,
       contentType: "application/json",
       body: JSON.stringify({
-        message: "Très bien. Terminamos esta práctica.",
+        message: "Muy bien. Terminamos esta práctica.",
         exercise: null,
         evaluation: { status: "partially_correct", feedback: "La idea se entiende, pero revisa la conjugación.", correction: "Buongiorno", skill: "Producción" },
         learnerUpdate: { estimatedLevel: "A1", vocabulary: [], errorsToReview: ["Conjugación verbal en primera persona"] },
-        speechSegments: [{ text: "Buongiorno", language: "it", locale: "it-IT" }],
+        speechSegments: [],
         nextAction: "finish"
       })
     });
@@ -210,7 +210,7 @@ try {
   await aiPage.locator("#duration").selectOption("8");
   await aiPage.locator("#start-session").click();
   await aiPage.getByRole("button", { name: "Reintentar sesión" }).click();
-  await aiPage.locator("#lesson-content").getByRole("heading", { name: "¿Cómo se dice bonjour?" }).waitFor();
+  await aiPage.locator("#lesson-content").getByRole("heading", { name: "¿Qué significa buongiorno?" }).waitFor();
   assert.deepEqual(await aiPage.evaluate(() => window.__spoken.slice(0, 3).map(item => [item.text, item.lang])), [
     ["¿Cómo se dice", "es-CL"], ["buongiorno", "it-IT"], ["?", "es-CL"]
   ], "mixed questions should be spoken in order using the locale of each segment");
@@ -222,13 +222,13 @@ try {
   assert.deepEqual(await aiPage.evaluate(() => window.__spoken.at(-1) && [window.__spoken.at(-1).text, window.__spoken.at(-1).lang]), ["buongiorno", "it-IT"], "manual replay should pronounce only the selected target fragment");
   const spokenBeforeFirstHint = await aiPage.evaluate(() => window.__spoken.length);
   await aiPage.locator("#hint-btn").click();
-  await aiPage.locator("#feedback").getByText(/Je m’appelle/).waitFor();
+  await aiPage.locator("#feedback").getByText(/saludo matinal/).waitFor();
   assert.ok(await aiPage.evaluate(count => window.__spoken.length > count && window.__spoken.at(-1)?.text === "Vorrei" && window.__spoken.at(-1)?.lang === "it-IT", spokenBeforeFirstHint), "the first AI hint should automatically pronounce its target-language fragment");
   const turnBeforeExtraHint = await aiPage.locator("#turn-count").innerText();
   const cancellationsBeforeExtraHint = await aiPage.evaluate(() => window.__speechCancelled);
   await aiPage.locator("#hint-btn").click();
   assert.ok(await aiPage.evaluate(count => window.__speechCancelled > count, cancellationsBeforeExtraHint), "requesting another hint should cancel any previous speech");
-  await aiPage.locator("#feedback").getByText(/verbo que expresa tu nombre/).waitFor();
+  await aiPage.locator("#feedback").getByText(/saludo matinal/).waitFor();
   assert.equal(await aiPage.locator("#turn-count").innerText(), turnBeforeExtraHint, "an additional hint must not advance the session");
   assert.equal(hintCalls, 1, "a second hint should call the AI tutor once");
   const hintSpeaker = aiPage.locator("#feedback [data-speak]").first();
