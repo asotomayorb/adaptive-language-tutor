@@ -239,7 +239,7 @@ try {
   await aiPage.getByRole("button", { name: "Reintentar sesión" }).click();
   await aiPage.locator("#lesson-content").getByRole("heading", { name: "¿Qué significa buongiorno?" }).waitFor();
   assert.deepEqual(await aiPage.evaluate(() => window.__spoken.slice(0, 3).map(item => [item.text, item.lang])), [
-    ["¿Cómo se dice", "es-CL"], ["buongiorno", "it-IT"], ["?", "es-CL"]
+    ["¿Qué significa", "es-CL"], ["buongiorno", "it-IT"], ["?", "es-CL"]
   ], "mixed questions should be spoken in order using the locale of each segment");
   assert.equal(await aiPage.evaluate(() => window.__spoken[1]?.voice), "Italian", "target segment should select the matching installed voice");
   const targetFragment = aiPage.locator("#lesson-content .target-fragment");
