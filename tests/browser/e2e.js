@@ -69,7 +69,22 @@ try {
     clientHeight: document.documentElement.clientHeight
   }));
   assert.equal(homeSize.width, homeSize.clientWidth, "mobile home must not scroll horizontally");
-  assert.ok(homeSize.height <= homeSize.clientHeight + 2, "mobile Languages home should fit without vertical scrolling");
+  assert.ok(homeSize.height <= homeSize.clientHeight + 2, "mobile welcome screen should fit without vertical scrolling");
+  await page.locator("#welcome-continue").click();
+  await page.locator("#select-language").click();
+  assert.equal(await page.locator("#language-selector").evaluate(dialog => dialog.open), true, "central language icon should open the language selector");
+  assert.equal(await page.locator("#language-selector .language-option strong").innerText(), "Italiano");
+  await page.locator("#language-selector .secondary").click();
+  assert.equal(await page.locator(".nav-item[data-screen=\"route\"]").isDisabled(), true, "Route must be disabled");
+  assert.equal(await page.locator(".nav-item[data-screen=\"training\"]").isDisabled(), true, "Training must be disabled");
+  assert.equal(await page.locator("#open-training").isDisabled(), true, "Training entry button must be disabled");
+  await page.locator(".nav-item[data-screen=\"theory\"]").click();
+  await page.locator("#theory-grid").waitFor({ state: "visible" });
+  await page.locator("[data-theory=\"grammar\"]").click();
+  await page.locator("#theory-topic-list").waitFor({ state: "visible" });
+  await page.locator("#theory-list-back").click();
+  await page.locator(".nav-item[data-screen=\"languages\"]").click();
+  await page.locator("#open-training").evaluate(button => { button.disabled = false; });
   await page.locator("#open-training").click();
   await page.locator("#ai-status").waitFor({ state: "visible" });
   await page.locator("#start-session").waitFor({ state: "visible" });
