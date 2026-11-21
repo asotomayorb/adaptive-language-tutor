@@ -98,3 +98,11 @@ Replit queda aplazado hasta que las etapas de auditoría, proveedor real y prueb
 - Se incorpora una pantalla de bienvenida independiente con el título “Adaptive Language Tutor” y botón “Continuar”; el inicio con secciones y la navegación inferior aparecen solo después de continuar.
 - Se rediseña la barra inferior como una bandeja flotante redondeada, con icono sobre etiqueta y acceso central Idiomas elevado, para aproximarse al esquema visual acordado.
 - Esta modificación corrige la ausencia de la bienvenida y la presentación plana anterior. Debe verificarse visualmente en Render y con Browser E2E; no declarar despliegue actualizado hasta confirmar el SHA servido.
+
+
+## Auditoría de discrepancia de preview y referencia — 21-11-2026
+- Se confirma que el preview compartido para la reconstrucción (adaptive-language-tutor-rebuild-preview.onrender.com) sirve el commit antiguo deca27b, no los commits recientes de rebuild/functional-baseline. Por eso la pantalla de bienvenida y el rediseño de navegación no aparecen allí.
+- La rama de referencia feature/mobile-bottom-navigation sigue existiendo en GitHub (HEAD 734b689); no fue eliminada ni sobrescrita. Su README documenta una navegación distinta (cuatro secciones, solo iconos), así que no debe confundirse con la especificación de cinco posiciones usada en la reconstrucción.
+- La reconstrucción actual no es una restauración visual fiel: se simplificó la interfaz y se reimplementó Estadísticas, por lo que el gráfico previo puede no estar reproducido íntegramente. No afirmar que el diseño o sus gráficos se recuperaron hasta comparar la implementación de referencia y validar en el preview correcto.
+- Preview indicado por el README de la rama de referencia: https://adaptive-language-tutor-preview-5b3d.onrender.com. Debe comprobarse que corresponda al servicio y commit esperados antes de compartirlo como preview actualizado.
+- Acción correctiva pendiente: comparar la rama de referencia con la reconstrucción, recuperar de ella la interfaz/gráficos acordados sin perder la base funcional, y asociar/desplegar el preview correcto. No se modificó ni eliminó ninguna rama en esta auditoría.
