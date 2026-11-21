@@ -206,6 +206,7 @@ try {
   });
 
   await aiPage.goto(baseUrl, { waitUntil: "networkidle" });
+  await aiPage.locator("#open-training").click();
   await aiPage.locator("#language").selectOption("Italiano");
   await aiPage.locator("#duration").selectOption("8");
   await aiPage.locator("#start-session").click();
