@@ -62,7 +62,7 @@ const GEMINI_RESPONSE_SCHEMA = {
     },
     nextAction: { type: "STRING", enum: ["answer", "continue", "review", "finish"] }
   },
-  required: ["message", "exercise", "evaluation", "learnerUpdate", "speechSegments", "nextAction"]
+  required: ["message", "exercise", "evaluation", "learnerUpdate", "questionSegments", "speechSegments", "nextAction"]
 };
 
 
@@ -146,6 +146,24 @@ function validateTutorResult(result) {
       !Array.isArray(result.learnerUpdate.errorsToReview) ||
       !result.learnerUpdate.errorsToReview.every(item => typeof item === "string"))) {
     throw contractError("The AI provider returned an invalid learner update.");
+  }
+  if (result.questionSegments !== undefined && (!Array.isArray(result.questionSegments) ||
+      !result.questionSegments.every(item => isRecord(item) &&
+        typeof item.text === "string" && typeof item.language === "string" &&
+        typeof item.locale === "string" && typeof item.isTarget === "boolean"))) {
+    throw contractError("The AI provider returned invalid question segments.");
+  }
+  if (result.exercise?.prompt && result.questionSegments?.length) {
+    const reconstructed = result.questionSegments.map(item => item.text).join("");
+    if (reconstructed !== result.exercise.prompt) {
+      throw contractError("The AI provider question segments do not reproduce the complete exercise prompt.");
+    }
+  }
+  if (result.exercise?.prompt && !result.questionSegments?.length) {
+    throw contractError("The AI provider omitted the question speech segments.");
+  }
+  if (result.questionSegments?.some(item => item.isTarget && input?.learner?.targetLanguageLocale && item.locale !== input.learner.targetLanguageLocale)) {
+    throw contractError("The AI provider returned a target question segment with a different locale.");
   }
   if (result.speechSegments !== undefined && (!Array.isArray(result.speechSegments) ||
       !result.speechSegments.every(item => isRecord(item) &&
