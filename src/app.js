@@ -64,6 +64,13 @@ $("session-audio-toggle").addEventListener("click", toggleAudio);
 document.querySelectorAll(".nav-item[data-screen]:not([disabled])").forEach(button => {
   button.addEventListener("click", () => setActiveScreen(button.dataset.screen));
 });
+$("select-language").addEventListener("click", () => $("language-selector").showModal());
+$("language-selector").querySelector("form").addEventListener("click", event => {
+  if (event.target.closest(".language-option")) {
+    event.preventDefault();
+    $("language-selector").close();
+  }
+});
 $("open-training").addEventListener("click", () => setActiveScreen("training"));
 $("welcome-continue").addEventListener("click", () => {
   $("screen-welcome").classList.add("hidden");
