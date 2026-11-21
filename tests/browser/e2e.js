@@ -120,6 +120,7 @@ try {
   assert.equal(await page.locator(".stats-language-chart").count(), 1, "language view should show the daily questions and accuracy chart");
   assert.equal(await page.locator(".stats-chart-legend").innerText(), "Preguntas respondidasPrecisión (%)");
 
+  await page.locator('.nav-item[data-screen="training"]').click();
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Exportar progreso" }).click();
   const download = await downloadPromise;
