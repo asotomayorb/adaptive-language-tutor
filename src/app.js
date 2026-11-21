@@ -185,7 +185,6 @@ function renderSpacedReview() {
     showFeedback(correct
       ? "Correcto. Próximo repaso en " + interval + " días."
       : "Respuesta de referencia: " + expected + ". " + (exercise?.explanation || card.explanation) + " La tarjeta volverá mañana.", correct);
-    appendCatalogSpeech($("feedback"), exercise || { target: expected }, "explanationSpeechSegments", true);
     $("answer-area").innerHTML = '<button id="next-spaced" class="secondary" type="button">Siguiente →</button>';
     $("next-spaced").addEventListener("click", () => { reviewIndex += 1; renderSpacedReview(); });
   });
@@ -525,7 +524,7 @@ function renderDiagnosticQuestion() {
     event.stopPropagation();
     speech.speak(button.dataset.speak, catalog.locale);
   }));
-  autoSpeak(exercise.options.join(". "), catalog.locale);
+  autoSpeak(exercise.prompt, "es-CL");
   $("hint-btn").hidden = true;
   $("review-btn").hidden = true;
   $("feedback").classList.add("hidden");
@@ -570,7 +569,7 @@ function renderLesson() {
     event.stopPropagation();
     speech.speak(button.dataset.speak, catalog.locale);
   }));
-  autoSpeak(currentExercise.options.join(". "), catalog.locale);
+  autoSpeak(currentExercise.prompt, "es-CL");
   $("submit-free").addEventListener("click", () => submitAnswer($("free-answer").value));
   $("feedback").classList.add("hidden");
   $("hint-btn").disabled = false;
@@ -586,7 +585,6 @@ function submitAnswer(answer) {
   } else {
     showFeedback("Respuesta de referencia: " + currentExercise.target + ". " + currentExercise.explanation, false);
   }
-  appendCatalogSpeech($("feedback"), currentExercise, "explanationSpeechSegments", true);
   updateStats();
   const next = document.createElement("button");
   next.className = "primary";
@@ -644,7 +642,6 @@ $("review-btn").addEventListener("click", () => {
   $("check-review").addEventListener("click", () => {
     const ok = evaluateAnswer($("review-answer").value, reviewExercise);
     showFeedback(ok ? "Correcto. " + reviewExercise.explanation : "Respuesta de referencia: " + reviewExercise.target + ". " + reviewExercise.explanation, ok);
-    appendCatalogSpeech($("feedback"), reviewExercise, "explanationSpeechSegments", true);
     $("answer-area").innerHTML = '<button class="secondary" id="back-to-practice" type="button">Volver a la práctica</button>';
     $("back-to-practice").addEventListener("click", renderLesson);
   });
