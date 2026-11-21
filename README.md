@@ -148,3 +148,14 @@ Replit queda aplazado hasta que las etapas de auditoría, proveedor real y prueb
 - [x] Se habilita Teoría en la barra inferior y se reinicia su navegación interna al volver a entrar.
 - [x] Estadísticas y sus componentes no se modifican en esta etapa.
 - [ ] Verificar CI, E2E y el deploy de Render del commit de esta restauración.
+
+
+## Verificación y preview de navegación/Teoría — 21-11-2026
+- [x] El acceso central de Idiomas abre el selector y devuelve a la pantalla Idiomas; Italiano sigue siendo la única opción disponible.
+- [x] Ruta y Entrenamiento permanecen bloqueados desde la interfaz. El test E2E desbloquea el botón solo dentro del navegador de pruebas para mantener cobertura del flujo pedagógico sin habilitarlo a usuarios.
+- [x] Teoría restaurada y accesible; se reinicia su navegación interna al volver a entrar. Estadísticas no se modificó.
+- [x] Se ajusta el alto de la bienvenida y E2E mide la pantalla Idiomas después de continuar.
+- [x] Tests unitarios aprobados en `27965dbe0f53dbe5bf12aab77552c538ef594cf7`.
+- [ ] Browser E2E del commit `27965dbe0f53dbe5bf12aab77552c538ef594cf7` pendiente de finalización (run [44962365893](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44962365893)).
+- [x] Render Preview desplegado y en estado `live` desde `c8f6930a4bb759e58dd84221694cfa9443583b28`: https://adaptive-language-tutor-rebuild-preview.onrender.com.
+- [ ] Revisión visual humana en móvil pendiente; el estado `live` confirma el deploy, no sustituye la inspección de la interfaz en el dispositivo.
