@@ -832,3 +832,14 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Italiano es la única opción visible y seleccionable en el selector central. Al iniciar o cambiar el idioma, se abre Teoría como primera sección disponible; Estadísticas permanece accesible.
 - Ruta y Entrenamiento no se borran: sus módulos se conservan como respaldo interno, pero no se puede acceder a ellos desde la navegación y `showScreen` rechaza su apertura.
 - Preview canónico: `https://adaptive-language-tutor-preview-5b3d.onrender.com`. El servicio rebuild queda marcado como respaldo histórico y no debe compartirse como preview de usuario.
+
+
+## Alcance temporal vigente y preview canónico — 21-11-2026
+- La app abre directamente en **Teoría**, sin pantalla de bienvenida intermedia. El usuario ve desde el primer instante la interfaz móvil y la barra inferior.
+- La barra inferior tiene cinco posiciones: **Ruta** (bloqueada), **Entrenamiento** (bloqueado), **Idiomas** (selector central elevado con globo y bandera), **Teoría** (disponible) y **Estadísticas** (disponible).
+- El selector central abre un diálogo con **Italiano** como única opción visible. Al confirmar o cancelar, la navegación vuelve a la sección disponible actual.
+- Teoría y Estadísticas conservan sus implementaciones y estilos existentes; Ruta y Entrenamiento se mantienen en el repositorio, pero están temporalmente inaccesibles desde la interfaz.
+- npm run check y npm test aprobados en el commit 7fc2cf5; Browser E2E aprobado en el run https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44964132590.
+- Render confirma el preview canónico LIVE desde el commit 7fc2cf5404fa637722e78060a12df9b8ef11f394, deploy dep-dc12va0u01pc738jrqtg: https://adaptive-language-tutor-preview-5b3d.onrender.com.
+- El preview alternativo de reconstrucción queda archivado: su rama conserva el código como respaldo, el entrypoint original se guarda en archive/rebuild-functional-baseline-index.html, y el servicio alternativo redirige al preview canónico (deploy LIVE dep-dc12u5ou01pc738jnm40). No eliminar la rama ni los datos históricos.
+- La verificación E2E se ejecutó en Chromium con viewport móvil; no reemplaza la revisión visual y táctil humana en Android.
