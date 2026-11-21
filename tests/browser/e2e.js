@@ -111,6 +111,15 @@ try {
   assert.equal(stored.sessions[0].languageId, "it-IT", "only the Italian target catalog should be active");
   assert.ok(await page.locator("#summary-content").innerText());
 
+  await page.locator('.nav-item[data-screen="stats"]').click();
+  await page.locator("#screen-stats").waitFor({ state: "visible" });
+  assert.equal(await page.locator("#statistics-content .stats-language-table tbody tr").count(), 3, "statistics should show sessions, vocabulary and accuracy by language");
+  assert.equal(await page.locator("#stats-view-select").inputValue(), "global", "statistics should open on the global chart");
+  assert.equal(await page.locator(".stats-horizontal-row").count(), 1, "global statistics should show the Italian accuracy bar");
+  await page.locator("#stats-view-select").selectOption("it-IT");
+  assert.equal(await page.locator(".stats-language-chart").count(), 1, "language view should show the daily questions and accuracy chart");
+  assert.equal(await page.locator(".stats-chart-legend").innerText(), "Preguntas respondidasPrecisión (%)");
+
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Exportar progreso" }).click();
   const download = await downloadPromise;
