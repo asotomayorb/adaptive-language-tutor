@@ -109,6 +109,17 @@ try {
 
   await page.getByRole("button", { name: "Nueva sesión →" }).click();
   await page.locator("#setup-panel").waitFor({ state: "visible" });
+  await page.locator("#start-session").click();
+  await page.locator("#lesson-panel").waitFor({ state: "visible" });
+  await page.locator("#session-close").click();
+  await page.locator("#session-confirm").waitFor({ state: "visible" });
+  await page.locator("#cancel-session-close").click();
+  await page.locator("#lesson-panel").waitFor({ state: "visible" });
+  await page.locator("#session-close").click();
+  await page.locator("#confirm-session-close").click();
+  await page.locator("#setup-panel").waitFor({ state: "visible" });
+  assert.equal(await page.locator(".bottom-nav").isVisible(), true, "navigation should return after discarding an unfinished session");
+  assert.equal((await page.evaluate(() => JSON.parse(localStorage.getItem("adaptive-language-tutor.progress") || "{}"))).sessions.length, 1, "discarding an unfinished session must not save it");
   assert.deepEqual(pageErrors, [], "browser should not report uncaught page errors");
 
   // Exercise the AI-mode interface with deterministic API responses, including both retry paths.
