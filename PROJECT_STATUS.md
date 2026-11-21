@@ -858,3 +858,11 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - [x] Replit permanece intacto; solo se trabajó en feature/mobile-bottom-navigation.
 - [ ] La prueba audible real en Android sigue pendiente.
 
+
+
+## Alcance temporal de navegación — 21-11-2026
+- Base visual canónica: `feature/mobile-bottom-navigation`.
+- Navegación: selector central destacado de Idiomas (solo Italiano visible); Ruta y Entrenamiento bloqueados; Teoría y Estadísticas disponibles.
+- Tras bienvenida/selección de idioma se abre Teoría como primera sección disponible. Estadísticas conserva su implementación.
+- Los módulos de Ruta y Entrenamiento no se eliminan ni refactorizan; quedan temporalmente inaccesibles desde la navegación.
+- Preview canónico previsto: `https://adaptive-language-tutor-preview-5b3d.onrender.com`; verificar el commit LIVE antes de compartir.
