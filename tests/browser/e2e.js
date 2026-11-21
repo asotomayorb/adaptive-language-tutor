@@ -206,6 +206,12 @@ try {
   });
 
   await aiPage.goto(baseUrl, { waitUntil: "networkidle" });
+  assert.equal(await aiPage.locator("#screen-languages h1").innerText(), "IDIOMAS", "the app should open on the central Languages screen");
+  assert.equal(await aiPage.locator('[data-screen="route"]').isDisabled(), true, "unfinished Route navigation should remain disabled");
+  assert.equal(await aiPage.locator('[data-screen="theory"]').isDisabled(), true, "unfinished Theory navigation should remain disabled");
+  await aiPage.locator('[data-screen="stats"]').click();
+  await aiPage.locator("#screen-stats").waitFor({ state: "visible" });
+  await aiPage.locator('[data-screen="languages"]').click();
   await aiPage.locator("#open-training").click();
   await aiPage.locator("#language").selectOption("Italiano");
   await aiPage.locator("#duration").selectOption("8");
