@@ -152,7 +152,8 @@ function refreshDashboard() {
     '<div class="stats-table-wrap"><table class="stats-language-table"><thead><tr><th>Indicador</th><th title="' + languageName + '">' + languageFlag + '</th></tr></thead><tbody>' +
     '<tr><th scope="row">Sesiones</th><td>' + stats.sessions + '</td></tr>' +
     '<tr><th scope="row">Palabras</th><td>' + stats.vocabulary + '</td></tr>' +
-    '<tr><th scope="row">Precisión</th><td>' + accuracy + '%</td></tr></tbody></table></div></section>';
+    '<tr><th scope="row">Precisión</th><td>' + accuracy + '%</td></tr>' +
+    '<tr><th scope="row">Progreso de Ruta</th><td aria-label="Ruta aún no habilitada">—</td></tr></tbody></table></div></section>';
 
   const daily = new Map();
   for (const item of sessions) {
