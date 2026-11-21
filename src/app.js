@@ -303,19 +303,10 @@ function renderAITutorTurn(result) {
         '<span class="vocabulary-item">' + escapeHTML(item.term) + speakerButton(item.term, session.config.languageId) + '</span>'
       ).join("") + '</div>'
     : "";
-  const speechSegments = (result.speechSegments || []).filter(item =>
-    item && typeof item.text === "string" && item.text.trim() &&
-    typeof item.locale === "string" && item.locale.trim()
-  );
-  const speechMarkup = speechSegments.length
-    ? '<div class="ai-speech-segments"><span class="muted">Pronunciación</span>' + speechSegments.map(item =>
-        '<span class="vocabulary-item">' + escapeHTML(item.text) + speakerButton(item.text, item.locale) + '</span>'
-      ).join("") + '</div>'
-    : "";
-  $("lesson-content").innerHTML = message + feedback + prompt + speechMarkup + vocabularyMarkup;
+  $("lesson-content").innerHTML = message + feedback + prompt + vocabularyMarkup;
   bindSpeakerButtons($("lesson-content"));
   const initialQuestionAudio = questionSegments.map(item => ({ text: item.text, locale: item.locale }));
-  speech.speakSequence([...initialQuestionAudio, ...speechSegments], { automatic: true });
+  speech.speakSequence(initialQuestionAudio, { automatic: true });
   $("feedback").classList.add("hidden");
   $("hint-btn").hidden = false;
   $("review-btn").hidden = true;
