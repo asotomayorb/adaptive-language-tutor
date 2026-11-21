@@ -22,6 +22,7 @@ const tutorJson = JSON.stringify({
     vocabulary: [],
     errorsToReview: []
   },
+  questionSegments: [{ text: "Como você se chama?", language: "pt", locale: "pt-BR", isTarget: true }],
   speechSegments: [{ text: "Bom dia", language: "pt", locale: "pt-BR" }],
   nextAction: "answer"
 });
@@ -79,8 +80,9 @@ test("Gemini adapter uses its native generateContent format", async () => {
         ["type", "prompt", "expectedAnswer", "acceptedAnswers", "hint"]);
       assert.equal(body.generationConfig.responseSchema.properties.exercise.nullable, true);
       assert.deepEqual(body.generationConfig.responseSchema.required,
-        ["message", "exercise", "evaluation", "learnerUpdate", "speechSegments", "nextAction"]);
+        ["message", "exercise", "evaluation", "learnerUpdate", "questionSegments", "speechSegments", "nextAction"]);
       assert.equal(body.generationConfig.responseSchema.properties.speechSegments.type, "ARRAY");
+      assert.equal(body.generationConfig.responseSchema.properties.questionSegments.type, "ARRAY");
     })
   );
   assert.equal((await provider.generateTutorTurn({ userMessage: "Hello" })).message, "Vamos a practicar.");
@@ -110,6 +112,7 @@ test("provider preserves validated target-language speech segments", async () =>
         exercise: null,
         evaluation: null,
         learnerUpdate: null,
+        questionSegments: [],
         speechSegments: [{ text: "Bom dia", language: "pt", locale: "pt-BR" }],
         nextAction: "answer"
       }) } }]
@@ -124,7 +127,7 @@ test("invalid target-language speech segments are rejected", async () => {
     { AI_PROVIDER: "openai", AI_API_KEY: "secret", AI_MODEL: "test-model" },
     fakeFetch("https://api.openai.com/v1/chat/completions", {}, {
       choices: [{ message: { content: JSON.stringify({
-        message: "Hi", exercise: null, evaluation: null, learnerUpdate: null,
+        message: "Hi", exercise: null, evaluation: null, learnerUpdate: null, questionSegments: [],
         speechSegments: [{ text: "Bonjour", locale: "fr-FR" }],
         nextAction: "answer"
       }) } }]
