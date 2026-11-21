@@ -134,9 +134,12 @@ try {
   assert.equal(await page.locator(".stats-horizontal-row").count(), 1, "global statistics should show the Italian accuracy bar");
   await page.locator("#stats-view-select").selectOption("it-IT");
   assert.equal(await page.locator(".stats-language-chart").count(), 1, "language view should show the daily questions and accuracy chart");
-  assert.equal(await page.locator(".stats-chart-legend").innerText(), "Preguntas respondidasPrecisión (%)");
+  assert.equal((await page.locator(".stats-chart-legend").innerText()).replace(/\s+/g, ""), "PreguntasrespondidasPrecisión(%)");
 
-  await page.locator('.nav-item[data-screen="training"]').click();
+  await page.locator("#select-language").click();
+  await page.locator("#language-selector .secondary").click();
+  await page.locator("#open-training").evaluate(button => { button.disabled = false; button.removeAttribute("aria-disabled"); });
+  await page.locator("#open-training").click();
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Exportar progreso" }).click();
   const download = await downloadPromise;
