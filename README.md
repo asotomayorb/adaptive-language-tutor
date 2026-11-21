@@ -21,14 +21,26 @@ Rama de trabajo: `feature/ai-tutor-pedagogy` · [PR #2](https://github.com/asoto
 ### Auditoría de interfaz y comportamiento
 - La base elegida todavía muestra una pantalla de configuración/sesión; no contiene la navegación completa acordada (Ruta, Entrenamiento, Idiomas, Teoría y Estadísticas). No debe presentarse como interfaz final.
 - Los catálogos visibles de esta base son portugués brasileño e inglés; el alcance vigente de la reconstrucción deberá quedar limitado a italiano como idioma objetivo.
-- El contrato de audio actual solo devuelve fragmentos del idioma objetivo en `speechSegments`; no representa preguntas mixtas origen/destino con segmentos, subrayado selectivo y reproducción individual. Esta regla nueva reemplaza el comportamiento anterior.
+- En la auditoría inicial, el contrato de audio solo devolvía fragmentos del idioma objetivo. La nueva implementación añade `questionSegments` con texto, idioma, locale e indicador `isTarget`; el servidor exige reconstrucción exacta de la consigna y valida locales cuando se proporcionan.
 - El flujo conversacional de esta base sí incluye el resultado inicial del tutor en el historial que se envía junto con la primera respuesta del alumno. Este comportamiento debe conservarse y mantenerse cubierto por pruebas.
 - La persistencia de progreso es local al navegador. No se ha verificado sincronización remota ni debe asumirse.
 - Las pruebas automatizadas de esta base incluyen `npm run check`, `npm test` y `npm run test:e2e`; los resultados históricos de ramas anteriores no certifican automáticamente los cambios de esta reconstrucción.
 
+
+### Implementación TTS segmentado — 21-11-2026
+- [x] Contrato de tutor IA ampliado con `questionSegments`: `text`, `language`, `locale`, `isTarget`.
+- [x] Consigna completa validada al concatenar segmentos; se rechazan omisiones, texto añadido y locale incorrecto para los idiomas origen/destino configurados.
+- [x] Prompt pedagógico: instrucciones por defecto en idioma nativo; fragmento objetivo solo cuando es el elemento que se evalúa.
+- [x] Interfaz de tutor IA: reproduce los segmentos en orden; subraya únicamente `isTarget=true`; al pulsarlo reproduce solo ese fragmento.
+- [x] Locale nativo predeterminado provisional `es-CL`; falta integrarlo con la configuración global para que sea modificable.
+- [x] Prueba Browser E2E agregada para consigna mixta español/francés, orden de voces, subrayado y replay del fragmento objetivo.
+- [ ] CI de esta iteración y Browser E2E pendientes de resultado final tras correcciones.
+- [ ] Extender la regla a Ruta, Entrenamiento y Teoría; verificar que opciones y respuestas no reciban TTS.
+- [ ] El selector y los catálogos todavía no están limitados a italiano; no se considera completado el alcance de idioma objetivo.
+
 ### Orden de reconstrucción
 1. Asegurar contratos de datos y flujos conversacionales.
-2. Implementar TTS por segmentos de idioma: lectura secuencial origen/destino, subrayado solo del segmento objetivo y replay individual; excluir alternativas y respuestas.
+2. [En implementación] TTS por segmentos en el tutor IA: lectura secuencial origen/destino, subrayado solo del segmento objetivo y replay individual. Falta extenderlo a las demás vistas; alternativas y respuestas permanecen excluidas.
 3. Recuperar la navegación y ciclo de vida acordados, con pantallas utilizables en móvil.
 4. Verificar persistencia, errores, reintentos y modo local sin proveedor IA.
 5. Ejecutar CI y Browser E2E en el commit final; después desplegar un Render Preview de esta rama.
