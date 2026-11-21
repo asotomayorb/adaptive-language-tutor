@@ -2710,7 +2710,7 @@ $("welcome-start").addEventListener("click", () => {
   if ($("language").value && localStorage.getItem("adaptive-language-tutor.settings")) {
     $("welcome-screen").classList.add("hidden");
     $("app-shell").classList.remove("hidden");
-    showScreen("route");
+    showScreen("theory");
   } else {
     $("app-shell").classList.add("hidden");
     $("language-picker").showModal();
@@ -2730,7 +2730,7 @@ document.querySelectorAll("[data-language]").forEach(button => button.addEventLi
   $("language-picker").close();
   $("welcome-screen").classList.add("hidden");
   $("app-shell").classList.remove("hidden");
-  showScreen("route");
+  showScreen("theory");
   refreshDashboard();
 }));
 
