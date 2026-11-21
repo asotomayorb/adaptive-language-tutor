@@ -107,10 +107,6 @@ function refreshDashboard() {
   const reviewButton = $("start-spaced-review");
   if (reviewButton) reviewButton.addEventListener("click", startSpacedReview);
 }
-$("language").addEventListener("change", () => { updateCustomLanguageFields(); refreshDashboard(); });
-$("custom-language-name").addEventListener("input", refreshDashboard);
-$("custom-language-locale").addEventListener("input", refreshDashboard);
-updateCustomLanguageFields();
 refreshDashboard();
 checkTutorHealth().then(status => {
   aiConfigured = Boolean(status.ai?.configured);
