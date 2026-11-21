@@ -241,6 +241,7 @@ $("setup-form").addEventListener("submit", event => {
   }
   const config = { language:catalog.label, languageId:catalog.id, languageLocale:catalog.locale || catalog.id, duration:Number($("duration").value), level:$("level").value, topic:$("topic").value };
   session = createSession(config);
+  activeQuestionAudio = [];
   setActiveScreen("training");
   setSessionView(true);
   sessionFinished = false;
@@ -704,7 +705,8 @@ function finishSession() {
   ).join(", ") || "ninguno";
   $("summary-content").innerHTML = '<p class="intro">Completaste ' + summary.turns + ' turnos de ' + escapeHTML(session.config.language) + '.</p><ul class="summary-list">' + diagnosticText + aiLevelText + '<li>Respuestas evaluadas como correctas: ' + summary.correct + '/' + summary.attempted + ' (' + summary.accuracy + '%).</li><li>Mejor racha: ' + summary.bestStreak + '.</li><li>Vocabulario aprendido: ' + vocabularyText + '.</li><li>Errores evaluados para reforzar: ' + summary.errors.length + '.</li><li>Focos y patrones recomendados: ' + focus + '.</li></ul>';
   bindSpeakerButtons($("summary-content"));
-  speech.speakSequence(summary.vocabulary.map(item => ({ text: item.term, locale: summaryLocale })), { automatic: true });
+  activeQuestionAudio = summary.vocabulary.map(item => ({ text: item.term, locale: summaryLocale }));
+  speech.speakSequence(activeQuestionAudio, { automatic: true });
 }
 
 $("new-session").addEventListener("click", () => {
