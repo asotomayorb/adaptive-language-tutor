@@ -173,7 +173,7 @@ try {
         contentType: "application/json",
         body: JSON.stringify({
           message: "Pista adicional.",
-          exercise: { type: "production", prompt: "Comment tu t’appelles ?", expectedAnswer: "Je m’appelle Ana.", acceptedAnswers: ["Je m’appelle Ana."], hint: "Piensa en el verbo que expresa tu nombre." },
+          exercise: { type: "production", prompt: "¿Cómo se dice bonjour?", expectedAnswer: "Je m’appelle Ana.", acceptedAnswers: ["Je m’appelle Ana."], hint: "Piensa en el verbo que expresa tu nombre." },
           evaluation: null,
           learnerUpdate: null,
           questionSegments: [
