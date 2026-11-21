@@ -161,3 +161,98 @@ body{min-height:100svh;background:#f3f5f8}
 .language-option{display:grid;grid-template-columns:32px 1fr 20px;align-items:center;gap:10px;width:100%;min-height:58px;padding:12px;border:1px solid #9bb1ca;border-radius:13px;background:#f2f6fb;color:#183b66;text-align:left;font:inherit}
 .language-option>span:first-child{font-size:23px}
 .language-option>span:last-child{font-weight:800;color:#28734d}
+
+
+/* Teoría: estilos originales restaurados, conservando el shell actual. */
+.theory-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.theory-card{display:flex;align-items:center;gap:13px;min-height:90px;padding:17px;border:1px solid #e1e7ef;border-radius:15px;background:#fff;color:#2c4360;text-align:left;cursor:pointer}
+.theory-card span{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:#edf2f8;color:#234d78;font-size:19px;font-weight:750}
+.theory-card strong{font-size:14px}
+#theory-detail{margin-top:16px}
+@media(max-width:620px){.theory-grid{grid-template-columns:1fr 1fr}
+}
+.theory-topic-list{display:grid;gap:10px;margin-top:17px}
+.theory-topic{padding:14px;border:1px solid #e3e9f0;border-radius:12px;background:#fbfcfe}
+.theory-topic h3{font-size:15px;margin:0 0 6px;color:#233b58}
+.theory-topic p{font-size:13px;line-height:1.55;color:#68778c;margin:0}
+#theory-detail{margin-top:14px}
+/* Theory slides, larger topic list and question feedback */
+#theory-topic-list{padding:6px 0 24px}
+#theory-list-title{font-size:23px;margin:18px 0}
+#theory-list-items{display:grid;gap:9px}
+.theory-topic-row{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:64px;padding:15px 17px;border:1px solid #dfe6ee;border-radius:14px;background:#fff;color:#263c59;text-align:left;font:inherit;font-size:16px;font-weight:700;cursor:pointer}
+.theory-topic-row span:last-child{font-size:21px;color:#6d88a8}
+.theory-slide{position:fixed;z-index:60;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:calc(14px + env(safe-area-inset-top)) 22px calc(16px + env(safe-area-inset-bottom));border:0;border-radius:0;background:#f7f9fc;color:#172b4d;display:flex;flex-direction:column}
+.theory-slide[open]{display:flex}
+.theory-slide-header{display:flex;align-items:center;justify-content:space-between;min-height:54px}
+.theory-slide-header .icon-control{font-size:23px}
+#theory-counter{font-size:13px;color:#7c8ba0;font-weight:700}
+.theory-slide-content{width:min(720px,100%);margin:auto;flex:1;display:flex;flex-direction:column;justify-content:center;padding:22px 0}
+#theory-category{font-size:12px;letter-spacing:1.5px;text-transform:uppercase}
+#theory-title{font-size:clamp(30px,7vw,42px);line-height:1.1;letter-spacing:-1.1px;margin:0 0 24px}
+.theory-slide-text{font-size:clamp(18px,4.2vw,22px);line-height:1.75;color:#44566d;max-width:660px;margin:0}
+.theory-slide-footer{display:flex;justify-content:space-between;gap:12px;width:min(720px,100%);margin:0 auto}
+.theory-slide-footer button{min-height:52px;flex:1}
+.theory-slide-footer button:disabled{opacity:.35;cursor:not-allowed}
+@media(max-width:620px){.theory-slide{padding-left:20px;padding-right:20px}
+.theory-topic-row{min-height:66px;font-size:16px}
+.theory-slide-footer button{font-size:13px;padding:12px 8px}
+}
+.theory-slide-text{font-size:14px;line-height:1.65;color:#68778c}
+.theory-pronoun-table{width:100%;border-collapse:collapse;margin:17px 0 10px;background:#fff;border-radius:13px;overflow:hidden}
+.theory-pronoun-table th,.theory-pronoun-table td{padding:10px 12px;border-bottom:1px solid #e8edf3;text-align:left;font-size:13px;line-height:1.4}
+.theory-pronoun-table th{background:#edf2f7;color:#53677e;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.theory-pronoun-table td:first-child{width:54%}
+.theory-target-word{font-size:19px;font-weight:800;color:#1e4269}
+.theory-pronoun-table .speak-button{margin-left:5px;vertical-align:middle}
+.theory-footnote{font-size:11px;color:#8491a1;line-height:1.5}
+.theory-example{margin-top:16px;padding:15px;border-radius:13px;background:#eef3f8}
+.theory-example>span{display:block;margin-bottom:8px;font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:#70839a}
+.theory-example>p{font-size:17px;line-height:1.5;margin:5px 0;color:#1e4269;font-weight:700}
+.theory-example>p.theory-slide-text{font-size:13px;font-weight:400;color:#68778c}
+.theory-slide-content{overflow-y:auto;justify-content:flex-start}
+.theory-slide-content #theory-title{margin-bottom:14px}
+@media(max-width:620px){.theory-pronoun-table th,.theory-pronoun-table td{padding:9px 8px;font-size:12px}
+.theory-target-word{font-size:17px}
+}
+.theory-vocab-group{margin:20px 0}
+.theory-vocab-group h3{font-size:16px;margin:0 0 9px;color:#344a64}
+.theory-note{margin:14px 0;padding:13px 15px;border-left:3px solid #9aafc7;border-radius:8px;background:#f5f7fa;color:#52657d}
+.theory-note>strong{display:block;margin-bottom:5px;font-size:11px;letter-spacing:.45px;text-transform:uppercase;color:#425b78}
+.theory-note>p{margin:0;font-size:13px;line-height:1.6}
+.theory-example{margin-top:16px}
+.theory-example>p{font-weight:650}
+.theory-note{margin:18px 0;padding:16px 18px;border:1px solid #e2e8f0;border-radius:12px;background:#fbfcfe}
+.theory-note>strong{display:block;margin-bottom:10px;color:#263c59}
+.theory-rule-list{display:grid;gap:9px;margin:0;padding-left:20px;color:#52657d;line-height:1.6;font-size:14px}
+.theory-rule-list li{padding-left:3px}
+.theory-rule-list{display:grid;gap:8px;margin:10px 0 2px;padding-left:20px}
+.theory-rule-list li{padding-left:3px;line-height:1.55}
+.theory-note{min-width:0}
+@media(max-width:620px){.theory-rule-list{gap:10px}
+}
+/* 20-11-2026: compact activity hierarchy, route summary and theory hierarchy */
+.session-topbar{margin-bottom:4px}
+.theory-note{margin:18px 0;padding:15px 16px;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc}
+.theory-note h3{font-size:14px;margin:0 0 9px;color:#29425f}
+.theory-rule-list{margin:0;padding-left:23px;display:grid;gap:8px;line-height:1.55;color:#465a72;font-size:13px}
+.theory-rule-list li{padding-left:3px}
+.theory-exceptions{background:#fffaf2;border-color:#efe3ca}
+.theory-slide-header{display:grid;grid-template-columns:42px 1fr 42px;align-items:center}
+.theory-slide-header .theory-header-spacer{width:42px;height:42px}
+.theory-rule-parent{font-weight:650;color:#263e59}
+.theory-rule-children{display:grid;gap:6px;margin:8px 0 2px;padding-left:22px;list-style:disc;color:#52657c}
+.theory-rule-children li{padding-left:3px;line-height:1.55}
+@media(max-width:620px){.theory-rule-children{gap:5px}
+}
+/* Legible theory conjugation and example tables on narrow screens */
+.theory-table-block{margin:18px 0}
+.theory-table-block h3{margin:0 0 8px;font-size:14px;color:#29425f}
+.theory-table-block>p{margin:0 0 10px;font-size:13px;line-height:1.55;color:#52657c}
+.theory-table-scroll{width:100%;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain}
+.theory-table-scroll .theory-pronoun-table,.theory-table-scroll .theory-example-table{min-width:100%;width:max-content;border-collapse:collapse;font-size:12px}
+.theory-table-scroll th,.theory-table-scroll td{padding:9px 10px;border-bottom:1px solid #e5ebf1;text-align:left;vertical-align:top;white-space:nowrap}
+.theory-table-scroll th{background:#f2f6fa;color:#38536f;font-weight:750}
+.theory-example-table td{white-space:normal;min-width:112px}
+.theory-translation{display:block;margin-top:4px;color:#708096;font-size:11px;line-height:1.4}
+.theory-example-table td:first-child{font-weight:700;white-space:nowrap}
