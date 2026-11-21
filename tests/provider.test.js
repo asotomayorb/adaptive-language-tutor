@@ -157,6 +157,7 @@ test("provider rejects speech segments tagged with a different target locale", a
         exercise: null,
         evaluation: null,
         learnerUpdate: null,
+        questionSegments: [],
         speechSegments: [{ text: "Bonjour", language: "fr", locale: "fr-FR" }],
         nextAction: "answer"
       }) } }]
@@ -177,6 +178,7 @@ test("provider rejects premature AI session completion", async () => {
     exercise: null,
     evaluation: { status: "correct", feedback: "Bien.", correction: null, skill: "Producción" },
     learnerUpdate: null,
+    questionSegments: [],
     speechSegments: [],
     nextAction: "finish"
   };
