@@ -120,7 +120,7 @@ try {
     window.__spoken = [];
     window.__speechCancelled = 0;
     const synth = {
-      getVoices: () => [{ name: "French", lang: "fr-FR" }, { name: "Spanish Chile", lang: "es-CL" }],
+      getVoices: () => [{ name: "Italian", lang: "it-IT" }, { name: "Spanish Chile", lang: "es-CL" }],
       speak: utterance => window.__spoken.push({ text: utterance.text, lang: utterance.lang, voice: utterance.voice?.name }),
       cancel: () => { window.__speechCancelled += 1; }
     };
@@ -140,8 +140,8 @@ try {
   await aiPage.route("**/api/tutor", async route => {
     const input = route.request().postDataJSON();
     if (input.task === "start_lesson") {
-      assert.equal(input.learner.targetLanguageLabel, "Francés");
-      assert.equal(input.learner.targetLanguageLocale, "fr-FR", "AI requests should carry the selected locale explicitly");
+      assert.equal(input.learner.targetLanguageLabel, "Italiano");
+      assert.equal(input.learner.targetLanguageLocale, "it-IT", "AI requests should carry the selected locale explicitly");
       startCalls += 1;
       if (startCalls === 1) {
         return route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ error: "Mock temporary failure" }) });
@@ -151,15 +151,15 @@ try {
         contentType: "application/json",
         body: JSON.stringify({
           message: "Vamos praticar uma situação cotidiana.",
-          exercise: { type: "production", prompt: "¿Cómo se dice bonjour?", expectedAnswer: "Je m’appelle Ana.", acceptedAnswers: ["Je m’appelle Ana."], hint: "Usa la expresión Je m’appelle..." },
+          exercise: { type: "production", prompt: "¿Cómo se dice bonjour?", expectedAnswer: "Buongiorno", acceptedAnswers: ["Buongiorno"], hint: "Usa la expresión Je m’appelle..." },
           evaluation: null,
-          learnerUpdate: { estimatedLevel: "A1", vocabulary: [{ term: "s’appeler", meaning: "llamarse" }], errorsToReview: [] },
+          learnerUpdate: { estimatedLevel: "A1", vocabulary: [{ term: "parlare", meaning: "hablar" }], errorsToReview: [] },
           questionSegments: [
             { text: "¿Cómo se dice ", language: "es", locale: "es-CL", isTarget: false },
-            { text: "bonjour", language: "fr", locale: "fr-FR", isTarget: true },
+            { text: "buongiorno", language: "it", locale: "it-IT", isTarget: true },
             { text: "?", language: "es", locale: "es-CL", isTarget: false }
           ],
-          speechSegments: [{ text: "Je m’appelle", language: "fr", locale: "fr-FR" }],
+          speechSegments: [{ text: "Vorrei", language: "it", locale: "it-IT" }],
           nextAction: "answer"
         })
       });
@@ -173,15 +173,15 @@ try {
         contentType: "application/json",
         body: JSON.stringify({
           message: "Pista adicional.",
-          exercise: { type: "production", prompt: "¿Cómo se dice bonjour?", expectedAnswer: "Je m’appelle Ana.", acceptedAnswers: ["Je m’appelle Ana."], hint: "Piensa en el verbo que expresa tu nombre." },
+          exercise: { type: "production", prompt: "¿Cómo se dice bonjour?", expectedAnswer: "Buongiorno", acceptedAnswers: ["Buongiorno"], hint: "Piensa en el verbo que expresa tu nombre." },
           evaluation: null,
           learnerUpdate: null,
           questionSegments: [
             { text: "¿Cómo se dice ", language: "es", locale: "es-CL", isTarget: false },
-            { text: "bonjour", language: "fr", locale: "fr-FR", isTarget: true },
+            { text: "buongiorno", language: "it", locale: "it-IT", isTarget: true },
             { text: "?", language: "es", locale: "es-CL", isTarget: false }
           ],
-          speechSegments: [{ text: "s’appeler", language: "fr", locale: "fr-FR" }],
+          speechSegments: [{ text: "parlare", language: "it", locale: "it-IT" }],
           nextAction: "answer"
         })
       });
@@ -197,35 +197,33 @@ try {
       body: JSON.stringify({
         message: "Très bien. Terminamos esta práctica.",
         exercise: null,
-        evaluation: { status: "partially_correct", feedback: "La idea se entiende, pero revisa la conjugación.", correction: "Je m’appelle Ana.", skill: "Producción" },
+        evaluation: { status: "partially_correct", feedback: "La idea se entiende, pero revisa la conjugación.", correction: "Buongiorno", skill: "Producción" },
         learnerUpdate: { estimatedLevel: "A1", vocabulary: [], errorsToReview: ["Conjugación verbal en primera persona"] },
-        speechSegments: [{ text: "Je m’appelle Ana.", language: "fr", locale: "fr-FR" }],
+        speechSegments: [{ text: "Buongiorno", language: "it", locale: "it-IT" }],
         nextAction: "finish"
       })
     });
   });
 
   await aiPage.goto(baseUrl, { waitUntil: "networkidle" });
-  await aiPage.locator("#language").selectOption("other");
-  await aiPage.locator("#custom-language-name").fill("Francés");
-  await aiPage.locator("#custom-language-locale").fill("fr-FR");
+  await aiPage.locator("#language").selectOption("Italiano");
   await aiPage.locator("#duration").selectOption("8");
   await aiPage.locator("#start-session").click();
   await aiPage.getByRole("button", { name: "Reintentar sesión" }).click();
   await aiPage.locator("#lesson-content").getByRole("heading", { name: "¿Cómo se dice bonjour?" }).waitFor();
   assert.deepEqual(await aiPage.evaluate(() => window.__spoken.slice(0, 3).map(item => [item.text, item.lang])), [
-    ["¿Cómo se dice", "es-CL"], ["bonjour", "fr-FR"], ["?", "es-CL"]
+    ["¿Cómo se dice", "es-CL"], ["buongiorno", "it-IT"], ["?", "es-CL"]
   ], "mixed questions should be spoken in order using the locale of each segment");
-  assert.equal(await aiPage.evaluate(() => window.__spoken[1]?.voice), "French", "target segment should select the matching installed voice");
+  assert.equal(await aiPage.evaluate(() => window.__spoken[1]?.voice), "Italian", "target segment should select the matching installed voice");
   const targetFragment = aiPage.locator("#lesson-content .target-fragment");
-  assert.equal(await targetFragment.innerText(), "bonjour");
+  assert.equal(await targetFragment.innerText(), "buongiorno");
   assert.equal(await targetFragment.evaluate(node => getComputedStyle(node).textDecorationLine.includes("underline")), true, "only the target-language fragment should be underlined");
   await targetFragment.click();
-  assert.deepEqual(await aiPage.evaluate(() => window.__spoken.at(-1) && [window.__spoken.at(-1).text, window.__spoken.at(-1).lang]), ["bonjour", "fr-FR"], "manual replay should pronounce only the selected target fragment");
+  assert.deepEqual(await aiPage.evaluate(() => window.__spoken.at(-1) && [window.__spoken.at(-1).text, window.__spoken.at(-1).lang]), ["buongiorno", "it-IT"], "manual replay should pronounce only the selected target fragment");
   const spokenBeforeFirstHint = await aiPage.evaluate(() => window.__spoken.length);
   await aiPage.locator("#hint-btn").click();
   await aiPage.locator("#feedback").getByText(/Je m’appelle/).waitFor();
-  assert.ok(await aiPage.evaluate(count => window.__spoken.length > count && window.__spoken.at(-1)?.text === "Je m’appelle" && window.__spoken.at(-1)?.lang === "fr-FR", spokenBeforeFirstHint), "the first AI hint should automatically pronounce its target-language fragment");
+  assert.ok(await aiPage.evaluate(count => window.__spoken.length > count && window.__spoken.at(-1)?.text === "Vorrei" && window.__spoken.at(-1)?.lang === "it-IT", spokenBeforeFirstHint), "the first AI hint should automatically pronounce its target-language fragment");
   const turnBeforeExtraHint = await aiPage.locator("#turn-count").innerText();
   const cancellationsBeforeExtraHint = await aiPage.evaluate(() => window.__speechCancelled);
   await aiPage.locator("#hint-btn").click();
@@ -236,8 +234,8 @@ try {
   const hintSpeaker = aiPage.locator("#feedback [data-speak]").first();
   await hintSpeaker.waitFor();
   await hintSpeaker.click();
-  assert.ok(await aiPage.evaluate(() => window.__spoken.some(item => item.text === "s’appeler" && item.lang === "fr-FR")), "additional hint fragments should support manual pronunciation");
-  await aiPage.locator("#ai-answer").fill("Je m’appelle Ana.");
+  assert.ok(await aiPage.evaluate(() => window.__spoken.some(item => item.text === "parlare" && item.lang === "it-IT")), "additional hint fragments should support manual pronunciation");
+  await aiPage.locator("#ai-answer").fill("Buongiorno");
   const cancellationsBeforeAnswer = await aiPage.evaluate(() => window.__speechCancelled);
   await aiPage.locator("#submit-ai-answer").click();
   assert.ok(await aiPage.evaluate(count => window.__speechCancelled > count, cancellationsBeforeAnswer), "submitting an answer should immediately cancel speech from the previous turn");
@@ -247,7 +245,7 @@ try {
   await aiPage.locator("#summary-panel").waitFor({ state: "visible" });
   const summarySpeaker = aiPage.locator("#summary-content [data-speak]").first();
   await summarySpeaker.waitFor();
-  assert.ok(await aiPage.evaluate(() => window.__spoken.some(item => item.text === "s’appeler" && item.lang === "fr-FR")), "summary vocabulary should be read automatically in the selected target locale");
+  assert.ok(await aiPage.evaluate(() => window.__spoken.some(item => item.text === "parlare" && item.lang === "it-IT")), "summary vocabulary should be read automatically in the selected target locale");
   const spokenBeforeSummaryReplay = await aiPage.evaluate(() => window.__spoken.length);
   await summarySpeaker.click();
   assert.ok(await aiPage.evaluate(count => window.__spoken.length > count, spokenBeforeSummaryReplay), "summary vocabulary should support manual replay");
@@ -255,13 +253,13 @@ try {
   const spokenBeforeSummaryReenable = await aiPage.evaluate(() => window.__spoken.length);
   await aiPage.locator("#audio-toggle").click();
   assert.ok(await aiPage.evaluate(count => window.__spoken.length > count, spokenBeforeSummaryReenable), "re-enabling automatic speech on the summary should replay visible target vocabulary");
-  assert.equal(await aiPage.evaluate(() => window.__spoken.at(-1)?.lang), "fr-FR", "summary replay should preserve the selected target locale");
+  assert.equal(await aiPage.evaluate(() => window.__spoken.at(-1)?.lang), "it-IT", "summary replay should preserve the selected target locale");
 
   // Hidden panels must not be replayed when automatic speech is re-enabled.
   await aiPage.evaluate(() => {
     document.querySelector("#summary-panel").classList.add("hidden");
     document.querySelector("#lesson-panel").classList.remove("hidden");
-    document.querySelector("#lesson-content").innerHTML = '<button data-speak="visible lesson phrase" data-locale="fr-FR">play</button>';
+    document.querySelector("#lesson-content").innerHTML = '<button data-speak="visible lesson phrase" data-locale="it-IT">play</button>';
   });
   await aiPage.locator("#audio-toggle").click();
   const spokenBeforeVisibleReplay = await aiPage.evaluate(() => window.__spoken.length);
@@ -274,7 +272,7 @@ try {
   );
   assert.equal(aiStored.sessions?.length, 1, "mock AI session should persist once");
   assert.equal(aiStored.reviewCards?.length, 2, "evaluated errors and qualitative learning patterns should both create review cards");
-  assert.equal(aiStored.reviewCards[0].expected, "Je m’appelle Ana.");
+  assert.equal(aiStored.reviewCards[0].expected, "Buongiorno");
 
   // Make the AI review card due and verify that the real spaced-review UI grades it.
   await aiPage.evaluate(() => {
@@ -285,10 +283,10 @@ try {
   });
   await aiPage.reload({ waitUntil: "networkidle" });
   await aiPage.locator("#language").selectOption("other");
-  await aiPage.locator("#custom-language-name").fill("Francés");
-  await aiPage.locator("#custom-language-locale").fill("fr-FR");
+  await aiPage.locator("#custom-language-name").fill("Italiano");
+  await aiPage.locator("#custom-language-locale").fill("it-IT");
   await aiPage.getByRole("button", { name: /Iniciar repaso/ }).click();
-  await aiPage.locator("#spaced-answer").fill("Je m’appelle Ana.");
+  await aiPage.locator("#spaced-answer").fill("Buongiorno");
   await aiPage.locator("#check-spaced").click();
   const cancellationsBeforeNextReview = await aiPage.evaluate(() => window.__speechCancelled);
   await aiPage.getByRole("button", { name: "Siguiente →" }).click();
