@@ -21,7 +21,14 @@
   </header>
   <p id="audio-status" class="audio-status" role="status" aria-live="polite"></p>
 
-  <section id="screen-languages" class="app-screen">
+  <section id="screen-welcome" class="welcome-screen">
+    <div class="welcome-mark" aria-hidden="true">A</div>
+    <h1>Adaptive Language Tutor</h1>
+    <p>Aprende idiomas a tu ritmo.</p>
+    <button id="welcome-continue" class="primary wide-action" type="button">Continuar →</button>
+  </section>
+
+  <section id="screen-languages" class="app-screen hidden">
     <div class="screen-heading"><p class="eyebrow">IDIOMA OBJETIVO</p><h1>IDIOMAS</h1></div>
     <div class="language-card selected" aria-current="true">
       <span class="language-flag" aria-hidden="true">🇮🇹</span>
@@ -80,7 +87,7 @@
     </section>
   </section>
 
-  <nav class="bottom-nav" aria-label="Navegación principal">
+  <nav class="bottom-nav hidden" aria-label="Navegación principal">
     <button class="nav-item unavailable" type="button" data-screen="route" aria-label="Ruta" aria-disabled="true" disabled><span class="nav-icon route-icon">🗺️</span><span class="nav-label">Ruta</span></button>
     <button class="nav-item" type="button" data-screen="training" aria-label="Entrenamiento"><span class="nav-icon">🏋️</span><span class="nav-label">Entrenamiento</span></button>
     <button class="nav-item active languages-tab" type="button" data-screen="languages" aria-label="Idiomas" aria-current="page"><span class="nav-icon">🌐🇮🇹</span><span class="nav-label">Idiomas</span></button>
