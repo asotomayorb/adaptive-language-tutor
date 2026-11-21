@@ -9,14 +9,14 @@
   <script type="module" src="./src/app.js"></script>
 </head>
 <body>
-<section id="welcome-screen" class="welcome-screen">
+<section id="welcome-screen" class="welcome-screen hidden">
   <div class="welcome-brand"><span class="welcome-mark">A</span></div>
   <h1>Adaptive<br>Language Tutor</h1>
   <p>Aprende un idioma, paso a paso.</p>
   <button id="welcome-start" class="welcome-start" type="button">Iniciar</button>
 </section>
 
-<main id="app-shell" class="app-shell hidden">
+<main id="app-shell" class="app-shell">
   <header class="topbar">
     <div class="topbar-spacer"></div>
     <div class="header-actions">
@@ -24,7 +24,7 @@
     </div>
   </header>
 
-  <section id="screen-route" class="app-screen">
+  <section id="screen-route" class="app-screen hidden">
     <div class="screen-heading"><h1>Ruta</h1></div>
     <section class="route-stage panel">
       <div class="route-intro"><span class="eyebrow">APRENDIZAJE PROGRESIVO</span><h2>Tu recorrido</h2><p>Cada unidad combina vocabulario y conjugaciones, aplicación en contexto y producción de frases completas. Supera la actividad final y consigue las estrellas necesarias para desbloquear la siguiente.</p></div>
@@ -54,7 +54,7 @@
     <p id="ai-status" class="muted exercise-status hidden" role="status"></p>
   </section>
 
-  <section id="screen-theory" class="app-screen hidden">
+  <section id="screen-theory" class="app-screen">
     <div class="screen-heading"><h1>Teoría</h1></div>
     <div id="theory-grid" class="theory-grid">
       <button class="theory-card" type="button" data-theory="grammar"><span>文</span><strong>Gramática</strong></button>
