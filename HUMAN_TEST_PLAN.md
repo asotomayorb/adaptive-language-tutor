@@ -549,3 +549,13 @@ Para cada escenario registrar:
 - [ ] Tras elegir Italiano se abre Teoría; categorías, temas, detalle y pronunciación siguen funcionando.
 - [ ] Estadísticas abre y conserva sus gráficos/tabla y navegación interna.
 - [ ] La barra inferior no permite entrar a Ruta o Entrenamiento por rutas de navegación indirectas.
+
+
+## Resultado automatizado del alcance temporal — 21-11-2026
+- [x] La aplicación abre directamente en Teoría y muestra la navegación desde el primer instante.
+- [x] El selector central abre el diálogo y ofrece solo Italiano.
+- [x] Ruta y Entrenamiento permanecen visibles y deshabilitados.
+- [x] Teoría permite abrir categorías, temas y detalle.
+- [x] Estadísticas abre sin errores de navegador.
+- [x] npm run check y npm test aprobados; Browser E2E aprobado en https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44964132590.
+- [ ] Falta completar la revisión manual táctil/auditiva en Android.
