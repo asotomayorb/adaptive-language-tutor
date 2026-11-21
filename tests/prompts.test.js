@@ -41,6 +41,9 @@ test("tutor prompt defines a non-advancing progressive hint request", () => {
   assert.match(TUTOR_SYSTEM_PROMPT, /questionSegments/i);
   assert.match(TUTOR_SYSTEM_PROMPT, /reconstruyan EXACTAMENTE el prompt/i);
   assert.match(TUTOR_SYSTEM_PROMPT, /isTarget=true/i);
+  assert.match(TUTOR_SYSTEM_PROMPT, /questionSegments/i);
+  assert.match(TUTOR_SYSTEM_PROMPT, /reconstruyan EXACTAMENTE el prompt/i);
+  assert.match(TUTOR_SYSTEM_PROMPT, /isTarget=true/i);
   assert.match(TUTOR_SYSTEM_PROMPT, /request_hint/i);
   assert.match(TUTOR_SYSTEM_PROMPT, /no cambies de actividad/i);
   assert.match(TUTOR_SYSTEM_PROMPT, /no avances el turno/i);
