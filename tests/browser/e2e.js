@@ -46,8 +46,8 @@ try {
     window.__spoken = [];
     const synth = {
       getVoices: () => [
-        { name: "Brazilian Portuguese", lang: "pt-BR" },
-        { name: "English", lang: "en-US" }
+        { name: "Italian", lang: "it-IT" },
+        { name: "Spanish Chile", lang: "es-CL" }
       ],
       speak: utterance => window.__spoken.push({ text: utterance.text, lang: utterance.lang, voice: utterance.voice?.name }),
       cancel: () => {}
@@ -60,37 +60,37 @@ try {
 
   await page.goto(baseUrl, { waitUntil: "networkidle" });
   assert.match(await page.title(), /Adaptive Language Tutor/);
-  await page.locator("#ai-status").waitFor();
+  assert.equal(await page.locator("#screen-languages h1").innerText(), "IDIOMAS");
+  await page.locator("#open-training").click();
+  await page.locator("#ai-status").waitFor({ state: "visible" });
   await page.locator("#start-session").waitFor({ state: "visible" });
+  await page.locator("#language").selectOption("Italiano");
   await page.locator("#level").selectOption("diagnostic");
   await page.locator("#duration").selectOption("8");
   await page.locator("#start-session").click();
-  // Complete the four-question diagnostic, then verify guided practice.
+  // Complete the four-question diagnostic, then verify source-language prompts.
   for (let question = 0; question < 4; question += 1) {
     await page.locator("#answer-area .answer-option").first().click();
   }
-  await page.locator("#answer-area [data-speak]").first().waitFor();
   const firstSpeech = await page.evaluate(() => window.__spoken[0]);
-  assert.equal(firstSpeech.lang, "pt-BR", "automatic speech should use the selected target locale");
-  assert.equal(firstSpeech.voice, "Brazilian Portuguese", "speech should select the matching installed voice");
-  await page.locator("#answer-area [data-speak]").first().click();
-  assert.ok(await page.evaluate(() => window.__spoken.length >= 2), "manual pronunciation should be available per phrase");
-  await page.locator("#audio-toggle").click();
-  assert.equal(await page.locator("#audio-toggle").getAttribute("aria-pressed"), "false", "global audio toggle should disable automatic speech");
+  assert.equal(firstSpeech.lang, "es-CL", "local instructions should be read in the source locale");
+  assert.equal(firstSpeech.voice, "Spanish Chile", "source speech should select the matching installed voice");
+  assert.equal(await page.locator("#answer-area [data-speak]").count(), 0, "answer alternatives must not receive TTS controls");
+  await page.locator("#session-audio-toggle").click();
+  assert.equal(await page.locator("#session-audio-toggle").getAttribute("aria-pressed"), "false", "session audio toggle should disable automatic speech");
   const speechCountBeforeReenable = await page.evaluate(() => window.__spoken.length);
-  await page.locator("#audio-toggle").click();
-  assert.equal(await page.locator("#audio-toggle").getAttribute("aria-pressed"), "true", "global audio toggle should re-enable automatic speech");
-  assert.ok(await page.evaluate(count => window.__spoken.length > count, speechCountBeforeReenable), "re-enabling audio should read the currently visible target fragments");
+  await page.locator("#session-audio-toggle").click();
+  assert.equal(await page.locator("#session-audio-toggle").getAttribute("aria-pressed"), "true", "session audio toggle should re-enable automatic speech");
+  assert.ok(await page.evaluate(count => window.__spoken.length > count && window.__spoken.at(-1)?.lang === "es-CL", speechCountBeforeReenable), "re-enabling audio should replay the complete source-language prompt");
   await page.locator("#hint-btn").click();
   await page.locator("#feedback").waitFor({ state: "visible" });
-  assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "dia" && item.lang === "pt-BR")), "local hints should pronounce explicitly annotated target-language fragments");
+  assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "buon" && item.lang === "it-IT")), "local hints may pronounce explicitly annotated target-language fragments");
 
-  // Complete the configured eight-turn local session.
+  // Complete the configured eight-turn local session and ensure responses stay silent.
   for (let turn = 0; turn < 8; turn += 1) {
+    const speechCountBeforeAnswer = await page.evaluate(() => window.__spoken.length);
     await page.locator("#answer-area [data-choice]").first().click();
-    if (turn === 0) {
-      assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "Bom dia" && item.lang === "pt-BR")), "local feedback should pronounce only explicitly annotated target-language explanation fragments");
-    }
+    assert.equal(await page.evaluate(() => window.__spoken.length), speechCountBeforeAnswer, "answer feedback must not trigger TTS");
     await page.getByRole("button", { name: "Continuar →" }).click();
   }
   await page.locator("#summary-panel").waitFor({ state: "visible" });
@@ -99,7 +99,7 @@ try {
     JSON.parse(localStorage.getItem("adaptive-language-tutor.progress") || "{}")
   );
   assert.equal(stored.sessions?.length, 1, "completed session should persist once");
-  assert.ok(stored.sessions[0].languageId, "persisted session should include its language");
+  assert.equal(stored.sessions[0].languageId, "it-IT", "only the Italian target catalog should be active");
   assert.ok(await page.locator("#summary-content").innerText());
 
   const downloadPromise = page.waitForEvent("download");
