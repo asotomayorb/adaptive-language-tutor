@@ -125,7 +125,7 @@ function enforceSessionDuration(result, input) {
   return result;
 }
 
-function validateTutorResult(result) {
+function validateTutorResult(result, input) {
   if (Buffer.byteLength(JSON.stringify(result), "utf8") > 16 * 1024) {
     throw contractError("The AI provider response exceeds the tutor size limit.");
   }
@@ -295,7 +295,7 @@ export function createAIProvider(env = process.env, fetchImpl = fetch) {
         });
         if (!response.ok) throw await readProviderError(response);
         const data = await response.json();
-        const result = validateTutorResult(extractJson(extractText(data)));
+        const result = validateTutorResult(extractJson(extractText(data)), input);
         return enforceSessionDuration(result, input);
       } catch (error) {
         console.error("[ai-provider] request failed", JSON.stringify({
