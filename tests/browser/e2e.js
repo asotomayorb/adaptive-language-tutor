@@ -42,11 +42,12 @@ try {
 
   await page.goto(baseUrl, { waitUntil: "networkidle" });
   assert.deepEqual(pageErrors, [], "the app should initialize without uncaught browser errors");
-  assert.equal(await page.locator("#welcome-screen").isVisible(), true, "fresh users should see welcome");
-  await page.locator("#welcome-start").click();
-  assert.equal(await page.locator("#language-picker").isVisible(), true, "welcome should open language selection");
-
+  await page.locator("#screen-theory").waitFor({ state: "visible" });
+  assert.equal(await page.locator("#welcome-screen").isVisible(), false, "the app should open directly on its available section");
+  assert.equal(await page.locator("#nav-language-button").isVisible(), true, "the central language icon should be visible immediately");
   const languageOptions = page.locator(".language-mosaic [data-language]");
+  await page.locator("#nav-language-button").click();
+  assert.equal(await page.locator("#language-picker").isVisible(), true, "the central icon should open language selection");
   assert.equal(await languageOptions.count(), 1, "Italian should be the only visible language option");
   assert.equal(await languageOptions.first().getAttribute("data-language"), "Italiano");
   await languageOptions.first().click();
