@@ -120,7 +120,7 @@ try {
     window.__spoken = [];
     window.__speechCancelled = 0;
     const synth = {
-      getVoices: () => [{ name: "French", lang: "fr-FR" }],
+      getVoices: () => [{ name: "French", lang: "fr-FR" }, { name: "Spanish Chile", lang: "es-CL" }],
       speak: utterance => window.__spoken.push({ text: utterance.text, lang: utterance.lang, voice: utterance.voice?.name }),
       cancel: () => { window.__speechCancelled += 1; }
     };
@@ -151,10 +151,15 @@ try {
         contentType: "application/json",
         body: JSON.stringify({
           message: "Vamos praticar uma situação cotidiana.",
-          exercise: { type: "production", prompt: "Comment tu t’appelles ?", expectedAnswer: "Je m’appelle Ana.", acceptedAnswers: ["Je m’appelle Ana."], hint: "Usa la expresión Je m’appelle..." },
+          exercise: { type: "production", prompt: "¿Cómo se dice bonjour?", expectedAnswer: "Je m’appelle Ana.", acceptedAnswers: ["Je m’appelle Ana."], hint: "Usa la expresión Je m’appelle..." },
           evaluation: null,
           learnerUpdate: { estimatedLevel: "A1", vocabulary: [{ term: "s’appeler", meaning: "llamarse" }], errorsToReview: [] },
-          speechSegments: [{ text: "Comment tu t’appelles ?", language: "fr", locale: "fr-FR" }, { text: "Je m’appelle", language: "fr", locale: "fr-FR" }],
+          questionSegments: [
+            { text: "¿Cómo se dice ", language: "es", locale: "es-CL", isTarget: false },
+            { text: "bonjour", language: "fr", locale: "fr-FR", isTarget: true },
+            { text: "?", language: "es", locale: "es-CL", isTarget: false }
+          ],
+          speechSegments: [{ text: "Je m’appelle", language: "fr", locale: "fr-FR" }],
           nextAction: "answer"
         })
       });
@@ -162,7 +167,7 @@ try {
     if (input.task === "request_hint") {
       hintCalls += 1;
       assert.equal(input.session.turn, 0, "asking for a hint must not consume a practice turn");
-      assert.equal(input.session.currentExercise.prompt, "Comment tu t’appelles ?", "hint request must preserve the active exercise");
+      assert.equal(input.session.currentExercise.prompt, "¿Cómo se dice bonjour?", "hint request must preserve the active exercise");
       return route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -171,6 +176,11 @@ try {
           exercise: { type: "production", prompt: "Comment tu t’appelles ?", expectedAnswer: "Je m’appelle Ana.", acceptedAnswers: ["Je m’appelle Ana."], hint: "Piensa en el verbo que expresa tu nombre." },
           evaluation: null,
           learnerUpdate: null,
+          questionSegments: [
+            { text: "¿Cómo se dice ", language: "es", locale: "es-CL", isTarget: false },
+            { text: "bonjour", language: "fr", locale: "fr-FR", isTarget: true },
+            { text: "?", language: "es", locale: "es-CL", isTarget: false }
+          ],
           speechSegments: [{ text: "s’appeler", language: "fr", locale: "fr-FR" }],
           nextAction: "answer"
         })
@@ -202,11 +212,16 @@ try {
   await aiPage.locator("#duration").selectOption("8");
   await aiPage.locator("#start-session").click();
   await aiPage.getByRole("button", { name: "Reintentar sesión" }).click();
-  await aiPage.locator("#lesson-content").getByRole("heading", { name: "Comment tu t’appelles ?" }).waitFor();
-  assert.equal(await aiPage.evaluate(() => window.__spoken[0]?.lang), "fr-FR", "custom AI language should use its explicit target locale");
-  assert.equal(await aiPage.evaluate(() => window.__spoken[0]?.voice), "French", "custom AI locale should select the matching system voice");
-  await aiPage.locator("#lesson-content [data-speak]").first().click();
-  assert.ok(await aiPage.evaluate(() => window.__spoken.length >= 2), "AI fragments should offer manual playback");
+  await aiPage.locator("#lesson-content").getByRole("heading", { name: "¿Cómo se dice bonjour?" }).waitFor();
+  assert.deepEqual(await aiPage.evaluate(() => window.__spoken.slice(0, 3).map(item => [item.text, item.lang])), [
+    ["¿Cómo se dice", "es-CL"], ["bonjour", "fr-FR"], ["?", "es-CL"]
+  ], "mixed questions should be spoken in order using the locale of each segment");
+  assert.equal(await aiPage.evaluate(() => window.__spoken[1]?.voice), "French", "target segment should select the matching installed voice");
+  const targetFragment = aiPage.locator("#lesson-content .target-fragment");
+  assert.equal(await targetFragment.innerText(), "bonjour");
+  assert.equal(await targetFragment.evaluate(node => getComputedStyle(node).textDecorationLine.includes("underline")), true, "only the target-language fragment should be underlined");
+  await targetFragment.click();
+  assert.deepEqual(await aiPage.evaluate(() => window.__spoken.at(-1) && [window.__spoken.at(-1).text, window.__spoken.at(-1).lang]), ["bonjour", "fr-FR"], "manual replay should pronounce only the selected target fragment");
   const spokenBeforeFirstHint = await aiPage.evaluate(() => window.__spoken.length);
   await aiPage.locator("#hint-btn").click();
   await aiPage.locator("#feedback").getByText(/Je m’appelle/).waitFor();
