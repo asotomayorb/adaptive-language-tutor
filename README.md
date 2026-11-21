@@ -92,3 +92,9 @@ Replit queda aplazado hasta que las etapas de auditoría, proveedor real y prueb
 - [x] Se redujo la altura mínima de la pantalla Idiomas para conservar el inicio compacto en móvil.
 - [ ] Browser E2E de la corrección de altura y de la tabla/gráficos sigue pendiente; ver el último run en GitHub Actions antes de declarar validado.
 - [ ] Revisar el preview Render actualizado en móvil y confirmar la distribución visual. El servicio Render aún muestra el deploy anterior; no asumir que ya contiene estos cambios hasta verificar el commit desplegado.
+
+
+## Pantalla de bienvenida y navegación inferior — 21-11-2026
+- Se incorpora una pantalla de bienvenida independiente con el título “Adaptive Language Tutor” y botón “Continuar”; el inicio con secciones y la navegación inferior aparecen solo después de continuar.
+- Se rediseña la barra inferior como una bandeja flotante redondeada, con icono sobre etiqueta y acceso central Idiomas elevado, para aproximarse al esquema visual acordado.
+- Esta modificación corrige la ausencia de la bienvenida y la presentación plana anterior. Debe verificarse visualmente en Render y con Browser E2E; no declarar despliegue actualizado hasta confirmar el SHA servido.
