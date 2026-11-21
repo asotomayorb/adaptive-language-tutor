@@ -540,3 +540,12 @@ Para cada escenario registrar:
 - [x] Deploy LIVE: dep-dc0c80k0916s73db0ftg (commit 94aa33457e7d244f7679ae72186ad2916b5623e9).
 - [ ] Ejecutar las pruebas de audio y disposición anteriores en Android físico sobre esta versión.
 
+
+
+## 0. Alcance temporal de navegación (21-11-2026)
+- [ ] La barra inferior muestra cinco posiciones: Ruta, Entrenamiento, Idiomas central, Teoría y Estadísticas.
+- [ ] Ruta y Entrenamiento se muestran deshabilitados y no responden a pulsación ni teclado.
+- [ ] El botón central abre el selector de idioma; solo Italiano está visible y seleccionable.
+- [ ] Tras elegir Italiano se abre Teoría; categorías, temas, detalle y pronunciación siguen funcionando.
+- [ ] Estadísticas abre y conserva sus gráficos/tabla y navegación interna.
+- [ ] La barra inferior no permite entrar a Ruta o Entrenamiento por rutas de navegación indirectas.
