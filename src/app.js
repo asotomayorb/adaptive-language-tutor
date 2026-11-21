@@ -239,7 +239,7 @@ $("setup-form").addEventListener("submit", event => {
 
 function getAILearnerContext(config = session.config) {
   return {
-    nativeLanguage: "es",
+    nativeLanguage: "es",\n    nativeLanguageLocale: config.nativeLanguageLocale || "es-CL",
     targetLanguage: config.languageId,
     targetLanguageLabel: config.language,
     targetLanguageLocale: config.languageLocale || catalog?.locale || config.languageId,
@@ -298,8 +298,18 @@ function renderAITutorTurn(result) {
   $("error-count").textContent = session.errors.length;
 
   const message = '<p>' + escapeHTML(result.message || "") + '</p>';
+  const questionSegments = (result.questionSegments || []).filter(item =>
+    item && typeof item.text === "string" && item.text &&
+    typeof item.locale === "string" && item.locale &&
+    typeof item.isTarget === "boolean"
+  );
   const prompt = aiCurrentExercise.prompt
-    ? '<h3>' + escapeHTML(aiCurrentExercise.prompt) + '</h3>'
+    ? '<h3 class="mixed-question">' + (questionSegments.length
+        ? questionSegments.map(item => item.isTarget
+          ? '<button class="target-fragment" type="button" data-speak="' + escapeHTML(item.text) + '" data-locale="' + escapeHTML(item.locale) + '" aria-label="Reproducir fragmento en idioma objetivo">' + escapeHTML(item.text) + '</button>'
+          : '<span>' + escapeHTML(item.text) + '</span>'
+        ).join("")
+        : escapeHTML(aiCurrentExercise.prompt)) + '</h3>'
     : '<p class="muted">Responde libremente para continuar la conversación.</p>';
   const feedback = result.evaluation?.feedback
     ? '<p class="ai-feedback">' + escapeHTML(result.evaluation.feedback) + '</p>'
@@ -321,7 +331,8 @@ function renderAITutorTurn(result) {
     : "";
   $("lesson-content").innerHTML = message + feedback + prompt + speechMarkup + vocabularyMarkup;
   bindSpeakerButtons($("lesson-content"));
-  speech.speakSequence(speechSegments, { automatic: true });
+  const initialQuestionAudio = questionSegments.map(item => ({ text: item.text, locale: item.locale }));
+  speech.speakSequence([...initialQuestionAudio, ...speechSegments], { automatic: true });
   $("feedback").classList.add("hidden");
   $("hint-btn").hidden = false;
   $("review-btn").hidden = true;
