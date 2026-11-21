@@ -65,6 +65,12 @@ document.querySelectorAll(".nav-item[data-screen]:not([disabled])").forEach(butt
   button.addEventListener("click", () => setActiveScreen(button.dataset.screen));
 });
 $("open-training").addEventListener("click", () => setActiveScreen("training"));
+$("welcome-continue").addEventListener("click", () => {
+  $("screen-welcome").classList.add("hidden");
+  $("screen-languages").classList.remove("hidden");
+  document.querySelector(".bottom-nav").classList.remove("hidden");
+  setActiveScreen("languages");
+});
 
 function speakerButton(text, locale) {
   return '<button class="speak-button" type="button" data-speak="' + escapeHTML(text) + '" data-locale="' + escapeHTML(locale || "") + '" aria-label="Reproducir pronunciación" title="Escuchar">▶</button>';
