@@ -1,6 +1,5 @@
 import { createSession, recordAnswer, recordTutorEvaluation, evaluateAnswer, buildSummary, getAdaptation, applyLearnerUpdate } from "./core/pedagogy.js";
 import { loadProgress, saveProgress, persistSession, getDueCards, gradeReview, getProgressStats } from "./core/storage.js";
-import { ptBR } from "./content/pt-BR.js";
 import { italian } from "./content/it.js";
 import { checkTutorHealth, requestTutorTurn } from "./core/tutor-client.js";
 import { escapeHTML } from "./core/html.js";
@@ -74,13 +73,6 @@ function autoSpeak(text, locale = catalog?.locale) {
 const topicLabels = { daily:"vida cotidiana", travel:"viajes", food:"comida y restaurantes", work:"trabajo y estudios", random:"tema sorpresa" };
 function getSelectedCatalog() {
   return catalogs[$("language").value] || null;
-}
-function updateCustomLanguageFields() {
-  const custom = $("language").value === "other";
-  $("custom-language-name-field").classList.toggle("hidden", !custom);
-  $("custom-language-locale-field").classList.toggle("hidden", !custom);
-  $("custom-language-name").required = custom;
-  $("custom-language-locale").required = custom;
 }
 let session = null;
 let catalog = null;
