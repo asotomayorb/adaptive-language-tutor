@@ -75,7 +75,7 @@ body{min-height:100svh;background:#f3f5f8}
 @media(max-width:520px){
  .app-shell{width:calc(100% - 24px);padding-top:10px}
  .screen-heading{padding:24px 0 16px}
- #screen-languages{min-height:calc(100svh - 160px)}
+ #screen-languages{min-height:calc(100svh - 210px)}
  .statistics-grid{gap:9px}.stat-card{padding:13px}.stat-card strong{font-size:23px}
  .session-active .lesson-panel{padding-left:0;padding-right:0}
 }
