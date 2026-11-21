@@ -200,6 +200,7 @@ test("provider allows session completion at the configured duration", async () =
     exercise: null,
     evaluation: { status: "correct", feedback: "Bien.", correction: null, skill: "Producción" },
     learnerUpdate: null,
+    questionSegments: [],
     speechSegments: [],
     nextAction: "finish"
   };
