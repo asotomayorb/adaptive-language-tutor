@@ -4,7 +4,7 @@ Aplicación web de aprendizaje de idiomas con tutor conversacional de IA y modo 
 
 ## Estado actual
 
-**Reconstrucción funcional en curso.** La rama `rebuild/functional-baseline` se creó desde la base modular `feature/ai-tutor-pedagogy`. Ya incluye un shell móvil inicial con cinco secciones, Italiano como único idioma objetivo, fixtures locales mínimos y TTS segmentado en el tutor IA. La validación automatizada se está ejecutando sobre esta rama. Aún no está listo para producción ni se ha realizado la prueba humana Android.
+**Reconstrucción funcional en curso.** La rama `rebuild/functional-baseline` se creó desde la base modular `feature/ai-tutor-pedagogy`. Ya incluye un shell móvil inicial con cinco secciones, Italiano como único idioma objetivo, fixtures locales mínimos y TTS segmentado en el tutor IA. `npm run check`, `npm test` y Browser E2E están aprobados en el commit `95de77c`. Aún no está listo para producción ni se ha realizado la prueba humana Android.
 
 **Próximo paso:** cerrar CI/Browser E2E, verificar el preview Render de esta rama y continuar con persistencia, navegación y ciclo de vida en todos los flujos. El detalle de etapas, verificaciones y pendientes está en [PROJECT_STATUS.md](PROJECT_STATUS.md). El procedimiento de validación manual está preparado en [HUMAN_TEST_PLAN.md](HUMAN_TEST_PLAN.md).
 
@@ -37,8 +37,8 @@ Rama de trabajo: `rebuild/functional-baseline`. PR #2 y PR #3 permanecen intacto
 - [x] Sesión de entrenamiento sin navegación inferior, con control de audio y confirmación antes de descartar una sesión.
 - [x] Locale nativo predeterminado provisional `es-CL`; falta integrarlo con la configuración global para que sea modificable.
 - [x] Prueba Browser E2E agregada para consigna mixta español/francés, orden de voces, subrayado y replay del fragmento objetivo.
-- [x] `npm run check` y `npm test` aprobados en el commit `768e98e`.
-- [ ] Browser E2E del commit `768e98e` pendiente de resultado final.
+- [x] `npm run check`, `npm test` y Browser E2E aprobados en el commit `95de77c`.
+- [x] Browser E2E valida el caso mixto español/italiano, replay del fragmento objetivo, ausencia de TTS en respuestas, navegación, pantalla móvil sin scroll, persistencia, exportación y cierre/descartado de sesión.
 - [ ] Extender la segmentación mixta a todos los tipos de consigna y futuras pantallas; verificar que opciones y respuestas no reciban TTS.
 - [x] Selector y catálogo activo limitados a italiano. Los archivos de portugués e inglés permanecen en el repositorio como contenido histórico, pero ya no se ofrecen en la interfaz.
 
