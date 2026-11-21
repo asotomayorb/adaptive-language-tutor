@@ -61,6 +61,19 @@ const GEMINI_RESPONSE_SCHEMA = {
         required: ["text", "language", "locale", "isTarget"]
       }
     },
+    questionSegments: {
+      type: "ARRAY",
+      items: {
+        type: "OBJECT",
+        properties: {
+          text: { type: "STRING" },
+          language: { type: "STRING" },
+          locale: { type: "STRING" },
+          isTarget: { type: "BOOLEAN" }
+        },
+        required: ["text", "language", "locale", "isTarget"]
+      }
+    },
     speechSegments: {
       type: "ARRAY",
       items: {
@@ -175,7 +188,10 @@ function validateTutorResult(result) {
   if (result.exercise?.prompt && !result.questionSegments?.length) {
     throw contractError("The AI provider omitted the question speech segments.");
   }
-  if (result.questionSegments?.some(item => item.isTarget && input?.learner?.targetLanguageLocale && item.locale !== input.learner.targetLanguageLocale)) {
+  if (result.questionSegments?.some(item =>
+    (item.isTarget && input?.learner?.targetLanguageLocale && item.locale !== input.learner.targetLanguageLocale) ||
+    (!item.isTarget && input?.learner?.nativeLanguageLocale && item.locale !== input.learner.nativeLanguageLocale)
+  )) {
     throw contractError("The AI provider returned a target question segment with a different locale.");
   }
   if (result.speechSegments !== undefined && (!Array.isArray(result.speechSegments) ||
