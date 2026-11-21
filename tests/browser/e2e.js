@@ -310,9 +310,7 @@ try {
     localStorage.setItem(key, JSON.stringify(progress));
   });
   await aiPage.reload({ waitUntil: "networkidle" });
-  await aiPage.locator("#language").selectOption("other");
-  await aiPage.locator("#custom-language-name").fill("Italiano");
-  await aiPage.locator("#custom-language-locale").fill("it-IT");
+  await aiPage.locator('[data-screen="stats"]').click();
   await aiPage.getByRole("button", { name: /Iniciar repaso/ }).click();
   await aiPage.locator("#spaced-answer").fill("Buongiorno");
   await aiPage.locator("#check-spaced").click();
