@@ -21,3 +21,7 @@
 .vocabulary-item{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px}
 .vocabulary-item .speak-button{width:28px;min-width:28px;height:27px}
 @media(max-width:620px){.header-actions{gap:7px}.status{max-width:105px;text-align:right}}
+
+.mixed-question{display:flex;flex-wrap:wrap;gap:.28em;align-items:baseline}
+.target-fragment{display:inline;padding:0;border:0;border-radius:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px;cursor:pointer}
+.target-fragment:focus-visible{outline:2px solid #6684a8;outline-offset:3px;border-radius:3px}
