@@ -616,3 +616,9 @@
 .review-answer-reveal p{margin:4px 0}
 .review-translation{color:#68778c;font-size:13px}
 @media(max-width:390px){.summary-actions{gap:7px}.summary-action{font-size:10px;padding:10px 4px}}
+
+
+/* Temporary product scope: keep unavailable sections visible but non-interactive */
+.nav-item:disabled{opacity:.34;filter:grayscale(1);cursor:not-allowed;pointer-events:none}
+.nav-language{touch-action:manipulation}
+.nav-language:focus-visible,.nav-item:focus-visible{outline:3px solid #79a9dc;outline-offset:3px}
