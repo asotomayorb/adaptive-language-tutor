@@ -938,10 +938,22 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - **Árbol B2:** conservar sin cambios la línea/borde lateral azul que identifica cada unidad y su estado expandido. No alterar su color, posición, continuidad, grosor ni comportamiento.
 - **Subtemas:** eliminar los conectores/viñetas duplicados que aparecen a la izquierda. Sustituirlos por un único marcador sencillo por subtema (punto pequeño o segmento breve), manteniendo la sangría, los iconos de categoría y la jerarquía visual. No dibujar una segunda línea vertical para los subtemas.
 - **Detalle de Teoría:** el orden del encabezado debe ser: título de sección **«Teoría»** → ruta jerárquica (etapa y unidad) → categoría del subtema → título del subtema → contenido. La ruta no debe aparecer debajo del título del subtema.
-- **Audio manual:** corregir la reproducción individual del texto en idioma objetivo. El control debe reproducir exactamente el fragmento objetivo asociado, con su locale explícito (para la validación actual, portugués brasileño pt-BR), sin leer la traducción en español ni depender del audio automático global. Debe funcionar al pulsarlo manualmente en Android.
+- **Audio manual:** corregir la reproducción individual del texto en idioma objetivo. El control debe reproducir exactamente el fragmento objetivo asociado, con su locale explícito (para la validación actual, italiano it-IT), sin leer la traducción en español ni depender del audio automático global. Debe funcionar al pulsarlo manualmente en Android.
 - **No regresiones:** conservar el contenido, navegación, selección azul B2, expansión exclusiva y borde lateral azul de unidades.
 
 ### Estado
 - La propuesta de interfaz de estos tres ajustes fue presentada para revisión visual.
 - **Pendiente de implementación:** los cambios anteriores aún no se han aplicado al código ni desplegado. La reproducción manual de voz sigue siendo un defecto abierto hasta que se corrija y se valide auditivamente en Android.
-- Antes de cerrar esta iteración: actualizar pruebas Browser E2E para orden de encabezado y ausencia de conectores duplicados; añadir/verificar prueba de TTS con locale pt-BR; ejecutar npm run check, npm test y Browser E2E; desplegar y confirmar Render LIVE.
+- Antes de cerrar esta iteración: actualizar pruebas Browser E2E para orden de encabezado y ausencia de conectores duplicados; añadir/verificar prueba de TTS con locale it-IT; ejecutar npm run check, npm test y Browser E2E; desplegar y confirmar Render LIVE.
+
+
+### Implementación de ajustes de Teoría B2 e italiano — 22-11-2026
+- [x] Subtemas: se sustituyeron los conectores de rama duplicados por un único punto sencillo. Se eliminó la línea vertical secundaria de los subtemas.
+- [x] Se conserva sin cambios el borde lateral azul de cada unidad: grosor de 2 px, color normal y estado expandido.
+- [x] Detalle: la ruta «A1 · Principiante > Unidad» ahora se presenta inmediatamente debajo del título de sección «Teoría» y antes de categoría y título del subtema.
+- [x] Pronunciación manual: se mantienen controles individuales incluso para palabras y frases cortas. Cada botón conserva el texto objetivo y su locale explícito.
+- [x] Idioma vigente de la aplicación: **italiano (it-IT)**. Cualquier referencia a pt-BR en notas anteriores describe versiones históricas y no es un requisito vigente para esta iteración.
+- [x] Browser E2E ampliado para comprobar marcador único, ausencia de conectores, borde azul de unidad, posición de ruta y reproducción manual con locale it-IT.
+- [ ] Ejecutar y confirmar npm run check, npm test y Browser E2E en CI.
+- [ ] Confirmar Render Preview LIVE con el commit de esta iteración.
+- [ ] Validación auditiva manual pendiente en teléfono Android real. La prueba automatizada verifica el texto y locale enviados a SpeechSynthesis, pero no puede certificar la voz instalada ni el sonido físico del dispositivo.
