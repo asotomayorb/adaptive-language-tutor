@@ -952,3 +952,12 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Render Preview: deploy `dep-dc1jkoajnfac738v4j7g`, estado **LIVE**, commit `af0680ca58eb3c33d2f4a92ce6372d650ce1c6f4`.
 - El servicio continúa con auto-deploy desactivado; el despliegue fue manual y el commit de preview coincide con el código validado.
 - La prueba humana en Android/móvil queda pendiente para confirmar fidelidad visual, densidad, interacción táctil y legibilidad.
+
+
+## Ajustes de Teoría B2 e idioma italiano — 22-11-2026
+- Se simplificó el marcador de cada subtema a un único punto y se eliminó la línea vertical secundaria. El borde izquierdo azul de cada bloque de unidad se mantuvo con sus reglas originales.
+- La ruta de etapa/unidad se movió fuera del encabezado del subtema y quedó bajo el título de sección «Teoría».
+- Se conservaron los botones de pronunciación manual para fragmentos objetivo cortos; el locale esperado en la interfaz actual es it-IT.
+- Se amplió Browser E2E para validar marcadores, borde azul, orden de encabezado y llamada de voz manual en italiano.
+- Commits de implementación: dae2d56000277b71f53f4bd8231a5c0b230c1830 (app), 89a7f5984b8a149d91806c7740f0eac30f9b2b95 (HTML), 3fe60831f3f00e06078110eb924c305c4a151270 (CSS), 04a11fe73764724df0030295740442df000be484 (E2E).
+- Pendiente: CI, despliegue Render y prueba auditiva real en Android. No considerar validado el audio físico hasta esa comprobación.
