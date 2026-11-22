@@ -2081,6 +2081,14 @@ const theoryContent = {
     ["Conversación cotidiana", "Preguntas abiertas y respuestas breves para mantener una conversación y mostrar interés."]
   ]]
 };
+const theoryUnits=[
+{title:"Primeros contactos",categories:{grammar:[0,1],vocabulary:[0],expressions:[0]}},
+{title:"Datos personales y entorno",categories:{grammar:[2],vocabulary:[1],expressions:[3]}},
+{title:"Rutinas y tiempo",categories:{grammar:[3],vocabulary:[2],expressions:[4]}},
+{title:"Comida y compras",categories:{grammar:[4],vocabulary:[3],expressions:[2]}},
+{title:"Viajes y orientación",categories:{grammar:[5],vocabulary:[4],expressions:[1,3]}}
+];
+const theoryCategoryLabels={grammar:"Gramática",vocabulary:"Vocabulario",expressions:"Expresiones"};
 const theorySamples = {
   "Portugués brasileño":{pronouns:"eu, você, ele, ela, nós, vocês, eles/elas",greeting:"Olá! Bom dia! Até logo!",intro:"Meu nome é Ana. Sou do Chile.",articles:"o, a, os, as; um, uma, uns, umas"},
   "Inglés":{pronouns:"I, you, he, she, it, we, they",greeting:"Hello! Good morning! See you later!",intro:"My name is Ana. I'm from Chile.",articles:"the; a, an"},
