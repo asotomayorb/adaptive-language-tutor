@@ -77,7 +77,7 @@ try {
   assert.equal(await page.locator("#theory-list-title").innerText(), "Primeros contactos", "unit heading should retain its name after selection");
   assert.ok(await page.locator("#theory-list-items .theory-category-icon").count() > 0, "category should be represented by an icon on each subtopic");
   assert.equal(await page.locator("#theory-topics-level-title").innerText(), "A1 · Principiante", "subtopic list should retain the level heading");
-  const headerHeightBefore = await page.locator("#theory-heading-stack").first().evaluate(el => el.getBoundingClientRect().height);
+  const headerHeightBefore = await page.locator(".theory-heading-stack").first().evaluate(el => el.getBoundingClientRect().height);
   await page.locator("#theory-list-items [data-theory-topic]").first().click();
   assert.equal(await page.locator("#theory-detail").isVisible(), true, "Theory topic detail should open");
   assert.equal(await page.locator("#theory-topic-list").isVisible(), false, "detail should replace the list in-flow rather than overlay it");
