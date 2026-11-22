@@ -899,3 +899,13 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Se retiró la pantalla intermedia de categorías. Las unidades abren directamente la lista de subtemas, con icono de categoría junto a cada nombre.
 - Se mantiene «A1 · Principiante» como encabezado de la vista de unidades y el nombre exacto de la unidad al abrir sus subtemas; encabezados alineados a la izquierda.
 - Validación automatizada y despliegue de esta iteración pendientes de ejecución/verificación.
+
+
+## Teoría: encabezados acumulativos y detalle en flujo — 22-11-2026
+- [x] Se agregó el encabezado de nivel encima del encabezado de unidad en la lista de subtemas y en el detalle.
+- [x] Las filas de encabezado mantienen altura fija y controles de retorno por nivel.
+- [x] El detalle dejó de ser un overlay fijo a pantalla completa; ahora se presenta dentro del flujo de Teoría.
+- [x] El encabezado del detalle muestra icono de categoría antes de su nombre.
+- [x] Browser E2E actualizado para comprobar acumulación, altura, posición en flujo y retorno.
+- [ ] Ejecutar y confirmar CI/E2E sobre el commit final.
+- [ ] Confirmar despliegue LIVE del preview canónico; revisión visual en Android permanece pendiente.
