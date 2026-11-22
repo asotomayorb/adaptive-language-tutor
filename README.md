@@ -879,3 +879,5 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - El subtema se muestra como contenido siguiente dentro de Teoría, no como pantalla fija a pantalla completa.
 - El encabezado del detalle muestra el icono de categoría inmediatamente antes del nombre (por ejemplo, icono de gramática + «Gramática»).
 - Validación automatizada y despliegue de esta revisión quedan pendientes hasta completar CI y confirmar el preview LIVE.
+
+- Último commit de esta revisión: `ce437d5c2b6788ed5f480728f9f039537f687b0e`; Render inició el deploy `dep-dc18tbvf3r2c73c0uogg` y seguía en construcción al registrar esta nota. No declarar el preview actualizado hasta que el deploy figure LIVE.
