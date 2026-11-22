@@ -2679,13 +2679,7 @@ function openTheoryTopic(index) {
   $("theory-next").disabled = activeTheoryIndex === activeTheoryTopics.length - 1;
 }
 
-function populateTheoryUnits() {
-  $("theory-unit-select").innerHTML = '<option value="">Selecciona una unidad</option>' +
-    theoryUnits.map((unit, index) => '<option value="' + index + '">' + escapeHTML(unit.title) + '</option>').join("");
-  $("theory-unit-field").classList.remove("hidden");
-  $("theory-topic-field").classList.add("hidden");
-  $("theory-topic-select").innerHTML = '<option value="">Selecciona un subtema</option>';
-}
+let expandedTheoryUnit = null;
 
 function populateTheoryTopics(unitIndex) {
   activeTheoryUnit = Number(unitIndex);
@@ -2696,34 +2690,64 @@ function populateTheoryTopics(unitIndex) {
       return [item[0], item[1], i, key];
     })
   );
-  const options = Object.entries(unit.categories).map(([key, indices]) => {
-    const category = theoryCategoryLabels[key] || key;
-    const entries = indices.map(sourceIndex => {
-      const optionIndex = activeTheoryTopics.findIndex(item => item[2] === sourceIndex && item[3] === key);
-      return '<option value="' + optionIndex + '">' + escapeHTML(activeTheoryTopics[optionIndex][0]) + '</option>';
-    }).join("");
-    return '<optgroup label="' + escapeHTML(category) + '">' + entries + '</optgroup>';
-  }).join("");
-  $("theory-topic-select").innerHTML = '<option value="">Selecciona un subtema</option>' + options;
-  $("theory-topic-field").classList.remove("hidden");
 }
 
-$("theory-level-select").addEventListener("change", event => {
-  if (event.target.value === "a1") populateTheoryUnits();
-});
-$("theory-unit-select").addEventListener("change", event => {
-  if (event.target.value === "") {
-    $("theory-topic-field").classList.add("hidden");
-    return;
-  }
-  populateTheoryTopics(event.target.value);
-});
-$("theory-topic-select").addEventListener("change", event => {
-  if (event.target.value === "") return;
-  const index = Number(event.target.value);
-  activeTheoryCategory = theoryCategoryLabels[activeTheoryTopics[index][3]];
-  openTheoryTopic(index);
-});
+function populateTheoryUnits() {
+  const tree = $("theory-tree");
+  tree.innerHTML = theoryUnits.map((unit, unitIndex) => {
+    const expanded = expandedTheoryUnit === unitIndex;
+    const branches = expanded
+      ? Object.entries(unit.categories).flatMap(([key, indices]) =>
+          indices.map(sourceIndex => {
+            const item = theoryContent[key][1][sourceIndex];
+            return { key, sourceIndex, title: item[0] };
+          })
+        ).map((topic, topicIndex, topics) =>
+          '<button class="theory-tree-topic" type="button" data-unit-index="' + unitIndex +
+          '" data-category="' + topic.key + '" data-theory-topic="' + topic.sourceIndex + '">' +
+          '<span class="theory-tree-connector" aria-hidden="true">' + (topicIndex === topics.length - 1 ? '└' : '├') + '</span>' +
+          '<span class="theory-category-icon theory-tree-category-icon" aria-hidden="true">' + theoryCategoryIcons[topic.key] + '</span>' +
+          '<span class="theory-tree-topic-name">' + escapeHTML(topic.title) + '</span></button>'
+        ).join("")
+      : "";
+    return '<section class="theory-tree-unit' + (expanded ? ' is-expanded' : '') + '">' +
+      '<button class="theory-unit-row" type="button" data-unit-index="' + unitIndex +
+      '" aria-expanded="' + String(expanded) + '">' +
+      '<span class="theory-unit-number">' + (unitIndex + 1) + '.</span>' +
+      '<span class="theory-unit-name">' + escapeHTML(unit.title) + '</span>' +
+      '<span class="theory-unit-chevron" aria-hidden="true">' + (expanded ? '⌄' : '›') + '</span>' +
+      '</button>' +
+      (expanded ? '<div class="theory-tree-branches">' + branches + '</div>' : '') +
+      '</section>';
+  }).join("");
+
+  tree.querySelectorAll(".theory-unit-row").forEach(button => {
+    button.addEventListener("click", () => {
+      const unitIndex = Number(button.dataset.unitIndex);
+      expandedTheoryUnit = expandedTheoryUnit === unitIndex ? null : unitIndex;
+      if (expandedTheoryUnit === null) {
+        activeTheoryUnit = null;
+        activeTheoryTopics = [];
+      } else {
+        populateTheoryTopics(expandedTheoryUnit);
+      }
+      populateTheoryUnits();
+    });
+  });
+
+  tree.querySelectorAll(".theory-tree-topic").forEach(button => {
+    button.addEventListener("click", () => {
+      const unitIndex = Number(button.dataset.unitIndex);
+      const categoryKey = button.dataset.category;
+      const sourceIndex = Number(button.dataset.theoryTopic);
+      populateTheoryTopics(unitIndex);
+      const topicIndex = activeTheoryTopics.findIndex(topic => topic[2] === sourceIndex && topic[3] === categoryKey);
+      if (topicIndex < 0) return;
+      activeTheoryCategory = theoryCategoryLabels[categoryKey] || categoryKey;
+      openTheoryTopic(topicIndex);
+    });
+  });
+}
 $("theory-back").addEventListener("click", () => {
   speech.stop();
   $("theory-detail").classList.add("hidden");
@@ -2731,6 +2755,7 @@ $("theory-back").addEventListener("click", () => {
 });
 $("theory-prev").addEventListener("click", () => openTheoryTopic(activeTheoryIndex - 1));
 $("theory-next").addEventListener("click", () => openTheoryTopic(activeTheoryIndex + 1));
+populateTheoryUnits();
 $("variant-close").addEventListener("click", () => $("variant-dialog").close());
 function persistSettings() {
   const savedSettings = {
