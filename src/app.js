@@ -2664,7 +2664,7 @@ function openTheoryTopic(index) {
   } else if (activeTheoryCategory === "Gramática" && sourceIndex === 2) {
     detailMarkup = renderVerbLesson(languageName);
   } else if (activeTheoryCategory === "Gramática" && sourceIndex >= 3) {
-    detailMarkup = renderTenseLesson(languageName, activeTheoryIndex);
+    detailMarkup = renderTenseLesson(languageName, sourceIndex);
   } else if (sampleByTopic) {
     detailMarkup += '<section class="theory-example"><span>' + escapeHTML(sampleLabel) + ' · ' + escapeHTML(languageDefinitions[$("language").value]?.label || languageName) + '</span><p class="theory-target-word">' + escapeHTML(sampleByTopic) + '</p></section>';
   }
@@ -2675,7 +2675,7 @@ function openTheoryTopic(index) {
   speech.stop();
   $("theory-description").querySelectorAll("[data-speak]").forEach(button=>{
     const spoken=String(button.dataset.speak||"").trim();
-    if(spoken.length<=32&&!/[.!?]/.test(spoken)){
+    if(spoken.length<=32){
       if(button.previousElementSibling)button.previousElementSibling.classList.add("theory-target-word");
       button.remove();
     }
