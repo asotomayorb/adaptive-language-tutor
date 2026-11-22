@@ -913,9 +913,12 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - La presentación visual detallada de filas, conectores y detalle de subtema queda sujeta a revisión de los ejemplos antes de implementarse.
 
 
-### Refinamiento visual de árbol de Teoría — 22-11-2026
-- Se ajusta la propuesta visual para recuperar el estilo B original: árbol jerárquico compacto, con conectores de ramas mediante segmentos y sangría hacia la izquierda para los subtemas.
-- Reducir la altura vertical de filas y espacios; evitar tarjetas altas o contenedores innecesarios. Mantener visibles las unidades de la lista.
-- La numeración de unidades es arábiga (1, 2, 3, 4, 5, 6), no romana.
-- Se conserva la regla de expansión exclusiva: solo una unidad/subcategoría expandida a la vez; al abrir otra, la anterior se colapsa.
-- Los ejemplos visuales de esta revisión quedan pendientes de aprobación antes de implementación.
+### Diseño visual confirmado de Teoría — variante B2 (22-11-2026)
+- Variante elegida: **B2 — Ramificaciones independientes**, con selección azul.
+- Cada unidad es un bloque independiente con borde izquierdo azul; la unidad expandida recibe un fondo azul muy tenue y un borde azul más marcado.
+- Los subtemas aparecen debajo de la unidad, con sangría a la izquierda y conectores de rama `├` / `└`. No se numeran los subtemas.
+- La numeración arábiga (1, 2, 3, 4, 5, 6) identifica exclusivamente las unidades y respeta su orden.
+- Solo una unidad puede permanecer expandida a la vez. Al abrir otra, la anterior se colapsa automáticamente; tocar la unidad abierta la vuelve a colapsar.
+- La presentación es compacta y vertical; no usar selectores desplegables, tarjetas altas, nodos circulares ni líneas verticales compartidas por toda la lista.
+- Las categorías Gramática, Vocabulario y Expresiones siguen siendo identificadores visuales de los subtemas, no niveles jerárquicos.
+- El detalle de subtema conserva su contenido, navegación anterior/siguiente y retorno único; al volver, mantiene expandida la unidad de origen.
