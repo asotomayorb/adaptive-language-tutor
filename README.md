@@ -870,4 +870,4 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Commit de código: `0b96d5a007005a0b3b4a59d1336891fb0eab736e`.
 - `npm run check` + `npm test`: aprobados en [GitHub Actions](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44992684949).
 - Browser E2E: en ejecución al registrar esta nota: [run 44992684991](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44992684991).
-- Render Preview: deploy `dep-dc18fkeq1p3s73fg7t6g` en actualización; no declarar LIVE hasta confirmar su estado.
+- Render Preview: **LIVE**, deploy `dep-dc18fkeq1p3s73fg7t6g`, commit `0b96d5a007005a0b3b4a59d1336891fb0eab736e`; [preview canónico](https://adaptive-language-tutor-preview-5b3d.onrender.com/).
