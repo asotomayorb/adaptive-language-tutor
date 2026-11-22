@@ -657,3 +657,21 @@
 #theory-level-heading,#theory-list-title{text-align:left}
 .theory-topic-label{display:flex;align-items:center;gap:10px;min-width:0}
 .theory-category-icon{display:inline-grid;place-items:center;flex:0 0 28px;width:28px;height:28px;border-radius:8px;background:#edf2f8;color:#234d78;font-size:13px;font-weight:800}
+
+
+/* Theory drill-down: cumulative, fixed-height hierarchy headers and inline detail. */
+.theory-heading-stack{display:flex;flex-direction:column;gap:0;margin:0 0 14px;flex:0 0 auto}
+.theory-heading-row{display:grid;grid-template-columns:40px minmax(0,1fr);align-items:center;column-gap:10px;min-height:54px;height:54px;border-bottom:1px solid #e3e9f1}
+.theory-heading-row .back-control{width:40px;height:40px;min-width:40px}
+.theory-heading-row h2{min-width:0;margin:0;text-align:left;font-size:16px;line-height:1.2;font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.theory-topic-heading-row{grid-template-columns:40px minmax(0,1fr) auto}
+.theory-topic-heading{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:2px}
+.theory-topic-heading .eyebrow{margin:0;display:flex;align-items:center;gap:6px;font-size:11px;line-height:1.2;letter-spacing:.5px;text-transform:uppercase}
+.theory-topic-heading h2{white-space:normal;font-size:16px;line-height:1.2}
+.theory-detail-inline{display:flex;flex-direction:column;min-width:0;margin-top:12px;padding:0 0 16px}
+.theory-detail-inline .theory-slide-content{width:100%;margin:0;padding:12px 0 20px;overflow:visible;flex:0 0 auto}
+.theory-detail-inline .theory-slide-footer{width:100%;margin-top:12px}
+.theory-detail-inline .theory-slide-footer button{min-height:48px}
+.theory-detail-inline #theory-description .theory-slide-text{font-size:15px;line-height:1.6}
+.theory-topic-heading-row #theory-counter{font-size:12px;white-space:nowrap;padding-left:4px}
+@media(max-width:620px){.theory-heading-row{height:54px;min-height:54px}.theory-heading-row h2{font-size:15px}.theory-topic-heading h2{font-size:15px}.theory-heading-stack{margin-bottom:12px}}
