@@ -652,3 +652,8 @@
 .theory-hierarchy>h2{margin:0 0 12px;font-size:17px;text-align:center;color:#29425f}
 .theory-hierarchy .subscreen-header{margin-bottom:14px}
 .theory-target-word{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+
+/* Theory navigation: persistent, left-aligned headings and category markers. */
+#theory-level-heading,#theory-list-title{text-align:left}
+.theory-topic-label{display:flex;align-items:center;gap:10px;min-width:0}
+.theory-category-icon{display:inline-grid;place-items:center;flex:0 0 28px;width:28px;height:28px;border-radius:8px;background:#edf2f8;color:#234d78;font-size:13px;font-weight:800}
