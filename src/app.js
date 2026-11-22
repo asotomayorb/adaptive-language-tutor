@@ -1934,7 +1934,6 @@ function showScreen(name) {
     $("theory-detail").classList.add("hidden");
     $("theory-topic-list").classList.add("hidden");
     $("theory-unit-list").classList.add("hidden");
-    $("theory-category-screen").classList.add("hidden");
     $("theory-level-list").classList.remove("hidden");
   }
   if (name === "exercises") {
@@ -2710,10 +2709,7 @@ $("theory-list-back").addEventListener("click", () => {
   $("theory-topic-list").classList.add("hidden");
   $("theory-category-screen").classList.remove("hidden");
 });
-$("theory-category-back").addEventListener("click", () => {
-  $("theory-category-screen").classList.add("hidden");
-  $("theory-unit-list").classList.remove("hidden");
-});
+
 $("theory-back").addEventListener("click", () => {
   speech.stop();
   $("theory-detail").classList.add("hidden");
