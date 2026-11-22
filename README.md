@@ -843,3 +843,10 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Render confirma el preview canónico LIVE desde el commit 7fc2cf5404fa637722e78060a12df9b8ef11f394, deploy dep-dc12va0u01pc738jrqtg: https://adaptive-language-tutor-preview-5b3d.onrender.com.
 - El preview alternativo de reconstrucción queda archivado: su rama conserva el código como respaldo, el entrypoint original se guarda en archive/rebuild-functional-baseline-index.html, y el servicio alternativo redirige al preview canónico (deploy LIVE dep-dc12u5ou01pc738jnm40). No eliminar la rama ni los datos históricos.
 - La verificación E2E se ejecutó en Chromium con viewport móvil; no reemplaza la revisión visual y táctil humana en Android.
+
+
+## Refinamiento vertical móvil — 22-11-2026
+- La navegación inferior debe mostrar sus cinco destinos en una sola fila, sin que Estadísticas se desplace a una segunda línea; conservar el botón central de Idiomas destacado.
+- En las pantallas principales, el título de sección mantiene su tamaño y queda alineado verticalmente con el control de audio de la cabecera.
+- La lista de temas de Teoría usa filas compactas con espacio suficiente entre ellas y área táctil adecuada; evitar tarjetas excesivamente altas para títulos breves.
+- Propuesta de organización futura de Teoría: unidades progresivas vinculadas al MCER (A1, A2, B1, B2, C1/C2), con temas agrupados por objetivo comunicativo y subtemas de gramática, vocabulario y expresiones. El esquema detallado se mantiene como propuesta hasta revisión; no implica que el contenido esté implementado.
