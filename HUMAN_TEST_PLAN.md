@@ -569,7 +569,7 @@ Para cada escenario registrar:
 
 
 ## Teoría: jerarquía y audio manual — 22-11-2026
-- [ ] La entrada a Teoría muestra nivel A1; al seleccionarlo aparecen cinco unidades tituladas.
+- [ ] La entrada a Teoría muestra nivel A1; al seleccionarlo aparecen seis unidades tituladas.
 - [ ] Cada unidad abre sus categorías disponibles y cada categoría muestra solo los subtemas asignados.
 - [ ] Los controles atrás recorren correctamente subtemas → categorías → unidades → niveles.
 - [ ] Palabras y frases cortas aparecen subrayadas y sin botón play; los textos largos conservan reproducción manual.
