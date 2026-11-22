@@ -954,6 +954,13 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - [x] Pronunciación manual: se mantienen controles individuales incluso para palabras y frases cortas. Cada botón conserva el texto objetivo y su locale explícito.
 - [x] Idioma vigente de la aplicación: **italiano (it-IT)**. Cualquier referencia a pt-BR en notas anteriores describe versiones históricas y no es un requisito vigente para esta iteración.
 - [x] Browser E2E ampliado para comprobar marcador único, ausencia de conectores, borde azul de unidad, posición de ruta y reproducción manual con locale it-IT.
-- [ ] Ejecutar y confirmar npm run check, npm test y Browser E2E en CI.
-- [ ] Confirmar Render Preview LIVE con el commit de esta iteración.
+- [x] npm run check y npm test aprobados en GitHub Actions run [45060797598](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45060797598).
+- [x] Browser E2E aprobado en run [45060797728](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45060797728).
+- [x] Render Preview **LIVE**, deploy dep-dc1k48d9fdbs73b2ua70, commit c55822c0ce8434ab086f0067715124fd7333377f.
 - [ ] Validación auditiva manual pendiente en teléfono Android real. La prueba automatizada verifica el texto y locale enviados a SpeechSynthesis, pero no puede certificar la voz instalada ni el sonido físico del dispositivo.
+
+### Resultado de CI y despliegue — 22-11-2026
+- Checks unitarios/estáticos: aprobados, run 45060797598.
+- Browser E2E: aprobado, run 45060797728.
+- Render Preview: LIVE, deploy dep-dc1k48d9fdbs73b2ua70, commit c55822c0ce8434ab086f0067715124fd7333377f.
+- La aplicación queda disponible para revisión visual y funcional. La comprobación de voz debe completarse en un teléfono Android real; CI no verifica el audio audible.
