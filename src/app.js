@@ -2681,8 +2681,8 @@ function openTheoryTopic(index) {
     }
   });
   $("theory-counter").textContent = (activeTheoryIndex + 1) + " / " + activeTheoryTopics.length;
-  $("theory-prev").disabled = sourceIndex === 0;
-  $("theory-next").disabled = sourceIndex === activeTheoryTopics.length - 1;
+  $("theory-prev").disabled = activeTheoryIndex === 0;
+  $("theory-next").disabled = activeTheoryIndex === activeTheoryTopics.length - 1;
   $("theory-detail").classList.remove("hidden");
 }
 let activeTheoryUnit=null;
