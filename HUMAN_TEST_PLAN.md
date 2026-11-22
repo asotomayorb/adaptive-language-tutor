@@ -575,3 +575,10 @@ Para cada escenario registrar:
 - [ ] Palabras y frases cortas aparecen subrayadas y sin botón play; los textos largos conservan reproducción manual.
 - [ ] Abrir un tema no inicia audio automáticamente; activar audio global no dispara lectura automática en Teoría.
 - [ ] Los títulos de sección están centrados y mantienen el tamaño; validar barra inferior en móvil vertical.
+
+
+## Teoría: navegación simplificada — 22-11-2026
+- [ ] Al tocar «A1 · Principiante», el encabezado de la siguiente vista conserva exactamente «A1 · Principiante» y queda alineado a la izquierda.
+- [ ] Al seleccionar una unidad, aparece directamente la lista de subtemas; el encabezado conserva exactamente el título de la unidad.
+- [ ] Cada subtema muestra un icono de categoría junto al nombre; no existe pantalla separada de Gramática, Vocabulario o Expresiones.
+- [ ] La flecha de retorno desde subtemas vuelve a unidades.
