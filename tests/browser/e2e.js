@@ -68,14 +68,23 @@ try {
   await page.locator("#language-cancel").click();
   assert.equal(await page.locator("#screen-theory").isVisible(), true, "cancel should keep the current section");
 
-  await page.locator('[data-theory="grammar"]').click();
-  assert.equal(await page.locator("#theory-topic-list").isVisible(), true, "Theory categories should open their topic list");
+  assert.equal(await page.locator(".screen-heading h1").evaluate(el => getComputedStyle(el).textAlign), "center", "section titles should remain centered");
+  await page.locator("#theory-level-a1").click();
+  assert.equal(await page.locator("#theory-unit-list").isVisible(), true, "A1 should open its unit list");
+  assert.equal(await page.locator("#theory-unit-items [data-theory-unit]").count(), 5, "A1 should show the five proposed unit titles");
+  await page.locator("#theory-unit-items [data-theory-unit]").first().click();
+  assert.equal(await page.locator("#theory-category-screen").isVisible(), true, "a unit should open its three-category layer");
+  await page.locator('[data-theory-category="grammar"]').click();
+  assert.equal(await page.locator("#theory-topic-list").isVisible(), true, "a category should open its subtopics");
   await page.locator("#theory-list-items [data-theory-topic]").first().click();
   assert.equal(await page.locator("#theory-detail").isVisible(), true, "Theory topic detail should open");
   assert.ok((await page.locator("#theory-title").innerText()).length > 0, "Theory detail should contain a title");
+  assert.equal(await page.locator("#theory-description [data-speak]").count(), 0, "short target-language items should not have play controls");
   await page.locator("#theory-back").click();
   await page.locator("#theory-list-back").click();
-  assert.equal(await page.locator("#theory-grid").isVisible(), true, "Theory should return to its category grid");
+  assert.equal(await page.locator("#theory-category-screen").isVisible(), true, "Theory should return to the category layer");
+  await page.locator("#theory-category-back").click();
+  assert.equal(await page.locator("#theory-unit-list").isVisible(), true, "category back should return to the unit list");
 
   await page.locator('.bottom-nav [data-screen="stats"]').click();
   await page.locator("#screen-stats").waitFor({ state: "visible" });
