@@ -942,3 +942,13 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Estado de expansión exclusivo: una sola unidad abierta; abrir otra colapsa la anterior; tocar la unidad abierta la colapsa.
 - Se conserva el detalle de teoría y la unidad expandida al regresar desde un subtema.
 - Pruebas automatizadas de árbol y expansión exclusiva añadidas a Browser E2E. Estado de CI y despliegue: pendiente de verificación.
+
+
+### Validación y despliegue de Teoría B2 — 22-11-2026
+- Commit de código y pruebas: `af0680ca58eb3c33d2f4a92ce6372d650ce1c6f4`.
+- `npm run check`: aprobado, GitHub Actions run [45057647408](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45057647408).
+- `npm test`: aprobado en el mismo run.
+- Browser E2E: aprobado, run [45057647416](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45057647416). Incluye orden/numeración de unidades, subtemas sin numeración, expansión exclusiva, apertura del detalle y conservación de unidad al volver.
+- Render Preview: deploy `dep-dc1jkoajnfac738v4j7g`, estado **LIVE**, commit `af0680ca58eb3c33d2f4a92ce6372d650ce1c6f4`.
+- El servicio continúa con auto-deploy desactivado; el despliegue fue manual y el commit de preview coincide con el código validado.
+- La prueba humana en Android/móvil queda pendiente para confirmar fidelidad visual, densidad, interacción táctil y legibilidad.
