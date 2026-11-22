@@ -622,3 +622,16 @@ Para cada escenario registrar:
 - [x] Browser E2E aprobado: [GitHub Actions 45057647416](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45057647416).
 - [x] Preview Render actualizado y LIVE: deploy `dep-dc1jkoajnfac738v4j7g`, commit `af0680ca58eb3c33d2f4a92ce6372d650ce1c6f4`.
 - [ ] Revisión visual y táctil humana en Android/móvil; comprobar que el resultado coincide con B2 y que la numeración/subniveles se perciben correctamente.
+
+
+## 15. Revisión de Teoría B2 en italiano — 22-11-2026
+
+- [ ] En la lista de unidades, confirmar que cada subtema muestra un único punto y no aparecen conectores duplicados ni una línea vertical secundaria.
+- [ ] Confirmar que el borde lateral azul de cada unidad mantiene color, posición, continuidad y grosor.
+- [ ] Abrir un subtema y verificar el orden visual: título de sección «Teoría» → ruta de etapa/unidad → categoría → título del subtema → contenido.
+- [ ] En el detalle de pronombres, tocar varios botones de pronunciación, incluidos fragmentos de una sola palabra; cada uno debe leer únicamente el fragmento asociado.
+- [ ] Confirmar que la voz seleccionada corresponde a italiano (it-IT) y que no se reproduce la traducción española.
+- [ ] Repetir la prueba de pronunciación en Android real; la comprobación automatizada del locale no sustituye la validación auditiva.
+- [ ] Volver desde el detalle y confirmar que la unidad de origen permanece expandida y que la expansión exclusiva sigue funcionando.
+
+**Idioma vigente de esta revisión:** italiano (it-IT). Las referencias a portugués brasileño (pt-BR) en secciones históricas del plan corresponden a iteraciones anteriores.
