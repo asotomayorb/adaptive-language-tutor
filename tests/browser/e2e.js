@@ -90,7 +90,7 @@ try {
   assert.ok((await page.locator("#theory-title").innerText()).length > 0, "Theory detail should contain a title");
   const categoryHeading = await page.locator("#theory-category").innerText();
   assert.ok(["文","Aa","“ ”"].some(icon => categoryHeading.startsWith(icon + " ")), "category header should put its icon before the category word");
-  assert.equal(await page.locator("#theory-breadcrumb").innerText(), "A1 · Principiante > Primeros contactos", "breadcrumb should sit below the topic title in smaller text");
+  assert.equal(await page.locator("#theory-breadcrumb").innerText(), "A1 · Principiante > Datos personales y entorno", "breadcrumb should identify the expanded unit below the topic title");
   assert.equal(await page.locator("#theory-detail .back-control").count(), 1, "detail should contain exactly one back arrow");
   assert.equal(await page.locator("#theory-description [data-speak]").count(), 0, "short target-language items should not have play controls");
   await page.locator("#theory-back").click();
