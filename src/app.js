@@ -2088,7 +2088,8 @@ const theoryUnits=[
 {title:"Datos personales y entorno",categories:{grammar:[2],vocabulary:[1],expressions:[3]}},
 {title:"Rutinas y tiempo",categories:{grammar:[3],vocabulary:[2],expressions:[4]}},
 {title:"Comida y compras",categories:{grammar:[4],vocabulary:[3],expressions:[2]}},
-{title:"Viajes y orientación",categories:{grammar:[5],vocabulary:[4],expressions:[1,3]}}
+{title:"Viajes y orientación",categories:{grammar:[5],vocabulary:[4],expressions:[1,3]}},
+{title:"Números y cantidades",categories:{vocabulary:[5]}}
 ];
 const theoryCategoryLabels={grammar:"Gramática",vocabulary:"Vocabulario",expressions:"Expresiones"};
 const theorySamples = {
