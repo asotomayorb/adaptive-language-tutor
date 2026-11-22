@@ -854,7 +854,7 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 
 ## Jerarquía de Teoría y audio — 22-11-2026
 - Jerarquía de navegación: **nivel → unidad → categoría (Gramática, Vocabulario o Expresiones) → subtema**.
-- El nivel A1 muestra cinco unidades con títulos únicamente: Primeros contactos; Datos personales y entorno; Rutinas y tiempo; Comida y compras; Viajes y orientación. Los subtemas existentes se agrupan bajo las unidades y categorías correspondientes; no se agregan explicaciones nuevas en esta etapa.
+- El nivel A1 muestra seis unidades con títulos únicamente: Primeros contactos; Datos personales y entorno; Rutinas y tiempo; Comida y compras; Viajes y orientación; Números y cantidades. Los subtemas existentes se agrupan bajo las unidades y categorías correspondientes; no se agregan explicaciones nuevas en esta etapa.
 - Los títulos principales de sección permanecen centrados y conservan su tamaño.
 - En Teoría, palabras y frases cortas del idioma objetivo se muestran subrayadas, sin control de reproducción. Los textos largos pueden tener botón de reproducción manual. La lectura automática está desactivada en Teoría; la lectura automática queda reservada para preguntas de ejercicios.
 - Los cambios de jerarquía y audio deben validarse con Browser E2E y revisión visual/auditiva manual. No declarar el preview actualizado hasta confirmar el deploy.
