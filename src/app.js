@@ -2669,7 +2669,8 @@ function openTheoryTopic(index) {
     detailMarkup += '<section class="theory-example"><span>' + escapeHTML(sampleLabel) + ' · ' + escapeHTML(languageDefinitions[$("language").value]?.label || languageName) + '</span><p class="theory-target-word">' + escapeHTML(sampleByTopic) + '</p></section>';
   }
   $("theory-title").textContent = title;
-  $("theory-category").textContent = activeTheoryCategory;
+  const categoryIcon = theoryCategoryIcons[activeTheoryTopics[activeTheoryIndex]?.[3]] || "";
+  $("theory-category").textContent = categoryIcon + "  " + activeTheoryCategory;
   $("theory-description").innerHTML = detailMarkup;
   bindSpeakerButtons($("theory-description"));
   speech.stop();
@@ -2681,6 +2682,12 @@ function openTheoryTopic(index) {
     }
   });
   $("theory-counter").textContent = (activeTheoryIndex + 1) + " / " + activeTheoryTopics.length;
+  $("theory-detail-level-title").textContent = "A1 · Principiante";
+  $("theory-detail-unit-title").textContent = theoryUnits[activeTheoryUnit]?.title || "";
+  $("theory-detail-level-back").setAttribute("aria-label", "Volver a niveles");
+  $("theory-detail-unit-back").setAttribute("aria-label", "Volver a unidades");
+  $("theory-back").setAttribute("aria-label", "Volver a subtemas");
+  $("theory-topic-list").classList.add("hidden");
   $("theory-prev").disabled = activeTheoryIndex === 0;
   $("theory-next").disabled = activeTheoryIndex === activeTheoryTopics.length - 1;
   $("theory-detail").classList.remove("hidden");
@@ -2696,6 +2703,7 @@ $("theory-level-a1").addEventListener("click",()=>{
   const unit=theoryUnits[activeTheoryUnit];
   activeTheoryTopics=Object.entries(unit.categories).flatMap(([key,indices])=>indices.map(i=>{const all=theoryContent[key][1];return [all[i][0],all[i][1],i,key];}));
   $("theory-list-title").textContent=unit.title;
+  $("theory-topics-level-title").textContent="A1 · Principiante";
   $("theory-list-items").innerHTML=activeTheoryTopics.map((t,i)=>'<button class="theory-topic-row" type="button" data-theory-topic="'+i+'"><span class="theory-topic-label"><span class="theory-category-icon" aria-hidden="true">'+theoryCategoryIcons[t[3]]+'</span>'+escapeHTML(t[0])+'</span><span aria-hidden="true">→</span></button>').join("");
   $("theory-unit-list").classList.add("hidden");$("theory-topic-list").classList.remove("hidden");
   $("theory-list-items").querySelectorAll("[data-theory-topic]").forEach(t=>t.addEventListener("click",()=>{activeTheoryCategory=theoryCategoryLabels[activeTheoryTopics[Number(t.dataset.theoryTopic)][3]];openTheoryTopic(Number(t.dataset.theoryTopic));}));
@@ -2710,6 +2718,16 @@ $("theory-list-back").addEventListener("click", () => {
 $("theory-back").addEventListener("click", () => {
   speech.stop();
   $("theory-detail").classList.add("hidden");
+  $("theory-topic-list").classList.remove("hidden");
+});
+$("theory-detail-unit-back").addEventListener("click", () => {
+  speech.stop(); $("theory-detail").classList.add("hidden"); $("theory-topic-list").classList.remove("hidden");
+});
+$("theory-detail-level-back").addEventListener("click", () => {
+  speech.stop(); $("theory-detail").classList.add("hidden"); $("theory-topic-list").classList.add("hidden"); $("theory-unit-list").classList.remove("hidden");
+});
+$("theory-topics-level-back").addEventListener("click", () => {
+  speech.stop(); $("theory-topic-list").classList.add("hidden"); $("theory-unit-list").classList.remove("hidden");
 });
 $("theory-prev").addEventListener("click", () => openTheoryTopic(activeTheoryIndex - 1));
 $("theory-next").addEventListener("click", () => openTheoryTopic(activeTheoryIndex + 1));
