@@ -897,3 +897,9 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Corrección de integración — 22-11-2026: al volver a Teoría desde otra sección, el restablecimiento de vista debe operar sobre el contenedor único de selectores y el detalle; no debe intentar ocultar las antiguas listas independientes.
 
 - El selector de Etapa comienza con una opción neutra («Selecciona una etapa»); al elegir A1 se habilita la selección de Unidad, sin depender de volver a seleccionar un valor precargado.
+
+
+### Confirmación de preview — 22-11-2026
+- Render deploy `dep-dc19agetlv9c73bf6gu0` finalizó en estado **LIVE** con el commit `e9caf17995211d65d0f390032845f2d2536a7d23`.
+- El preview canónico sigue siendo https://adaptive-language-tutor-preview-5b3d.onrender.com/.
+- La consulta de runs asociadas al commit no devolvió ejecuciones; el conector disponible filtra a runs disparadas por pull request. No se afirma que `npm run check`, `npm test` ni Browser E2E hayan pasado para este commit. Consultar Actions directamente o ejecutar localmente antes de considerar la navegación validada.
