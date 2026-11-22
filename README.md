@@ -881,3 +881,14 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Validación automatizada y despliegue de esta revisión quedan pendientes hasta completar CI y confirmar el preview LIVE.
 
 - Último commit de esta revisión: `ce437d5c2b6788ed5f480728f9f039537f687b0e`; Render inició el deploy `dep-dc18tbvf3r2c73c0uogg` y seguía en construcción al registrar esta nota. No declarar el preview actualizado hasta que el deploy figure LIVE.
+
+
+## Ajuste de navegación de Teoría — 22-11-2026 (vigente)
+- Esta decisión **reemplaza** los encabezados acumulativos y las flechas de retorno por nivel descritos en la iteración anterior.
+- La navegación de Teoría usa selectores desplegables jerárquicos y progresivos: **Etapa → Unidad → Subtema**. Las opciones de subtema se agrupan visualmente mediante optgroups de Gramática, Vocabulario y Expresiones.
+- No mostrar la palabra «Nivel» como encabezado del menú principal de Teoría; usar «Etapa».
+- Al abrir un subtema, conservar el nombre del subtema como título principal, con su categoría/icono como rótulo superior.
+- Debajo del título se muestra una ruta breve y de menor tamaño: «A1 · Principiante > Nombre de unidad». La ruta no lleva flechas ni controles de retorno.
+- El detalle contiene una sola flecha de retroceso, que devuelve a los selectores jerárquicos. No mostrar flechas adicionales para volver a etapa o unidad; esas dimensiones se cambian directamente en sus desplegables.
+- Mantener el contenido, los ejemplos, la pronunciación manual y el orden pedagógico existentes. Este cambio afecta la navegación y su presentación, no amplía el temario.
+- Validar los selectores en móvil, la agrupación por categoría, el título/ruta y la existencia de una sola flecha mediante Browser E2E. La revisión táctil final en Android sigue siendo manual.
