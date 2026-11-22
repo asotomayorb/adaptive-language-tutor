@@ -961,3 +961,9 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Se amplió Browser E2E para validar marcadores, borde azul, orden de encabezado y llamada de voz manual en italiano.
 - Commits de implementación: dae2d56000277b71f53f4bd8231a5c0b230c1830 (app), 89a7f5984b8a149d91806c7740f0eac30f9b2b95 (HTML), 3fe60831f3f00e06078110eb924c305c4a151270 (CSS), 04a11fe73764724df0030295740442df000be484 (E2E).
 - Pendiente: CI, despliegue Render y prueba auditiva real en Android. No considerar validado el audio físico hasta esa comprobación.
+
+### Validación final de Teoría B2 italiana — 22-11-2026
+- `npm run check` + `npm test`: aprobados en GitHub Actions run [45060797598](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45060797598).
+- Browser E2E: aprobado en [45060797728](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45060797728), incluyendo marcador único, borde lateral de unidad, ubicación de ruta y reproducción manual it-IT.
+- Render Preview: LIVE, deploy `dep-dc1k48d9fdbs73b2ua70`, commit `c55822c0ce8434ab086f0067715124fd7333377f`.
+- Pendiente únicamente la prueba humana auditiva/táctil en Android para confirmar la voz italiana del dispositivo y la experiencia visual real.
