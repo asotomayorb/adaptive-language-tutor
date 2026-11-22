@@ -642,3 +642,12 @@ Para cada escenario registrar:
 - [x] npm run check y npm test aprobados en run [45060797598](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45060797598).
 - [x] Preview Render LIVE en deploy `dep-dc1k48d9fdbs73b2ua70`, commit `c55822c0ce8434ab086f0067715124fd7333377f`.
 - [ ] Prueba auditiva/táctil en Android real pendiente.
+
+
+## Ajustes visuales y audio directo de Teoría — 22-11-2026
+- [ ] Confirmar que «A1 · Principiante», unidades y subtemas tienen el mismo tamaño tipográfico (16 px).
+- [ ] Confirmar que el párrafo de desarrollo comienza más cerca del título del subtema.
+- [ ] Tocar una palabra o frase breve en italiano: debe reproducirse directamente, sin icono Play.
+- [ ] Confirmar que los fragmentos extensos conservan el icono Play y reproducen únicamente su propio texto.
+- [ ] Confirmar reproducción italiana it-IT y ausencia de lectura de traducción española.
+- [ ] Repetir las pruebas en Android real; verificar respuesta táctil y sonido audible.
