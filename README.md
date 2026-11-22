@@ -974,3 +974,9 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Los textos tocables deben ser accesibles por teclado y anunciarse como controles.
 - Mantener el locale italiano it-IT y no leer traducciones en español.
 - Añadir pruebas E2E para igualdad de tamaños, espaciado compacto y pronunciación directa del texto. Validar CI y Render antes de cerrar.
+
+### Validación y despliegue — ajustes de legibilidad y audio — 22-11-2026
+- `npm run check` + `npm test`: aprobados en GitHub Actions run [45062976801](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45062976801).
+- Browser E2E: aprobado en run [45062980099](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45062980099). Verifica tamaños jerárquicos iguales, inicio compacto del contenido y pronunciación directa del texto corto en it-IT.
+- Render Preview: **LIVE**, deploy `dep-dc1kf756e07s73dkg96g`, commit `91b939557b44c77173021d1cd8167729706073e1`.
+- Pendiente solo la comprobación visual/táctil y auditiva en Android real.
