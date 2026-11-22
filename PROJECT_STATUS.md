@@ -967,3 +967,12 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Browser E2E: aprobado en [45060797728](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45060797728), incluyendo marcador único, borde lateral de unidad, ubicación de ruta y reproducción manual it-IT.
 - Render Preview: LIVE, deploy `dep-dc1k48d9fdbs73b2ua70`, commit `c55822c0ce8434ab086f0067715124fd7333377f`.
 - Pendiente únicamente la prueba humana auditiva/táctil en Android para confirmar la voz italiana del dispositivo y la experiencia visual real.
+
+
+## Ajustes de tipografía, espaciado y audio directo en Teoría — 22-11-2026
+- Etapa, unidad y subtema se igualan a 16 px, tomando como referencia el encabezado «A1 · Principiante».
+- Se reduce el margen inferior del encabezado del detalle a 4 px y el padding superior del contenido a 2 px para acercar la primera explicación al título.
+- El texto objetivo corto se vuelve interactivo: al tocarlo se reproduce directamente en italiano (it-IT), sin icono Play. Se reserva el icono para fragmentos de más de 48 caracteres.
+- El texto tocable incorpora rol y foco de teclado; se mantiene el texto objetivo exacto y no la traducción.
+- Browser E2E actualizado para comprobar tipografía, espaciado, locale, texto leído y ausencia de icono redundante.
+- Pendiente: CI, despliegue Render y prueba auditiva en Android real.
