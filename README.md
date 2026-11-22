@@ -930,3 +930,18 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Browser E2E: aprobado en [45057647416](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45057647416).
 - Render Preview: **LIVE**, deploy `dep-dc1jkoajnfac738v4j7g`, commit `af0680ca58eb3c33d2f4a92ce6372d650ce1c6f4`.
 - La prueba humana visual y táctil en móvil queda pendiente.
+
+
+## Ajustes solicitados tras prueba humana de Teoría B2 — 22-11-2026
+
+### Diseño aprobado para la siguiente iteración
+- **Árbol B2:** conservar sin cambios la línea/borde lateral azul que identifica cada unidad y su estado expandido. No alterar su color, posición, continuidad, grosor ni comportamiento.
+- **Subtemas:** eliminar los conectores/viñetas duplicados que aparecen a la izquierda. Sustituirlos por un único marcador sencillo por subtema (punto pequeño o segmento breve), manteniendo la sangría, los iconos de categoría y la jerarquía visual. No dibujar una segunda línea vertical para los subtemas.
+- **Detalle de Teoría:** el orden del encabezado debe ser: título de sección **«Teoría»** → ruta jerárquica (etapa y unidad) → categoría del subtema → título del subtema → contenido. La ruta no debe aparecer debajo del título del subtema.
+- **Audio manual:** corregir la reproducción individual del texto en idioma objetivo. El control debe reproducir exactamente el fragmento objetivo asociado, con su locale explícito (para la validación actual, portugués brasileño pt-BR), sin leer la traducción en español ni depender del audio automático global. Debe funcionar al pulsarlo manualmente en Android.
+- **No regresiones:** conservar el contenido, navegación, selección azul B2, expansión exclusiva y borde lateral azul de unidades.
+
+### Estado
+- La propuesta de interfaz de estos tres ajustes fue presentada para revisión visual.
+- **Pendiente de implementación:** los cambios anteriores aún no se han aplicado al código ni desplegado. La reproducción manual de voz sigue siendo un defecto abierto hasta que se corrija y se valide auditivamente en Android.
+- Antes de cerrar esta iteración: actualizar pruebas Browser E2E para orden de encabezado y ausencia de conectores duplicados; añadir/verificar prueba de TTS con locale pt-BR; ejecutar npm run check, npm test y Browser E2E; desplegar y confirmar Render LIVE.
