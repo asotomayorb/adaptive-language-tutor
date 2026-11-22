@@ -566,3 +566,12 @@ Para cada escenario registrar:
 - [ ] Confirmar que el botón central de Idiomas sigue destacado y que los cinco objetivos táctiles no se superponen.
 - [ ] Confirmar que el título de sección conserva su tamaño y queda a la misma altura que el icono de audio.
 - [ ] Abrir cada categoría de Teoría: comprobar que las filas son más compactas, legibles y no se ven apretadas; probar títulos largos y navegación al detalle.
+
+
+## Teoría: jerarquía y audio manual — 22-11-2026
+- [ ] La entrada a Teoría muestra nivel A1; al seleccionarlo aparecen cinco unidades tituladas.
+- [ ] Cada unidad abre sus categorías disponibles y cada categoría muestra solo los subtemas asignados.
+- [ ] Los controles atrás recorren correctamente subtemas → categorías → unidades → niveles.
+- [ ] Palabras y frases cortas aparecen subrayadas y sin botón play; los textos largos conservan reproducción manual.
+- [ ] Abrir un tema no inicia audio automáticamente; activar audio global no dispara lectura automática en Teoría.
+- [ ] Los títulos de sección están centrados y mantienen el tamaño; validar barra inferior en móvil vertical.
