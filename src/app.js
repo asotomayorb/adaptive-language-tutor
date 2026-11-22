@@ -2665,13 +2665,7 @@ function openTheoryTopic(index) {
   $("theory-description").innerHTML = detailMarkup;
   bindSpeakerButtons($("theory-description"));
   speech.stop();
-  $("theory-description").querySelectorAll("[data-speak]").forEach(button => {
-    const spoken = String(button.dataset.speak || "").trim();
-    if (spoken.length <= 32) {
-      if (button.previousElementSibling) button.previousElementSibling.classList.add("theory-target-word");
-      button.remove();
-    }
-  });
+  // Keep manual pronunciation controls for every target-language fragment, including short words and phrases.
   $("theory-counter").textContent = (activeTheoryIndex + 1) + " / " + activeTheoryTopics.length;
   $("theory-level-list").classList.add("hidden");
   $("theory-detail").classList.remove("hidden");
@@ -2705,7 +2699,7 @@ function populateTheoryUnits() {
         ).map((topic, topicIndex, topics) =>
           '<button class="theory-tree-topic" type="button" data-unit-index="' + unitIndex +
           '" data-category="' + topic.key + '" data-theory-topic="' + topic.sourceIndex + '">' +
-          '<span class="theory-tree-connector" aria-hidden="true">' + (topicIndex === topics.length - 1 ? '└' : '├') + '</span>' +
+          '<span class="theory-tree-marker" aria-hidden="true">•</span>' +
           '<span class="theory-category-icon theory-tree-category-icon" aria-hidden="true">' + theoryCategoryIcons[topic.key] + '</span>' +
           '<span class="theory-tree-topic-name">' + escapeHTML(topic.title) + '</span></button>'
         ).join("")
