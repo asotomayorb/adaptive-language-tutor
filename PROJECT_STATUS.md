@@ -909,3 +909,13 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - [x] Browser E2E actualizado para comprobar acumulación, altura, posición en flujo y retorno.
 - [ ] Ejecutar y confirmar CI/E2E sobre el commit final.
 - [ ] Confirmar despliegue LIVE del preview canónico; revisión visual en Android permanece pendiente.
+
+
+## Navegación jerárquica de Teoría — 22-11-2026
+- [x] Sustituir las listas de botones por tres selectores desplegables progresivos: Etapa, Unidad y Subtema.
+- [x] Agrupar las opciones del selector de subtema mediante categorías Gramática, Vocabulario y Expresiones.
+- [x] Eliminar el rótulo «Nivel» de la entrada principal de Teoría.
+- [x] En el detalle, mantener categoría como rótulo y subtema como título principal; mostrar debajo la ruta «A1 · Principiante > unidad» en tamaño menor.
+- [x] Dejar una sola flecha de retorno en el detalle; cambiar etapa/unidad desde los selectores, sin flechas adicionales.
+- [ ] Ejecutar `npm run check`, `npm test` y `npm run test:e2e` sobre el commit resultante.
+- [ ] Confirmar que Render Preview despliega el commit resultante y revisar en Android físico la interacción de los tres desplegables.
