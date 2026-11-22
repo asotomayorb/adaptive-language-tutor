@@ -2688,7 +2688,7 @@ $("theory-level-a1").addEventListener("click",()=>{
  $("theory-level-list").classList.add("hidden");$("theory-unit-list").classList.remove("hidden");
  $("theory-unit-items").innerHTML=theoryUnits.map((u,i)=>'<button class="theory-topic-row" data-theory-unit="'+i+'" type="button"><span>'+escapeHTML(u.title)+'</span><span>→</span></button>').join("");
  $("theory-unit-items").querySelectorAll("[data-theory-unit]").forEach(b=>b.addEventListener("click",()=>{
-  activeTheoryUnit=Number(b.dataset.theoryUnit);$("theory-unit-list").classList.add("hidden");
+  activeTheoryUnit=Number(b.dataset.theoryUnit);$("theory-unit-list").classList.add("hidden");$("theory-category-screen").classList.remove("hidden");$("theory-unit-heading").textContent=theoryUnits[activeTheoryUnit].title;
   $("theory-grid").innerHTML=Object.keys(theoryUnits[activeTheoryUnit].categories).map(k=>'<button class="theory-card" type="button" data-theory-category="'+k+'"><span>'+(k==="grammar"?"文":k==="vocabulary"?"Aa":"“ ”")+'</span><strong>'+theoryCategoryLabels[k]+'</strong></button>').join("");
   $("theory-grid").classList.remove("hidden");
   $("theory-grid").querySelectorAll("[data-theory-category]").forEach(c=>c.addEventListener("click",()=>{
@@ -2696,7 +2696,7 @@ $("theory-level-a1").addEventListener("click",()=>{
    activeTheoryTopics=theoryUnits[activeTheoryUnit].categories[key].map(i=>[all[i][0],all[i][1],i]);
    $("theory-list-title").textContent=theoryUnits[activeTheoryUnit].title+" · "+label;
    $("theory-list-items").innerHTML=activeTheoryTopics.map((t,i)=>'<button class="theory-topic-row" type="button" data-theory-topic="'+i+'"><span>'+escapeHTML(t[0])+'</span><span>→</span></button>').join("");
-   $("theory-grid").classList.add("hidden");$("theory-topic-list").classList.remove("hidden");
+   $("theory-category-screen").classList.add("hidden");$("theory-topic-list").classList.remove("hidden");
    $("theory-list-items").querySelectorAll("[data-theory-topic]").forEach(t=>t.addEventListener("click",()=>openTheoryTopic(Number(t.dataset.theoryTopic))));
   }));
  }));
