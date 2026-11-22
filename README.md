@@ -909,5 +909,13 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Se adopta como base visual la alternativa **B: árbol jerárquico persistente**, manteniendo visibles los niveles superiores mientras se navega por la jerarquía.
 - La jerarquía es Etapa → Unidad → Subtemas. Gramática, Vocabulario y Expresiones son categorías identificadas mediante iconos/etiquetas en los subtemas, no niveles jerárquicos.
 - Regla de expansión exclusiva: dentro de una misma lista jerárquica solo puede permanecer expandida una unidad a la vez. Al expandir otra unidad, la anterior se colapsa automáticamente; por ejemplo, abrir «Datos personales y entorno» colapsa «Primeros contactos».
-- Las unidades se enumeran con números romanos (I, II, III, IV, V, VI), conservando sus títulos.
+- Las unidades se enumeran con números arábigos (1, 2, 3, 4, 5, 6), conservando sus títulos.
 - La presentación visual detallada de filas, conectores y detalle de subtema queda sujeta a revisión de los ejemplos antes de implementarse.
+
+
+### Refinamiento visual de árbol de Teoría — 22-11-2026
+- Se ajusta la propuesta visual para recuperar el estilo B original: árbol jerárquico compacto, con conectores de ramas mediante segmentos y sangría hacia la izquierda para los subtemas.
+- Reducir la altura vertical de filas y espacios; evitar tarjetas altas o contenedores innecesarios. Mantener visibles las unidades de la lista.
+- La numeración de unidades es arábiga (1, 2, 3, 4, 5, 6), no romana.
+- Se conserva la regla de expansión exclusiva: solo una unidad/subcategoría expandida a la vez; al abrir otra, la anterior se colapsa.
+- Los ejemplos visuales de esta revisión quedan pendientes de aprobación antes de implementación.
