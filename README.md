@@ -922,3 +922,11 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - La presentación es compacta y vertical; no usar selectores desplegables, tarjetas altas, nodos circulares ni líneas verticales compartidas por toda la lista.
 - Las categorías Gramática, Vocabulario y Expresiones siguen siendo identificadores visuales de los subtemas, no niveles jerárquicos.
 - El detalle de subtema conserva su contenido, navegación anterior/siguiente y retorno único; al volver, mantiene expandida la unidad de origen.
+
+
+### Validación y preview de B2 — 22-11-2026
+- Código y pruebas de la variante B2: commit `af0680ca58eb3c33d2f4a92ce6372d650ce1c6f4`.
+- `npm run check` y `npm test`: aprobados en GitHub Actions [45057647408](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45057647408).
+- Browser E2E: aprobado en [45057647416](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45057647416).
+- Render Preview: **LIVE**, deploy `dep-dc1jkoajnfac738v4j7g`, commit `af0680ca58eb3c33d2f4a92ce6372d650ce1c6f4`.
+- La prueba humana visual y táctil en móvil queda pendiente.
