@@ -582,3 +582,11 @@ Para cada escenario registrar:
 - [ ] Al seleccionar una unidad, aparece directamente la lista de subtemas; el encabezado conserva exactamente el título de la unidad.
 - [ ] Cada subtema muestra un icono de categoría junto al nombre; no existe pantalla separada de Gramática, Vocabulario o Expresiones.
 - [ ] La flecha de retorno desde subtemas vuelve a unidades.
+
+
+## Teoría: navegación acumulativa — 22-11-2026
+- [ ] Al profundizar, los encabezados A1 y unidad se acumulan uno debajo del otro y no cambian su texto.
+- [ ] La altura de cada fila con flecha se conserva entre la lista y el detalle.
+- [ ] El subtema aparece debajo de la jerarquía dentro de Teoría, sin cubrir la pantalla completa.
+- [ ] En el detalle, el icono de categoría aparece antes de «Gramática», «Vocabulario» o «Expresiones».
+- [ ] Las flechas del detalle permiten volver al subtema, unidad o nivel correspondiente.
