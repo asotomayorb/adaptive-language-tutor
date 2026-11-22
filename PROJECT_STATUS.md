@@ -893,3 +893,9 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Se centraron los títulos principales, se subrayaron palabras/frases cortas y se retiraron sus controles de reproducción.
 - Se eliminó la reproducción automática al abrir temas de Teoría; los controles restantes reproducen manualmente textos largos.
 - Browser E2E actualizado para jerarquía, navegación atrás, título centrado y ausencia de play en subtemas cortos. Pendiente ejecutar pruebas, inspeccionar el preview y revisar en Android real.
+
+
+## Teoría: navegación simplificada — 22-11-2026
+- Se retiró la pantalla intermedia de categorías. Las unidades abren directamente la lista de subtemas, con icono de categoría junto a cada nombre.
+- Se mantiene «A1 · Principiante» como encabezado de la vista de unidades y el nombre exacto de la unidad al abrir sus subtemas; encabezados alineados a la izquierda.
+- Validación automatizada y despliegue de esta iteración pendientes de ejecución/verificación.
