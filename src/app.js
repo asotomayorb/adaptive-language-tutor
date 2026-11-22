@@ -2705,7 +2705,11 @@ $("theory-units-back").addEventListener("click",()=>{$("theory-unit-list").class
 $("theory-list-back").addEventListener("click", () => {
   speech.stop();
   $("theory-topic-list").classList.add("hidden");
-  $("theory-grid").classList.remove("hidden");
+  $("theory-category-screen").classList.remove("hidden");
+});
+$("theory-category-back").addEventListener("click", () => {
+  $("theory-category-screen").classList.add("hidden");
+  $("theory-unit-list").classList.remove("hidden");
 });
 $("theory-back").addEventListener("click", () => {
   speech.stop();
