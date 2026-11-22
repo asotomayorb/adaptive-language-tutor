@@ -2646,9 +2646,9 @@ function openTheoryTopic(index) {
   const locale = getSelectedCatalog()?.locale || "und";
   let detailMarkup = '<p class="theory-slide-text">' + escapeHTML(body) + '</p>';
   const italianApplied = languageName === "Italiano"
-    ? renderItalianAppliedTopic(activeTheoryCategory, activeTheoryIndex, locale)
+    ? renderItalianAppliedTopic(activeTheoryCategory, sourceIndex, locale)
     : null;
-  const appliedLanguage = renderAppliedLanguageTopic(languageName, activeTheoryCategory, activeTheoryIndex, locale);
+  const appliedLanguage = renderAppliedLanguageTopic(languageName, activeTheoryCategory, sourceIndex, locale);
   const articleLesson = activeTheoryCategory === "Gramática" && sourceIndex === 1
     ? renderArticleLesson(languageName, locale) : null;
   if (italianApplied || appliedLanguage) {
