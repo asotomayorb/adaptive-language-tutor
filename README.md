@@ -895,3 +895,5 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 
 
 - Corrección de integración — 22-11-2026: al volver a Teoría desde otra sección, el restablecimiento de vista debe operar sobre el contenedor único de selectores y el detalle; no debe intentar ocultar las antiguas listas independientes.
+
+- El selector de Etapa comienza con una opción neutra («Selecciona una etapa»); al elegir A1 se habilita la selección de Unidad, sin depender de volver a seleccionar un valor precargado.
