@@ -877,3 +877,11 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - [x] Render preview canónico LIVE: 7fc2cf5404fa637722e78060a12df9b8ef11f394, deploy dep-dc12va0u01pc738jrqtg, URL https://adaptive-language-tutor-preview-5b3d.onrender.com.
 - [x] Preview duplicado de reconstrucción archivado: rama preservada como respaldo, entrypoint original guardado en archive/rebuild-functional-baseline-index.html, servicio redirigido al preview canónico (deploy dep-dc12u5ou01pc738jnm40).
 - [ ] Revisión humana final en dispositivo Android: apariencia, toque, reproducción de pronunciación y navegación.
+
+
+## Ajuste de interfaz vertical y Teoría — 22-11-2026
+- Se ajustó CSS para mantener las cinco posiciones de navegación en una sola fila en móvil, incluido Estadísticas.
+- Se alineó el título principal de sección con el control de audio sin reducir el tamaño del título.
+- Se compactaron las filas de temas de Teoría, conservando altura táctil y separación.
+- La actualización visual está registrada en `src/styles.css`; pendiente ejecutar CI/E2E y verificar el preview en Android físico.
+- Esquema pedagógico propuesto, aún no implementado: unidades por nivel MCER con objetivos comunicativos y subtemas agrupados en gramática, vocabulario y expresiones.
