@@ -31,9 +31,10 @@ try {
   const pageErrors = [];
   page.on("pageerror", error => pageErrors.push(error.message));
   await page.addInitScript(() => {
+    window.__spoken = [];
     const synth = {
       getVoices: () => [{ name: "Italian", lang: "it-IT" }, { name: "Spanish", lang: "es-CL" }],
-      speak: utterance => { setTimeout(() => utterance.onend?.(), 0); },
+      speak: utterance => { window.__spoken.push({ text:utterance.text, lang:utterance.lang }); setTimeout(() => utterance.onend?.(), 0); },
       cancel: () => {}, pause: () => {}, resume: () => {}, paused: false, speaking: false
     };
     Object.defineProperty(window, "speechSynthesis", { configurable: true, value: synth });
@@ -78,6 +79,9 @@ try {
   assert.ok(await page.locator("#theory-tree .theory-tree-topic").count() > 0, "the expanded unit should reveal its subtopics");
   assert.equal(await page.locator("#theory-tree .theory-tree-topic").first().locator(".theory-tree-topic-name").innerText(), "Pronombres personales", "subtopics should retain their existing names");
   assert.equal(await page.locator("#theory-tree .theory-tree-topic .theory-unit-number").count(), 0, "subtopics must not receive unit numbering");
+  assert.equal(await page.locator("#theory-tree .theory-tree-connector").count(), 0, "subtopics must not retain duplicate branch connectors");
+  assert.ok(await page.locator("#theory-tree .theory-tree-marker").count() > 0, "each subtopic should use one simple marker");
+  assert.equal(await page.locator("#theory-tree .theory-tree-unit").first().evaluate(el => getComputedStyle(el).borderLeftWidth), "2px", "the blue unit branch border should remain unchanged");
   await unitRows.nth(1).click();
   assert.equal(await page.locator("#theory-tree .theory-unit-row[aria-expanded='true']").count(), 1, "only one unit may remain expanded at a time");
   assert.equal(await unitRows.nth(0).getAttribute("aria-expanded"), "false", "opening another unit should collapse the previous one");
@@ -90,9 +94,16 @@ try {
   assert.ok((await page.locator("#theory-title").innerText()).length > 0, "Theory detail should contain a title");
   const categoryHeading = await page.locator("#theory-category").innerText();
   assert.ok(["文","Aa","“ ”"].some(icon => categoryHeading.startsWith(icon + " ")), "category header should put its icon before the category word");
-  assert.equal(await page.locator("#theory-breadcrumb").innerText(), "A1 · Principiante > Datos personales y entorno", "breadcrumb should identify the expanded unit below the topic title");
+  assert.equal(await page.locator("#theory-breadcrumb").innerText(), "A1 · Principiante > Datos personales y entorno", "breadcrumb should identify the expanded unit");
+  assert.ok(await page.locator("#theory-detail").locator("#theory-breadcrumb").evaluate(el => el.compareDocumentPosition(el.nextElementSibling) & Node.DOCUMENT_POSITION_FOLLOWING), "breadcrumb should precede the category and subtopic header");
   assert.equal(await page.locator("#theory-detail .back-control").count(), 1, "detail should contain exactly one back arrow");
-  assert.equal(await page.locator("#theory-description [data-speak]").count(), 0, "short target-language items should not have play controls");
+  const manualPronunciation = page.locator("#theory-description [data-speak]").first();
+  assert.ok(await manualPronunciation.count() > 0, "short target-language words should retain manual pronunciation controls");
+  assert.equal(await manualPronunciation.getAttribute("data-locale"), "it-IT", "Italian pronunciation controls must declare the it-IT locale");
+  await manualPronunciation.click();
+  await page.waitForFunction(() => window.__spoken?.length > 0);
+  assert.equal(await page.evaluate(() => window.__spoken.at(-1).lang), "it-IT", "manual pronunciation must invoke the Italian voice");
+  assert.ok(await page.evaluate(() => window.__spoken.at(-1).text.length > 0), "manual pronunciation must send the selected target-language text");
   await page.locator("#theory-back").click();
   assert.equal(await page.locator("#theory-level-list").isVisible(), true, "the single back arrow should return to the unit tree");
   assert.equal(await page.locator("#theory-tree .theory-unit-row[aria-expanded='true']").count(), 1, "returning from detail should preserve the expanded unit");
