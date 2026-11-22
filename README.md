@@ -871,3 +871,11 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - `npm run check` + `npm test`: aprobados en [GitHub Actions](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44992684949).
 - Browser E2E: en ejecución al registrar esta nota: [run 44992684991](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44992684991).
 - Render Preview: **LIVE**, deploy `dep-dc18fkeq1p3s73fg7t6g`, commit `0b96d5a007005a0b3b4a59d1336891fb0eab736e`; [preview canónico](https://adaptive-language-tutor-preview-5b3d.onrender.com/).
+
+
+### Navegación acumulativa de Teoría — 22-11-2026
+- Los encabezados de nivel y unidad se acumulan en filas consecutivas al profundizar hacia la lista y el detalle del subtema.
+- Cada fila de encabezado conserva altura fija e incluye su flecha de retorno; la navegación mantiene visible la jerarquía superior.
+- El subtema se muestra como contenido siguiente dentro de Teoría, no como pantalla fija a pantalla completa.
+- El encabezado del detalle muestra el icono de categoría inmediatamente antes del nombre (por ejemplo, icono de gramática + «Gramática»).
+- Validación automatizada y despliegue de esta revisión quedan pendientes hasta completar CI y confirmar el preview LIVE.
