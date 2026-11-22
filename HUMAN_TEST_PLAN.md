@@ -601,3 +601,5 @@ Para cada escenario registrar:
 - [ ] Confirmar que la ruta no contiene flechas ni botones de retorno y que en el detalle existe exactamente una flecha.
 - [ ] Pulsar la única flecha y confirmar que vuelve al conjunto de selectores conservando la etapa y unidad seleccionadas.
 - [ ] Probar los desplegables en Android vertical y horizontal, incluyendo títulos largos y áreas táctiles.
+
+- [ ] La primera opción del selector Etapa debe ser un placeholder; seleccionar A1 debe revelar Unidad sin depender de volver a elegir una opción ya seleccionada.
