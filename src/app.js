@@ -2698,7 +2698,7 @@ $("theory-level-a1").addEventListener("click",()=>{
   $("theory-list-title").textContent=unit.title;
   $("theory-list-items").innerHTML=activeTheoryTopics.map((t,i)=>'<button class="theory-topic-row" type="button" data-theory-topic="'+i+'"><span class="theory-topic-label"><span class="theory-category-icon" aria-hidden="true">'+theoryCategoryIcons[t[3]]+'</span>'+escapeHTML(t[0])+'</span><span aria-hidden="true">→</span></button>').join("");
   $("theory-unit-list").classList.add("hidden");$("theory-topic-list").classList.remove("hidden");
-  $("theory-list-items").querySelectorAll("[data-theory-topic]").forEach(t=>t.addEventListener("click",()=>openTheoryTopic(Number(t.dataset.theoryTopic))));
+  $("theory-list-items").querySelectorAll("[data-theory-topic]").forEach(t=>t.addEventListener("click",()=>{activeTheoryCategory=theoryCategoryLabels[activeTheoryTopics[Number(t.dataset.theoryTopic)][3]];openTheoryTopic(Number(t.dataset.theoryTopic));}));
  }));
 });
 $("theory-units-back").addEventListener("click",()=>{$("theory-unit-list").classList.add("hidden");$("theory-level-list").classList.remove("hidden");});
