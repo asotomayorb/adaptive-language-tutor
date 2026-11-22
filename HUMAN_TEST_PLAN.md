@@ -615,3 +615,10 @@ Para cada escenario registrar:
 - [ ] Abrir un subtema: el detalle existente debe conservar contenido, categoría, título, ruta, audio manual y controles anterior/siguiente.
 - [ ] Volver desde el detalle: debe regresar al árbol y conservar expandida la unidad de origen.
 - [ ] Probar con viewport móvil estrecho (320 px), móvil estándar (390 px) y escritorio; comprobar ausencia de scroll horizontal y legibilidad de títulos largos.
+
+
+### Verificación automatizada y disponibilidad para prueba humana — 22-11-2026
+- [x] `npm run check` y `npm test` aprobados: [GitHub Actions 45057647408](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45057647408).
+- [x] Browser E2E aprobado: [GitHub Actions 45057647416](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45057647416).
+- [x] Preview Render actualizado y LIVE: deploy `dep-dc1jkoajnfac738v4j7g`, commit `af0680ca58eb3c33d2f4a92ce6372d650ce1c6f4`.
+- [ ] Revisión visual y táctil humana en Android/móvil; comprobar que el resultado coincide con B2 y que la numeración/subniveles se perciben correctamente.
