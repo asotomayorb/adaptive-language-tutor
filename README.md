@@ -853,8 +853,15 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 
 
 ## Jerarquía de Teoría y audio — 22-11-2026
-- Jerarquía de navegación: **nivel → unidad → categoría (Gramática, Vocabulario o Expresiones) → subtema**.
-- El nivel A1 muestra seis unidades con títulos únicamente: Primeros contactos; Datos personales y entorno; Rutinas y tiempo; Comida y compras; Viajes y orientación; Números y cantidades. Los subtemas existentes se agrupan bajo las unidades y categorías correspondientes; no se agregan explicaciones nuevas en esta etapa.
+- Jerarquía de navegación: **nivel → unidad → subtema**. Gramática, Vocabulario y Expresiones no son pantallas ni niveles separados; cada subtema muestra un icono identificador de su categoría al inicio del nombre.
+- El nivel A1 muestra seis unidades con títulos únicamente: Primeros contactos; Datos personales y entorno; Rutinas y tiempo; Comida y compras; Viajes y orientación; Números y cantidades. Los subtemas existentes se agrupan bajo las unidades; no se agregan explicaciones nuevas en esta etapa.
+- Al abrir A1, el encabezado conserva «A1 · Principiante»; al abrir una unidad, el encabezado de la lista conserva exactamente el título de esa unidad. Los subtítulos de Teoría se alinean a la izquierda.
 - Los títulos principales de sección permanecen centrados y conservan su tamaño.
 - En Teoría, palabras y frases cortas del idioma objetivo se muestran subrayadas, sin control de reproducción. Los textos largos pueden tener botón de reproducción manual. La lectura automática está desactivada en Teoría; la lectura automática queda reservada para preguntas de ejercicios.
 - Los cambios de jerarquía y audio deben validarse con Browser E2E y revisión visual/auditiva manual. No declarar el preview actualizado hasta confirmar el deploy.
+
+
+### Ajuste de navegación de Teoría — 22-11-2026
+- Se simplificó la navegación a nivel → unidad → subtemas, eliminando el nivel/pantalla intermedia de categorías.
+- Gramática, Vocabulario y Expresiones se indican mediante iconos junto al nombre de cada subtema.
+- Los encabezados de nivel y unidad conservan sus nombres al entrar a la siguiente vista; los subtítulos quedan alineados a la izquierda.
