@@ -933,3 +933,12 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - [x] Servicio preview canónico confirmado en la rama `feature/mobile-bottom-navigation`; URL https://adaptive-language-tutor-preview-5b3d.onrender.com/.
 - [ ] Tests `npm run check`, `npm test` y Browser E2E para este commit: no verificados. La consulta disponible de runs de commit devuelve solo ejecuciones asociadas a PR y no encontró ninguna para este SHA; no se atribuye aprobación sin evidencia.
 - [ ] Revisar la navegación de tres desplegables y el detalle en Android real antes de cerrar la iteración.
+
+
+## Implementación de árbol de Teoría B2 — 22-11-2026
+- Se reemplaza la navegación por selectores Etapa/Unidad/Subtema por un árbol compacto de unidades con ramificaciones independientes.
+- B2 aplicado: bloques de unidad independientes con borde izquierdo azul; fondo azul tenue y borde más intenso en la unidad expandida; subtemas sangrados con conectores `├` / `└`.
+- La numeración árabe se aplica solo a las seis unidades; los subtemas no llevan números.
+- Estado de expansión exclusivo: una sola unidad abierta; abrir otra colapsa la anterior; tocar la unidad abierta la colapsa.
+- Se conserva el detalle de teoría y la unidad expandida al regresar desde un subtema.
+- Pruebas automatizadas de árbol y expansión exclusiva añadidas a Browser E2E. Estado de CI y despliegue: pendiente de verificación.
