@@ -690,3 +690,32 @@
 .theory-breadcrumb{margin:7px 0 0;color:#8190a2;font-size:12px;line-height:1.35;font-weight:550}
 #theory-counter{padding-top:4px;color:#8190a2;font-size:12px;white-space:nowrap}
 @media(max-width:620px){.theory-detail-header{gap:9px;margin-top:15px}.theory-topic-heading h2{font-size:22px}.theory-breadcrumb{font-size:11px}.theory-select-field select{min-height:50px}}
+
+
+/* Teoría B2: ramificaciones independientes, selección azul y jerarquía compacta. */
+.theory-tree-view{margin-top:10px}
+.theory-tree-view>h2{margin:0 0 10px;color:#29425f;font-size:16px;font-weight:750;text-align:left}
+.theory-tree{display:grid;gap:5px}
+.theory-tree-unit{min-width:0;border-left:2px solid #b8cfe7;border-radius:0 8px 8px 0;background:transparent;transition:background .14s ease,border-color .14s ease}
+.theory-tree-unit.is-expanded{border-left-color:#347fc5;background:#edf5fd}
+.theory-unit-row{display:grid;grid-template-columns:27px minmax(0,1fr) 20px;align-items:center;gap:8px;width:100%;min-height:40px;padding:7px 10px;border:0;border-radius:0 8px 8px 0;background:transparent;color:#263e59;font:inherit;text-align:left;cursor:pointer}
+.theory-unit-row:focus-visible,.theory-tree-topic:focus-visible{outline:2px solid #347fc5;outline-offset:2px}
+.theory-unit-number{color:#6e8197;font-size:14px;font-weight:750;font-variant-numeric:tabular-nums}
+.theory-tree-unit.is-expanded .theory-unit-number{color:#2876bb}
+.theory-unit-name{min-width:0;font-size:14px;font-weight:700;line-height:1.25}
+.theory-unit-chevron{justify-self:end;color:#71869e;font-size:21px;line-height:1}
+.theory-tree-unit.is-expanded .theory-unit-chevron{color:#2876bb}
+.theory-tree-branches{display:grid;gap:0;margin:0 10px 6px 25px;padding:1px 0 2px 12px;border-left:1px solid #80acd7}
+.theory-tree-topic{display:grid;grid-template-columns:14px 21px minmax(0,1fr);align-items:center;gap:7px;min-height:31px;width:100%;padding:3px 5px 3px 0;border:0;background:transparent;color:#40556e;font:inherit;text-align:left;cursor:pointer}
+.theory-tree-connector{margin-left:-19px;color:#3988d0;font-size:15px;line-height:1}
+.theory-tree-category-icon{width:20px;height:20px;flex-basis:20px;border-radius:6px;background:#e0edf9;color:#286da9;font-size:9px}
+.theory-tree-topic-name{min-width:0;font-size:12px;font-weight:550;line-height:1.3}
+.theory-tree-topic:hover .theory-tree-topic-name{color:#1d659f}
+@media(max-width:620px){
+ .theory-tree{gap:4px}
+ .theory-unit-row{min-height:38px;padding:6px 9px;gap:7px}
+ .theory-unit-name{font-size:13px}
+ .theory-tree-branches{margin-left:23px}
+ .theory-tree-topic{min-height:30px}
+ .theory-tree-topic-name{font-size:12px}
+}
