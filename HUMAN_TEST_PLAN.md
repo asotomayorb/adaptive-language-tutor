@@ -590,3 +590,14 @@ Para cada escenario registrar:
 - [ ] El subtema aparece debajo de la jerarquía dentro de Teoría, sin cubrir la pantalla completa.
 - [ ] En el detalle, el icono de categoría aparece antes de «Gramática», «Vocabulario» o «Expresiones».
 - [ ] Las flechas del detalle permiten volver al subtema, unidad o nivel correspondiente.
+
+
+## Teoría — selectores jerárquicos y retorno único (22-11-2026)
+- [ ] En Teoría, comprobar que la primera lista muestra «Etapa» y no la palabra «Nivel».
+- [ ] Seleccionar A1 y verificar que aparece el desplegable Unidad con seis opciones.
+- [ ] Seleccionar una unidad y verificar que aparece Subtema; sus opciones deben agruparse por Gramática, Vocabulario y Expresiones.
+- [ ] Cambiar la unidad después de haber seleccionado una: el selector de subtema debe actualizarse y no conservar una selección perteneciente a la unidad anterior.
+- [ ] Abrir un subtema y comprobar que su categoría/icono queda como rótulo, el nombre del subtema como título principal y la ruta «A1 · Principiante > unidad» debajo, en tamaño menor.
+- [ ] Confirmar que la ruta no contiene flechas ni botones de retorno y que en el detalle existe exactamente una flecha.
+- [ ] Pulsar la única flecha y confirmar que vuelve al conjunto de selectores conservando la etapa y unidad seleccionadas.
+- [ ] Probar los desplegables en Android vertical y horizontal, incluyendo títulos largos y áreas táctiles.
