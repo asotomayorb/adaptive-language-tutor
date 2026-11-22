@@ -644,3 +644,11 @@
  #theory-list-items{gap:8px}
  .theory-topic-row{min-height:54px;padding:12px 14px;font-size:15px}
 }
+
+/* Theory: centered section headings, progressive hierarchy, and no play controls on short target-language items. */
+.screen-heading{justify-content:center!important;text-align:center!important}
+.screen-heading h1{width:100%!important;text-align:center!important}
+.theory-hierarchy{margin-top:10px}
+.theory-hierarchy>h2{margin:0 0 12px;font-size:17px;text-align:center;color:#29425f}
+.theory-hierarchy .subscreen-header{margin-bottom:14px}
+.theory-target-word{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
