@@ -71,7 +71,7 @@ try {
   assert.equal(await page.locator("#screen-theory .screen-heading h1").evaluate(el => getComputedStyle(el).textAlign), "center", "section titles should remain centered");
   await page.locator("#theory-level-a1").click();
   assert.equal(await page.locator("#theory-unit-list").isVisible(), true, "A1 should open its unit list");
-  assert.equal(await page.locator("#theory-unit-items [data-theory-unit]").count(), 5, "A1 should show the five proposed unit titles");
+  assert.equal(await page.locator("#theory-unit-items [data-theory-unit]").count(), 6, "A1 should show the six proposed unit titles");
   await page.locator("#theory-unit-items [data-theory-unit]").first().click();
   assert.equal(await page.locator("#theory-category-screen").isVisible(), true, "a unit should open its three-category layer");
   await page.locator('[data-theory-category="grammar"]').click();
