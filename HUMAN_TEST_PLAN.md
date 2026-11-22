@@ -635,3 +635,10 @@ Para cada escenario registrar:
 - [ ] Volver desde el detalle y confirmar que la unidad de origen permanece expandida y que la expansión exclusiva sigue funcionando.
 
 **Idioma vigente de esta revisión:** italiano (it-IT). Las referencias a portugués brasileño (pt-BR) en secciones históricas del plan corresponden a iteraciones anteriores.
+
+
+### Validación automatizada de Teoría B2 italiana — 22-11-2026
+- [x] Browser E2E comprueba los marcadores simples, la conservación del borde azul de unidad, la posición de la ruta y la reproducción manual con locale it-IT. Run [45060797728](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45060797728).
+- [x] npm run check y npm test aprobados en run [45060797598](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45060797598).
+- [x] Preview Render LIVE en deploy `dep-dc1k48d9fdbs73b2ua70`, commit `c55822c0ce8434ab086f0067715124fd7333377f`.
+- [ ] Prueba auditiva/táctil en Android real pendiente.
