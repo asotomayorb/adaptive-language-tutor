@@ -559,3 +559,10 @@ Para cada escenario registrar:
 - [x] Estadísticas abre sin errores de navegador.
 - [x] npm run check y npm test aprobados; Browser E2E aprobado en https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44964132590.
 - [ ] Falta completar la revisión manual táctil/auditiva en Android.
+
+
+## Revisión manual — barra inferior y lista compacta de Teoría — 22-11-2026
+- [ ] En móvil vertical (320–430 px), confirmar que Ruta, Entrenamiento, Idiomas, Teoría y Estadísticas caben en una sola fila y que Estadísticas no baja.
+- [ ] Confirmar que el botón central de Idiomas sigue destacado y que los cinco objetivos táctiles no se superponen.
+- [ ] Confirmar que el título de sección conserva su tamaño y queda a la misma altura que el icono de audio.
+- [ ] Abrir cada categoría de Teoría: comprobar que las filas son más compactas, legibles y no se ven apretadas; probar títulos largos y navegación al detalle.
