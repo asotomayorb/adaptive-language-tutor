@@ -88,7 +88,8 @@ try {
   assert.equal(await page.locator("#theory-level-list").isVisible(), false, "detail should replace the dropdown stack in-flow");
   assert.equal(await page.locator("#theory-detail").evaluate(el => getComputedStyle(el).position), "static", "detail should not be fullscreen/fixed");
   assert.ok((await page.locator("#theory-title").innerText()).length > 0, "Theory detail should contain a title");
-  assert.match(await page.locator("#theory-category").innerText(), /^(文|Aa|“ ”)\\s+/, "category header should put its icon before the category word");
+  const categoryHeading = await page.locator("#theory-category").innerText();
+  assert.ok(["文","Aa","“ ”"].some(icon => categoryHeading.startsWith(icon + " ")), "category header should put its icon before the category word");
   assert.equal(await page.locator("#theory-breadcrumb").innerText(), "A1 · Principiante > Primeros contactos", "breadcrumb should sit below the topic title in smaller text");
   assert.equal(await page.locator("#theory-detail .back-control").count(), 1, "detail should contain exactly one back arrow");
   assert.equal(await page.locator("#theory-description [data-speak]").count(), 0, "short target-language items should not have play controls");
