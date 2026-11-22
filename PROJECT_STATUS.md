@@ -976,3 +976,9 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - El texto tocable incorpora rol y foco de teclado; se mantiene el texto objetivo exacto y no la traducción.
 - Browser E2E actualizado para comprobar tipografía, espaciado, locale, texto leído y ausencia de icono redundante.
 - Pendiente: CI, despliegue Render y prueba auditiva en Android real.
+
+### Validación final de tipografía y pronunciación directa — 22-11-2026
+- `npm run check` + `npm test`: aprobados, run `45062976801`.
+- Browser E2E: aprobado, run `45062980099`, commit de test `d6158c913ffbbf44500a3898b274c1b79ca31ebe`.
+- Render Preview: LIVE, deploy `dep-dc1kf756e07s73dkg96g`, commit `91b939557b44c77173021d1cd8167729706073e1`.
+- Prueba humana Android sigue pendiente: confirmar apariencia en pantalla física y audio italiano audible al tocar palabras/frases cortas; los iconos permanecen para textos extensos.
