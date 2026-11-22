@@ -865,3 +865,9 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Se simplificó la navegación a nivel → unidad → subtemas, eliminando el nivel/pantalla intermedia de categorías.
 - Gramática, Vocabulario y Expresiones se indican mediante iconos junto al nombre de cada subtema.
 - Los encabezados de nivel y unidad conservan sus nombres al entrar a la siguiente vista; los subtítulos quedan alineados a la izquierda.
+
+### Verificación de navegación simplificada — 22-11-2026
+- Commit de código: `0b96d5a007005a0b3b4a59d1336891fb0eab736e`.
+- `npm run check` + `npm test`: aprobados en [GitHub Actions](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44992684949).
+- Browser E2E: en ejecución al registrar esta nota: [run 44992684991](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44992684991).
+- Render Preview: deploy `dep-dc18fkeq1p3s73fg7t6g` en actualización; no declarar LIVE hasta confirmar su estado.
