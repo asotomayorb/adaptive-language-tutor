@@ -924,3 +924,5 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 ### Corrección de ciclo de navegación — 22-11-2026
 - [x] Actualizar `showScreen("theory")` para usar el nuevo contenedor de selectores; retirar referencias a las antiguas listas de nivel/unidad/subtema.
 - [ ] Revalidar CI y Browser E2E después de este ajuste.
+
+- [x] El selector de Etapa utiliza un placeholder inicial para garantizar que la selección de A1 dispare la carga del desplegable Unidad.
