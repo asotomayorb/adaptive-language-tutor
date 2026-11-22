@@ -919,3 +919,8 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - [x] Dejar una sola flecha de retorno en el detalle; cambiar etapa/unidad desde los selectores, sin flechas adicionales.
 - [ ] Ejecutar `npm run check`, `npm test` y `npm run test:e2e` sobre el commit resultante.
 - [ ] Confirmar que Render Preview despliega el commit resultante y revisar en Android físico la interacción de los tres desplegables.
+
+
+### Corrección de ciclo de navegación — 22-11-2026
+- [x] Actualizar `showScreen("theory")` para usar el nuevo contenedor de selectores; retirar referencias a las antiguas listas de nivel/unidad/subtema.
+- [ ] Revalidar CI y Browser E2E después de este ajuste.
