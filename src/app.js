@@ -182,6 +182,35 @@ function seekPassageSpeech(value) {
   if (wasPlaying) startPassageSpeech(offset);
   else updateReadingPassageControl();
 }
+function bindTheoryTargetText(root) {
+  const locale = getSelectedCatalog()?.locale || "und";
+  root.querySelectorAll(".theory-target-word").forEach(target => {
+    const spokenText = target.textContent.trim();
+    if (!spokenText) return;
+    const adjacentSpeaker = target.nextElementSibling?.matches(".speak-button") ? target.nextElementSibling : null;
+    if (spokenText.length > 48) {
+      if (!adjacentSpeaker) target.insertAdjacentHTML("afterend", " " + speakerButton(spokenText, locale));
+      return;
+    }
+    adjacentSpeaker?.remove();
+    if (target.dataset.theorySpeechBound === "true") return;
+    target.dataset.theorySpeechBound = "true";
+    target.classList.add("theory-target-tap");
+    target.dataset.speak = spokenText;
+    target.dataset.locale = locale;
+    target.setAttribute("role", "button");
+    target.setAttribute("tabindex", "0");
+    target.setAttribute("aria-label", "Escuchar " + spokenText + " en italiano");
+    const speak = () => speech.speak(spokenText, locale);
+    target.addEventListener("click", speak);
+    target.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        speak();
+      }
+    });
+  });
+}
 function bindSpeakerButtons(root) {
   root.querySelectorAll("[data-speak]:not([data-speech-bound])").forEach(button => {
     button.dataset.speechBound = "true";
@@ -2663,6 +2692,8 @@ function openTheoryTopic(index) {
   $("theory-category").textContent = categoryIcon + "  " + activeTheoryCategory;
   $("theory-breadcrumb").textContent = "A1 · Principiante > " + (theoryUnits[activeTheoryUnit]?.title || "");
   $("theory-description").innerHTML = detailMarkup;
+  bindSpeakerButtons($("theory-description"));
+  bindTheoryTargetText($("theory-description"));
   bindSpeakerButtons($("theory-description"));
   speech.stop();
   // Keep manual pronunciation controls for every target-language fragment, including short words and phrases.
