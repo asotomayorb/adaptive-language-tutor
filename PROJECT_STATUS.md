@@ -885,3 +885,11 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Se compactaron las filas de temas de Teoría, conservando altura táctil y separación.
 - La actualización visual está registrada en `src/styles.css`; pendiente ejecutar CI/E2E y verificar el preview en Android físico.
 - Esquema pedagógico propuesto, aún no implementado: unidades por nivel MCER con objetivos comunicativos y subtemas agrupados en gramática, vocabulario y expresiones.
+
+
+## Teoría: jerarquía, centrado y audio — 22-11-2026
+- Se añadió navegación Nivel A1 → cinco unidades → Gramática/Vocabulario/Expresiones → subtemas existentes.
+- Se mantuvieron los subtemas y detalles existentes; las unidades nuevas son solo títulos y agrupaciones, sin contenido didáctico añadido.
+- Se centraron los títulos principales, se subrayaron palabras/frases cortas y se retiraron sus controles de reproducción.
+- Se eliminó la reproducción automática al abrir temas de Teoría; los controles restantes reproducen manualmente textos largos.
+- Browser E2E actualizado para jerarquía, navegación atrás, título centrado y ausencia de play en subtemas cortos. Pendiente ejecutar pruebas, inspeccionar el preview y revisar en Android real.
