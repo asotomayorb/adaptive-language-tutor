@@ -892,3 +892,6 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - El detalle contiene una sola flecha de retroceso, que devuelve a los selectores jerárquicos. No mostrar flechas adicionales para volver a etapa o unidad; esas dimensiones se cambian directamente en sus desplegables.
 - Mantener el contenido, los ejemplos, la pronunciación manual y el orden pedagógico existentes. Este cambio afecta la navegación y su presentación, no amplía el temario.
 - Validar los selectores en móvil, la agrupación por categoría, el título/ruta y la existencia de una sola flecha mediante Browser E2E. La revisión táctil final en Android sigue siendo manual.
+
+
+- Corrección de integración — 22-11-2026: al volver a Teoría desde otra sección, el restablecimiento de vista debe operar sobre el contenedor único de selectores y el detalle; no debe intentar ocultar las antiguas listas independientes.
