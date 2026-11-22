@@ -76,11 +76,21 @@ try {
   assert.equal(await page.locator("#theory-topic-list").isVisible(), true, "a unit should open its subtopics directly");
   assert.equal(await page.locator("#theory-list-title").innerText(), "Primeros contactos", "unit heading should retain its name after selection");
   assert.ok(await page.locator("#theory-list-items .theory-category-icon").count() > 0, "category should be represented by an icon on each subtopic");
+  assert.equal(await page.locator("#theory-topics-level-title").innerText(), "A1 · Principiante", "subtopic list should retain the level heading");
+  const headerHeightBefore = await page.locator("#theory-heading-stack").first().evaluate(el => el.getBoundingClientRect().height);
   await page.locator("#theory-list-items [data-theory-topic]").first().click();
   assert.equal(await page.locator("#theory-detail").isVisible(), true, "Theory topic detail should open");
+  assert.equal(await page.locator("#theory-topic-list").isVisible(), false, "detail should replace the list in-flow rather than overlay it");
+  assert.equal(await page.locator("#theory-detail").evaluate(el => getComputedStyle(el).position), "static", "detail should not be fullscreen/fixed");
+  assert.equal(await page.locator("#theory-detail-level-title").innerText(), "A1 · Principiante", "detail should accumulate the level heading");
+  assert.equal(await page.locator("#theory-detail-unit-title").innerText(), "Primeros contactos", "detail should accumulate the unit heading");
   assert.ok((await page.locator("#theory-title").innerText()).length > 0, "Theory detail should contain a title");
+  assert.match(await page.locator("#theory-category").innerText(), /^(文|Aa|“ ”)\s+/, "category header should put its icon before the category word");
+  const headerHeightAfter = await page.locator("#theory-detail .theory-heading-stack").evaluate(el => el.getBoundingClientRect().height);
+  assert.ok(headerHeightAfter >= headerHeightBefore, "cumulative heading rows should preserve their height during navigation");
   assert.equal(await page.locator("#theory-description [data-speak]").count(), 0, "short target-language items should not have play controls");
   await page.locator("#theory-back").click();
+  assert.equal(await page.locator("#theory-topic-list").isVisible(), true, "detail back should return to the subtopic list");
   await page.locator("#theory-list-back").click();
   assert.equal(await page.locator("#theory-unit-list").isVisible(), true, "subtopic back should return to the unit list");
 
