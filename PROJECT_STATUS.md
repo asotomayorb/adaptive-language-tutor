@@ -926,3 +926,10 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - [ ] Revalidar CI y Browser E2E después de este ajuste.
 
 - [x] El selector de Etapa utiliza un placeholder inicial para garantizar que la selección de A1 dispare la carga del desplegable Unidad.
+
+
+### Confirmación de deploy y estado de pruebas — 22-11-2026
+- [x] Render deploy `dep-dc19agetlv9c73bf6gu0` finalizó **LIVE**; commit `e9caf17995211d65d0f390032845f2d2536a7d23`.
+- [x] Servicio preview canónico confirmado en la rama `feature/mobile-bottom-navigation`; URL https://adaptive-language-tutor-preview-5b3d.onrender.com/.
+- [ ] Tests `npm run check`, `npm test` y Browser E2E para este commit: no verificados. La consulta disponible de runs de commit devuelve solo ejecuciones asociadas a PR y no encontró ninguna para este SHA; no se atribuye aprobación sin evidencia.
+- [ ] Revisar la navegación de tres desplegables y el detalle en Android real antes de cerrar la iteración.
