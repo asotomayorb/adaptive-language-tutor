@@ -69,13 +69,21 @@ try {
   assert.equal(await page.locator("#screen-theory").isVisible(), true, "cancel should keep the current section");
 
   assert.equal(await page.locator("#screen-theory .screen-heading h1").evaluate(el => getComputedStyle(el).textAlign), "center", "section titles should remain centered");
-  await page.locator("#theory-level-select").selectOption("a1");
-  assert.equal(await page.locator("#theory-unit-field").isVisible(), true, "selecting a level should reveal the unit dropdown");
-  assert.equal(await page.locator("#theory-unit-select option").count(), 7, "A1 should offer six units plus its placeholder");
-  await page.locator("#theory-unit-select").selectOption("0");
-  assert.equal(await page.locator("#theory-topic-field").isVisible(), true, "selecting a unit should reveal the subtopic dropdown");
-  assert.ok(await page.locator("#theory-topic-select optgroup").count() > 0, "subtopics should be grouped by grammar, vocabulary and expressions");
-  await page.locator("#theory-topic-select").selectOption("0");
+  assert.equal(await page.locator("#theory-level-heading").innerText(), "A1 · Principiante", "the stage should remain as a simple hierarchy heading");
+  const unitRows = page.locator("#theory-tree .theory-unit-row");
+  assert.equal(await unitRows.count(), 6, "A1 should show its six units");
+  assert.deepEqual(await page.locator("#theory-tree .theory-unit-number").allInnerTexts(), ["1.","2.","3.","4.","5.","6."], "only units should carry Arabic numbering");
+  await unitRows.nth(0).click();
+  assert.equal(await unitRows.nth(0).getAttribute("aria-expanded"), "true", "the first unit should expand");
+  assert.ok(await page.locator("#theory-tree .theory-tree-topic").count() > 0, "the expanded unit should reveal its subtopics");
+  assert.equal(await page.locator("#theory-tree .theory-tree-topic").first().locator(".theory-tree-topic-name").innerText(), "Pronombres personales", "subtopics should retain their existing names");
+  assert.equal(await page.locator("#theory-tree .theory-tree-topic .theory-unit-number").count(), 0, "subtopics must not receive unit numbering");
+  await unitRows.nth(1).click();
+  assert.equal(await page.locator("#theory-tree .theory-unit-row[aria-expanded='true']").count(), 1, "only one unit may remain expanded at a time");
+  assert.equal(await unitRows.nth(0).getAttribute("aria-expanded"), "false", "opening another unit should collapse the previous one");
+  assert.equal(await unitRows.nth(1).getAttribute("aria-expanded"), "true", "the newly selected unit should be expanded");
+  const topicButton = page.locator("#theory-tree .theory-tree-topic").first();
+  await topicButton.click();
   assert.equal(await page.locator("#theory-detail").isVisible(), true, "Theory topic detail should open");
   assert.equal(await page.locator("#theory-level-list").isVisible(), false, "detail should replace the dropdown stack in-flow");
   assert.equal(await page.locator("#theory-detail").evaluate(el => getComputedStyle(el).position), "static", "detail should not be fullscreen/fixed");
@@ -85,7 +93,8 @@ try {
   assert.equal(await page.locator("#theory-detail .back-control").count(), 1, "detail should contain exactly one back arrow");
   assert.equal(await page.locator("#theory-description [data-speak]").count(), 0, "short target-language items should not have play controls");
   await page.locator("#theory-back").click();
-  assert.equal(await page.locator("#theory-level-list").isVisible(), true, "the single back arrow should return to the hierarchical dropdowns");
+  assert.equal(await page.locator("#theory-level-list").isVisible(), true, "the single back arrow should return to the unit tree");
+  assert.equal(await page.locator("#theory-tree .theory-unit-row[aria-expanded='true']").count(), 1, "returning from detail should preserve the expanded unit");
 
   await page.locator('.bottom-nav [data-screen="stats"]').click();
   await page.locator("#screen-stats").waitFor({ state: "visible" });
