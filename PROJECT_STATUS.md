@@ -888,7 +888,7 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 
 
 ## Teoría: jerarquía, centrado y audio — 22-11-2026
-- Se añadió navegación Nivel A1 → cinco unidades → Gramática/Vocabulario/Expresiones → subtemas existentes.
+- Se añadió navegación Nivel A1 → seis unidades → Gramática/Vocabulario/Expresiones → subtemas existentes.
 - Se mantuvieron los subtemas y detalles existentes; las unidades nuevas son solo títulos y agrupaciones, sin contenido didáctico añadido.
 - Se centraron los títulos principales, se subrayaron palabras/frases cortas y se retiraron sus controles de reproducción.
 - Se eliminó la reproducción automática al abrir temas de Teoría; los controles restantes reproducen manualmente textos largos.
