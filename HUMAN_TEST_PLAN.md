@@ -651,3 +651,13 @@ Para cada escenario registrar:
 - [ ] Confirmar que los fragmentos extensos conservan el icono Play y reproducen únicamente su propio texto.
 - [ ] Confirmar reproducción italiana it-IT y ausencia de lectura de traducción española.
 - [ ] Repetir las pruebas en Android real; verificar respuesta táctil y sonido audible.
+
+
+### Resultado de validación — 22-11-2026
+- [x] Igualdad de tamaño tipográfico (16 px) validada en Browser E2E.
+- [x] Espaciado compacto entre encabezado y desarrollo validado en Browser E2E.
+- [x] Pronunciación directa de texto corto en it-IT, sin icono Play redundante, validada en Browser E2E.
+- [x] `npm run check` y `npm test` aprobados: [run 45062976801](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45062976801).
+- [x] Browser E2E aprobado: [run 45062980099](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45062980099).
+- [x] Preview Render LIVE: deploy `dep-dc1kf756e07s73dkg96g`.
+- [ ] Prueba visual, táctil y auditiva en Android real.
