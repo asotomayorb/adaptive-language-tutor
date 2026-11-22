@@ -603,3 +603,15 @@ Para cada escenario registrar:
 - [ ] Probar los desplegables en Android vertical y horizontal, incluyendo títulos largos y áreas táctiles.
 
 - [ ] La primera opción del selector Etapa debe ser un placeholder; seleccionar A1 debe revelar Unidad sin depender de volver a elegir una opción ya seleccionada.
+
+
+## Teoría — árbol B2 y expansión exclusiva (22-11-2026)
+- [ ] En la pantalla Teoría, confirmar que el encabezado muestra «A1 · Principiante» y debajo aparecen las seis unidades en orden.
+- [ ] Verificar numeración arábiga consecutiva 1–6 únicamente en las unidades; ningún subtema debe tener número.
+- [ ] Comprobar que cada unidad es un bloque independiente con borde lateral azul y filas verticalmente compactas.
+- [ ] Abrir una unidad: debe mostrar sus subtemas debajo, con sangría a la izquierda y conectores de rama; la unidad activa debe tener fondo azul muy tenue.
+- [ ] Abrir otra unidad: la anterior debe colapsarse automáticamente y solo la nueva permanecer expandida.
+- [ ] Tocar nuevamente la unidad expandida: debe colapsarse.
+- [ ] Abrir un subtema: el detalle existente debe conservar contenido, categoría, título, ruta, audio manual y controles anterior/siguiente.
+- [ ] Volver desde el detalle: debe regresar al árbol y conservar expandida la unidad de origen.
+- [ ] Probar con viewport móvil estrecho (320 px), móvil estándar (390 px) y escritorio; comprobar ausencia de scroll horizontal y legibilidad de títulos largos.
