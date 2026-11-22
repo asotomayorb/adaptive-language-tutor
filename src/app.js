@@ -1932,8 +1932,6 @@ function showScreen(name) {
   $("app-shell").classList.remove("session-active");
   if (name === "theory") {
     $("theory-detail").classList.add("hidden");
-    $("theory-topic-list").classList.add("hidden");
-    $("theory-unit-list").classList.add("hidden");
     $("theory-level-list").classList.remove("hidden");
   }
   if (name === "exercises") {
