@@ -2631,6 +2631,9 @@ function renderItalianAppliedTopic(category, index, locale) {
 let activeTheoryTopics = [];
 let activeTheoryIndex = 0;
 let activeTheoryCategory = "";
+let activeTheoryUnit = null;
+const theoryCategoryIcons = { grammar:"文", vocabulary:"Aa", expressions:"“ ”" };
+
 function openTheoryTopic(index) {
   activeTheoryIndex = Math.max(0, Math.min(index, activeTheoryTopics.length - 1));
   const [title, body, sourceIndex = activeTheoryIndex] = activeTheoryTopics[activeTheoryIndex];
@@ -2647,87 +2650,86 @@ function openTheoryTopic(index) {
   const languageName = $("language").value === "other" ? $("custom-language-name").value.trim() : $("language").value;
   const locale = getSelectedCatalog()?.locale || "und";
   let detailMarkup = '<p class="theory-slide-text">' + escapeHTML(body) + '</p>';
-  const italianApplied = languageName === "Italiano"
-    ? renderItalianAppliedTopic(activeTheoryCategory, sourceIndex, locale)
-    : null;
+  const italianApplied = languageName === "Italiano" ? renderItalianAppliedTopic(activeTheoryCategory, sourceIndex, locale) : null;
   const appliedLanguage = renderAppliedLanguageTopic(languageName, activeTheoryCategory, sourceIndex, locale);
-  const articleLesson = activeTheoryCategory === "Gramática" && sourceIndex === 1
-    ? renderArticleLesson(languageName, locale) : null;
-  if (italianApplied || appliedLanguage) {
-    detailMarkup = italianApplied || appliedLanguage;
-  } else if (articleLesson) {
-    detailMarkup = articleLesson;
-  } else if (activeTheoryCategory === "Gramática" && sourceIndex === 0) {
-    detailMarkup = '<p class="theory-slide-text">Los pronombres indican quién participa en la oración. Estas son las formas personales más habituales:</p>' + renderPronounTable(sample, languageName, locale);
-  } else if (activeTheoryCategory === "Gramática" && sourceIndex === 1 && sample?.articles) {
-    detailMarkup += '<section class="theory-example"><span>Artículos de este idioma</span><p class="theory-target-word">' + escapeHTML(sample.articles) + '</p><p class="theory-slide-text">Observa género, número y si el artículo es definido o indefinido. Algunos idiomas expresan estas diferencias mediante sufijos o no usan artículos.</p></section>';
-  } else if (activeTheoryCategory === "Gramática" && sourceIndex === 2) {
-    detailMarkup = renderVerbLesson(languageName);
-  } else if (activeTheoryCategory === "Gramática" && sourceIndex >= 3) {
-    detailMarkup = renderTenseLesson(languageName, sourceIndex);
-  } else if (sampleByTopic) {
-    detailMarkup += '<section class="theory-example"><span>' + escapeHTML(sampleLabel) + ' · ' + escapeHTML(languageDefinitions[$("language").value]?.label || languageName) + '</span><p class="theory-target-word">' + escapeHTML(sampleByTopic) + '</p></section>';
-  }
+  const articleLesson = activeTheoryCategory === "Gramática" && sourceIndex === 1 ? renderArticleLesson(languageName, locale) : null;
+  if (italianApplied || appliedLanguage) detailMarkup = italianApplied || appliedLanguage;
+  else if (articleLesson) detailMarkup = articleLesson;
+  else if (activeTheoryCategory === "Gramática" && sourceIndex === 0) detailMarkup = '<p class="theory-slide-text">Los pronombres indican quién participa en la oración. Estas son las formas personales más habituales:</p>' + renderPronounTable(sample, languageName, locale);
+  else if (activeTheoryCategory === "Gramática" && sourceIndex === 1 && sample?.articles) detailMarkup += '<section class="theory-example"><span>Artículos de este idioma</span><p class="theory-target-word">' + escapeHTML(sample.articles) + '</p><p class="theory-slide-text">Observa género, número y si el artículo es definido o indefinido. Algunos idiomas expresan estas diferencias mediante sufijos o no usan artículos.</p></section>';
+  else if (activeTheoryCategory === "Gramática" && sourceIndex === 2) detailMarkup = renderVerbLesson(languageName);
+  else if (activeTheoryCategory === "Gramática" && sourceIndex >= 3) detailMarkup = renderTenseLesson(languageName, sourceIndex);
+  else if (sampleByTopic) detailMarkup += '<section class="theory-example"><span>' + escapeHTML(sampleLabel) + ' · ' + escapeHTML(languageDefinitions[$("language").value]?.label || languageName) + '</span><p class="theory-target-word">' + escapeHTML(sampleByTopic) + '</p></section>';
   $("theory-title").textContent = title;
   const categoryIcon = theoryCategoryIcons[activeTheoryTopics[activeTheoryIndex]?.[3]] || "";
   $("theory-category").textContent = categoryIcon + "  " + activeTheoryCategory;
+  $("theory-breadcrumb").textContent = "A1 · Principiante > " + (theoryUnits[activeTheoryUnit]?.title || "");
   $("theory-description").innerHTML = detailMarkup;
   bindSpeakerButtons($("theory-description"));
   speech.stop();
-  $("theory-description").querySelectorAll("[data-speak]").forEach(button=>{
-    const spoken=String(button.dataset.speak||"").trim();
-    if(spoken.length<=32){
-      if(button.previousElementSibling)button.previousElementSibling.classList.add("theory-target-word");
+  $("theory-description").querySelectorAll("[data-speak]").forEach(button => {
+    const spoken = String(button.dataset.speak || "").trim();
+    if (spoken.length <= 32) {
+      if (button.previousElementSibling) button.previousElementSibling.classList.add("theory-target-word");
       button.remove();
     }
   });
   $("theory-counter").textContent = (activeTheoryIndex + 1) + " / " + activeTheoryTopics.length;
-  $("theory-detail-level-title").textContent = "A1 · Principiante";
-  $("theory-detail-unit-title").textContent = theoryUnits[activeTheoryUnit]?.title || "";
-  $("theory-detail-level-back").setAttribute("aria-label", "Volver a niveles");
-  $("theory-detail-unit-back").setAttribute("aria-label", "Volver a unidades");
-  $("theory-back").setAttribute("aria-label", "Volver a subtemas");
-  $("theory-topic-list").classList.add("hidden");
+  $("theory-level-list").classList.add("hidden");
+  $("theory-detail").classList.remove("hidden");
   $("theory-prev").disabled = activeTheoryIndex === 0;
   $("theory-next").disabled = activeTheoryIndex === activeTheoryTopics.length - 1;
-  $("theory-detail").classList.remove("hidden");
 }
-let activeTheoryUnit=null;
-const theoryCategoryIcons={grammar:"文",vocabulary:"Aa",expressions:"“ ”"};
-$("theory-level-a1").addEventListener("click",()=>{
- $("theory-level-list").classList.add("hidden");$("theory-unit-list").classList.remove("hidden");
- $("theory-level-heading").textContent="A1 · Principiante";
- $("theory-unit-items").innerHTML=theoryUnits.map((u,i)=>'<button class="theory-topic-row" data-theory-unit="'+i+'" type="button"><span>'+escapeHTML(u.title)+'</span><span aria-hidden="true">→</span></button>').join("");
- $("theory-unit-items").querySelectorAll("[data-theory-unit]").forEach(b=>b.addEventListener("click",()=>{
-  activeTheoryUnit=Number(b.dataset.theoryUnit);
-  const unit=theoryUnits[activeTheoryUnit];
-  activeTheoryTopics=Object.entries(unit.categories).flatMap(([key,indices])=>indices.map(i=>{const all=theoryContent[key][1];return [all[i][0],all[i][1],i,key];}));
-  $("theory-list-title").textContent=unit.title;
-  $("theory-topics-level-title").textContent="A1 · Principiante";
-  $("theory-list-items").innerHTML=activeTheoryTopics.map((t,i)=>'<button class="theory-topic-row" type="button" data-theory-topic="'+i+'"><span class="theory-topic-label"><span class="theory-category-icon" aria-hidden="true">'+theoryCategoryIcons[t[3]]+'</span>'+escapeHTML(t[0])+'</span><span aria-hidden="true">→</span></button>').join("");
-  $("theory-unit-list").classList.add("hidden");$("theory-topic-list").classList.remove("hidden");
-  $("theory-list-items").querySelectorAll("[data-theory-topic]").forEach(t=>t.addEventListener("click",()=>{activeTheoryCategory=theoryCategoryLabels[activeTheoryTopics[Number(t.dataset.theoryTopic)][3]];openTheoryTopic(Number(t.dataset.theoryTopic));}));
- }));
+
+function populateTheoryUnits() {
+  $("theory-unit-select").innerHTML = '<option value="">Selecciona una unidad</option>' +
+    theoryUnits.map((unit, index) => '<option value="' + index + '">' + escapeHTML(unit.title) + '</option>').join("");
+  $("theory-unit-field").classList.remove("hidden");
+  $("theory-topic-field").classList.add("hidden");
+  $("theory-topic-select").innerHTML = '<option value="">Selecciona un subtema</option>';
+}
+
+function populateTheoryTopics(unitIndex) {
+  activeTheoryUnit = Number(unitIndex);
+  const unit = theoryUnits[activeTheoryUnit];
+  activeTheoryTopics = Object.entries(unit.categories).flatMap(([key, indices]) =>
+    indices.map(i => {
+      const item = theoryContent[key][1][i];
+      return [item[0], item[1], i, key];
+    })
+  );
+  const options = Object.entries(unit.categories).map(([key, indices]) => {
+    const category = theoryCategoryLabels[key] || key;
+    const entries = indices.map(sourceIndex => {
+      const optionIndex = activeTheoryTopics.findIndex(item => item[2] === sourceIndex && item[3] === key);
+      return '<option value="' + optionIndex + '">' + escapeHTML(activeTheoryTopics[optionIndex][0]) + '</option>';
+    }).join("");
+    return '<optgroup label="' + escapeHTML(category) + '">' + entries + '</optgroup>';
+  }).join("");
+  $("theory-topic-select").innerHTML = '<option value="">Selecciona un subtema</option>' + options;
+  $("theory-topic-field").classList.remove("hidden");
+}
+
+$("theory-level-select").addEventListener("change", event => {
+  if (event.target.value === "a1") populateTheoryUnits();
 });
-$("theory-units-back").addEventListener("click",()=>{$("theory-unit-list").classList.add("hidden");$("theory-level-list").classList.remove("hidden");});
-$("theory-list-back").addEventListener("click", () => {
-  speech.stop();
-  $("theory-topic-list").classList.add("hidden");
-  $("theory-unit-list").classList.remove("hidden");
+$("theory-unit-select").addEventListener("change", event => {
+  if (event.target.value === "") {
+    $("theory-topic-field").classList.add("hidden");
+    return;
+  }
+  populateTheoryTopics(event.target.value);
+});
+$("theory-topic-select").addEventListener("change", event => {
+  if (event.target.value === "") return;
+  const index = Number(event.target.value);
+  activeTheoryCategory = theoryCategoryLabels[activeTheoryTopics[index][3]];
+  openTheoryTopic(index);
 });
 $("theory-back").addEventListener("click", () => {
   speech.stop();
   $("theory-detail").classList.add("hidden");
-  $("theory-topic-list").classList.remove("hidden");
-});
-$("theory-detail-unit-back").addEventListener("click", () => {
-  speech.stop(); $("theory-detail").classList.add("hidden"); $("theory-topic-list").classList.remove("hidden");
-});
-$("theory-detail-level-back").addEventListener("click", () => {
-  speech.stop(); $("theory-detail").classList.add("hidden"); $("theory-topic-list").classList.add("hidden"); $("theory-unit-list").classList.remove("hidden");
-});
-$("theory-topics-level-back").addEventListener("click", () => {
-  speech.stop(); $("theory-topic-list").classList.add("hidden"); $("theory-unit-list").classList.remove("hidden");
+  $("theory-level-list").classList.remove("hidden");
 });
 $("theory-prev").addEventListener("click", () => openTheoryTopic(activeTheoryIndex - 1));
 $("theory-next").addEventListener("click", () => openTheoryTopic(activeTheoryIndex + 1));
