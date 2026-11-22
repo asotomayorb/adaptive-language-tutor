@@ -56,24 +56,20 @@
 
   <section id="screen-theory" class="app-screen">
     <div class="screen-heading"><h1>Teoría</h1></div>
-    <section id="theory-level-list" class="theory-hierarchy">
-      <h2>Nivel</h2><button class="theory-topic-row" type="button" id="theory-level-a1"><span>A1 · Principiante</span><span aria-hidden="true">→</span></button>
+    <section id="theory-level-list" class="theory-hierarchy theory-select-stack">
+      <label class="theory-select-field" for="theory-level-select"><span>Etapa</span><select id="theory-level-select"><option value="a1">A1 · Principiante</option></select></label>
+      <label id="theory-unit-field" class="theory-select-field hidden" for="theory-unit-select"><span>Unidad</span><select id="theory-unit-select"><option value="">Selecciona una unidad</option></select></label>
+      <label id="theory-topic-field" class="theory-select-field hidden" for="theory-topic-select"><span>Subtema</span><select id="theory-topic-select"><option value="">Selecciona un subtema</option></select></label>
     </section>
-    <section id="theory-unit-list" class="theory-hierarchy hidden">
-      <header class="theory-heading-stack"><div class="theory-heading-row"><button id="theory-units-back" class="icon-control back-control" type="button" aria-label="Volver a niveles">←</button><h2 id="theory-level-heading">A1 · Principiante</h2></div></header>
-      <div id="theory-unit-items"></div>
-    </section>
-    
-    <section id="theory-topic-list" class="theory-topic-list hidden"><header class="theory-heading-stack"><div class="theory-heading-row"><button id="theory-topics-level-back" class="icon-control back-control" type="button" aria-label="Volver a niveles">←</button><h2 id="theory-topics-level-title">A1 · Principiante</h2></div><div class="theory-heading-row"><button id="theory-list-back" class="icon-control back-control" type="button" aria-label="Volver a unidades">←</button><h2 id="theory-list-title"></h2></div></header><div id="theory-list-items"></div></section>
     <section id="theory-detail" class="theory-detail-inline hidden">
-    <header class="theory-heading-stack">
-      <div class="theory-heading-row"><button id="theory-detail-level-back" class="icon-control back-control" type="button" aria-label="Volver a niveles">←</button><h2 id="theory-detail-level-title">A1 · Principiante</h2></div>
-      <div class="theory-heading-row"><button id="theory-detail-unit-back" class="icon-control back-control" type="button" aria-label="Volver a unidades">←</button><h2 id="theory-detail-unit-title"></h2></div>
-      <div class="theory-heading-row theory-topic-heading-row"><button id="theory-back" class="icon-control back-control" type="button" aria-label="Volver a subtemas">←</button><div class="theory-topic-heading"><p id="theory-category" class="eyebrow"></p><h2 id="theory-title"></h2></div><span id="theory-counter"></span></div>
-    </header>
-    <div class="theory-slide-content"><div id="theory-description"></div></div>
-    <footer class="theory-slide-footer"><button id="theory-prev" class="secondary" type="button">← Anterior</button><button id="theory-next" class="primary" type="button">Siguiente →</button></footer>
-  </section>
+      <header class="theory-detail-header">
+        <button id="theory-back" class="icon-control back-control" type="button" aria-label="Volver a la selección de temas" title="Volver">←</button>
+        <div class="theory-topic-heading"><p id="theory-category" class="eyebrow"></p><h2 id="theory-title"></h2><p id="theory-breadcrumb" class="theory-breadcrumb"></p></div>
+        <span id="theory-counter"></span>
+      </header>
+      <div class="theory-slide-content"><div id="theory-description"></div></div>
+      <footer class="theory-slide-footer"><button id="theory-prev" class="secondary" type="button">← Anterior</button><button id="theory-next" class="primary" type="button">Siguiente →</button></footer>
+    </section>
   </section>
 
   <section id="screen-stats" class="app-screen hidden">
