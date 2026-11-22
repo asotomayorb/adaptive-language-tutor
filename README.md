@@ -903,3 +903,11 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Render deploy `dep-dc19agetlv9c73bf6gu0` finalizó en estado **LIVE** con el commit `e9caf17995211d65d0f390032845f2d2536a7d23`.
 - El preview canónico sigue siendo https://adaptive-language-tutor-preview-5b3d.onrender.com/.
 - La consulta de runs asociadas al commit no devolvió ejecuciones; el conector disponible filtra a runs disparadas por pull request. No se afirma que `npm run check`, `npm test` ni Browser E2E hayan pasado para este commit. Consultar Actions directamente o ejecutar localmente antes de considerar la navegación validada.
+
+
+### Diseño confirmado de navegación de Teoría — 22-11-2026
+- Se adopta como base visual la alternativa **B: árbol jerárquico persistente**, manteniendo visibles los niveles superiores mientras se navega por la jerarquía.
+- La jerarquía es Etapa → Unidad → Subtemas. Gramática, Vocabulario y Expresiones son categorías identificadas mediante iconos/etiquetas en los subtemas, no niveles jerárquicos.
+- Regla de expansión exclusiva: dentro de una misma lista jerárquica solo puede permanecer expandida una unidad a la vez. Al expandir otra unidad, la anterior se colapsa automáticamente; por ejemplo, abrir «Datos personales y entorno» colapsa «Primeros contactos».
+- Las unidades se enumeran con números romanos (I, II, III, IV, V, VI), conservando sus títulos.
+- La presentación visual detallada de filas, conectores y detalle de subtema queda sujeta a revisión de los ejemplos antes de implementarse.
