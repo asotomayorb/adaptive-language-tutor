@@ -964,3 +964,13 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Browser E2E: aprobado, run 45060797728.
 - Render Preview: LIVE, deploy dep-dc1k48d9fdbs73b2ua70, commit c55822c0ce8434ab086f0067715124fd7333377f.
 - La aplicación queda disponible para revisión visual y funcional. La comprobación de voz debe completarse en un teléfono Android real; CI no verifica el audio audible.
+
+
+## Ajustes de legibilidad y pronunciación directa en Teoría — 22-11-2026
+- La tipografía de la jerarquía (etapa, unidad y subtema) debe compartir el tamaño del encabezado «A1 · Principiante»: 16 px.
+- Reducir el espacio vertical entre el encabezado del subtema y el inicio de su desarrollo; el párrafo explicativo comienza inmediatamente después del título, sin un hueco amplio.
+- Las palabras y frases breves en italiano se reproducen al tocar directamente el texto subrayado. No muestran icono Play.
+- Reservar el icono Play para fragmentos de pronunciación extensos (más de 48 caracteres); el icono reproduce solo ese fragmento.
+- Los textos tocables deben ser accesibles por teclado y anunciarse como controles.
+- Mantener el locale italiano it-IT y no leer traducciones en español.
+- Añadir pruebas E2E para igualdad de tamaños, espaciado compacto y pronunciación directa del texto. Validar CI y Render antes de cerrar.
