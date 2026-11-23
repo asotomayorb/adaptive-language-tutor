@@ -661,3 +661,10 @@ Para cada escenario registrar:
 - [x] Browser E2E aprobado: [run 45062980099](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45062980099).
 - [x] Preview Render LIVE: deploy `dep-dc1kf756e07s73dkg96g`.
 - [ ] Prueba visual, táctil y auditiva en Android real.
+
+
+### Teoría — revisión de jerarquía A
+- [ ] Confirmar que las unidades se presentan como ramas abiertas, sin celdas/tarjetas, y que el borde lateral azul permanece.
+- [ ] Verificar que los iconos de Gramática, Vocabulario y Expresiones son los mismos glifos, en monocolor.
+- [ ] Confirmar mayor separación vertical entre subtemas y que el subrayado punteado sigue activando pronunciación italiana al tocarlo.
+- [ ] Confirmar que el título, el contenido y los botones Anterior/Siguiente quedan compactos, sin superposición ni pérdida de área táctil.
