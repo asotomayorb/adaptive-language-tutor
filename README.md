@@ -1043,3 +1043,10 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Durante el desplazamiento por los subtemas, el encabezado de la unidad expandida permanece visible debajo de la etapa; se respeta el área segura superior en móvil.
 - Las viñetas de subtemas se refuerzan como puntos azules de 8 px, más visibles que el marcador anterior, sin modificar el tamaño tipográfico ni la sangría general.
 - Browser E2E verifica estilos sticky y diámetro del marcador. La prueba real en Android sigue siendo necesaria para confirmar la sensación de desplazamiento y ausencia de contenido oculto.
+
+
+### Validación y despliegue — encabezados fijos y viñetas — 23-11-2026
+
+- CI final del HEAD `7f446f2b8277a862432d6145c71dea59ad36d65d`: Tests aprobados en [45115607032](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45115607032) y Browser E2E aprobado en [45115607075](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45115607075).
+- Render Preview **LIVE**, deploy `dep-dc1sj97f3r2c73dl79ig`, commit `7f446f2b8277a862432d6145c71dea59ad36d65d`.
+- Pendiente únicamente validación visual/táctil en Android real para comprobar el apilamiento sticky durante desplazamiento y la visibilidad de las nuevas viñetas.
