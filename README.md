@@ -1007,3 +1007,12 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 ### Diagnóstico de preview sin cambios — 23-11-2026
 - Se identificó que el servicio canónico `adaptive-language-tutor-preview-5b3d` tenía `autoDeploy` desactivado y su último deploy LIVE era `91b939557b44c77173021d1cd8167729706073e1`, anterior a los estilos de la revisión actual. Esto explica que el preview se viera igual pese a que los checks del código actual pasaron.
 - Se inició un despliegue manual de la rama actual: deploy `dep-dc1pnqqvcj2c73d73ke0`, commit `bad4f055d711c05e118d5868d93c105045126e80`. Al registrar esta nota, Render seguía en `build_in_progress`; no declarar LIVE hasta confirmarlo.
+
+### Ajuste reforzado de jerarquía A y detalle de subtema — 23-11-2026
+- Se verificó que el deploy manual anterior está LIVE en el commit `bad4f055d711c05e118d5868d93c105045126e80`; el usuario reportó que la interfaz seguía igual, por lo que se reforzaron los valores visuales en CSS en lugar de repetir el mismo despliegue.
+- Aumentar de forma perceptible la separación entre unidades y, especialmente, entre subtemas: árbol con 14 px de separación; ramas con 14 px y filas de subtema de al menos 44 px.
+- Mantener las unidades sin tarjetas, conservar la línea lateral azul y los glifos existentes (文, Aa, “ ”) en monocolor.
+- Subrayado de italiano con patrón dotted y TTS directo conservado.
+- Detalle de subtema: reducir margen superior del encabezado y ruta, y reducir al mínimo el espacio antes de Anterior/Siguiente sin disminuir su área táctil.
+- Cambio CSS: commit `7f2b9bc90bb4e3a89107d06e37b25c2aab17489c`. Pendiente CI, Browser E2E y nuevo deploy LIVE.
+- Se preparará un esquema de revisión del detalle con partes A–F identificadas en la respuesta, sin incorporar etiquetas temporales a la interfaz de producción.
