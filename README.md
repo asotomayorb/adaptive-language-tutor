@@ -1058,3 +1058,14 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Se eliminan las viñetas de subtemas, conservando sus glifos de categoría. Las unidades usan azul suave y los subtemas un celeste de menor intensidad.
 - El glifo de Vocabulario se sustituye por un símbolo de traducción/idiomas, sin libro.
 - Browser E2E actualizado para las nuevas reglas. No se ejecutó localmente en esta acción; el resultado de CI queda pendiente. No se afirma despliegue Render hasta verificarlo.
+
+
+### Implementación de encabezado y glifos de Teoría — 23-11-2026
+- Menú de jerarquías: el único encabezado sticky es «Teoría»; etapa y unidades se desplazan con el contenido.
+- Se eliminaron los marcadores/viñetas generados junto a los subtemas; se conservan los iconos SVG de categoría y su alineación.
+- Gramática conserva el libro abierto y Expresiones conserva los globos de conversación. Vocabulario usa ahora un símbolo lineal de traducción/intercambio entre idiomas, sin libro.
+- Detalle de subtema: una sola fila superior con retorno a la izquierda, «Teoría» centrado y audio a la derecha. Debajo se muestra la ruta jerárquica, luego categoría alineada a la izquierda y título del subtema.
+- Se agruparon la fila superior, ruta, categoría y título en un bloque sticky; el bloque permanece fijo hasta el título inclusive. El cuerpo del contenido continúa desplazándose.
+- Se mantiene el subrayado punteado y la pronunciación directa de palabras cortas en el idioma objetivo. No se duplicó la lógica de TTS existente.
+- Commits de implementación: HTML `ed5a6d7`, JS `13e0b6b`, CSS `f2c2e7c` y `7380b42`.
+- Estado de validación: no se ejecutaron localmente `npm run check`, `npm test` ni Browser E2E en esta acción. Pendiente comprobar Actions y Render LIVE; también falta validación visual/táctil/auditiva en Android real.
