@@ -677,3 +677,12 @@ Para cada escenario registrar:
 - [ ] En detalle, comprobar título y ruta compactos; el contenido comienza cerca del encabezado.
 - [ ] Confirmar que Anterior/Siguiente quedan próximos al contenido, sin perder área táctil ni superponerse.
 - [ ] Repetir en Android real; el E2E no acredita legibilidad táctil ni audio físico.
+
+## Teoría — iconos y encabezado de subtema (23-11-2026)
+- [ ] En el árbol, verificar icono de libro abierto para Gramática, libro con A para Vocabulario y globos de conversación para Expresiones; todos lineales y monocolor.
+- [ ] Confirmar que no aparecen los glifos anteriores 文, Aa ni “ ”.
+- [ ] Abrir un subtema: flecha de retorno a la izquierda en la fila superior.
+- [ ] Confirmar ruta Etapa > Unidad centrada y contador 1/4 a la derecha.
+- [ ] Confirmar categoría/icono (C) y título (D) alineados a la izquierda bajo la fila superior.
+- [ ] Verificar que los textos largos de ruta se truncan sin superponerse al contador.
+- [ ] Verificar navegación Anterior/Siguiente y TTS it-IT.
