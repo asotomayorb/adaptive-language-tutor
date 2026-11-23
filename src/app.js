@@ -2701,7 +2701,7 @@ function openTheoryTopic(index) {
   bindSpeakerButtons($("theory-description"));
   speech.stop();
   // Keep manual pronunciation controls for every target-language fragment, including short words and phrases.
-  $("theory-counter").textContent = (activeTheoryIndex + 1) + " / " + activeTheoryTopics.length;
+  $("theory-counter").textContent = (activeTheoryIndex + 1) + "/" + activeTheoryTopics.length;
   $("theory-level-list").classList.add("hidden");
   $("theory-detail").classList.remove("hidden");
   $("theory-prev").disabled = activeTheoryIndex === 0;
