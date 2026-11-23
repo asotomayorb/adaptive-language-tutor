@@ -1002,3 +1002,8 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Se verificaron los runs de GitHub Actions para el HEAD actual `1fde4397dd38f8e79f7b37ee94e20849f17ea832`: Tests [45096368092](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45096368092) y Browser E2E [45096368051](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45096368051), ambos completados con conclusión `success`.
 - Esto valida los checks automatizados en ese commit, pero no confirma que Render haya desplegado los cambios. La comprobación del servicio sigue pendiente por falta de workspace Render seleccionado.
 - La revisión visual/táctil y auditiva en Android real sigue pendiente.
+
+
+### Diagnóstico de preview sin cambios — 23-11-2026
+- Se identificó que el servicio canónico `adaptive-language-tutor-preview-5b3d` tenía `autoDeploy` desactivado y su último deploy LIVE era `91b939557b44c77173021d1cd8167729706073e1`, anterior a los estilos de la revisión actual. Esto explica que el preview se viera igual pese a que los checks del código actual pasaron.
+- Se inició un despliegue manual de la rama actual: deploy `dep-dc1pnqqvcj2c73d73ke0`, commit `bad4f055d711c05e118d5868d93c105045126e80`. Al registrar esta nota, Render seguía en `build_in_progress`; no declarar LIVE hasta confirmarlo.
