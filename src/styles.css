@@ -945,3 +945,13 @@
   #screen-theory .theory-detail-topbar{min-height:42px}
   #screen-theory .theory-detail-sticky-head #theory-title{font-size:20px}
 }
+
+/* Menu de jerarquías: únicamente el título de sección permanece fijo. */
+#screen-theory #theory-level-heading,
+#screen-theory .theory-tree-unit.is-expanded .theory-unit-row{
+  position:static!important;
+  top:auto!important;
+  box-shadow:none!important;
+}
+#screen-theory .theory-tree-topic{background:transparent!important}
+#screen-theory .theory-tree-topic:hover{background:#edf5fc!important}
