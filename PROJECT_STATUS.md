@@ -1034,3 +1034,6 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Commits: `ed5a6d7`, `13e0b6b`, `f2c2e7c`, `7380b42`, documentación `92e505e`.
 - Validación automatizada y Render: pendientes de consultar para este HEAD. No se afirma despliegue ni aprobación de pruebas.
 - Prueba humana Android: pendiente (visual, táctil y audio real it-IT).
+
+- Corrección de visibilidad: al abrir un subtema se retiran las clases `hidden` de la ruta y del contador; antes permanecían ocultos aunque JS actualizara su texto. Commit `dbeb02b`.
+- El HEAD actual incorpora también esta corrección documental y queda pendiente de CI/Render LIVE.
