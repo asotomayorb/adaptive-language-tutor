@@ -1011,3 +1011,10 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Validación final del HEAD `9cd1f5547f5926bcf0451516651b0900bfa65486`: Tests [45105290863](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45105290863) y Browser E2E [45105290817](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45105290817), ambos aprobados.
 - Render Preview **LIVE**, deploy `dep-dc1r1aqfngtc738drrhg`, commit de interfaz `9090b62ef89910dd3e551a323eb1137b10064442`. El commit posterior `9cd1f55` solo corrigió selectores de test.
 - Pendiente exclusivamente la validación humana visual/táctil/auditiva en Android.
+
+
+## 23-11-2026 — Encabezados fijos y marcadores de subtema
+- Se confirma la alternativa A: inmovilizar en Teoría todos los niveles que funcionan como encabezado, a todo el ancho de la sección: título «Teoría», etapa y unidad expandida. Los encabezados se apilan con offsets para no cubrirse entre sí; el encabezado de unidad acompaña el desplazamiento de sus subtemas.
+- Los marcadores de los subtemas aumentan de tamaño y grosor visual: punto azul de 8 px, conservando la sangría, iconos de categoría y filas táctiles.
+- Browser E2E incorpora comprobaciones de posición sticky y tamaño del marcador.
+- Pendiente: resultado CI, deploy manual Render (autoDeploy desactivado) y comprobación en Android real de que el apilamiento sticky no tape contenido al desplazarse.
