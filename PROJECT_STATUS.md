@@ -982,3 +982,10 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Browser E2E: aprobado, run `45062980099`, commit de test `d6158c913ffbbf44500a3898b274c1b79ca31ebe`.
 - Render Preview: LIVE, deploy `dep-dc1kf756e07s73dkg96g`, commit `91b939557b44c77173021d1cd8167729706073e1`.
 - Prueba humana Android sigue pendiente: confirmar apariencia en pantalla física y audio italiano audible al tocar palabras/frases cortas; los iconos permanecen para textos extensos.
+
+
+## Iteración de jerarquía A y acabado visual — 22-11-2026
+- Se registró la elección de ramas abiertas sin celdas y categorías monocolor conservando los glifos actuales.
+- Se ajustaron espacios verticales entre unidades y subtemas, subrayado punteado de texto objetivo y separación compacta entre título, contenido y controles Anterior/Siguiente.
+- Se conserva el TTS manual con locale it-IT y la estructura de unidades existente.
+- Validación automatizada y despliegue Render pendientes; requiere ejecutar `npm run check`, `npm test`, Browser E2E y confirmar deploy LIVE.
