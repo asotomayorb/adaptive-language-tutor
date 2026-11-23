@@ -61,12 +61,15 @@
       <div id="theory-tree" class="theory-tree" aria-label="Unidades de la etapa A1"></div>
     </section>
     <section id="theory-detail" class="theory-detail-inline hidden">
-      <p id="theory-breadcrumb" class="theory-breadcrumb"></p>
-      <header class="theory-detail-header">
+      <header class="theory-detail-topbar">
         <button id="theory-back" class="icon-control back-control" type="button" aria-label="Volver a la selección de temas" title="Volver">←</button>
-        <div class="theory-topic-heading"><p id="theory-category" class="eyebrow"></p><h2 id="theory-title"></h2></div>
-        <span id="theory-counter"></span>
+        <p id="theory-breadcrumb" class="theory-breadcrumb"></p>
+        <span id="theory-counter" aria-label="Posición del subtema"></span>
       </header>
+      <div class="theory-topic-heading">
+        <p id="theory-category" class="eyebrow"></p>
+        <h2 id="theory-title"></h2>
+      </div>
       <div class="theory-slide-content"><div id="theory-description"></div></div>
       <footer class="theory-slide-footer"><button id="theory-prev" class="secondary" type="button">← Anterior</button><button id="theory-next" class="primary" type="button">Siguiente →</button></footer>
     </section>
