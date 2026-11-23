@@ -1071,3 +1071,12 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Estado de validación: no se ejecutaron localmente `npm run check`, `npm test` ni Browser E2E en esta acción. Pendiente comprobar Actions y Render LIVE; también falta validación visual/táctil/auditiva en Android real.
 
 - Corrección adicional tras inspección del DOM: la ruta y el contador se inicializan con clase `hidden`; ahora se muestran explícitamente al abrir el detalle. Commit JS `dbeb02b`. Esto evita que la ruta solicitada quede oculta aunque su texto ya se hubiera actualizado.
+
+
+### Refinamiento visual de Teoría — 23-11-2026
+- Vocabulario: el glifo se simplifica a «Aa», evitando el símbolo de flechas anterior.
+- Menú de jerarquías: el encabezado de nivel (por ejemplo, A1 · Principiante) se presenta en una celda azul suave; cada unidad numerada se presenta en una celda azul más tenue. Se conserva la expansión exclusiva, los subtemas, sus iconos y el comportamiento de desplazamiento ya aprobado.
+- Detalle de subtema: se oculta el encabezado global superior mientras el detalle está abierto, eliminando la duplicación de «Teoría». El título centrado de la fila interna aumenta a 24 px (tamaño de encabezado de sección) y el bloque se compacta hacia arriba. El botón de retorno y el audio se mantienen en sus posiciones.
+- La apertura y el retorno del detalle controlan una clase de estado explícita para ocultar/mostrar el encabezado externo sin depender de selectores CSS relacionales.
+- Commits de código: JS `edcc8f5`; CSS `adafe63`.
+- Pendiente: npm run check, npm test, Browser E2E, confirmar Render LIVE y revisión humana en Android.
