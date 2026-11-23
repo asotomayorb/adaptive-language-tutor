@@ -843,3 +843,12 @@
   #screen-theory #theory-level-heading{top:calc(42px + env(safe-area-inset-top))}
   #screen-theory .theory-tree-unit.is-expanded .theory-unit-row{top:calc(84px + env(safe-area-inset-top))}
 }
+
+/* Hierarchy cell treatment: softer branch blue, with subtopics lighter than their parent unit. */
+#screen-theory .theory-tree-unit.is-expanded .theory-unit-row{background:#e3effa!important}
+#screen-theory .theory-tree-topic{background:#eff8fe!important}
+#screen-theory .theory-tree-topic:hover{background:#e4f3fd!important}
+#screen-theory .theory-tree-marker{display:none!important}
+#screen-theory .theory-detail-topbar{display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:center}
+#screen-theory .section-detail-title{grid-column:2;grid-row:1}
+#screen-theory .section-detail-header .audio-toggle{grid-column:3;grid-row:1}
