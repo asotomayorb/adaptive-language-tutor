@@ -1026,3 +1026,4 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Se mantiene el cuerpo del contenido y la navegación Anterior/Siguiente.
 - En la jerarquía, se mantiene el árbol abierto A elegido: etapa, unidades con borde lateral azul y subtemas con iconos de categoría. La nomenclatura A–D se usa en los esquemas de revisión, no como etiquetas añadidas a producción.
 - Se actualizó Browser E2E para comprobar iconos SVG, orden/alineación del encabezado y contador 1/4. Pendiente confirmar Actions y Render LIVE.
+- Render deploy `dep-dc1r1aqfngtc738drrhg` quedó **LIVE** con el código de interfaz del commit `9090b62ef89910dd3e551a323eb1137b10064442`. Tests aprobados para el HEAD de esa revisión; Browser E2E se volvió a ejecutar después de corregir un selector de test y sigue en curso. La prueba humana Android sigue pendiente.
