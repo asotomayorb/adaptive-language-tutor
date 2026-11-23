@@ -1018,3 +1018,11 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Se preparará un esquema de revisión del detalle con partes A–F identificadas en la respuesta, sin incorporar etiquetas temporales a la interfaz de producción.
 - Deploy manual iniciado para el HEAD `73d7f6ca2ce5f8784794c78ad6be9a8195a40b51`: Render deploy `dep-dc1pskss728c73d3rnh0`, estado inicial `build_in_progress`. Confirmar LIVE antes de compartir como actualizado.
 - Validación del commit `f34ea7e46538f3f30db57838e531f9be42a51a78`: Tests aprobados en [45097695210](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45097695210) y Browser E2E aprobado en [45097695208](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45097695208). Render deploy `dep-dc1pskss728c73d3rnh0` seguía en `build_in_progress` en la última consulta.
+
+### Nueva presentación de jerarquías y detalle de subtema — 23-11-2026
+- Se sustituyen los glifos de texto de las categorías por iconos lineales SVG monocolor: Gramática = libro abierto; Vocabulario = libro abierto con letra A; Expresiones = dos globos de conversación. No se muestran los antiguos caracteres 文, Aa ni “ ”.
+- En el detalle, la fila superior agrupa A y B: A es la flecha de retorno a la izquierda; B es la ruta Etapa > Unidad centrada. El contador de posición del subtema se ubica a la derecha y usa formato compacto (por ejemplo, 1/4).
+- C (categoría/icono) y D (título del subtema) quedan en un bloque independiente alineado a la izquierda, inmediatamente debajo de la fila superior.
+- Se mantiene el cuerpo del contenido y la navegación Anterior/Siguiente.
+- En la jerarquía, se mantiene el árbol abierto A elegido: etapa, unidades con borde lateral azul y subtemas con iconos de categoría. La nomenclatura A–D se usa en los esquemas de revisión, no como etiquetas añadidas a producción.
+- Se actualizó Browser E2E para comprobar iconos SVG, orden/alineación del encabezado y contador 1/4. Pendiente confirmar Actions y Render LIVE.
