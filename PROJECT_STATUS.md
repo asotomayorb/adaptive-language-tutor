@@ -1037,3 +1037,10 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 
 - Corrección de visibilidad: al abrir un subtema se retiran las clases `hidden` de la ruta y del contador; antes permanecían ocultos aunque JS actualizara su texto. Commit `dbeb02b`.
 - El HEAD actual incorpora también esta corrección documental y queda pendiente de CI/Render LIVE.
+
+
+## 23-11-2026 — Ajuste de glifo, celdas y título único de Teoría
+- JS: glifo de Vocabulario cambiado a «Aa». Se agrega estado explícito `is-theory-detail-open` al abrir/cerrar el detalle.
+- CSS: nivel A1 en celda azul suave; unidades numeradas en celdas azul más tenue. En detalle se oculta el encabezado global duplicado y se amplía el título interno «Teoría» a 24 px; se compacta el encabezado hacia arriba.
+- Commits de código: `edcc8f5`, `adafe63`. README: `8fc7d13`.
+- No se ejecutaron aún pruebas automatizadas ni se confirmó Render LIVE. Prueba humana Android pendiente.
