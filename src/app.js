@@ -2659,7 +2659,11 @@ let activeTheoryTopics = [];
 let activeTheoryIndex = 0;
 let activeTheoryCategory = "";
 let activeTheoryUnit = null;
-const theoryCategoryIcons = { grammar:"文", vocabulary:"Aa", expressions:"“ ”" };
+const theoryCategoryIcons = {
+  grammar:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 6.2C9.6 4.5 6.4 4.1 3 5.1v13.1c3.4-1 6.6-.6 9 1.1 2.4-1.7 5.6-2.1 9-1.1V5.1c-3.4-1-6.6-.6-9 1.1Z"/><path d="M12 6.4v12.8"/></svg>',
+  vocabulary:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 6.2C9.6 4.5 6.4 4.1 3 5.1v13.1c3.4-1 6.6-.6 9 1.1 2.4-1.7 5.6-2.1 9-1.1V5.1c-3.4-1-6.6-.6-9 1.1Z"/><path d="M12 6.4v12.8"/><path d="m15.1 10.4 1.5 4.2m-2.6-1h2.3"/></svg>',
+  expressions:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5.5h11a3 3 0 0 1 3 3v4a3 3 0 0 1-3 3H9l-4.5 3v-3.2A3 3 0 0 1 2 12.5v-4a3 3 0 0 1 2-3Z"/><path d="M10 5.5v-1A2.5 2.5 0 0 1 12.5 2h6A2.5 2.5 0 0 1 21 4.5v6a2.5 2.5 0 0 1-2.5 2.5H18"/></svg>'
+};
 
 function openTheoryTopic(index) {
   activeTheoryIndex = Math.max(0, Math.min(index, activeTheoryTopics.length - 1));
@@ -2689,7 +2693,7 @@ function openTheoryTopic(index) {
   else if (sampleByTopic) detailMarkup += '<section class="theory-example"><span>' + escapeHTML(sampleLabel) + ' · ' + escapeHTML(languageDefinitions[$("language").value]?.label || languageName) + '</span><p class="theory-target-word">' + escapeHTML(sampleByTopic) + '</p></section>';
   $("theory-title").textContent = title;
   const categoryIcon = theoryCategoryIcons[activeTheoryTopics[activeTheoryIndex]?.[3]] || "";
-  $("theory-category").textContent = categoryIcon + "  " + activeTheoryCategory;
+  $("theory-category").innerHTML = '<span class="theory-category-icon" aria-hidden="true">' + categoryIcon + '</span><span>' + escapeHTML(activeTheoryCategory) + '</span>';
   $("theory-breadcrumb").textContent = "A1 · Principiante > " + (theoryUnits[activeTheoryUnit]?.title || "");
   $("theory-description").innerHTML = detailMarkup;
   bindSpeakerButtons($("theory-description"));
