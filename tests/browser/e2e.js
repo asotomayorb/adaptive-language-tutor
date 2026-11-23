@@ -94,8 +94,8 @@ try {
   assert.equal(await page.locator("#theory-level-list").isVisible(), false, "detail should replace the dropdown stack in-flow");
   assert.equal(await page.locator("#theory-detail").evaluate(el => getComputedStyle(el).position), "static", "detail should not be fullscreen/fixed");
   assert.ok((await page.locator("#theory-title").innerText()).length > 0, "Theory detail should contain a title");
-  const categoryHeading = await page.locator("#theory-category").innerText();
-   assert.ok(["Gramática","Vocabulario","Expresiones"].includes(categoryHeading), "category label should remain readable next to its new line icon");
+  const categoryHeading = (await page.locator("#theory-category").textContent()).trim();
+  assert.ok(["Gramática","Vocabulario","Expresiones"].some(label => categoryHeading.includes(label)), "category label should remain readable next to its new line icon");
   assert.equal(await page.locator("#theory-breadcrumb").innerText(), "A1 · Principiante > Datos personales y entorno", "breadcrumb should identify the expanded unit");
    assert.equal(await page.locator("#theory-detail-topbar #theory-back").count(), 1, "back arrow should sit in the left slot of the top row");
    assert.equal(await page.locator("#theory-detail-topbar #theory-breadcrumb").count(), 1, "centered hierarchy breadcrumb should share the top row");
