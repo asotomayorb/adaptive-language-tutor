@@ -786,3 +786,60 @@
  .theory-detail-inline .theory-topic-heading h2{font-size:21px}
 }
 .theory-detail-topbar .theory-breadcrumb{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+
+/* 23-11-2026: sticky hierarchy headings across the Theory section + stronger subtopic markers. */
+#screen-theory .screen-heading{
+  position:sticky!important;
+  top:0!important;
+  z-index:40!important;
+  min-height:42px;
+  background:#f3f5f8;
+  padding-top:0!important;
+  padding-bottom:8px!important;
+  isolation:isolate;
+}
+#screen-theory #theory-level-heading{
+  position:sticky;
+  top:42px;
+  z-index:39;
+  width:100%;
+  margin:0 0 10px;
+  padding:9px 0 8px;
+  background:#f3f5f8;
+  box-shadow:0 1px 0 #dfe6ee;
+}
+#screen-theory .theory-tree-unit.is-expanded .theory-unit-row{
+  position:sticky;
+  top:84px;
+  z-index:38;
+  width:100%;
+  background:#edf5fd;
+  box-shadow:0 1px 0 #d9e6f3;
+}
+#screen-theory .theory-tree-marker{
+  display:grid;
+  place-items:center;
+  width:10px;
+  height:12px;
+  overflow:visible;
+  font-size:0;
+  line-height:1;
+}
+#screen-theory .theory-tree-marker::before{
+  content:"";
+  display:block;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#2876bb;
+  box-shadow:0 0 0 1px #2876bb;
+}
+#screen-theory .theory-tree-topic{
+  grid-template-columns:10px 21px minmax(0,1fr);
+}
+@media(max-width:620px){
+  #screen-theory .screen-heading{top:env(safe-area-inset-top)!important}
+  #screen-theory #theory-level-heading{top:calc(42px + env(safe-area-inset-top))}
+  #screen-theory .theory-tree-unit.is-expanded .theory-unit-row{top:calc(84px + env(safe-area-inset-top))}
+}
