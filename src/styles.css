@@ -955,3 +955,85 @@
 }
 #screen-theory .theory-tree-topic{background:transparent!important}
 #screen-theory .theory-tree-topic:hover{background:#edf5fc!important}
+
+
+/* 23-11-2026: jerarquía en celdas azules y título único de detalle. */
+#screen-theory #theory-level-heading{
+  margin:0 0 12px!important;
+  padding:11px 13px!important;
+  border-radius:9px;
+  background:#dcecf9!important;
+  color:#244e73;
+  box-shadow:none!important;
+  font-size:16px;
+  font-weight:750;
+}
+#screen-theory .theory-tree-unit{
+  margin:0 0 7px;
+  border:0!important;
+  border-radius:8px;
+  overflow:hidden;
+  background:transparent;
+}
+#screen-theory .theory-tree-unit .theory-unit-row{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) 22px;
+  align-items:center;
+  gap:7px;
+  width:100%;
+  min-height:44px!important;
+  padding:9px 12px!important;
+  border:0!important;
+  border-radius:8px;
+  background:#edf5fc!important;
+  color:#405a73;
+  box-shadow:none!important;
+  text-align:left;
+}
+#screen-theory .theory-tree-unit.is-expanded .theory-unit-row{
+  background:#e7f1fa!important;
+  color:#294f72;
+}
+#screen-theory .theory-tree-branches{
+  margin:5px 8px 10px 16px!important;
+  padding:0!important;
+}
+#screen-theory .theory-tree-topic{
+  border-radius:6px;
+  padding-left:6px!important;
+}
+#screen-theory .theory-category-icon svg text{
+  fill:currentColor;
+  stroke:none;
+  font-family:Arial,sans-serif;
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:-1px;
+}
+#screen-theory.is-theory-detail-open>.screen-heading{display:none!important}
+#screen-theory.is-theory-detail-open .theory-detail-sticky-head{
+  top:0!important;
+  margin-top:0!important;
+  padding-top:0!important;
+}
+#screen-theory.is-theory-detail-open .theory-detail-topbar{
+  min-height:48px!important;
+}
+#screen-theory.is-theory-detail-open .theory-detail-topbar .section-detail-title{
+  font-size:24px!important;
+  line-height:1.15!important;
+  font-weight:800!important;
+}
+#screen-theory.is-theory-detail-open .theory-detail-sticky-head>#theory-breadcrumb{
+  padding-top:0!important;
+  padding-bottom:4px!important;
+}
+#screen-theory.is-theory-detail-open .theory-detail-sticky-head .theory-topic-heading{
+  gap:1px!important;
+}
+#screen-theory.is-theory-detail-open .theory-detail-sticky-head #theory-category{
+  margin:0!important;
+}
+#screen-theory.is-theory-detail-open .theory-detail-sticky-head #theory-title{
+  margin:0!important;
+}
