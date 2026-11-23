@@ -701,3 +701,16 @@ Para cada escenario registrar:
 - [x] Browser E2E aprobado: [45115607075](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45115607075).
 - [x] Render Preview LIVE: deploy `dep-dc1sj97f3r2c73dl79ig`.
 - [ ] Comprobación visual/táctil en Android real pendiente.
+
+
+## Teoría — encabezado sticky hasta título y glifos revisados (23-11-2026)
+- [ ] En el menú de jerarquías, confirmar que solo «Teoría» permanece fijo; etapa y unidades se desplazan.
+- [ ] Confirmar que los subtemas no muestran viñetas ni marcadores duplicados y que conservan su icono de categoría.
+- [ ] Confirmar Gramática = libro abierto; Vocabulario = símbolo de traducción/intercambio de idiomas; Expresiones = globos de conversación.
+- [ ] Abrir un subtema y confirmar una sola fila superior: retorno a la izquierda, «Teoría» centrado y audio a la derecha.
+- [ ] Confirmar ruta inmediatamente debajo, sin divisor horizontal.
+- [ ] Confirmar categoría e icono alineados a la izquierda, seguidos por el título.
+- [ ] Desplazarse: la fila superior, ruta, categoría y título permanecen fijos; el contenido explicativo sí se desplaza.
+- [ ] Tocar palabras italianas subrayadas: deben pronunciarse directamente, con locale it-IT y sin iconos Play adyacentes para palabras cortas.
+- [ ] Confirmar subrayado punteado y navegación Anterior/Siguiente sin superposición.
+- [ ] Repetir en teléfono Android real; verificar sonido audible, áreas táctiles y área segura superior.
