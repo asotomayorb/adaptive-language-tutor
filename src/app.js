@@ -35,7 +35,7 @@ const languageDefinitions = {
 const catalogs = Object.fromEntries(Object.entries(languageDefinitions).map(([name,definition]) => [name, definition.catalog || { id:definition.id, label:definition.label, locale:definition.locale, exercises:[] }]));
 const speech = createSpeechController({ onStatus: updateAudioStatus });
 function updateAudioStatus(status) {
-  const toggles = [document.getElementById("audio-toggle"), document.getElementById("session-audio-toggle")].filter(Boolean);
+  const toggles = [document.getElementById("audio-toggle"), document.getElementById("session-audio-toggle"), document.getElementById("theory-audio-toggle")].filter(Boolean);
   toggles.forEach(toggle => {
     toggle.textContent = status.enabled ? "🔊" : "🔇";
     toggle.setAttribute("aria-pressed", String(status.enabled));
@@ -2777,6 +2777,7 @@ function populateTheoryUnits() {
     });
   });
 }
+$("theory-audio-toggle").addEventListener("click", toggleAudio);
 $("theory-back").addEventListener("click", () => {
   speech.stop();
   $("theory-detail").classList.add("hidden");
