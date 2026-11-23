@@ -95,9 +95,13 @@ try {
   assert.equal(await page.locator("#theory-detail").evaluate(el => getComputedStyle(el).position), "static", "detail should not be fullscreen/fixed");
   assert.ok((await page.locator("#theory-title").innerText()).length > 0, "Theory detail should contain a title");
   const categoryHeading = await page.locator("#theory-category").innerText();
-  assert.ok(["文","Aa","“ ”"].some(icon => categoryHeading.startsWith(icon + " ")), "category header should put its icon before the category word");
+   assert.ok(["Gramática","Vocabulario","Expresiones"].includes(categoryHeading), "category label should remain readable next to its new line icon");
   assert.equal(await page.locator("#theory-breadcrumb").innerText(), "A1 · Principiante > Datos personales y entorno", "breadcrumb should identify the expanded unit");
-  assert.ok(await page.locator("#theory-detail").locator("#theory-breadcrumb").evaluate(el => el.compareDocumentPosition(el.nextElementSibling) & Node.DOCUMENT_POSITION_FOLLOWING), "breadcrumb should precede the category and subtopic header");
+   assert.equal(await page.locator("#theory-detail-topbar #theory-back").count(), 1, "back arrow should sit in the left slot of the top row");
+   assert.equal(await page.locator("#theory-detail-topbar #theory-breadcrumb").count(), 1, "centered hierarchy breadcrumb should share the top row");
+   assert.ok((await page.locator("#theory-detail-topbar #theory-counter").innerText()).includes("/"), "subtopic page counter should be at the right of the breadcrumb");
+   assert.ok(await page.locator("#theory-category").evaluate(el => el.parentElement.classList.contains("theory-topic-heading")), "category and title should align left in their own block");
+   assert.ok(await page.locator("#theory-tree .theory-tree-category-icon svg").count() > 0, "category rows should use line icons rather than the former text glyphs");
   assert.equal(await page.locator("#theory-detail .back-control").count(), 1, "detail should contain exactly one back arrow");
   const manualPronunciation = page.locator("#theory-description .theory-target-tap").first();
   assert.ok(await manualPronunciation.count() > 0, "short target-language text should be directly tappable");
@@ -108,7 +112,7 @@ try {
   assert.equal(await page.evaluate(() => window.__spoken.at(-1).lang), "it-IT", "tapping target text must invoke the Italian voice");
   assert.equal(await page.evaluate(() => window.__spoken.at(-1).text), await manualPronunciation.innerText(), "tapping target text must read that exact text");
   assert.equal(await page.locator("#theory-description .theory-target-tap + .speak-button").count(), 0, "short target text must not show a redundant play icon");
-  assert.ok(await page.locator("#theory-detail .theory-detail-header").evaluate(el => parseFloat(getComputedStyle(el).marginBottom) <= 4), "detail heading should sit close to the start of its explanation");
+  assert.ok(await page.locator("#theory-detail .theory-topic-heading").evaluate(el => parseFloat(getComputedStyle(el).marginBottom) <= 4), "detail heading should sit close to the start of its explanation");
   assert.ok(await page.locator("#theory-detail .theory-slide-content").evaluate(el => parseFloat(getComputedStyle(el).paddingTop) <= 2), "theory body should start close below the topic heading");
   await page.locator("#theory-back").click();
   assert.equal(await page.locator("#theory-level-list").isVisible(), true, "the single back arrow should return to the unit tree");
