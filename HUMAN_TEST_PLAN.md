@@ -716,3 +716,12 @@ Para cada escenario registrar:
 - [ ] Repetir en teléfono Android real; verificar sonido audible, áreas táctiles y área segura superior.
 
 - [ ] Confirmar que la ruta y el contador aparecen al abrir el detalle (se retiran sus estados iniciales `hidden`).
+
+
+## Teoría — refinamiento visual (23-11-2026)
+- [ ] Confirmar glifo «Aa» para Vocabulario, con tamaño y alineación consistentes con los otros iconos.
+- [ ] Confirmar que A1 · Principiante aparece dentro de una celda azul suave.
+- [ ] Confirmar que las unidades numeradas aparecen en celdas azules más tenues que la celda de nivel.
+- [ ] Abrir un subtema: debe desaparecer el encabezado global superior y quedar una sola fila con retorno, «Teoría» grande y audio.
+- [ ] Confirmar que «Teoría» tiene tamaño visual equivalente al encabezado de sección y que todo el bloque se sitúa arriba, sin espacio superior redundante.
+- [ ] Volver a jerarquías: el encabezado global reaparece y las celdas de nivel/unidad mantienen su formato.
