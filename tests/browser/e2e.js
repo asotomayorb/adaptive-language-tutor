@@ -97,9 +97,9 @@ try {
   const categoryHeading = (await page.locator("#theory-category").textContent()).trim();
   assert.ok(["Gramática","Vocabulario","Expresiones"].some(label => categoryHeading.includes(label)), "category label should remain readable next to its new line icon");
   assert.equal(await page.locator("#theory-breadcrumb").innerText(), "A1 · Principiante > Datos personales y entorno", "breadcrumb should identify the expanded unit");
-   assert.equal(await page.locator("#theory-detail-topbar #theory-back").count(), 1, "back arrow should sit in the left slot of the top row");
-   assert.equal(await page.locator("#theory-detail-topbar #theory-breadcrumb").count(), 1, "centered hierarchy breadcrumb should share the top row");
-   assert.match((await page.locator("#theory-detail-topbar #theory-counter").innerText()).trim(), /^\d+\/\d+$/, "subtopic page counter should use compact 1/4 format at the right");
+   assert.equal(await page.locator(".theory-detail-topbar #theory-back").count(), 1, "back arrow should sit in the left slot of the top row");
+   assert.equal(await page.locator(".theory-detail-topbar #theory-breadcrumb").count(), 1, "centered hierarchy breadcrumb should share the top row");
+   assert.match((await page.locator(".theory-detail-topbar #theory-counter").innerText()).trim(), /^\d+\/\d+$/, "subtopic page counter should use compact 1/4 format at the right");
    assert.ok(await page.locator("#theory-category").evaluate(el => el.parentElement.classList.contains("theory-topic-heading")), "category and title should align left in their own block");
    assert.ok(await page.locator("#theory-tree .theory-tree-category-icon svg").count() > 0, "category rows should use line icons rather than the former text glyphs");
   assert.equal(await page.locator("#theory-detail .back-control").count(), 1, "detail should contain exactly one back arrow");
