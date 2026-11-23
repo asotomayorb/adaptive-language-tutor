@@ -785,3 +785,4 @@
  .theory-detail-topbar .theory-breadcrumb{font-size:11px}
  .theory-detail-inline .theory-topic-heading h2{font-size:21px}
 }
+.theory-detail-topbar .theory-breadcrumb{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
