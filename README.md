@@ -996,3 +996,9 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - El último cambio de estilos de Teoría está presente en la rama. No se encontraron checks de CI asociados al commit de documentación más reciente; esto no demuestra que las pruebas hayan fallado, solo que no hay resultados disponibles en la consulta realizada.
 - La comprobación de Render no pudo completarse porque la cuenta conectada no tiene un workspace seleccionado. No se afirma que el preview incluya los últimos cambios.
 - Próximo paso técnico: validar `npm run check`, `npm test` y Browser E2E en un entorno con dependencias; después confirmar el deploy LIVE. La prueba visual/táctil y auditiva en Android sigue siendo manual.
+
+
+### Validación posterior — 22-11-2026
+- Se verificaron los runs de GitHub Actions para el HEAD actual `1fde4397dd38f8e79f7b37ee94e20849f17ea832`: Tests [45096368092](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45096368092) y Browser E2E [45096368051](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45096368051), ambos completados con conclusión `success`.
+- Esto valida los checks automatizados en ese commit, pero no confirma que Render haya desplegado los cambios. La comprobación del servicio sigue pendiente por falta de workspace Render seleccionado.
+- La revisión visual/táctil y auditiva en Android real sigue pendiente.
