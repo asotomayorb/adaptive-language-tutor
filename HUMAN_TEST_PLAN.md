@@ -686,3 +686,12 @@ Para cada escenario registrar:
 - [ ] Confirmar categoría/icono (C) y título (D) alineados a la izquierda bajo la fila superior.
 - [ ] Verificar que los textos largos de ruta se truncan sin superponerse al contador.
 - [ ] Verificar navegación Anterior/Siguiente y TTS it-IT.
+
+
+## Teoría — encabezados fijos y marcadores reforzados (23-11-2026)
+- [ ] Desplazarse por la lista de Teoría: el título de sección permanece fijo arriba.
+- [ ] Confirmar que la etapa queda fija debajo del título de sección y no se superpone.
+- [ ] Expandir una unidad y desplazarse por sus subtemas: la fila de la unidad permanece fija debajo de etapa y título, a todo el ancho de la sección.
+- [ ] Confirmar que al cambiar de unidad no queda un encabezado anterior superpuesto ni se tapa el primer subtema.
+- [ ] Verificar que las viñetas/puntos de subtema se ven claramente más gruesos (8 px), manteniendo iconos y sangría.
+- [ ] Repetir el desplazamiento en Android real, incluyendo el área segura superior y pantallas pequeñas.
