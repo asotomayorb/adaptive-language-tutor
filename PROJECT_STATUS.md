@@ -1008,3 +1008,6 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Render Preview: **LIVE**, deploy `dep-dc1r1aqfngtc738drrhg`, commit de interfaz `9090b62ef89910dd3e551a323eb1137b10064442`.
 - Tests unitarios/estáticos aprobados en el HEAD de la revisión. Browser E2E del commit `9cd1f5547f5926bcf0451516651b0900bfa65486` está en curso tras ajustar el selector de encabezado del test; los fallos previos fueron aserciones/selector de test, no un fallo de compilación.
 - Pendiente: resultado final Browser E2E y prueba humana visual/táctil/auditiva en Android.
+- Validación final del HEAD `9cd1f5547f5926bcf0451516651b0900bfa65486`: Tests [45105210920](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45105210920) y Browser E2E [45105290817](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45105290817), ambos aprobados.
+- Render Preview **LIVE**, deploy `dep-dc1r1aqfngtc738drrhg`, commit de interfaz `9090b62ef89910dd3e551a323eb1137b10064442`. El commit posterior `9cd1f55` solo corrigió selectores de test.
+- Pendiente exclusivamente la validación humana visual/táctil/auditiva en Android.
