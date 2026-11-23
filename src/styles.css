@@ -725,3 +725,19 @@
 .theory-unit-name,.theory-tree-topic-name{font-size:16px}
 .theory-target-tap{cursor:pointer;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;touch-action:manipulation}
 .theory-target-tap:focus-visible{outline:2px solid #347fc5;outline-offset:3px;border-radius:3px}
+
+
+/* Theory refinement A: open branches, monochrome category glyphs, clearer vertical rhythm. */
+.theory-tree{gap:10px}
+.theory-tree-unit{background:transparent;border-radius:0 7px 7px 0}
+.theory-tree-unit.is-expanded{background:transparent}
+.theory-unit-row{padding-block:9px;min-height:44px}
+.theory-tree-branches{gap:9px;margin:5px 8px 12px 25px;padding:0 0 0 12px}
+.theory-tree-topic{min-height:38px;padding-block:5px;gap:8px}
+.theory-tree-category-icon{background:transparent!important;color:currentColor!important;border:0!important;filter:grayscale(1);opacity:.82}
+.theory-target-tap{text-decoration-style:dotted!important;text-decoration-thickness:1.5px!important;text-underline-offset:4px!important}
+.theory-topic-heading h2{margin-bottom:0}
+.theory-detail-inline .theory-slide-content{padding-top:0!important;padding-bottom:8px!important}
+.theory-detail-inline .theory-slide-content>.theory-slide-text:first-child{margin-top:4px!important}
+.theory-detail-inline .theory-slide-footer{margin-top:4px!important}
+.theory-detail-inline .theory-slide-footer button{min-height:44px}
