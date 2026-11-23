@@ -695,3 +695,9 @@ Para cada escenario registrar:
 - [ ] Confirmar que al cambiar de unidad no queda un encabezado anterior superpuesto ni se tapa el primer subtema.
 - [ ] Verificar que las viñetas/puntos de subtema se ven claramente más gruesos (8 px), manteniendo iconos y sangría.
 - [ ] Repetir el desplazamiento en Android real, incluyendo el área segura superior y pantallas pequeñas.
+
+### Estado automatizado — encabezados fijos y marcadores — 23-11-2026
+- [x] Tests aprobados: [45115607032](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45115607032).
+- [x] Browser E2E aprobado: [45115607075](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45115607075).
+- [x] Render Preview LIVE: deploy `dep-dc1sj97f3r2c73dl79ig`.
+- [ ] Comprobación visual/táctil en Android real pendiente.
