@@ -714,3 +714,5 @@ Para cada escenario registrar:
 - [ ] Tocar palabras italianas subrayadas: deben pronunciarse directamente, con locale it-IT y sin iconos Play adyacentes para palabras cortas.
 - [ ] Confirmar subrayado punteado y navegación Anterior/Siguiente sin superposición.
 - [ ] Repetir en teléfono Android real; verificar sonido audible, áreas táctiles y área segura superior.
+
+- [ ] Confirmar que la ruta y el contador aparecen al abrir el detalle (se retiran sus estados iniciales `hidden`).
