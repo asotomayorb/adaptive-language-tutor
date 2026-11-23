@@ -668,3 +668,12 @@ Para cada escenario registrar:
 - [ ] Verificar que los iconos de Gramática, Vocabulario y Expresiones son los mismos glifos, en monocolor.
 - [ ] Confirmar mayor separación vertical entre subtemas y que el subrayado punteado sigue activando pronunciación italiana al tocarlo.
 - [ ] Confirmar que el título, el contenido y los botones Anterior/Siguiente quedan compactos, sin superposición ni pérdida de área táctil.
+
+## Teoría A — verificación de espaciado y detalle (23-11-2026)
+- [ ] Confirmar separación perceptible entre unidades (aprox. 14 px) sin tarjetas ni fondos de celda.
+- [ ] Confirmar separación entre subtemas (13–14 px), filas táctiles de al menos 44 px y sangría coherente.
+- [ ] Confirmar que cada unidad conserva su borde lateral azul y los subtemas mantienen los glifos 文, Aa y “ ” en monocolor.
+- [ ] Tocar una palabra/frase italiana: subrayado punteado visible y TTS audible en it-IT.
+- [ ] En detalle, comprobar título y ruta compactos; el contenido comienza cerca del encabezado.
+- [ ] Confirmar que Anterior/Siguiente quedan próximos al contenido, sin perder área táctil ni superponerse.
+- [ ] Repetir en Android real; el E2E no acredita legibilidad táctil ni audio físico.
