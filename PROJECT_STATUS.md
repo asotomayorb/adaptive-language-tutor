@@ -999,3 +999,9 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Pendiente: confirmar Actions (check/tests y Browser E2E), desplegar el commit CSS y verificar que Render quede LIVE. Revisión humana Android sigue pendiente.
 - CI del commit `f34ea7e46538f3f30db57838e531f9be42a51a78`: Tests aprobados [45097695210](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45097695210); Browser E2E aprobado [45097695208](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45097695208).
 - Render deploy `dep-dc1pskss728c73d3rnh0` iniciado para el commit `73d7f6ca2ce5f8784794c78ad6be9a8195a40b51`; pendiente confirmar LIVE.
+
+## 23-11-2026 — Iconos y encabezado compacto de Teoría
+- Se reemplazaron los glifos 文, Aa y “ ” por SVG lineales monocolor: libro abierto (Gramática), libro con A (Vocabulario), globos de conversación (Expresiones).
+- Detalle: fila superior con flecha de retorno a la izquierda, ruta Etapa > Unidad centrada y contador de subtema a la derecha en formato 1/4. Categoría y título alineados a la izquierda en una segunda fila.
+- La jerarquía conserva el diseño de ramas abiertas, unidades con borde lateral azul y subtemas identificados por icono.
+- Browser E2E actualizado para validar el nuevo orden y el sistema de iconos. Pendiente resultado CI y deploy LIVE.
