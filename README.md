@@ -1036,3 +1036,10 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - **Jerarquía B2:** conservar ramas abiertas, borde lateral azul de las unidades y ausencia de tarjetas. Reducir la separación y sangría de los subtemas C para acercarlos visualmente a la unidad B que los contiene, manteniendo legibilidad y áreas táctiles.
 - **Encabezados fijos al desplazar:** evaluar un comportamiento sticky similar a inmovilizar filas en Excel. Alternativa principal para revisión: mantener fija la cabecera de etapa y la unidad expandida en dos niveles; comparar con una alternativa que fije solo la etapa. Evitar que el encabezado fijo oculte el primer subtema y respetar el área segura superior del móvil.
 - No implementar ni desplegar estos cambios hasta que el usuario revise las alternativas visuales y confirme el comportamiento sticky.
+
+
+### Confirmación de encabezados sticky y viñetas de jerarquía — 23-11-2026
+- Se confirma la alternativa A con alcance a toda la sección Teoría: título de sección, etapa y unidad expandida quedan inmovilizados en una pila de encabezados de ancho completo, con niveles escalonados para evitar superposición.
+- Durante el desplazamiento por los subtemas, el encabezado de la unidad expandida permanece visible debajo de la etapa; se respeta el área segura superior en móvil.
+- Las viñetas de subtemas se refuerzan como puntos azules de 8 px, más visibles que el marcador anterior, sin modificar el tamaño tipográfico ni la sangría general.
+- Browser E2E verifica estilos sticky y diámetro del marcador. La prueba real en Android sigue siendo necesaria para confirmar la sensación de desplazamiento y ausencia de contenido oculto.
