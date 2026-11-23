@@ -989,3 +989,11 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Se ajustaron espacios verticales entre unidades y subtemas, subrayado punteado de texto objetivo y separación compacta entre título, contenido y controles Anterior/Siguiente.
 - Se conserva el TTS manual con locale it-IT y la estructura de unidades existente.
 - Validación automatizada y despliegue Render pendientes; requiere ejecutar `npm run check`, `npm test`, Browser E2E y confirmar deploy LIVE.
+
+## 23-11-2026 — Teoría A: refuerzo de espaciado y detalle
+- Commit CSS: `7f2b9bc90bb4e3a89107d06e37b25c2aab17489c`.
+- Se refuerza la separación vertical de unidades y subtemas, con filas de subtema de 44 px como mínimo y separación de ramas de 13–14 px.
+- Se conservan el borde lateral azul de unidades, la estructura abierta sin tarjetas, los glifos de categoría monocolor y la pronunciación directa it-IT con subrayado punteado.
+- Se compacta el encabezado/ruta del subtema y el espacio previo a Anterior/Siguiente, conservando objetivos táctiles de 44 px.
+- Deploy previo `dep-dc1pnqqvcj2c73d73ke0` confirmado LIVE con commit `bad4f055`; el nuevo commit aún requiere CI y despliegue.
+- Pendiente: confirmar Actions (check/tests y Browser E2E), desplegar el commit CSS y verificar que Render quede LIVE. Revisión humana Android sigue pendiente.
