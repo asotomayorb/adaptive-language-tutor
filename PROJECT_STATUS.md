@@ -1018,3 +1018,10 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Los marcadores de los subtemas aumentan de tamaño y grosor visual: punto azul de 8 px, conservando la sangría, iconos de categoría y filas táctiles.
 - Browser E2E incorpora comprobaciones de posición sticky y tamaño del marcador.
 - Pendiente: resultado CI, deploy manual Render (autoDeploy desactivado) y comprobación en Android real de que el apilamiento sticky no tape contenido al desplazarse.
+
+
+### Validación final — encabezados fijos y marcadores — 23-11-2026
+
+- CI final del HEAD `7f446f2b8277a862432d6145c71dea59ad36d65d`: Tests aprobados en [45115607032](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45115607032) y Browser E2E aprobado en [45115607075](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45115607075).
+- Render Preview **LIVE**, deploy `dep-dc1sj97f3r2c73dl79ig`, commit `7f446f2b8277a862432d6145c71dea59ad36d65d`.
+- Pendiente únicamente validación visual/táctil en Android real para comprobar el apilamiento sticky durante desplazamiento y la visibilidad de las nuevas viñetas.
