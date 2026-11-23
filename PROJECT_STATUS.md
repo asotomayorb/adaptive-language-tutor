@@ -1025,3 +1025,12 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - CI final del HEAD `7f446f2b8277a862432d6145c71dea59ad36d65d`: Tests aprobados en [45115607032](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45115607032) y Browser E2E aprobado en [45115607075](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45115607075).
 - Render Preview **LIVE**, deploy `dep-dc1sj97f3r2c73dl79ig`, commit `7f446f2b8277a862432d6145c71dea59ad36d65d`.
 - Pendiente únicamente validación visual/táctil en Android real para comprobar el apilamiento sticky durante desplazamiento y la visibilidad de las nuevas viñetas.
+
+
+## 23-11-2026 — Ajuste de jerarquía y encabezado del detalle de Teoría
+- HTML: encabezado de detalle agrupado en un único bloque sticky hasta el título del subtema.
+- JS: icono de Vocabulario sustituido por símbolo de traducción; eliminado el nodo de viñeta de cada subtema. Se conserva el TTS directo existente.
+- CSS: cabecera de detalle con retorno / «Teoría» / audio; ruta debajo; categoría y título alineados a la izquierda. En el menú solo permanece sticky el título de sección.
+- Commits: `ed5a6d7`, `13e0b6b`, `f2c2e7c`, `7380b42`, documentación `92e505e`.
+- Validación automatizada y Render: pendientes de consultar para este HEAD. No se afirma despliegue ni aprobación de pruebas.
+- Prueba humana Android: pendiente (visual, táctil y audio real it-IT).
