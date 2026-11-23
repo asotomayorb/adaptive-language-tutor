@@ -61,17 +61,19 @@
       <div id="theory-tree" class="theory-tree" aria-label="Unidades de la etapa A1"></div>
     </section>
     <section id="theory-detail" class="theory-detail-inline hidden">
-      <header class="theory-detail-topbar section-detail-header">
-        <button id="theory-back" class="icon-control back-control" type="button" aria-label="Volver a la selección de temas" title="Volver">←</button>
-        <h1 class="section-detail-title">Teoría</h1>
-        <button id="theory-audio-toggle" class="icon-control audio-toggle" type="button" aria-label="Desactivar audio" aria-pressed="true" title="Audio">🔊</button>
-      </header>
-      <p id="theory-breadcrumb" class="theory-breadcrumb hidden"></p>
-      <span id="theory-counter" class="theory-counter hidden" aria-label="Posición del subtema"></span>
-      <div class="theory-topic-heading">
-        <p id="theory-category" class="eyebrow"></p>
-        <h2 id="theory-title"></h2>
+      <div class="theory-detail-sticky-head">
+        <header class="theory-detail-topbar section-detail-header">
+          <button id="theory-back" class="icon-control back-control" type="button" aria-label="Volver a la selección de temas" title="Volver">←</button>
+          <h1 class="section-detail-title">Teoría</h1>
+          <button id="theory-audio-toggle" class="icon-control audio-toggle" type="button" aria-label="Desactivar audio" aria-pressed="true" title="Audio">🔊</button>
+        </header>
+        <p id="theory-breadcrumb" class="theory-breadcrumb hidden"></p>
+        <div class="theory-topic-heading">
+          <p id="theory-category" class="eyebrow"></p>
+          <h2 id="theory-title"></h2>
+        </div>
       </div>
+      <span id="theory-counter" class="theory-counter hidden" aria-label="Posición del subtema"></span>
       <div class="theory-slide-content"><div id="theory-description"></div></div>
       <footer class="theory-slide-footer"><button id="theory-prev" class="secondary" type="button">← Anterior</button><button id="theory-next" class="primary" type="button">Siguiente →</button></footer>
     </section>
