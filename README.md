@@ -1016,3 +1016,4 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Detalle de subtema: reducir margen superior del encabezado y ruta, y reducir al mínimo el espacio antes de Anterior/Siguiente sin disminuir su área táctil.
 - Cambio CSS: commit `7f2b9bc90bb4e3a89107d06e37b25c2aab17489c`. Pendiente CI, Browser E2E y nuevo deploy LIVE.
 - Se preparará un esquema de revisión del detalle con partes A–F identificadas en la respuesta, sin incorporar etiquetas temporales a la interfaz de producción.
+- Deploy manual iniciado para el HEAD `73d7f6ca2ce5f8784794c78ad6be9a8195a40b51`: Render deploy `dep-dc1pskss728c73d3rnh0`, estado inicial `build_in_progress`. Confirmar LIVE antes de compartir como actualizado.
