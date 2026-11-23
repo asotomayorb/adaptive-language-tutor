@@ -2695,6 +2695,7 @@ function openTheoryTopic(index) {
   const categoryIcon = theoryCategoryIcons[activeTheoryTopics[activeTheoryIndex]?.[3]] || "";
   $("theory-category").innerHTML = '<span class="theory-category-icon" aria-hidden="true">' + categoryIcon + '</span><span>' + escapeHTML(activeTheoryCategory) + '</span>';
   $("theory-breadcrumb").textContent = "A1 · Principiante > " + (theoryUnits[activeTheoryUnit]?.title || "");
+  $("theory-breadcrumb").classList.remove("hidden");
   $("theory-description").innerHTML = detailMarkup;
   bindSpeakerButtons($("theory-description"));
   bindTheoryTargetText($("theory-description"));
@@ -2702,6 +2703,7 @@ function openTheoryTopic(index) {
   speech.stop();
   // Keep manual pronunciation controls for every target-language fragment, including short words and phrases.
   $("theory-counter").textContent = (activeTheoryIndex + 1) + "/" + activeTheoryTopics.length;
+  $("theory-counter").classList.remove("hidden");
   $("theory-level-list").classList.add("hidden");
   $("theory-detail").classList.remove("hidden");
   $("theory-prev").disabled = activeTheoryIndex === 0;
