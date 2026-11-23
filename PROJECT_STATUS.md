@@ -1005,3 +1005,6 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Detalle: fila superior con flecha de retorno a la izquierda, ruta Etapa > Unidad centrada y contador de subtema a la derecha en formato 1/4. Categoría y título alineados a la izquierda en una segunda fila.
 - La jerarquía conserva el diseño de ramas abiertas, unidades con borde lateral azul y subtemas identificados por icono.
 - Browser E2E actualizado para validar el nuevo orden y el sistema de iconos. Pendiente resultado CI y deploy LIVE.
+- Render Preview: **LIVE**, deploy `dep-dc1r1aqfngtc738drrhg`, commit de interfaz `9090b62ef89910dd3e551a323eb1137b10064442`.
+- Tests unitarios/estáticos aprobados en el HEAD de la revisión. Browser E2E del commit `9cd1f5547f5926bcf0451516651b0900bfa65486` está en curso tras ajustar el selector de encabezado del test; los fallos previos fueron aserciones/selector de test, no un fallo de compilación.
+- Pendiente: resultado final Browser E2E y prueba humana visual/táctil/auditiva en Android.
