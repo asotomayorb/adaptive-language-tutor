@@ -989,3 +989,10 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - El subrayado de palabras/frases en italiano debe ser segmentado/punteado y seguir activando TTS al tocar el texto.
 - Reducir el espacio bajo el título del subtema y antes de los controles Anterior/Siguiente.
 - Conservar el contenido, el audio italiano it-IT, la selección azul y la línea lateral de unidades; no reintroducir tarjetas ni conectores duplicados.
+
+
+### Continuación de revisión — 22-11-2026
+- Se volvió a leer esta especificación antes de continuar.
+- El último cambio de estilos de Teoría está presente en la rama. No se encontraron checks de CI asociados al commit de documentación más reciente; esto no demuestra que las pruebas hayan fallado, solo que no hay resultados disponibles en la consulta realizada.
+- La comprobación de Render no pudo completarse porque la cuenta conectada no tiene un workspace seleccionado. No se afirma que el preview incluya los últimos cambios.
+- Próximo paso técnico: validar `npm run check`, `npm test` y Browser E2E en un entorno con dependencias; después confirmar el deploy LIVE. La prueba visual/táctil y auditiva en Android sigue siendo manual.
