@@ -980,3 +980,12 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Browser E2E: aprobado en run [45062980099](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45062980099). Verifica tamaños jerárquicos iguales, inicio compacto del contenido y pronunciación directa del texto corto en it-IT.
 - Render Preview: **LIVE**, deploy `dep-dc1kf756e07s73dkg96g`, commit `91b939557b44c77173021d1cd8167729706073e1`.
 - Pendiente solo la comprobación visual/táctil y auditiva en Android real.
+
+
+### Preferencias de interfaz confirmadas — 22-11-2026
+- Se elige la alternativa A para Teoría: ramas abiertas, sin celdas/tarjetas.
+- Los iconos de categorías conservan los mismos glifos actuales (Gramática «文», Vocabulario «Aa», Expresiones «“ ”»), en tratamiento monocolor.
+- Aumentar la separación vertical entre unidades y subtemas, especialmente entre subtemas.
+- El subrayado de palabras/frases en italiano debe ser segmentado/punteado y seguir activando TTS al tocar el texto.
+- Reducir el espacio bajo el título del subtema y antes de los controles Anterior/Siguiente.
+- Conservar el contenido, el audio italiano it-IT, la selección azul y la línea lateral de unidades; no reintroducir tarjetas ni conectores duplicados.
