@@ -81,6 +81,11 @@ try {
   assert.equal(await page.locator("#theory-tree .theory-tree-topic .theory-unit-number").count(), 0, "subtopics must not receive unit numbering");
   assert.equal(await page.locator("#theory-tree .theory-tree-connector").count(), 0, "subtopics must not retain duplicate branch connectors");
   assert.ok(await page.locator("#theory-tree .theory-tree-marker").count() > 0, "each subtopic should use one simple marker");
+  assert.equal(await page.locator("#theory-tree .theory-tree-marker").first().evaluate(el => getComputedStyle(el, "::before").width), "8px", "subtopic bullets should be visibly thicker/larger");
+  assert.equal(await page.locator("#screen-theory .screen-heading").evaluate(el => getComputedStyle(el).position), "sticky", "Theory section title should remain fixed while scrolling");
+  assert.equal(await page.locator("#theory-level-heading").evaluate(el => getComputedStyle(el).position), "sticky", "stage heading should remain fixed under the section title");
+  assert.equal(await page.locator("#theory-tree .theory-tree-unit.is-expanded .theory-unit-row").evaluate(el => getComputedStyle(el).position), "sticky", "expanded unit heading should remain fixed while its subtopics scroll");
+
   assert.equal(await page.locator("#theory-tree .theory-tree-unit").first().evaluate(el => getComputedStyle(el).borderLeftWidth), "2px", "the blue unit branch border should remain unchanged");
   const hierarchyFontSizes = await page.locator("#theory-level-heading, #theory-tree .theory-unit-name, #theory-tree .theory-tree-topic-name").evaluateAll(nodes => nodes.map(el => getComputedStyle(el).fontSize));
   assert.ok(hierarchyFontSizes.every(size => size === "16px"), "stage, unit and subtopic labels should share the A1 heading font size");
