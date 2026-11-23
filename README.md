@@ -1069,3 +1069,5 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Se mantiene el subrayado punteado y la pronunciación directa de palabras cortas en el idioma objetivo. No se duplicó la lógica de TTS existente.
 - Commits de implementación: HTML `ed5a6d7`, JS `13e0b6b`, CSS `f2c2e7c` y `7380b42`.
 - Estado de validación: no se ejecutaron localmente `npm run check`, `npm test` ni Browser E2E en esta acción. Pendiente comprobar Actions y Render LIVE; también falta validación visual/táctil/auditiva en Android real.
+
+- Corrección adicional tras inspección del DOM: la ruta y el contador se inicializan con clase `hidden`; ahora se muestran explícitamente al abrir el detalle. Commit JS `dbeb02b`. Esto evita que la ruta solicitada quede oculta aunque su texto ya se hubiera actualizado.
