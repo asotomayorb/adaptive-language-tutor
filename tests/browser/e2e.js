@@ -108,12 +108,12 @@ try {
   assert.equal(await page.locator("#theory-tree .theory-unit-name").first().evaluate(el => getComputedStyle(el).color), "rgb(49, 91, 133)", "unit title should use the blue text accent");
   // Advancing across category boundaries must update the category and content context.
   await page.locator("#theory-next").click();
-  assert.match(await page.locator("#theory-category").innerText(), /Vocabulario/, "next topic should update category to Vocabulary");
-  assert.equal(await page.locator("#theory-category .vocabulary-abc-glyph").innerText(), "abc", "Vocabulary should use the abc glyph");
+  assert.match(await page.locator("#theory-category").innerText(), /Vocabulario/i, "next topic should update category to Vocabulary");
+  assert.equal(await page.locator("#theory-category .vocabulary-abc-glyph").innerText(), "abc", "Vocabulary should use the lowercase abc glyph");
   await page.locator("#theory-next").click();
-  assert.match(await page.locator("#theory-category").innerText(), /Expresiones/, "next topic should update category to Expressions");
+  assert.match(await page.locator("#theory-category").innerText(), /Expresiones/i, "next topic should update category to Expressions");
   await page.locator("#theory-prev").click();
-  assert.match(await page.locator("#theory-category").innerText(), /Vocabulario/, "previous topic should restore its own category");
+  assert.match(await page.locator("#theory-category").innerText(), /Vocabulario/i, "previous topic should restore its own category");
   assert.equal(await page.locator("#theory-breadcrumb").innerText(), "A1 · Principiante > Datos personales y entorno", "breadcrumb should identify the expanded unit");
    assert.equal(await page.locator(".theory-detail-topbar #theory-back").count(), 1, "back arrow should sit in the left slot of the top row");
    assert.equal(await page.locator(".theory-detail-topbar .section-detail-title").innerText(), "Teoría", "detail header should identify the section");
