@@ -1051,3 +1051,12 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - El nivel usa #173B65 y las unidades #315B85 con texto claro, reforzando contraste sin alterar el árbol ni su expansión.
 - Se ocultó la cabecera global duplicada mientras se abre un subtema; queda la cabecera interna con retorno, «Teoría» y audio, y el contenido se eleva.
 - Cambios en rama `feature/mobile-bottom-navigation`; validación CI/E2E y despliegue Render pendientes. No se afirma que el preview esté actualizado.
+
+
+## 24-11-2026 — Corrección de categorías y legibilidad de Teoría
+- JS: `openTheoryTopic` ahora sincroniza la categoría activa con cada diapositiva al abrir, avanzar o retroceder. Corrige el defecto reportado donde el contenido especializado seguía dependiendo de la primera categoría abierta, aunque los glifos correspondieran a otra.
+- JS: glifo de Vocabulario simplificado a un globo con meridianos/paralelos como símbolo de idioma.
+- CSS: celdas de unidad cambiadas a `#4B81B8`, con texto blanco.
+- Browser E2E: añadidas aserciones de cambio de categoría a través de Gramática/Vocabulario/Expresiones y color de unidad.
+- Commits: JS `c0743b6`, CSS `75444d3`, E2E `b4537c4`. README actualizado en `51754d4`.
+- No se ejecutaron todavía checks ni E2E; Render LIVE no confirmado. Revisión visual/táctil Android pendiente.
