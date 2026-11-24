@@ -1144,3 +1144,9 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Tests (`npm run check` + `npm test`) también aprobados en [45308897457](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45308897457).
 - Render Preview **LIVE**, deploy `dep-dc2eu2dg1s2s73b4bdh0`, commit de interfaz `3419279bb749c5164cc19baf8aad71609d55f825`.
 - Falta únicamente la revisión visual/táctil en Android real. La columna para checks sigue siendo una reserva visual hasta implementar la relación con progreso de Ruta.
+
+
+### Ajuste fino de separación entre unidades — 24-11-2026
+- Se compacta la separación vertical entre unidades: el árbol no añade gap y cada unidad deja solo 2 px de margen inferior. Las ramas abiertas conservan 4 px al final para separar el siguiente bloque sin crear un hueco excesivo.
+- La numeración de las unidades se fuerza a color neutro `#263e59` tanto en estado normal como expandido; el acento azul queda reservado al nombre de la unidad.
+- Browser E2E comprueba el color de la numeración y el nuevo espaciado. Pendiente CI y deploy manual de Render (auto-deploy desactivado), además de revisión en Android.
