@@ -1037,3 +1037,23 @@
 #screen-theory.is-theory-detail-open .theory-detail-sticky-head #theory-title{
   margin:0!important;
 }
+
+
+/* 23-11-2026: approved hierarchy contrast, translation glyph, and remove duplicate global audio header in topic detail. */
+#screen-theory #theory-level-heading{
+  background:#173B65!important;
+  color:#fff!important;
+}
+#screen-theory .theory-tree-unit .theory-unit-row,
+#screen-theory .theory-tree-unit.is-expanded .theory-unit-row{
+  background:#315B85!important;
+  color:#fff!important;
+}
+#screen-theory .theory-unit-number,
+#screen-theory .theory-unit-chevron,
+#screen-theory .theory-tree-unit.is-expanded .theory-unit-number,
+#screen-theory .theory-tree-unit.is-expanded .theory-unit-chevron{
+  color:#e3eef9!important;
+}
+#screen-theory .theory-detail-inline .theory-category-icon{color:#53677d!important}
+body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!important}
