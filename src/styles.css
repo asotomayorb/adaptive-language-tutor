@@ -1175,6 +1175,7 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
   font-weight:800;
   letter-spacing:-1.4px;
   line-height:1;
+  text-transform:none!important;
 }
 #screen-theory .theory-tree-category-icon:has(.vocabulary-abc-glyph){
   width:29px!important;
