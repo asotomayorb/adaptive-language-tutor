@@ -1071,3 +1071,54 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
 #screen-theory .theory-tree-unit.is-expanded .theory-unit-chevron{
   color:#f0f6fc!important;
 }
+
+
+/* 24-11-2026: vocabulario con marca bilingüe y contador en la línea del título. */
+#screen-theory .theory-tree-category-icon:has(svg .translation-glyph-letter){
+  width:32px!important;
+  flex-basis:32px!important;
+}
+#screen-theory .theory-category-icon svg:has(.translation-glyph-letter){
+  width:30px!important;
+  height:20px!important;
+  overflow:visible;
+}
+#screen-theory .theory-category-icon .translation-glyph-letter{
+  fill:currentColor!important;
+  stroke:none!important;
+  font-family:Arial,sans-serif;
+  font-size:15px;
+  font-weight:800;
+}
+#screen-theory .theory-category-icon .translation-glyph-arrows{
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.6;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+#screen-theory .theory-detail-sticky-head .theory-topic-title-row{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+  width:100%;
+  min-width:0;
+}
+#screen-theory .theory-detail-sticky-head .theory-topic-title-row #theory-title{
+  flex:1 1 auto;
+  min-width:0;
+  margin:0!important;
+}
+#screen-theory .theory-detail-sticky-head .theory-topic-title-row #theory-counter{
+  display:block;
+  flex:0 0 auto;
+  align-self:center;
+  margin:0!important;
+  padding:0!important;
+  color:#8190a2;
+  font-size:12px;
+  line-height:1.2;
+  font-weight:700;
+  white-space:nowrap;
+}
