@@ -768,3 +768,10 @@ Para cada escenario registrar:
 - [ ] Confirmar que solo el nombre de la unidad conserva el acento azul.
 - [ ] Verificar que no cambia el color al expandir otra unidad ni al volver desde el detalle de un subtema.
 - [ ] Comprobar que las unidades mantienen la separación compacta y que los subtemas conservan su sangría/columna reservada.
+
+
+## Comprobación reforzada de numeración — 24-11-2026
+- [ ] En Teoría, el número de unidad se ve neutro (#263e59) tanto contraído como expandido.
+- [ ] El nombre de unidad conserva el acento azul (#315b85).
+- [ ] Confirmar que ambos colores se mantienen al cambiar de unidad y al regresar desde el detalle de un subtema.
+- [ ] Verificar el preview Render recién publicado; recargar sin caché si el navegador conserva estilos anteriores.
