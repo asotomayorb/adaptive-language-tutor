@@ -732,3 +732,11 @@ Para cada escenario registrar:
 - Abrir un subtema y comprobar que no quede una franja superior vacía ni audio duplicado; debe verse solo la cabecera interna con retorno, «Teoría» y audio, seguida de ruta, categoría, título y contenido.
 - Confirmar que el glifo de Vocabulario representa traducción/intercambio y no se deforma; Gramática y Expresiones deben conservar sus glifos.
 - Revisar en Android real que el encabezado no tape contenido al desplazarse y que los controles mantengan áreas táctiles adecuadas.
+
+
+## 24. Regresión de navegación entre subtemas de Teoría — 24-11-2026
+- [ ] Abrir la unidad «Datos personales y entorno» y entrar a «Pronombres personales».
+- [ ] Avanzar a «Vocabulario» y luego «Expresiones»: comprobar que rótulo, contenido y glifo corresponden a la categoría actual; no debe conservarse la categoría del primer subtema.
+- [ ] Retroceder y comprobar que vuelve la categoría y contenido de Vocabulario.
+- [ ] Repetir entrando primero por otro subtema y confirmar que el contenido no depende de cuál se abrió inicialmente.
+- [ ] Confirmar que las celdas de unidad se ven en azul `#4B81B8` con texto blanco y que el glifo de Vocabulario se reconoce como idioma/globo.
