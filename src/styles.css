@@ -1057,3 +1057,17 @@
 }
 #screen-theory .theory-detail-inline .theory-category-icon{color:#53677d!important}
 body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!important}
+
+
+/* 24-11-2026: lighten unit cells and keep strong white-text contrast. */
+#screen-theory .theory-tree-unit .theory-unit-row,
+#screen-theory .theory-tree-unit.is-expanded .theory-unit-row{
+  background:#4b81b8!important;
+  color:#fff!important;
+}
+#screen-theory .theory-unit-number,
+#screen-theory .theory-unit-chevron,
+#screen-theory .theory-tree-unit.is-expanded .theory-unit-number,
+#screen-theory .theory-tree-unit.is-expanded .theory-unit-chevron{
+  color:#f0f6fc!important;
+}
