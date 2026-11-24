@@ -740,3 +740,11 @@ Para cada escenario registrar:
 - [ ] Retroceder y comprobar que vuelve la categoría y contenido de Vocabulario.
 - [ ] Repetir entrando primero por otro subtema y confirmar que el contenido no depende de cuál se abrió inicialmente.
 - [ ] Confirmar que las celdas de unidad se ven en azul `#4B81B8` con texto blanco y que el glifo de Vocabulario se reconoce como idioma/globo.
+
+
+## Teoría — glifo bilingüe y contador de subtema (24-11-2026)
+- [ ] En el árbol de Teoría, comprobar que Vocabulario muestra «A ⇄ 文» claramente, sin globo ni deformación; Gramática y Expresiones conservan sus iconos.
+- [ ] Abrir un subtema: comprobar que el título queda a la izquierda y el contador (por ejemplo, 1/4) alineado al extremo derecho en la misma línea.
+- [ ] Avanzar y retroceder: el contador debe actualizarse (2/4, 3/4...) sin desplazarse a otra fila.
+- [ ] Desplazarse por el contenido: título y contador permanecen fijos juntos en el encabezado sticky.
+- [ ] Probar títulos largos y viewport de 320 px; el título debe poder ocupar el espacio disponible sin superponerse al contador.
