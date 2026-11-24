@@ -105,6 +105,7 @@ try {
   // Advancing across category boundaries must update the category and content context.
   await page.locator("#theory-next").click();
   assert.match(await page.locator("#theory-category").innerText(), /Vocabulario/, "next topic should update category to Vocabulary");
+  assert.equal(await page.locator("#theory-category .vocabulary-abc-glyph").innerText(), "abc", "Vocabulary should use the abc glyph");
   await page.locator("#theory-next").click();
   assert.match(await page.locator("#theory-category").innerText(), /Expresiones/, "next topic should update category to Expressions");
   await page.locator("#theory-prev").click();
@@ -138,6 +139,7 @@ try {
   await page.locator('.bottom-nav [data-screen="stats"]').click();
   await page.locator("#screen-stats").waitFor({ state: "visible" });
   assert.ok(await page.locator("#statistics-content").count() === 1, "Statistics content should remain mounted");
+  assert.equal(await page.locator("#screen-stats > .screen-heading").evaluate(el => getComputedStyle(el).position), "sticky", "Statistics section title should remain fixed while scrolling, like other sections");
   assert.deepEqual(pageErrors, [], "navigation and preserved sections should not produce browser errors");
 
   await context.close();
