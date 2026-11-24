@@ -103,7 +103,9 @@ try {
   assert.ok((await page.locator("#theory-title").innerText()).length > 0, "Theory detail should contain a title");
   const categoryHeading = (await page.locator("#theory-category").textContent()).trim();
   assert.ok(["Gramática","Vocabulario","Expresiones"].some(label => categoryHeading.includes(label)), "category label should remain readable next to its new line icon");
-  assert.match(await page.locator("#theory-tree .theory-tree-unit.is-expanded .theory-unit-row").evaluate(el => getComputedStyle(el).backgroundColor), /rgb\\(75, 129, 184\\)/, "unit cells should use the approved lighter blue");
+  assert.equal(await page.locator("#theory-tree .theory-tree-unit.is-expanded .theory-unit-row").evaluate(el => getComputedStyle(el).backgroundColor), "rgb(227, 239, 250)", "unit cells should use the soft blue background");
+  assert.equal(await page.locator("#theory-tree .theory-unit-number").first().evaluate(el => getComputedStyle(el).color), "rgb(38, 62, 89)", "unit numbering should remain neutral");
+  assert.equal(await page.locator("#theory-tree .theory-unit-name").first().evaluate(el => getComputedStyle(el).color), "rgb(49, 91, 133)", "unit title should use the blue text accent");
   // Advancing across category boundaries must update the category and content context.
   await page.locator("#theory-next").click();
   assert.match(await page.locator("#theory-category").innerText(), /Vocabulario/, "next topic should update category to Vocabulary");
