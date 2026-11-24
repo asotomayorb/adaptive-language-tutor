@@ -1116,3 +1116,11 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Se identificó el workspace Render `My Workspace` y se inició deploy manual `dep-dc2ek6etlv9c73ft8kb0`, asociado al commit `0bf2879569ca831759e42e39b0c23ba61ea78484`.
 - Último estado consultado: `update_in_progress`. El preview no se considera actualizado hasta que Render confirme `LIVE`.
 - CI: `Tests` aprobado; `Browser E2E` falló en la aserción previa del color de las celdas de subtema (color calculado transparente, esperado azul claro). Las nuevas aserciones de glifo y contador todavía no se ejecutaron. Revisar la prueba antes de declarar validación completa.
+
+
+### Ajustes de jerarquía, glifo y encabezados globales — 24-11-2026
+- En las filas de unidad, la numeración conserva color neutro; el nombre de la unidad recibe el acento azul. Las celdas mantienen un fondo azul suave.
+- Los subtemas aumentan su sangría y reservan una columna vacía a la izquierda para incorporar en el futuro el check de finalización alimentado por Ruta. No se muestran checks ficticios ni se conecta todavía el progreso de Ruta.
+- Vocabulario usa el glifo textual «abc».
+- Los encabezados de sección permanecen fijos durante el desplazamiento en todas las pantallas, incluida Estadísticas.
+- Browser E2E cubre estos estilos y la reserva visual para checks. La conexión de checks con Ruta queda pendiente de implementar junto con el progreso real de temas.
