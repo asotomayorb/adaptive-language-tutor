@@ -1197,7 +1197,9 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
 
 
 /* 24-11-2026: compactar separación entre unidades y mantener numeración neutra en todos los estados. */
-#screen-theory #theory-tree .theory-tree{
+/* #theory-tree es el propio grid; no existe un .theory-tree descendiente. */
+#screen-theory #theory-tree{
+  display:grid!important;
   gap:0!important;
 }
 #screen-theory #theory-tree .theory-tree-unit{
