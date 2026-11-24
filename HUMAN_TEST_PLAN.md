@@ -755,3 +755,9 @@ Para cada escenario registrar:
 - Expandir una unidad y comprobar la mayor sangría de los subtemas; el espacio vacío a la izquierda debe reservarse para el futuro check de Ruta, sin mostrar un check hasta que exista integración real.
 - Verificar que el glifo de Vocabulario muestra «abc».
 - En Estadísticas, desplazar la pantalla y comprobar que el título de sección permanece visible, igual que en las demás secciones.
+
+
+## Menú de jerarquías — separación y numeración — 24-11-2026
+- Comprobar que las unidades quedan más juntas, sin huecos verticales grandes entre filas.
+- Confirmar que la numeración se ve neutra (sin azul/acento) tanto antes como después de expandir una unidad.
+- Confirmar que el nombre de la unidad mantiene su acento azul y que la lista de subtemas conserva la sangría.
