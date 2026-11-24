@@ -725,3 +725,10 @@ Para cada escenario registrar:
 - [ ] Abrir un subtema: debe desaparecer el encabezado global superior y quedar una sola fila con retorno, «Teoría» grande y audio.
 - [ ] Confirmar que «Teoría» tiene tamaño visual equivalente al encabezado de sección y que todo el bloque se sitúa arriba, sin espacio superior redundante.
 - [ ] Volver a jerarquías: el encabezado global reaparece y las celdas de nivel/unidad mantienen su formato.
+
+
+## Revisión visual — jerarquía y detalle de subtema (23-11-2026)
+- En el menú de Teoría, comprobar contraste entre celda de nivel (#173B65) y celdas de unidad (#315B85), legibilidad del texto y conservación de expansión.
+- Abrir un subtema y comprobar que no quede una franja superior vacía ni audio duplicado; debe verse solo la cabecera interna con retorno, «Teoría» y audio, seguida de ruta, categoría, título y contenido.
+- Confirmar que el glifo de Vocabulario representa traducción/intercambio y no se deforma; Gramática y Expresiones deben conservar sus glifos.
+- Revisar en Android real que el encabezado no tape contenido al desplazarse y que los controles mantengan áreas táctiles adecuadas.
