@@ -1093,3 +1093,10 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Se comprobó que el servicio canónico `adaptive-language-tutor-preview-5b3d` apunta a `feature/mobile-bottom-navigation`, pero tiene el auto-deploy desactivado. Por eso los nuevos commits no se publican automáticamente.
 - El último deploy LIVE previo correspondía al commit `0f49e5faf5f585afa1ece566ef975806d4f64ef7`, no al HEAD de la rama.
 - Se inició un deploy manual del HEAD `c5293f7f6893b36a5e588324e6e3961ffb8780f8`: deploy `dep-dc2e1metlv9c73frfaa0`. Estado observado: `build_in_progress`; pendiente confirmar LIVE. No afirmar todavía que la vista esté actualizada.
+
+
+### Corrección de contenido y glifo de Teoría — 24-11-2026
+- Las celdas de unidad usan azul más claro `#4B81B8`, con texto blanco y contraste conservado.
+- Vocabulario usa un glifo de globo/idioma más reconocible, en lugar del SVG de flechas que se percibía extraño.
+- Se corrigió el estado del detalle: al avanzar o retroceder, la categoría activa se deriva del subtema actual. Antes persistía la categoría del primer subtema abierto, haciendo que el contenido especializado y el rótulo quedaran desincronizados aunque el icono cambiara.
+- Browser E2E ahora cubre el cambio Gramática → Vocabulario → Expresiones y el color de unidad. Pendiente CI, despliegue Render LIVE y comprobación humana móvil.
