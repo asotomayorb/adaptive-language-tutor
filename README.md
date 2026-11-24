@@ -1171,3 +1171,11 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - La prueba verifica el color calculado del número (`rgb(38, 62, 89)`), el color del nombre (`rgb(49, 91, 133)`) y el espaciado entre unidades.
 - Validación anterior: `npm run check` y `npm test` aprobados en run [45313920290](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45313920290); Browser E2E falló por el selector incorrecto en [45313920332](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45313920332). Nueva ejecución pendiente.
 - Render Preview estaba LIVE en deploy `dep-dc2fmbbncjis73cr8c60`, que contiene el CSS de numeración neutra. El auto-deploy sigue desactivado.
+
+
+### Corrección reforzada de color en jerarquías tras reporte «sigue igual» — 24-11-2026
+- Se inspeccionó el HTML generado: la numeración y el nombre de unidad son spans separados dentro de cada fila.
+- La hoja CSS acumulaba reglas históricas contradictorias para los números (tonos claros en revisiones anteriores) y dependía de que el último override prevaleciera. Para eliminar la ambigüedad de cascada, el renderizado de cada unidad ahora fija directamente en el elemento: número neutro `#263e59` y nombre azul `#315b85`, incluyendo `-webkit-text-fill-color` para consistencia en navegadores móviles.
+- Browser E2E verifica tanto el color calculado como los estilos explícitos de ambos spans.
+- Commits: implementación `88a4ce2a5ae84fba589d0a95f0cb74e5f7023c04`; prueba `29b53577655f6c16a9a3a298612b17ee83895d74`.
+- Pendiente: ejecutar CI, publicar con limpieza de caché Render (auto-deploy desactivado) y verificar el resultado LIVE antes de solicitar nueva revisión visual Android.
