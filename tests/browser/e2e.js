@@ -106,6 +106,9 @@ try {
   assert.equal(await page.locator("#theory-tree .theory-tree-unit.is-expanded .theory-unit-row").evaluate(el => getComputedStyle(el).backgroundColor), "rgb(227, 239, 250)", "unit cells should use the soft blue background");
   assert.equal(await page.locator("#theory-tree .theory-unit-number").first().evaluate(el => getComputedStyle(el).color), "rgb(38, 62, 89)", "unit numbering should remain neutral");
   assert.equal(await page.locator("#theory-tree .theory-unit-name").first().evaluate(el => getComputedStyle(el).color), "rgb(49, 91, 133)", "unit title should use the blue text accent");
+  assert.equal(await page.locator("#theory-tree .theory-unit-number").first().evaluate(el => getComputedStyle(el).color), "rgb(38, 62, 89)", "unit numbering should stay neutral and unaccented");
+  assert.equal(await page.locator("#theory-tree .theory-tree").evaluate(el => getComputedStyle(el).rowGap), "0px", "unit list should not add extra row gaps");
+  assert.equal(await page.locator("#theory-tree .theory-tree-unit").first().evaluate(el => getComputedStyle(el).marginBottom), "2px", "spacing between units should be compact");
   // Advancing across category boundaries must update the category and content context.
   await page.locator("#theory-next").click();
   assert.match(await page.locator("#theory-category").innerText(), /Vocabulario/i, "next topic should update category to Vocabulary");
