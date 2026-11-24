@@ -1137,3 +1137,10 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Se corrigió el último selector E2E que todavía esperaba el glifo bilingüe anterior; ahora comprueba «abc».
 - `npm run check` y `npm test` aprobados en el HEAD `e6e7f06f0509c823493a0a11975c9a097e80dfa4`, Actions run [45308897457](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45308897457).
 - Browser E2E del mismo HEAD sigue en ejecución en [45308897430](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45308897430); pendiente resultado. El preview Render ya está **LIVE** en deploy `dep-dc2eu2dg1s2s73b4bdh0`, commit `3419279bb749c5164cc19baf8aad71609d55f825`, que incluye los cambios de interfaz y el glifo abc en minúsculas.
+
+
+### Resultado final de validación — 24-11-2026
+- Browser E2E aprobado en el HEAD `e6e7f06f0509c823493a0a11975c9a097e80dfa4`, Actions run [45308897430](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45308897430).
+- Tests (`npm run check` + `npm test`) también aprobados en [45308897457](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45308897457).
+- Render Preview **LIVE**, deploy `dep-dc2eu2dg1s2s73b4bdh0`, commit de interfaz `3419279bb749c5164cc19baf8aad71609d55f825`.
+- Falta únicamente la revisión visual/táctil en Android real. La columna para checks sigue siendo una reserva visual hasta implementar la relación con progreso de Ruta.
