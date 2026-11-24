@@ -748,3 +748,10 @@ Para cada escenario registrar:
 - [ ] Avanzar y retroceder: el contador debe actualizarse (2/4, 3/4...) sin desplazarse a otra fila.
 - [ ] Desplazarse por el contenido: título y contador permanecen fijos juntos en el encabezado sticky.
 - [ ] Probar títulos largos y viewport de 320 px; el título debe poder ocupar el espacio disponible sin superponerse al contador.
+
+
+## Revisión móvil — jerarquía y encabezados — 24-11-2026
+- En Teoría, comprobar que la numeración de las unidades queda neutra y que solo el nombre de unidad lleva el acento azul.
+- Expandir una unidad y comprobar la mayor sangría de los subtemas; el espacio vacío a la izquierda debe reservarse para el futuro check de Ruta, sin mostrar un check hasta que exista integración real.
+- Verificar que el glifo de Vocabulario muestra «abc».
+- En Estadísticas, desplazar la pantalla y comprobar que el título de sección permanece visible, igual que en las demás secciones.
