@@ -1163,3 +1163,11 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Se identificó la causa: el override anterior buscaba `.theory-tree` como descendiente de `#theory-tree`, pero el propio contenedor tiene ambos identificadores/clases. Por ello el `gap:0` no se aplicaba y seguía activo el espacio amplio de 13–14 px.
 - Se corrigió el selector para aplicar `display:grid` y `gap:0` directamente a `#screen-theory #theory-tree`. Se mantienen 2 px entre unidades, 4 px al final de ramas y numeración neutra.
 - Commit de corrección CSS: `2ac2b2ad273b588ea4b2c539fdde10b90439b396`. Pendiente CI y deploy manual Render; auto-deploy continúa desactivado.
+
+
+### Corrección de numeración neutra y selector E2E — 24-11-2026
+- Se mantiene el número de unidad en color neutro `#263e59` en estado normal y expandido; el acento azul corresponde exclusivamente al nombre de la unidad. La regla CSS ya está aplicada en `src/styles.css`.
+- Se corrigió el E2E: el contenedor `#theory-tree` es el propio grid, no contiene un descendiente `.theory-tree`. La aserción de separación ahora consulta el elemento correcto y evita un timeout ajeno al comportamiento visual.
+- La prueba verifica el color calculado del número (`rgb(38, 62, 89)`), el color del nombre (`rgb(49, 91, 133)`) y el espaciado entre unidades.
+- Validación anterior: `npm run check` y `npm test` aprobados en run [45313920290](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45313920290); Browser E2E falló por el selector incorrecto en [45313920332](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45313920332). Nueva ejecución pendiente.
+- Render Preview estaba LIVE en deploy `dep-dc2fmbbncjis73cr8c60`, que contiene el CSS de numeración neutra. El auto-deploy sigue desactivado.
