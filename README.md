@@ -1131,3 +1131,9 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - En el HEAD de trabajo `a5f38843458a7e7f55fd09a9cb826502d36d5786`, `npm run check` y `npm test` aprobaron en Actions run [45308702322](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45308702322).
 - Browser E2E del HEAD `a5f3884` está en ejecución en run [45308702254](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45308702254). Las dos ejecuciones previas detectaron aserciones antiguas que no coincidían con la jerarquía vigente (subtemas abiertos y ausencia de borde lateral); se actualizaron para comprobar el diseño real. No declarar E2E aprobado hasta que finalice la ejecución actual.
 - La reserva de espacio para checks es visual; la integración de finalización de temas con Ruta aún no existe. La comprobación visual/táctil en Android real sigue pendiente.
+
+
+### Seguimiento de CI — glifo abc — 24-11-2026
+- Se corrigió el último selector E2E que todavía esperaba el glifo bilingüe anterior; ahora comprueba «abc».
+- `npm run check` y `npm test` aprobados en el HEAD `e6e7f06f0509c823493a0a11975c9a097e80dfa4`, Actions run [45308897457](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45308897457).
+- Browser E2E del mismo HEAD sigue en ejecución en [45308897430](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45308897430); pendiente resultado. El preview Render ya está **LIVE** en deploy `dep-dc2eu2dg1s2s73b4bdh0`, commit `3419279bb749c5164cc19baf8aad71609d55f825`, que incluye los cambios de interfaz y el glifo abc en minúsculas.
