@@ -1076,3 +1076,12 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Causa confirmada: `autoDeploy=no`; los pushes a GitHub no actualizan este preview. La conexión Render requería indicar workspace explícito; se localizó `My Workspace` (`tea-dbus0u5g1s2s73coteeg`).
 - Se inició manualmente el despliegue del commit `0bf2879569ca831759e42e39b0c23ba61ea78484`, deploy `dep-dc2ek6etlv9c73ft8kb0`. En la última consulta el estado era `update_in_progress`; no declarar LIVE hasta confirmarlo.
 - GitHub Actions: `Tests` aprobado (run 45305871034). `Browser E2E` falló (run 45305871098) en una aserción anterior: el estilo de las celdas de subtema devuelve `rgba(0, 0, 0, 0)` en vez del azul claro esperado. La ejecución no alcanzó las nuevas aserciones del contador/glifo. Corregir/actualizar esa aserción y volver a ejecutar E2E antes de dar la revisión por validada.
+
+
+## Ajustes de jerarquía y encabezados globales — 24-11-2026
+- Vocabulario cambia su glifo a «abc».
+- Numeración de unidades en color neutro; el nombre de unidad usa acento azul sobre fondo azul suave.
+- Subtemas con sangría ampliada y columna vacía reservada para futuros checks de finalización provenientes de Ruta. La columna es solo espacio visual: no se simula progreso ni se conecta aún a datos.
+- Encabezados sticky generalizados a las pantallas de sección, incluida Estadísticas.
+- Browser E2E actualizado para verificar número/título, espacio reservado, glifo y encabezado de Estadísticas.
+- Pendiente ejecutar CI, revisar el deploy Render y validar scroll en dispositivo Android. No declarar estos cambios probados visualmente hasta confirmar E2E/preview.
