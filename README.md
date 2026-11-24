@@ -1100,3 +1100,12 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Vocabulario usa un glifo de globo/idioma más reconocible, en lugar del SVG de flechas que se percibía extraño.
 - Se corrigió el estado del detalle: al avanzar o retroceder, la categoría activa se deriva del subtema actual. Antes persistía la categoría del primer subtema abierto, haciendo que el contenido especializado y el rótulo quedaran desincronizados aunque el icono cambiara.
 - Browser E2E ahora cubre el cambio Gramática → Vocabulario → Expresiones y el color de unidad. Pendiente CI, despliegue Render LIVE y comprobación humana móvil.
+
+
+### Corrección de glifo y contador de subtema — 24-11-2026
+- Vocabulario: reemplazar el globo que seguía sin reconocerse correctamente por un glifo bilingüe compacto «A ⇄ 文», que identifica letras/idiomas y traducción. Gramática y Expresiones no cambian.
+- Detalle de subtema: el contador (por ejemplo, 1/4) se ubica en la misma línea que el título, alineado a la derecha. El título ocupa el espacio flexible y el contador conserva su ancho.
+- La fila completa de título y contador forma parte del encabezado sticky; ambos permanecen visibles al desplazarse por el contenido.
+- Browser E2E incorpora verificaciones de ubicación única del contador junto al título.
+- Commits: HTML 80de502, JS aff80b3, CSS e1894a9, E2E 79bcab7; documentación actualizada en los commits inmediatamente anteriores.
+- Pendiente validar CI, Render LIVE y prueba visual/táctil en Android real.
