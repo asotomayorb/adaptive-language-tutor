@@ -761,3 +761,10 @@ Para cada escenario registrar:
 - Comprobar que las unidades quedan más juntas, sin huecos verticales grandes entre filas.
 - Confirmar que la numeración se ve neutra (sin azul/acento) tanto antes como después de expandir una unidad.
 - Confirmar que el nombre de la unidad mantiene su acento azul y que la lista de subtemas conserva la sangría.
+
+
+## Confirmación de color de numeración en jerarquías — 24-11-2026
+- [ ] En Teoría, comprobar que los números 1–6 de las unidades usan color neutro, tanto en filas contraídas como expandidas.
+- [ ] Confirmar que solo el nombre de la unidad conserva el acento azul.
+- [ ] Verificar que no cambia el color al expandir otra unidad ni al volver desde el detalle de un subtema.
+- [ ] Comprobar que las unidades mantienen la separación compacta y que los subtemas conservan su sangría/columna reservada.
