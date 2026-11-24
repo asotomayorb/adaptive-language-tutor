@@ -1111,3 +1111,10 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Se compacta la separación vertical entre unidades: el árbol no añade gap y cada unidad deja solo 2 px de margen inferior. Las ramas abiertas conservan 4 px al final para separar el siguiente bloque sin crear un hueco excesivo.
 - La numeración de las unidades se fuerza a color neutro `#263e59` tanto en estado normal como expandido; el acento azul queda reservado al nombre de la unidad.
 - Browser E2E comprueba el color de la numeración y el nuevo espaciado. Pendiente CI y deploy manual de Render (auto-deploy desactivado), además de revisión en Android.
+
+
+### Deploy del ajuste de separación — 24-11-2026
+- Render Preview **LIVE**: deploy `dep-dc2fhh4s728c73aelb30`, commit `3713d5949797d382eb85b74b1d90a26fb719a6c8`.
+- `npm run check` y `npm test` aprobados en Actions run [45313920290](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45313920290).
+- Browser E2E [45313920332](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45313920332) sigue en ejecución al momento de esta actualización; no se declara aprobado todavía.
+- La prueba humana en Android debe confirmar que la reducción de espacios se percibe adecuada y que el número sigue neutro al expandir la unidad.
