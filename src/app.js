@@ -2661,7 +2661,7 @@ let activeTheoryCategory = "";
 let activeTheoryUnit = null;
 const theoryCategoryIcons = {
   grammar:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 6.2C9.6 4.5 6.4 4.1 3 5.1v13.1c3.4-1 6.6-.6 9 1.1 2.4-1.7 5.6-2.1 9-1.1V5.1c-3.4-1-6.6-.6-9 1.1Z"/><path d="M12 6.4v12.8"/></svg>',
-  vocabulary:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><text x="2.2" y="17.5">Aa</text></svg>',
+  vocabulary:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7h11M12 4l3 3-3 3M20 17H9m3-3-3 3 3 3"/><path d="M5 12.5h2.5l2 2.5 2-2.5"/></svg>',
   expressions:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5.5h11a3 3 0 0 1 3 3v4a3 3 0 0 1-3 3H9l-4.5 3v-3.2A3 3 0 0 1 2 12.5v-4a3 3 0 0 1 2-3Z"/><path d="M10 5.5v-1A2.5 2.5 0 0 1 12.5 2h6A2.5 2.5 0 0 1 21 4.5v6a2.5 2.5 0 0 1-2.5 2.5H18"/></svg>'
 };
 
