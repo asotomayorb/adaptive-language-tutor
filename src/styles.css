@@ -1194,3 +1194,19 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
 #screen-theory>.screen-heading{
   padding-top:0!important;
 }
+
+
+/* 24-11-2026: compactar separación entre unidades y mantener numeración neutra en todos los estados. */
+#screen-theory #theory-tree .theory-tree{
+  gap:0!important;
+}
+#screen-theory #theory-tree .theory-tree-unit{
+  margin:0 0 2px!important;
+}
+#screen-theory #theory-tree .theory-tree-branches{
+  margin-bottom:4px!important;
+}
+#screen-theory #theory-tree .theory-unit-number,
+#screen-theory #theory-tree .theory-tree-unit.is-expanded .theory-unit-number{
+  color:#263e59!important;
+}
