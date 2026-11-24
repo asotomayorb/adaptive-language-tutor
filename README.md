@@ -1087,3 +1087,9 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - El menú de jerarquías aumenta el contraste: celda de nivel #173B65 y celdas de unidades #315B85, con texto claro. Se mantiene la diferencia de intensidad entre nivel y unidad.
 - En el detalle de subtema se oculta la cabecera global que duplicaba el control de audio; se conserva la cabecera interna con retorno, título «Teoría» y audio. El contenido restante sube al espacio liberado.
 - Validación automatizada y Render LIVE pendientes de confirmar para esta revisión. La revisión humana móvil sigue pendiente.
+
+
+### Diagnóstico de Render tras reporte de preview sin cambios — 24-11-2026
+- Se comprobó que el servicio canónico `adaptive-language-tutor-preview-5b3d` apunta a `feature/mobile-bottom-navigation`, pero tiene el auto-deploy desactivado. Por eso los nuevos commits no se publican automáticamente.
+- El último deploy LIVE previo correspondía al commit `0f49e5faf5f585afa1ece566ef975806d4f64ef7`, no al HEAD de la rama.
+- Se inició un deploy manual del HEAD `c5293f7f6893b36a5e588324e6e3961ffb8780f8`: deploy `dep-dc2e1metlv9c73frfaa0`. Estado observado: `build_in_progress`; pendiente confirmar LIVE. No afirmar todavía que la vista esté actualizada.
