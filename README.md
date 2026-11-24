@@ -1124,3 +1124,10 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Vocabulario usa el glifo textual «abc».
 - Los encabezados de sección permanecen fijos durante el desplazamiento en todas las pantallas, incluida Estadísticas.
 - Browser E2E cubre estos estilos y la reserva visual para checks. La conexión de checks con Ruta queda pendiente de implementar junto con el progreso real de temas.
+
+
+### Estado de validación — ajustes de jerarquía y títulos — 24-11-2026
+- La implementación de interfaz está desplegada en Render Preview: deploy `dep-dc2et9ei0phs73alhth0`, **LIVE**, commit `3353d9aa04cfa14f356b5af85e1a021db906cd55`. El servicio mantiene auto-deploy desactivado; los despliegues posteriores requieren activación manual.
+- En el HEAD de trabajo `a5f38843458a7e7f55fd09a9cb826502d36d5786`, `npm run check` y `npm test` aprobaron en Actions run [45308702322](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45308702322).
+- Browser E2E del HEAD `a5f3884` está en ejecución en run [45308702254](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45308702254). Las dos ejecuciones previas detectaron aserciones antiguas que no coincidían con la jerarquía vigente (subtemas abiertos y ausencia de borde lateral); se actualizaron para comprobar el diseño real. No declarar E2E aprobado hasta que finalice la ejecución actual.
+- La reserva de espacio para checks es visual; la integración de finalización de temas con Ruta aún no existe. La comprobación visual/táctil en Android real sigue pendiente.
