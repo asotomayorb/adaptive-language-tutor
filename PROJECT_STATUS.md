@@ -1060,3 +1060,12 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Browser E2E: añadidas aserciones de cambio de categoría a través de Gramática/Vocabulario/Expresiones y color de unidad.
 - Commits: JS `c0743b6`, CSS `75444d3`, E2E `b4537c4`. README actualizado en `51754d4`.
 - No se ejecutaron todavía checks ni E2E; Render LIVE no confirmado. Revisión visual/táctil Android pendiente.
+
+
+## 24-11-2026 — Glifo de Vocabulario y contador del detalle
+- HTML: el contador de subtema (1/4) se movió dentro de la fila del título, alineado al extremo derecho junto al nombre. Ambos quedan dentro del bloque sticky, por lo que permanecen fijos durante el desplazamiento.
+- JS: el glifo de Vocabulario cambia del globo a una marca bilingüe «A ⇄ 文», que comunica visualmente traducción entre idiomas y evita el glifo anterior que no se reconocía bien.
+- CSS: se ajustan proporciones del símbolo y se organiza la fila del título con nombre flexible y contador no comprimible a la derecha.
+- Browser E2E: se añaden aserciones para comprobar que el contador está anidado en la fila del título y aparece una sola vez.
+- Commits: HTML 80de502, JS aff80b3, CSS e1894a9, E2E 79bcab7.
+- Pendiente: validar CI, Render LIVE y la lectura visual en Android real; no se declara el preview actualizado hasta confirmar el deploy.
