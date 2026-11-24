@@ -1186,3 +1186,10 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - En el HEAD `b647fac64e3180fc024c99decbd115ee846fa764`, Tests aprobados en [45317664026](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45317664026) y Browser E2E aprobado en [45317664032](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45317664032).
 - Render Preview confirmado **LIVE**, deploy `dep-dc2g0ejrjlhs73ck877g`, asociado al HEAD `b647fac64e3180fc024c99decbd115ee846fa764`. Se publicó manualmente con limpieza de caché porque el auto-deploy está desactivado.
 - Pendiente únicamente la comprobación visual/táctil humana en Android. La aprobación E2E confirma el comportamiento en el navegador automatizado, pero no sustituye la revisión en el teléfono del usuario.
+
+
+### Seguimiento de reporte visual persistente — 24-11-2026
+- El usuario informa que el menú de jerarquías todavía se ve igual después de la publicación.
+- Se volvió a consultar Render: el servicio Preview tiene el deploy `dep-dc2g0ejrjlhs73ck877g` en estado **LIVE**, asociado al commit `b647fac64e3180fc024c99decbd115ee846fa764`. El auto-deploy permanece desactivado.
+- No se aplican más cambios CSS a ciegas: las pruebas automatizadas ya verifican los estilos, pero no permiten identificar qué versión o elemento está viendo el usuario en su Android.
+- Próximo diagnóstico pendiente: solicitar una captura actual del menú de jerarquías abierto (idealmente mostrando una unidad expandida) y confirmar que se abrió el preview Render, no una pestaña/app instalada antigua. Con esa evidencia se comparará el DOM/estilos visibles antes de modificar nuevamente.
