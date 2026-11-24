@@ -1069,3 +1069,10 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Browser E2E: se añaden aserciones para comprobar que el contador está anidado en la fila del título y aparece una sola vez.
 - Commits: HTML 80de502, JS aff80b3, CSS e1894a9, E2E 79bcab7.
 - Pendiente: validar CI, Render LIVE y la lectura visual en Android real; no se declara el preview actualizado hasta confirmar el deploy.
+
+
+### Seguimiento del preview sin cambios — 24-11-2026
+- Se leyó README y se verificó que el servicio correcto es `adaptive-language-tutor-preview-5b3d`, servicio `srv-dbus3hnf3r2c739j9ir0`, rama `feature/mobile-bottom-navigation`.
+- Causa confirmada: `autoDeploy=no`; los pushes a GitHub no actualizan este preview. La conexión Render requería indicar workspace explícito; se localizó `My Workspace` (`tea-dbus0u5g1s2s73coteeg`).
+- Se inició manualmente el despliegue del commit `0bf2879569ca831759e42e39b0c23ba61ea78484`, deploy `dep-dc2ek6etlv9c73ft8kb0`. En la última consulta el estado era `update_in_progress`; no declarar LIVE hasta confirmarlo.
+- GitHub Actions: `Tests` aprobado (run 45305871034). `Browser E2E` falló (run 45305871098) en una aserción anterior: el estilo de las celdas de subtema devuelve `rgba(0, 0, 0, 0)` en vez del azul claro esperado. La ejecución no alcanzó las nuevas aserciones del contador/glifo. Corregir/actualizar esa aserción y volver a ejecutar E2E antes de dar la revisión por validada.
