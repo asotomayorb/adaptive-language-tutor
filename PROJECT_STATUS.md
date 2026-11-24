@@ -1044,3 +1044,10 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - CSS: nivel A1 en celda azul suave; unidades numeradas en celdas azul más tenue. En detalle se oculta el encabezado global duplicado y se amplía el título interno «Teoría» a 24 px; se compacta el encabezado hacia arriba.
 - Commits de código: `edcc8f5`, `adafe63`. README: `8fc7d13`.
 - No se ejecutaron aún pruebas automatizadas ni se confirmó Render LIVE. Prueba humana Android pendiente.
+
+
+## 23-11-2026 — Contraste de jerarquía y encabezado de subtema
+- Se cambió el glifo de Vocabulario de Aa a un SVG de intercambio/traducción entre idiomas; Gramática y Expresiones permanecen intactos.
+- El nivel usa #173B65 y las unidades #315B85 con texto claro, reforzando contraste sin alterar el árbol ni su expansión.
+- Se ocultó la cabecera global duplicada mientras se abre un subtema; queda la cabecera interna con retorno, «Teoría» y audio, y el contenido se eleva.
+- Cambios en rama `feature/mobile-bottom-navigation`; validación CI/E2E y despliegue Render pendientes. No se afirma que el preview esté actualizado.
