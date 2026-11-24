@@ -775,3 +775,10 @@ Para cada escenario registrar:
 - [ ] El nombre de unidad conserva el acento azul (#315b85).
 - [ ] Confirmar que ambos colores se mantienen al cambiar de unidad y al regresar desde el detalle de un subtema.
 - [ ] Verificar el preview Render recién publicado; recargar sin caché si el navegador conserva estilos anteriores.
+
+
+## Validación automatizada y preview publicado — 24-11-2026
+- [x] Tests CI aprobados: [run 45317664026](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45317664026).
+- [x] Browser E2E aprobado: [run 45317664032](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45317664032).
+- [x] Render Preview LIVE: deploy `dep-dc2g0ejrjlhs73ck877g`.
+- [ ] Revisión visual en Android real: comprobar color neutro de números, acento azul solo en nombres, filas contraídas/expandidas y caché del navegador.
