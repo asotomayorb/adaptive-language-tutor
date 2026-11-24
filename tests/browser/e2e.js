@@ -88,7 +88,7 @@ try {
   assert.equal(await page.locator("#theory-tree .theory-tree-topic").first().locator(".theory-topic-completion-slot").count(), 1, "subtopics should reserve a left slot for future Route completion checks");
   assert.equal(await page.locator("#theory-tree .theory-tree-branches").first().evaluate(el => parseFloat(getComputedStyle(el).marginLeft)) >= 34, true, "subtopics should be indented to make room for future checks");
 
-  assert.equal(await page.locator("#theory-tree .theory-tree-unit").first().evaluate(el => getComputedStyle(el).borderLeftWidth), "2px", "the blue unit branch border should remain unchanged");
+  assert.equal(await page.locator("#theory-tree .theory-tree-unit").first().evaluate(el => getComputedStyle(el).borderLeftWidth), "0px", "unit hierarchy should use the approved blue cells without a duplicate branch border");
   const hierarchyFontSizes = await page.locator("#theory-level-heading, #theory-tree .theory-unit-name, #theory-tree .theory-tree-topic-name").evaluateAll(nodes => nodes.map(el => getComputedStyle(el).fontSize));
   assert.ok(hierarchyFontSizes.every(size => size === "16px"), "stage, unit and subtopic labels should share the A1 heading font size");
   await unitRows.nth(1).click();
