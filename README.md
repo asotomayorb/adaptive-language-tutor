@@ -1080,3 +1080,10 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - La apertura y el retorno del detalle controlan una clase de estado explícita para ocultar/mostrar el encabezado externo sin depender de selectores CSS relacionales.
 - Commits de código: JS `edcc8f5`; CSS `adafe63`.
 - Pendiente: npm run check, npm test, Browser E2E, confirmar Render LIVE y revisión humana en Android.
+
+
+### Contraste de jerarquía y glifo de vocabulario — 23-11-2026
+- Se aprueba el glifo de traducción/intercambio para Vocabulario; no usar Aa ni libro. El SVG representa el intercambio entre idiomas con flechas y trazos tipográficos.
+- El menú de jerarquías aumenta el contraste: celda de nivel #173B65 y celdas de unidades #315B85, con texto claro. Se mantiene la diferencia de intensidad entre nivel y unidad.
+- En el detalle de subtema se oculta la cabecera global que duplicaba el control de audio; se conserva la cabecera interna con retorno, título «Teoría» y audio. El contenido restante sube al espacio liberado.
+- Validación automatizada y Render LIVE pendientes de confirmar para esta revisión. La revisión humana móvil sigue pendiente.
