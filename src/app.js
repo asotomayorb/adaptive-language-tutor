@@ -2749,8 +2749,8 @@ function populateTheoryUnits() {
     return '<section class="theory-tree-unit' + (expanded ? ' is-expanded' : '') + '">' +
       '<button class="theory-unit-row" type="button" data-unit-index="' + unitIndex +
       '" aria-expanded="' + String(expanded) + '">' +
-      '<span class="theory-unit-number">' + (unitIndex + 1) + '.</span>' +
-      '<span class="theory-unit-name">' + escapeHTML(unit.title) + '</span>' +
+      '<span class="theory-unit-number" style="color:#263e59!important;-webkit-text-fill-color:#263e59">' + (unitIndex + 1) + '.</span>' +
+      '<span class="theory-unit-name" style="color:#315b85!important;-webkit-text-fill-color:#315b85">' + escapeHTML(unit.title) + '</span>' +
       '<span class="theory-unit-chevron" aria-hidden="true">' + (expanded ? '⌄' : '›') + '</span>' +
       '</button>' +
       (expanded ? '<div class="theory-tree-branches">' + branches + '</div>' : '') +
