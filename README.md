@@ -1157,3 +1157,9 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - `npm run check` y `npm test` aprobados en Actions run [45313920290](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45313920290).
 - Browser E2E [45313920332](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45313920332) sigue en ejecución al momento de esta actualización; no se declara aprobado todavía.
 - La prueba humana en Android debe confirmar que la reducción de espacios se percibe adecuada y que el número sigue neutro al expandir la unidad.
+
+
+### Corrección del espaciado de jerarquías tras reporte visual — 24-11-2026
+- Se identificó la causa: el override anterior buscaba `.theory-tree` como descendiente de `#theory-tree`, pero el propio contenedor tiene ambos identificadores/clases. Por ello el `gap:0` no se aplicaba y seguía activo el espacio amplio de 13–14 px.
+- Se corrigió el selector para aplicar `display:grid` y `gap:0` directamente a `#screen-theory #theory-tree`. Se mantienen 2 px entre unidades, 4 px al final de ramas y numeración neutra.
+- Commit de corrección CSS: `2ac2b2ad273b588ea4b2c539fdde10b90439b396`. Pendiente CI y deploy manual Render; auto-deploy continúa desactivado.
