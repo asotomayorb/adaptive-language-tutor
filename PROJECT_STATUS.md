@@ -1134,3 +1134,10 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Browser E2E verifica tanto el color calculado como los estilos explícitos de ambos spans.
 - Commits: implementación `88a4ce2a5ae84fba589d0a95f0cb74e5f7023c04`; prueba `29b53577655f6c16a9a3a298612b17ee83895d74`.
 - Pendiente: ejecutar CI, publicar con limpieza de caché Render (auto-deploy desactivado) y verificar el resultado LIVE antes de solicitar nueva revisión visual Android.
+
+
+### Validación y publicación de la corrección reforzada de numeración — 24-11-2026
+- La implementación fija en el HTML generado el color del número de unidad en `#263e59` y el del nombre en `#315b85`, incluyendo `-webkit-text-fill-color` para navegadores móviles. El cambio de código está en el commit `88a4ce2a5ae84fba589d0a95f0cb74e5f7023c04`; las aserciones E2E en `29b53577655f6c16a9a3a298612b17ee83895d74` verifican estilo explícito y color calculado.
+- En el HEAD `b647fac64e3180fc024c99decbd115ee846fa764`, Tests aprobados en [45317664026](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45317664026) y Browser E2E aprobado en [45317664032](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45317664032).
+- Render Preview confirmado **LIVE**, deploy `dep-dc2g0ejrjlhs73ck877g`, asociado al HEAD `b647fac64e3180fc024c99decbd115ee846fa764`. Se publicó manualmente con limpieza de caché porque el auto-deploy está desactivado.
+- Pendiente únicamente la comprobación visual/táctil humana en Android. La aprobación E2E confirma el comportamiento en el navegador automatizado, pero no sustituye la revisión en el teléfono del usuario.
