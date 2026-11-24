@@ -1109,3 +1109,10 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Browser E2E incorpora verificaciones de ubicación única del contador junto al título.
 - Commits: HTML 80de502, JS aff80b3, CSS e1894a9, E2E 79bcab7; documentación actualizada en los commits inmediatamente anteriores.
 - Pendiente validar CI, Render LIVE y prueba visual/táctil en Android real.
+
+
+### Seguimiento de preview sin cambios — 24-11-2026
+- Causa: el servicio `adaptive-language-tutor-preview-5b3d` tiene auto-deploy desactivado (`autoDeploy=no`); un push a la rama no publica automáticamente los cambios.
+- Se identificó el workspace Render `My Workspace` y se inició deploy manual `dep-dc2ek6etlv9c73ft8kb0`, asociado al commit `0bf2879569ca831759e42e39b0c23ba61ea78484`.
+- Último estado consultado: `update_in_progress`. El preview no se considera actualizado hasta que Render confirme `LIVE`.
+- CI: `Tests` aprobado; `Browser E2E` falló en la aserción previa del color de las celdas de subtema (color calculado transparente, esperado azul claro). Las nuevas aserciones de glifo y contador todavía no se ejecutaron. Revisar la prueba antes de declarar validación completa.
