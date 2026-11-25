@@ -193,7 +193,6 @@ try {
   const articleVariants = page.locator("#theory-description .theory-speech-variant");
   assert.ok(await articleVariants.count() >= 2, "slash-separated article variants should render independent speech fragments");
   await page.locator("#theory-back").click();
-  await page.locator("#theory-back").click();
   await unitRows.nth(0).click();
   await page.locator("#theory-tree .theory-tree-topic").first().click();
   await unitRows.nth(0).click();
