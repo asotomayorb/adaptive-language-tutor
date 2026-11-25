@@ -1160,3 +1160,13 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Browser E2E: aprobado, run [45522922093](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45522922093).
 - El E2E verifica seis unidades, cuatro subtemas de Unidad 1, dos destinos tocables/pronunciables por variante, encabezados italianos en cursiva con comillas angulares y tamaños equivalentes en columnas verbales.
 - No se desplegó a Render ni se integró aún en `feature/mobile-bottom-navigation`. Pendiente revisión del diff/merge y después prueba humana Android.
+
+## 25-11-2026 — Pulido de contenido y estructura de Unidad 2
+- Se confirmó en código que Unidad 2 ya tenía cuatro subtemas desplegados, aunque algunos datos no correspondían a los títulos: Países e idiomas mostraba saludos, Artículos y adjetivos heredaba una lección de verbos, y Edad y procedencia mostraba indicaciones de transporte.
+- Se corrigió la correspondencia pedagógica: pares país/idioma; concordancia de adjetivos italianos (-o/-a/-i/-e y formas en -e); expresiones de edad y procedencia con variantes formales e informales.
+- Artículos y concordancia: reglas prácticas de artículos definidos/indefinidos, género, número, sonido inicial y apóstrofo se presentan en el párrafo introductorio antes de las tablas.
+- CSS: todas las tablas de Teoría usan ancho completo y distribución uniforme de columnas, con ajuste de texto para móvil.
+- TTS: variantes divididas por barra, salto de línea, guion largo y guion espaciado conservan controles de pronunciación separados.
+- Browser E2E amplía cobertura a los cuatro subtemas de Unidad 2 y valida títulos, contenido, reglas previas a tablas, variantes TTS y columnas equilibradas. Se corrigieron errores de navegación de la prueba; último run `45606335111` sobre `e08b88c` pendiente al registrar este estado.
+- `npm run check` y `npm test` aprobados en run [45606123743](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45606123743), commit `26c848e`.
+- Render no actualizado; rama principal intacta. No integrar ni desplegar hasta Browser E2E aprobado y revisión del diff.
