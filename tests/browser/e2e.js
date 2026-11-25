@@ -175,7 +175,6 @@ try {
   assert.equal(await page.locator("#theory-detail .back-control").count(), 1, "detail should contain exactly one back arrow");
   // Unit 2 has deployed learning content and remains in the polishing phase.
   await page.locator("#theory-back").click();
-  await unitRows.nth(1).click();
   const unitTwoTopics = page.locator("#theory-tree .theory-tree-topic");
   assert.equal(await unitTwoTopics.count(), 4, "Unit 2 should expose its four deployed subtopics");
   await unitTwoTopics.nth(0).click();
