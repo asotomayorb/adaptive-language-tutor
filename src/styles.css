@@ -1248,3 +1248,13 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
 #screen-theory .theory-bilingual-table td{
   overflow-wrap:anywhere;
 }
+
+/* Keep every column in the Italian conjugation comparison equally readable. */
+#screen-theory .theory-verb-comparison-table tbody td{
+  font-size:19px!important;
+  font-weight:600;
+  line-height:1.4;
+}
+@media(max-width:620px){
+  #screen-theory .theory-verb-comparison-table tbody td{font-size:17px!important;}
+}
