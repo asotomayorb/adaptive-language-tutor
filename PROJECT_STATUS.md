@@ -1152,3 +1152,11 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Browser E2E actualizado para verificar el árbol de seis unidades, contenido de los cuatro subtemas, pronunciación por variante y tipografía.
 - Commits de código: `bd01acf` (contenido/render), `59006e1` (CSS), `8e23221` y `1b48823` (alineación de títulos). Pruebas: `b70baaa`.
 - Estado: CI, `npm run check`, `npm test`, Browser E2E y revisión de diff pendientes. Render no actualizado; no solicitar prueba humana todavía.
+
+
+### Validación de la recuperación selectiva — 25-11-2026
+- HEAD validado: `c4cf342423e59d56d65d4008cf5bf4046876f64c` (código) más registro de validación en README.
+- `npm run check` y `npm test`: aprobados, Actions run [45522922228](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45522922228).
+- Browser E2E: aprobado, run [45522922093](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45522922093).
+- El E2E verifica seis unidades, cuatro subtemas de Unidad 1, dos destinos tocables/pronunciables por variante, encabezados italianos en cursiva con comillas angulares y tamaños equivalentes en columnas verbales.
+- No se desplegó a Render ni se integró aún en `feature/mobile-bottom-navigation`. Pendiente revisión del diff/merge y después prueba humana Android.
