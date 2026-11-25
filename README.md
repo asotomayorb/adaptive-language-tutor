@@ -1343,3 +1343,11 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Edad y procedencia tiene una introducción específica sobre «avere», «essere» y el trato formal; se quitaron las aclaraciones «(formal)» de las traducciones.
 - Browser E2E ampliado para verificar las etiquetas país/gentilicio/idioma, TTS por celda, reglas en viñetas antes de tablas y ausencia de aclaraciones parentéticas.
 - Validaciones automatizadas y publicación Render pendientes; no declarar listo para prueba humana hasta confirmar CI/E2E y preview actualizado.
+
+
+### Diagnóstico de preview sin cambios — 25-11-2026
+- El usuario informa que Render Preview sigue mostrando la versión anterior. La revisión confirma que el HEAD de `feature/mobile-bottom-navigation` es `d9565981cf49ec77faa861e39b8edca2f1bea15c`, pero el servicio Render mantiene auto-deploy desactivado; por tanto, un commit en GitHub no actualiza el preview por sí solo.
+- El código de Unidad 2 y los ajustes solicitados sí están presentes en `src/app.js` en esa rama (incluye las columnas País/Gentilicio/Idioma y las reglas previas a las tablas). No se debe concluir que faltan en el código por el hecho de no verse aún en Render.
+- La ejecución `npm run check` + `npm test` aprobó en Actions [45661774198](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45661774198). Browser E2E falló en [45661774152](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45661774152), específicamente en `tests/browser/e2e.js:122`: una aserción de Unidad 1 exige cursiva en todas las introducciones italianas. Es una aserción de prueba que debe revisarse; no demuestra por sí sola un defecto del contenido de Unidad 2.
+- No se debe publicar ni declarar listo para preview hasta corregir/ajustar la aserción sin debilitar la cobertura, volver a ejecutar Browser E2E y confirmar en Render que el deploy LIVE corresponde al HEAD validado.
+- La conexión actual a Render no permitió consultar el servicio ni disparar un deploy; no se ha realizado publicación en esta revisión.
