@@ -1333,3 +1333,13 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Pendiente: prueba humana en Android (visual, táctil y auditiva), especialmente distribución de tablas, lectura individual de variantes y navegación por los cuatro subtemas de Unidad 2.
 - Checkpoint funcional publicado: 19627135bf04bcb7c0a83330f007ebee04a0f8de. Mantenerlo como punto de retorno antes de ampliar contenidos.
 - Se ajustaron los workflows para ejecutar Tests y Browser E2E también en PR dirigidos a la rama activa, además de los eventos push.
+
+
+### Ajustes de claridad solicitados para Unidad 2 — 25-11-2026
+- Se aplican las últimas instrucciones del chat origen, limitando el cambio a Unidad 2 y sus pruebas; no se modifica el contenido de Unidad 1 ni de Unidades 3–6.
+- Países e idiomas ahora separa las columnas País, Gentilicio e Idioma, con explicación breve de cada una y controles TTS independientes.
+- Artículos y concordancia presenta reglas concisas en viñetas antes de dos tablas independientes (definidos e indefinidos), sin notas explicativas dentro de las celdas.
+- Artículos y adjetivos presenta reglas detalladas en viñetas antes de la tabla; los ejemplos mantienen la traducción solo en español y sin aclaraciones parentéticas.
+- Edad y procedencia tiene una introducción específica sobre «avere», «essere» y el trato formal; se quitaron las aclaraciones «(formal)» de las traducciones.
+- Browser E2E ampliado para verificar las etiquetas país/gentilicio/idioma, TTS por celda, reglas en viñetas antes de tablas y ausencia de aclaraciones parentéticas.
+- Validaciones automatizadas y publicación Render pendientes; no declarar listo para prueba humana hasta confirmar CI/E2E y preview actualizado.
