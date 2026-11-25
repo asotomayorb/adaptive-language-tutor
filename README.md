@@ -1380,3 +1380,11 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Aunque la configuración automática ya estaba activa, Render no inició un deploy al detectar esos pushes. Para no dejar el preview desactualizado, se lanzó un deploy de recuperación manual del HEAD validado: `dep-dc3iga0u01pc73eobuog`, estado LIVE, commit `4bb81c7814867c5ddd0b9e0347839ab724307224`.
 - Se comprobó que el servicio sigue con autoDeploy habilitado después del deploy manual. La política está configurada para futuros pushes, pero la ejecución automática aún requiere una comprobación adicional con un próximo cambio de código; si vuelve a no dispararse, revisar webhook/integración GitHub-Render antes de declarar la automatización plenamente verificada.
 - Preview LIVE actual: https://adaptive-language-tutor-preview-5b3d.onrender.com. Prueba humana Android de Unidad 2 pendiente.
+
+
+### Auto-deploy en cada commit — 25-11-2026
+- Se cambió el disparador del servicio de `checksPass` a `commit` para ajustarse a la solicitud de publicar automáticamente cada push a `feature/mobile-bottom-navigation`. Render confirma `autoDeploy=yes`, `autoDeployTrigger=commit`; Blueprint `autoSync=true`.
+- Motivo: aunque los checks de GitHub estaban aprobados, Render no inició automáticamente los despliegues de los commits anteriores; se necesitó un deploy manual de recuperación. El modo `commit` evita depender de la detección de checks CI por Render.
+- Esta modalidad publica cada commit sin esperar el resultado de CI. Mantener CI activo y evitar pushes de cambios incompletos.
+- Prueba de automatización: el siguiente commit posterior a esta configuración debe generar un deploy automático. Verificar su trigger y commit antes de declarar la automatización comprobada.
+- Preview actualmente LIVE: commit `4bb81c7814867c5ddd0b9e0347839ab724307224`, deploy `dep-dc3iga0u01pc73eobuog`.
