@@ -2618,9 +2618,21 @@ function formatItalianTheoryTitle(value) {
     "stare":"estar",
     "passato prossimo":"pretérito perfecto compuesto",
     "parlare":"hablar",
-    "andare":"ir"
+    "andare":"ir",
+    "paesi e nazionalità":"países y nacionalidades",
+    "aggettivi qualificativi":"adjetivos calificativos",
+    "articoli determinativi":"artículos definidos",
+    "articoli indeterminativi":"artículos indefinidos",
+    "accordo in genere e numero":"concordancia de género y número",
+    "età e provenienza":"edad y procedencia",
+    "nazionalità":"nacionalidad",
+    "provenienza":"procedencia",
+    "lingue":"idiomas",
+    "paesi":"países",
+    "aggettivi":"adjetivos"
   };
-  return String(value).replace(/\b(essere|stare|passato prossimo|parlare|andare)\b/gi, match => {
+  const terms = Object.keys(translations).sort((a,b) => b.length - a.length).join("|");
+  return String(value).replace(new RegExp("\\b(" + terms + ")\\b","gi"), match => {
     const translation = translations[match.toLowerCase()];
     const label = match.charAt(0).toUpperCase() + match.slice(1);
     return '«<em>' + label + '</em>» (' + translation + ')';
@@ -2636,6 +2648,64 @@ function renderItalianAppliedTopic(category, index, locale) {
   const rows = (items) => items.map(([term, meaning, note = ""]) => {
     return '<tr><td>' + renderSpokenVariants(term) + '</td><td>' + renderLines(meaning) + '</td>' + (note ? '<td>' + escapeHTML(note) + '</td>' : '') + '</tr>';
   }).join("");
+  if (category === "Vocabulario" && index === 0) {
+    const countries = [
+      ["Italia","Italia","in Italia"],["Cile","Chile","in Cile"],["Argentina","Argentina","in Argentina"],
+      ["Brasile","Brasil","in Brasile"],["Spagna","España","in Spagna"],["Francia","Francia","in Francia"],
+      ["Germania","Alemania","in Germania"],["Portogallo","Portugal","in Portogallo"],["Stati Uniti","Estados Unidos","negli Stati Uniti"],
+      ["Canada","Canadá","in Canada"],["Messico","México","in Messico"],["Giappone","Japón","in Giappone"]
+    ];
+    const nationalities = [
+      ["italiano / italiana","italiano/a"],["cileno / cilena","chileno/a"],["argentino / argentina","argentino/a"],
+      ["brasiliano / brasiliana","brasileño/a"],["spagnolo / spagnola","español/a"],["francese","francés/a"],
+      ["tedesco / tedesca","alemán/alemana"],["portoghese","portugués/a"],["statunitense","estadounidense"],
+      ["canadese","canadiense"],["messicano / messicana","mexicano/a"],["giapponese","japonés/a"]
+    ];
+    const languages = [
+      ["italiano","italiano"],["spagnolo","español"],["inglese","inglés"],["portoghese","portugués"],
+      ["francese","francés"],["tedesco","alemán"],["giapponese","japonés"],["cinese","chino"],["arabo","árabe"]
+    ];
+    return '<p class="theory-slide-text">Para hablar del origen, combina el nombre del país con la preposición adecuada. Para expresar nacionalidad, el adjetivo cambia normalmente según el género; los nombres de idiomas se escriben con minúscula.</p>' +
+      '<h3>Paesi e nazionalità</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
+      rows(countries.map(([country,meaning,usage]) => [country + ' · ' + usage,meaning])) +
+      '</tbody></table><h3>Nazionalità</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
+      rows(nationalities) +
+      '</tbody></table><h3>Lingue</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
+      rows(languages) +
+      '</tbody></table>';
+  }
+  if (category === "Gramática" && index === 2) {
+    const examples = [
+      ["un ragazzo italiano","un chico italiano"],["una ragazza italiana","una chica italiana"],
+      ["due ragazzi italiani","dos chicos italianos"],["due ragazze italiane","dos chicas italianas"],
+      ["un libro interessante","un libro interesante"],["una città interessante","una ciudad interesante"],
+      ["due libri interessanti","dos libros interesantes"],["due città interessanti","dos ciudades interesantes"]
+    ];
+    return '<p class="theory-slide-text">En italiano, muchos adjetivos concuerdan con el sustantivo en género y número. Los adjetivos terminados en <em>-o</em> suelen formar el femenino en <em>-a</em> y el plural en <em>-i</em> (masculino) o <em>-e</em> (femenino). Los terminados en <em>-e</em> usan <em>-i</em> en plural para ambos géneros. Por lo general, el adjetivo va después del sustantivo.</p>' +
+      '<h3>Aggettivi qualificativi</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
+      rows([["bello / bella","bonito / bonita"],["buono / buona","bueno / buena"],["grande","grande"],["piccolo / piccola","pequeño / pequeña"],["interessante","interesante"],["nuovo / nuova","nuevo / nueva"]]) +
+      '</tbody></table><h3>Accordo in genere e numero</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
+      rows(examples) +
+      '</tbody></table><section class="theory-note"><strong>Reglas prácticas</strong><p><em>-o</em>: ragazzo italiano / ragazza italiana / ragazzi italiani / ragazze italiane. <em>-e</em>: un libro interessante / due libri interessanti. La forma del adjetivo debe concordar con el sustantivo al que acompaña.</p></section>';
+  }
+  if (category === "Expresiones" && index === 3) {
+    const phrases = [
+      ["Quanti anni hai? / Quanti anni ha?","¿Cuántos años tienes? / ¿Cuántos años tiene? (formal)"],
+      ["Ho venticinque anni.","Tengo veinticinco años."],
+      ["Di dove sei? / Di dov’è?","¿De dónde eres? / ¿De dónde es? (formal)"],
+      ["Sono del Cile.","Soy de Chile."],
+      ["Da dove vieni? / Da dove viene?","¿De dónde vienes? / ¿De dónde viene? (formal)"],
+      ["Vengo dal Cile.","Vengo de Chile."],
+      ["Che nazionalità hai?","¿Qué nacionalidad tienes?"],
+      ["Sono cileno / Sono cilena.","Soy chileno / Soy chilena."],
+      ["Che lingue parli?","¿Qué idiomas hablas?"],
+      ["Parlo spagnolo e un po’ d’italiano.","Hablo español y un poco de italiano."]
+    ];
+    return '<p class="theory-slide-text">Para decir la edad, el italiano usa <em>avere</em> (tener), no <em>essere</em> (ser). Para preguntar por el origen puedes usar <em>Di dove sei?</em> o <em>Da dove vieni?</em>. Ajusta la pregunta formal con <em>Lei</em>.</p>' +
+      '<h3>Età e provenienza</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
+      rows(phrases) +
+      '</tbody></table><section class="theory-note"><strong>Observa</strong><p>La edad se expresa con <em>avere</em>: <em>Ho venticinque anni</em>. La procedencia se expresa con <em>essere di</em> o <em>venire da</em>: <em>Sono del Cile</em>, <em>Vengo dal Cile</em>. Los gentilicios concuerdan: <em>cileno</em> / <em>cilena</em>.</p></section>';
+  }
   if (category === "Gramática" && index === 0) {
     const pronouns = [["io","yo"],["tu","tú"],["lui / lei","él / ella"],["Lei","usted (formal)"],["noi","nosotros/as"],["voi","ustedes"],["loro","ellos/as"]];
     const verbs = [["io","sono","sto"],["tu","sei","stai"],["lui / lei","è","sta"],["Lei","è","sta"],["noi","siamo","stiamo"],["voi","siete","state"],["loro","sono","stanno"]];
@@ -2738,7 +2808,7 @@ function openTheoryTopic(index) {
   else if (activeTheoryCategory === "Gramática" && sourceIndex === 2) detailMarkup = renderVerbLesson(languageName);
   else if (activeTheoryCategory === "Gramática" && sourceIndex >= 3) detailMarkup = renderTenseLesson(languageName, sourceIndex);
   else if (sampleByTopic) detailMarkup += '<section class="theory-example"><span>' + escapeHTML(sampleLabel) + ' · ' + escapeHTML(languageDefinitions[$("language").value]?.label || languageName) + '</span><p class="theory-target-word">' + escapeHTML(sampleByTopic) + '</p></section>';
-  detailMarkup = detailMarkup.replace(/<h3>([\s\S]*?)<\/h3>/g, (_, heading) => '<h3>' + formatItalianTheoryTitle(heading) + '</h3>');
+  if (activeTheoryUnit >= 2) detailMarkup = "";\n  detailMarkup = detailMarkup.replace(/<h3>([\s\S]*?)<\/h3>/g, (_, heading) => '<h3>' + formatItalianTheoryTitle(heading) + '</h3>');
   $("theory-title").innerHTML = formatItalianTheoryTitle(title);
   const categoryIcon = theoryCategoryIcons[activeTheoryTopics[activeTheoryIndex]?.[3]] || "";
   $("theory-category").innerHTML = '<span class="theory-category-icon" aria-hidden="true">' + categoryIcon + '</span><span>' + escapeHTML(activeTheoryCategory) + '</span>';
