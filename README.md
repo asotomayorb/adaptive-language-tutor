@@ -1223,3 +1223,11 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Browser E2E: aprobado en run [45522922093](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45522922093).
 - Las pruebas cubren la jerarquía de seis unidades, los cuatro subtemas de Unidad 1, la pronunciación independiente de variantes y la tipografía/encabezados de las tablas de pronombres y conjugación.
 - La revisión humana Android y el despliegue Render siguen pendientes; el preview canónico no se ha modificado.
+
+
+### Pulido pendiente de Teoría italiana — 25-11-2026
+- Aclaración de estado: la Unidad 2 sí tiene contenido desplegado; no está vacía ni pendiente de creación. Su contenido permanece pendiente de pulido, por lo que puede diferir de una descripción anterior que la marcaba como completada.
+- Se continúa el refinamiento global de tablas y pronunciación: distribución equitativa de columnas, separación TTS por delimitadores entre conceptos y reglas explicadas en párrafo introductorio antes de las tablas.
+- En esta acción se ajustó la separación TTS para tratar por separado variantes separadas por `/`, salto de línea, guion largo o guion espaciado; las tablas bilingües se fijaron a ancho completo y distribución de columnas uniforme.
+- Validación automatizada y revisión visual aún pendientes; no publicar en Render ni declarar la tarea cerrada hasta comprobar los cambios.
+- Siguiente checkpoint: tras ejecutar validaciones y revisar el contenido de Unidad 2, registrar si se aprueba el pulido o qué ajustes siguen pendientes.
