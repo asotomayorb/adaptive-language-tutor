@@ -1216,3 +1216,10 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - En la comparación verbal se separan las tablas de pronombres y conjugación; los términos «essere» y «stare» se muestran en cursiva y entre comillas angulares. Se iguala el tamaño de las columnas verbales y las tablas bilingües (19 px escritorio / 17 px móvil).
 - Se adaptó Browser E2E para comprobar los cuatro subtemas, las variantes de pronunciación, el formato de encabezados y la conservación de las seis unidades.
 - Implementación en revisión: rama `recovery/intermediate-theory-content`. No publicar en Render ni integrar a la rama principal hasta completar CI y revisar el diff.
+
+
+### Validación automatizada de recuperación selectiva — 25-11-2026
+- `npm run check` y `npm test`: aprobados en GitHub Actions run [45522922228](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45522922228).
+- Browser E2E: aprobado en run [45522922093](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45522922093).
+- Las pruebas cubren la jerarquía de seis unidades, los cuatro subtemas de Unidad 1, la pronunciación independiente de variantes y la tipografía/encabezados de las tablas de pronombres y conjugación.
+- La revisión humana Android y el despliegue Render siguen pendientes; el preview canónico no se ha modificado.
