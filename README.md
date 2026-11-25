@@ -1240,3 +1240,15 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Rama: `feature/mobile-bottom-navigation`. Se preserva la jerarquía A1 de seis unidades y la recuperación de los cuatro subtemas de Unidad 1.
 - CI y Browser E2E aprobados; Render Preview LIVE en deploy `dep-dc3399u8bjmc73ednf6g`.
 - El checkpoint queda establecido como base estable para los siguientes ajustes de formato en subtemas. La prueba humana en Android permanece pendiente y no se considera aprobada.
+
+
+### Ajustes de formato en subtemas italianos — 25-11-2026
+- Se confirmó el checkpoint solicitado: base funcional `395aace02fccbf51aa433a66a33a87aa32d8043e`, registrado en README y PROJECT_STATUS antes de continuar.
+- Los títulos de subtemas convierten términos italianos reconocidos a cursiva, comillas angulares y traducción española entre paréntesis. Para «Pronombres y ser/estar», el encabezado ahora presenta «Essere» (ser) y «Stare» (estar).
+- Los encabezados y celdas de tablas quedan fuera de ese formato; en la tabla de conjugación los encabezados son texto simple.
+- La última tabla de conjugación aplica tamaño uniforme a sus tres columnas: 19 px escritorio y 17 px móvil.
+- Cambios de código: `448503a3effc7852a5811ba0a9ea313eb7ac8201` (render de títulos), `107e947cc32a801f8b5cac9f2c99d0022a65efc3` (CSS), `0131e4687c4cba885c1a9524490256f191512b4d` (E2E).
+- Tests `npm run check` + `npm test`: aprobados, Actions [45529304385](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45529304385) y [45529365304](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45529365304).
+- Browser E2E: aprobado, Actions [45529304350](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45529304350) y [45529365187](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45529365187).
+- Render Preview **LIVE**, deploy `dep-dc340mk0916s73fkoni0`, asociado al commit documental `b90f852c1f9226bffc860e5ce52309e6a773ddf7`, que contiene el código validado.
+- Sigue pendiente la revisión visual/táctil/auditiva humana en Android; los checks correspondientes quedaron añadidos a `HUMAN_TEST_PLAN.md`.
