@@ -1261,3 +1261,11 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Causa confirmada de la discrepancia: las correcciones de `recovery/intermediate-theory-content` no se han publicado en el servicio canónico. No es un problema de caché demostrado.
 - No se cambió la rama del servicio ni se inició un deploy: la rama de recuperación sigue aislada y el checkpoint de publicación continúa pendiente de confirmación del usuario.
 - Próximo paso sujeto a autorización: publicar el HEAD validado de `recovery/intermediate-theory-content` en el preview canónico, sin fusionarlo a `feature/mobile-bottom-navigation` ni a `main`. Después verificar deploy LIVE y contenido servido.
+
+
+### Política de respaldo — 25-11-2026
+- Esta rama queda reservada como respaldo de recuperación, no como rama de desarrollo diario ni como origen de despliegue Render.
+- El desarrollo funcional y la publicación del preview continúan en `feature/mobile-bottom-navigation`.
+- Conservar el historial de esta rama y sus checkpoints. Para rescatar avances, comparar y trasladar selectivamente commits/cambios a la rama activa, con pruebas antes de publicar.
+- El pulido de Unidad 2 de esta rama está validado por CI, pero no se ha integrado en la rama activa ni desplegado. No asumir que el contenido está visible en Render.
+- La nota anterior que proponía publicar directamente esta rama queda reemplazada por esta política vigente.
