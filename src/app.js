@@ -2086,36 +2086,44 @@ $("confirm-session-close").addEventListener("click", () => {
 
 const theoryContent = {
   grammar: ["Gramática", [
-    ["Pronombres personales", "Los pronombres indican quién realiza la acción. Su forma y frecuencia de uso dependen del idioma; en algunas lenguas pueden omitirse cuando el verbo ya identifica a la persona."],
-    ["Artículos", "Los artículos acompañan al sustantivo y pueden indicar si hablamos de algo conocido o no. Algunos idiomas distinguen género y número; otros no utilizan artículos."],
-    ["Verbo ser y estar", "Este tema expresa identidad, características, estados y ubicación. Algunos idiomas usan dos verbos diferentes; otros concentran varios significados en una sola forma."],
-    ["Tiempo presente", "Se utiliza para hábitos, hechos generales y situaciones actuales. La conjugación puede cambiar según la persona, el número y el tipo de verbo."],
-    ["Pasado", "Permite hablar de acciones terminadas o situaciones anteriores. Aprende las formas regulares e irregulares dentro de frases completas."],
-    ["Futuro", "Expresa planes, predicciones e intenciones. Cada idioma utiliza sus propias formas verbales o construcciones auxiliares."]
+    ["Pronombres y ser/estar", "Los pronombres permiten identificar quién habla. Se presentan junto con las formas más frecuentes para decir quién eres o cómo estás, adaptadas al idioma."],
+    ["Género y número", ""],
+    ["Artículos y adjetivos", ""],
+    ["Presente habitual", ""],
+    ["Preguntas y negación", ""],
+    ["Tiempo y frecuencia", ""],
+    ["Cantidades y artículos", ""],
+    ["Preposiciones de lugar", ""]
   ]],
   vocabulary: ["Vocabulario", [
-    ["Saludos", "Saludos y despedidas formales e informales. Aprende a elegirlos según la hora, la situación y la relación con la otra persona."],
-    ["Personas y familia", "Vocabulario para hablar de personas, relaciones y familia. Aprende cada sustantivo con sus marcas gramaticales cuando corresponda."],
-    ["Tiempo y fechas", "Días, meses, horas y expresiones temporales para organizar actividades y contar cuándo suceden las cosas."],
-    ["Comida y bebida", "Ingredientes, comidas, bebidas y vocabulario para pedir, comprar o expresar preferencias."],
-    ["Viajes y transporte", "Palabras para desplazarse, comprar pasajes, orientarse y resolver situaciones habituales durante un viaje."],
-    ["Números cardinales y ordinales", "Aprende a contar, expresar cantidades, precios, fechas, posiciones y orden. Incluye concordancia de género y formación de números compuestos."]
+    ["Países e idiomas", ""],
+    ["Familia", ""],
+    ["Profesiones", ""],
+    ["Rutinas y lugares", ""],
+    ["Días y fechas", ""],
+    ["Comida y productos", ""],
+    ["Ciudad y transporte", ""]
   ]],
   expressions: ["Expresiones", [
-    ["Presentarse", "Estructuras para saludar, decir tu nombre, explicar de dónde eres y conocer a otra persona."],
-    ["Pedir ayuda", "Formas directas y corteses de solicitar ayuda, pedir que repitan y explicar que no has entendido."],
-    ["En un café", "Frases para pedir alimentos y bebidas, consultar opciones y pagar de manera educada."],
-    ["Preguntar y aclarar", "Preguntas para pedir ubicaciones, precios, horarios y confirmar que has entendido la respuesta."],
-    ["Conversación cotidiana", "Preguntas abiertas y respuestas breves para mantener una conversación y mostrar interés."]
+    ["Saludos y despedidas", "Fórmulas frecuentes para iniciar y cerrar un contacto, con opciones de cortesía según la situación."],
+    ["Decir el nombre", "Formas sencillas para decir tu nombre y responder cuando alguien se presenta."],
+    ["Cómo estás", "Intercambios breves para preguntar por el estado de otra persona y responder."],
+    ["Edad y procedencia", ""],
+    ["Rutinas diarias", ""],
+    ["La hora", ""],
+    ["Pedir en un café", ""],
+    ["Precios y pagos", ""],
+    ["Ubicación e indicaciones", ""],
+    ["Ayuda y necesidades", ""]
   ]]
 };
 const theoryUnits=[
-{title:"Primeros contactos",categories:{grammar:[0,1],vocabulary:[0],expressions:[0]}},
-{title:"Datos personales y entorno",categories:{grammar:[2],vocabulary:[1],expressions:[3]}},
-{title:"Rutinas y tiempo",categories:{grammar:[3],vocabulary:[2],expressions:[4]}},
-{title:"Comida y compras",categories:{grammar:[4],vocabulary:[3],expressions:[2]}},
-{title:"Viajes y orientación",categories:{grammar:[5],vocabulary:[4],expressions:[1,3]}},
-{title:"Números y cantidades",categories:{vocabulary:[5]}}
+  {title:"Primeros contactos",categories:{expressions:[0,1,2],grammar:[0]}},
+  {title:"Datos personales y entorno",categories:{vocabulary:[0],grammar:[1],expressions:[3]}},
+  {title:"Rutinas y tiempo",categories:{vocabulary:[1,2,3,4],grammar:[2,3,4,5],expressions:[4,5]}},
+  {title:"Comida y compras",categories:{vocabulary:[5],expressions:[6,7]}},
+  {title:"Viajes y orientación",categories:{vocabulary:[6],grammar:[7],expressions:[8,9]}},
+  {title:"Números y cantidades",categories:{grammar:[6]}}
 ];
 const theoryCategoryLabels={grammar:"Gramática",vocabulary:"Vocabulario",expressions:"Expresiones"};
 const theorySamples = {
@@ -2605,15 +2613,31 @@ function renderArticleLesson(languageName, locale) {
   return '<p class="theory-slide-text">' + escapeHTML(lesson.intro) + '</p><table class="theory-pronoun-table"><thead><tr><th>Forma</th><th>Significado</th><th>Uso</th></tr></thead><tbody>' + rows + '</tbody></table>' + renderGrammarRuleContent(lesson.rule,lesson.exceptions) + '<section class="theory-example"><span>Ejemplos</span>' + examples + '</section>';
 }
 function renderItalianAppliedTopic(category, index, locale) {
-  const rows = (items) => items.map(([term, meaning, note = ""]) =>
-    '<tr><td><strong class="theory-target-word">' + escapeHTML(term) + '</strong> ' + speakerButton(term, locale) + '</td><td>' + escapeHTML(meaning) + '</td>' + (note ? '<td>' + escapeHTML(note) + '</td>' : '') + '</tr>'
-  ).join("");
+  const renderLines = (value) => String(value).split("<br>").map(part => escapeHTML(part)).join('<br>');
+  const renderSpokenVariants = (value) => String(value).split(/<br>|\\s*\\/\\s*/).map(part => {
+    const phrase = part.trim();
+    if (!phrase) return "";
+    return '<span class="theory-speech-variant"><strong class="theory-target-word">' + escapeHTML(phrase) + '</strong> ' + speakerButton(phrase, locale) + '</span>';
+  }).filter(Boolean).join('<span class="theory-variant-separator"> / </span>');
+  const rows = (items) => items.map(([term, meaning, note = ""]) => {
+    return '<tr><td>' + renderSpokenVariants(term) + '</td><td>' + renderLines(meaning) + '</td>' + (note ? '<td>' + escapeHTML(note) + '</td>' : '') + '</tr>';
+  }).join("");
+  if (category === "Gramática" && index === 0) {
+    const pronouns = [["io","yo"],["tu","tú"],["lui / lei","él / ella"],["Lei","usted (formal)"],["noi","nosotros/as"],["voi","ustedes"],["loro","ellos/as"]];
+    const verbs = [["io","sono","sto"],["tu","sei","stai"],["lui / lei","è","sta"],["Lei","è","sta"],["noi","siamo","stiamo"],["voi","siete","state"],["loro","sono","stanno"]];
+    return '<p class="theory-slide-text">Los pronombres indican quién realiza la acción. «<em>Essere</em>» expresa identidad y características; «<em>stare</em>» expresa estado o condición. Observa cada elemento por separado:</p>' +
+      '<h3>Pronombres personales</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
+      pronouns.map(([term,meaning]) => '<tr><td><strong class="theory-target-word">' + term + '</strong> ' + speakerButton(term,locale) + '</td><td>' + meaning + '</td></tr>').join("") +
+      '</tbody></table><h3>Verbos «<em>essere</em>» y «<em>stare</em>»</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Persona</th><th>«<em>Essere</em>»</th><th>«<em>Stare</em>»</th></tr></thead><tbody>' +
+      verbs.map(([person,essere,stare]) => '<tr><td>' + person + '</td><td>' + renderSpokenVariants(essere) + '</td><td>' + renderSpokenVariants(stare) + '</td></tr>').join("") +
+      '</tbody></table>';
+  }
   if (category === "Gramática" && index === 1) {
-    return '<p class="theory-slide-text">En italiano el artículo concuerda con el sustantivo en género y número. La forma masculina depende del sonido inicial; la forma femenina se contrae ante vocal.</p>' +
-      '<h3>Artículos definidos</h3><table class="theory-pronoun-table"><thead><tr><th>Forma y ejemplo</th><th>Significado</th><th>Cuándo se usa</th></tr></thead><tbody>' +
-      rows([["il libro","el libro","Masculino singular; consonante común"],["lo studente","el estudiante","Masculino singular; s + consonante, z, gn, ps"],["l’amico","el amigo","Masculino singular ante vocal"],["la casa","la casa","Femenino singular ante consonante"],["l’amica","la amiga","Femenino singular ante vocal"],["i libri","los libros","Plural de il"],["gli studenti / gli amici","los estudiantes / los amigos","Plural de lo y l’ masculino"],["le case","las casas","Plural femenino"]]) +
-      '</tbody></table><h3>Artículos indefinidos</h3><table class="theory-pronoun-table"><thead><tr><th>Forma y ejemplo</th><th>Significado</th></tr></thead><tbody>' +
-      rows([["un libro","un libro"],["uno studente","un estudiante"],["un amico","un amigo (sin apóstrofo)"],["una casa","una casa"],["un’amica","una amiga (con apóstrofo)"]]) +
+    return '<p class="theory-slide-text">En italiano, el artículo concuerda con el sustantivo en género y número. La forma masculina depende del sonido inicial y la femenina se contrae ante vocal.</p>' +
+      '<h3>Artículos definidos</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
+      rows([["il libro","el libro (masculino singular)"],["lo studente","el estudiante (masculino; s + consonante, z, gn o ps)"],["l’amico","el amigo (masculino ante vocal)"],["la casa","la casa (femenino singular)"],["l’amica","la amiga (femenino ante vocal)"],["i libri","los libros (plural de il)"],["gli studenti / gli amici","los estudiantes / los amigos (plural de lo y l’)"],["le case","las casas (plural femenino)"]]) +
+      '</tbody></table><h3>Artículos indefinidos</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
+      rows([["un libro","un libro"],["uno studente","un estudiante"],["un amico","un amigo (masculino, sin apóstrofo)"],["una casa","una casa"],["un’amica","una amiga (femenino, con apóstrofo)"]]) +
       '</tbody></table>' + renderGrammarRuleSections("El artículo concuerda con el sustantivo en género y número. La forma masculina depende del sonido inicial; la forma femenina se contrae ante vocal.", "No escribas *il studente ni *la amica. Memoriza el sustantivo junto con su artículo.");
   }
   if (category === "Gramática" && index === 4) {
@@ -2633,25 +2657,30 @@ function renderItalianAppliedTopic(category, index, locale) {
   }
   const vocabulary = {
     "Vocabulario": [
-      [["ciao","hola / chao","Informal"],["buongiorno","buenos días / buenas tardes","Formal o neutral"],["buonasera","buenas tardes / noches","Desde la tarde"],["arrivederci","hasta luego","Formal"],["a presto","hasta pronto","Neutral"]],
+      [["ciao","hola / chao"],["buongiorno","buenos días"],["buon pomeriggio","buenas tardes"],["buonasera","buenas tardes / noches"],["arrivederci","adiós / hasta luego"],["a presto","hasta pronto"]],
       [["la madre","la madre"],["il padre","el padre"],["il fratello","el hermano"],["la sorella","la hermana"],["i genitori","los padres"],["il figlio / la figlia","el hijo / la hija"]],
       [["oggi","hoy"],["domani","mañana"],["ieri","ayer"],["lunedì","lunes"],["la settimana","la semana"],["alle otto","a las ocho"]],
       [["il conto","la cuenta"],["un tavolo per due","una mesa para dos"],["l’acqua naturale","agua sin gas"],["il menù","el menú"],["vorrei…","quisiera…"],["senza…","sin…"]],
       [["il biglietto","el billete / pasaje"],["la stazione","la estación"],["il binario","el andén / vía"],["a destra","a la derecha"],["a sinistra","a la izquierda"],["quanto costa?","¿cuánto cuesta?"]]
     ],
     "Expresiones": [
-      [["Mi chiamo…","Me llamo…"],["Piacere!","¡Mucho gusto!"],["Sono cileno/a.","Soy chileno/a."],["Vengo dal Cile.","Vengo de Chile."]],
-      [["Mi può aiutare?","¿Me puede ayudar? (formal)"],["Può ripetere, per favore?","¿Puede repetir, por favor?"],["Non ho capito.","No entendí."],["Parla più lentamente, per favore.","Hable más despacio, por favor."]],
-      [["Vorrei un caffè, per favore.","Quisiera un café, por favor."],["Posso vedere il menù?","¿Puedo ver el menú?"],["Il conto, per favore.","La cuenta, por favor."],["È possibile pagare con carta?","¿Se puede pagar con tarjeta?"]],
+      [["Buongiorno /<br>Buonasera","Buenos días /<br>buenas tardes-noches"],["Ciao","Hola / chao"],["Arrivederci /<br>A presto","Adiós /<br>hasta pronto"]],
+      [["Mi chiamo… /<br>Sono…","Me llamo… /<br>soy…"],["Come ti chiami? /<br>Come si chiama?","¿Cómo te llamas? /<br>¿Cómo se llama? (formal)"],["Piacere!","¡Mucho gusto!"]],
+      [["Come stai? /<br>Come sta?","¿Cómo estás? /<br>¿Cómo está? (formal)"],["Sto bene, grazie.","Estoy bien, gracias."],["Così così.","Más o menos."],["Non c'è male.","No está mal."],["E tu? /<br>E Lei?","¿Y tú? /<br>¿Y usted?"]],
       [["Dov’è la stazione?","¿Dónde está la estación?"],["A che ora parte il treno?","¿A qué hora sale el tren?"],["Quanto costa?","¿Cuánto cuesta?"],["Può indicarmelo sulla mappa?","¿Puede indicármelo en el mapa?"]],
-      [["Come va?","¿Cómo estás?"],["Tutto bene, grazie.","Todo bien, gracias."],["Che cosa fai oggi?","¿Qué haces hoy?"],["Ci vediamo domani.","Nos vemos mañana."]]
+      [["Che cosa fai oggi?","¿Qué haces hoy?"],["Ci vediamo domani.","Nos vemos mañana."]]
     ]
   };
   if (category === "Vocabulario" || category === "Expresiones") {
     const items = vocabulary[category]?.[index];
     if (!items) return null;
-    const heading = category === "Vocabulario" ? "Palabras para usar en contexto" : "Frases listas para una situación real";
-    return '<p class="theory-slide-text">' + heading + '. Escucha cada expresión y fíjate en su traducción y registro.</p><table class="theory-pronoun-table"><thead><tr><th>Italiano</th><th>Español / uso</th></tr></thead><tbody>' + rows(items) + '</tbody></table>';
+    const introductions = {
+      0:"Saluda y despídete según el momento y la cercanía. «<em>Buongiorno</em>» se usa durante el día y «<em>buonasera</em>» al atardecer o por la noche.",
+      1:"Preséntate y pregunta el nombre de otra persona. «<em>Come ti chiami?</em>» es informal y «<em>Come si chiama?</em>» es la forma de cortesía.",
+      2:"Pregunta por el estado de alguien y responde. «<em>Come stai?</em>» y «<em>Come sta?</em>» expresan el mismo mensaje en trato informal y formal."
+    };
+    const introduction = category === "Expresiones" ? introductions[index] : "Palabras útiles para reconocer y utilizar en situaciones cotidianas.";
+    return '<p class="theory-slide-text">' + (introduction || "Expresiones frecuentes para comunicarte en situaciones cotidianas.") + '</p><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' + rows(items) + '</tbody></table>';
   }
   return null;
 }
