@@ -1260,3 +1260,20 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Rama: `feature/mobile-bottom-navigation`. Se conserva la jerarquía A1 de seis unidades.
 - Tests y Browser E2E aprobados; Render Preview LIVE, deploy `dep-dc340mk0916s73fkoni0`.
 - Este checkpoint es la base segura para limpiar los contenidos de unidades posteriores y desarrollar la Unidad 2. Unidad 1 debe permanecer intacta.
+
+
+### Limpieza de subtemas y desarrollo de Unidad 2 — 25-11-2026
+- Checkpoint anterior conservado: Unidad 1 y reglas de formato validadas, registrado antes de iniciar esta fase.
+- Se vació el contenido de los subtemas de Unidades 3 a 6, manteniendo todos sus títulos y la jerarquía de seis unidades. Unidad 1 permanece intacta.
+- Unidad 2 desarrollada para italiano en sus cuatro subtemas:
+  1. Países e idiomas: países, uso de preposiciones de lugar, gentilicios y nombres de idiomas.
+  2. Artículos y concordancia: artículos definidos e indefinidos, usos y ejemplos.
+  3. Artículos y adjetivos: concordancia de adjetivos en género y número, terminaciones -o/-a/-i/-e y ejemplos.
+  4. Edad y procedencia: preguntas/respuestas, edad con `avere`, origen con `essere di` / `venire da`, variantes formales e informales.
+- Se conserva el formato de tablas bilingües Italiano/Español, pronunciación independiente para cada variante separada por «/», y títulos italianos en cursiva entre « » con traducción española entre paréntesis. Los encabezados de tablas quedan sin ese formato.
+- E2E verifica los cuatro subtemas de Unidad 2, sus tablas, pronunciación por variantes, formato de títulos y ausencia de contenido en Unidad 3. Unidad 1 sigue cubierta por las pruebas previas.
+- CI `npm run check` + `npm test`: aprobado, run [45531925766](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45531925766).
+- Browser E2E: aprobado, run [45531925531](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45531925531).
+- Commits de código: `0e8b28b` (contenido Unidad 2 y limpieza), `571a0ca` (E2E), `30f7b9f` (formato de títulos italianos), `dc05ceb` (corrección de sintaxis y validación final).
+- Render deploy en curso: `dep-dc34b395efls73aor580`, código `dc05ceb51c49db20f6cebb9479e3e467d374cc76`. Registrar estado LIVE al completarse.
+- La prueba humana en Android continúa pendiente.
