@@ -2632,7 +2632,7 @@ function formatItalianTheoryTitle(value) {
     "aggettivi":"adjetivos"
   };
   const terms = Object.keys(translations).sort((a,b) => b.length - a.length).join("|");
-  return String(value).replace(new RegExp("\\b(" + terms + ")\\b","gi"), match => {
+  return String(value).replace(new RegExp("(" + terms + ")","gi"), match => {
     const translation = translations[match.toLowerCase()];
     const label = match.charAt(0).toUpperCase() + match.slice(1);
     return '«<em>' + label + '</em>» (' + translation + ')';
@@ -2718,9 +2718,9 @@ function renderItalianAppliedTopic(category, index, locale) {
   }
   if (category === "Gramática" && index === 1) {
     return '<p class="theory-slide-text">En italiano, el artículo concuerda con el sustantivo en género y número. La forma masculina depende del sonido inicial y la femenina se contrae ante vocal.</p>' +
-      '<h3>Artículos definidos</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
+      '<h3>Articoli determinativi</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
       rows([["il libro","el libro (masculino singular)"],["lo studente","el estudiante (masculino; s + consonante, z, gn o ps)"],["l’amico","el amigo (masculino ante vocal)"],["la casa","la casa (femenino singular)"],["l’amica","la amiga (femenino ante vocal)"],["i libri","los libros (plural de il)"],["gli studenti / gli amici","los estudiantes / los amigos (plural de lo y l’)"],["le case","las casas (plural femenino)"]]) +
-      '</tbody></table><h3>Artículos indefinidos</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
+      '</tbody></table><h3>Articoli indeterminativi</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
       rows([["un libro","un libro"],["uno studente","un estudiante"],["un amico","un amigo (masculino, sin apóstrofo)"],["una casa","una casa"],["un’amica","una amiga (femenino, con apóstrofo)"]]) +
       '</tbody></table>' + renderGrammarRuleSections("El artículo concuerda con el sustantivo en género y número. La forma masculina depende del sonido inicial; la forma femenina se contrae ante vocal.", "No escribas *il studente ni *la amica. Memoriza el sustantivo junto con su artículo.");
   }
