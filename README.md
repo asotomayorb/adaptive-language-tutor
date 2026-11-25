@@ -1293,3 +1293,13 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
   5. No repetir la regla en un cuadro inferior de la tabla. Las excepciones pueden ir en un cuadro posterior, pero deben explicarse claramente y no presentarse como ejemplos aislados.
 - El checkpoint registra el estado previo a estos cambios; no implica que los nuevos criterios ya estén implementados. Pendiente aplicar los cambios, añadir cobertura de pruebas, validar CI/E2E y actualizar Render si corresponde.
 - Prueba humana en Android sigue pendiente.
+
+
+## Política vigente de ramas y Render — 25-11-2026
+- Rama de desarrollo activa: `feature/mobile-bottom-navigation`. El trabajo funcional nuevo y las correcciones cotidianas continúan aquí.
+- Render Preview canónico permanece conectado a `feature/mobile-bottom-navigation`; esta es la rama que se publica y se valida en el teléfono.
+- Rama `recovery/intermediate-theory-content`: respaldo histórico/de recuperación. No usarla como rama de desarrollo cotidiano, no conectarla a Render y no desplegarla directamente.
+- Los avances que se quieran preservar como respaldo se registran mediante commits/checkpoints identificables en `recovery`; evitar reescrituras o borrados de su historial.
+- Para rescatar un avance, comparar primero las ramas y trasladar selectivamente commits o cambios desde `recovery` hacia `feature/mobile-bottom-navigation`; ejecutar validaciones y publicar desde la rama activa.
+- No hacer merge completo ni cambiar la rama configurada en Render como mecanismo automático de rescate. Cualquier integración debe ser selectiva y verificable.
+- Estado al registrar esta política: el pulido de Unidad 2 está validado por CI en `recovery`, pero todavía no se ha incorporado a la rama activa ni publicado en Render. La revisión humana Android también sigue pendiente.
