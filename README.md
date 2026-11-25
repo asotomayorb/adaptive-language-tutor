@@ -1303,3 +1303,12 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Para rescatar un avance, comparar primero las ramas y trasladar selectivamente commits o cambios desde `recovery` hacia `feature/mobile-bottom-navigation`; ejecutar validaciones y publicar desde la rama activa.
 - No hacer merge completo ni cambiar la rama configurada en Render como mecanismo automático de rescate. Cualquier integración debe ser selectiva y verificable.
 - Estado al registrar esta política: el pulido de Unidad 2 está validado por CI en `recovery`, pero todavía no se ha incorporado a la rama activa ni publicado en Render. La revisión humana Android también sigue pendiente.
+
+
+### Checkpoint confirmado — política de ramas y Render — 25-11-2026
+- El usuario confirma la política de ramas: `feature/mobile-bottom-navigation` sigue como única rama de desarrollo activo y fuente del preview canónico.
+- `recovery/intermediate-theory-content` queda exclusivamente como respaldo histórico; no se conecta ni se despliega directamente en Render.
+- El servicio canónico `adaptive-language-tutor-preview-5b3d` conserva la rama `feature/mobile-bottom-navigation` y el auto-deploy manual/desactivado.
+- Verificación previa a esta publicación: Render estaba LIVE en deploy `dep-dc34b395efls73aor580`, commit `dc05ceb51c49db20f6cebb9479e3e467d374cc76`. La rama activa avanzó después únicamente con documentación de política/checkpoint; no hay cambios de código funcional posteriores a ese deploy.
+- Se solicita publicar el HEAD documental de la rama activa para dejar el preview sincronizado con el checkpoint. La versión funcional servida seguirá siendo la del código validado `dc05ceb51c49db20f6cebb9479e3e467d374cc76`; el pulido adicional de Unidad 2 de `recovery` no está integrado y no debe aparecer todavía en Render.
+- La prueba visual/táctil/auditiva humana en Android continúa pendiente.
