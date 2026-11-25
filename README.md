@@ -1252,3 +1252,11 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Browser E2E: aprobado, Actions [45529304350](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45529304350) y [45529365187](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45529365187).
 - Render Preview **LIVE**, deploy `dep-dc340mk0916s73fkoni0`, asociado al commit documental `b90f852c1f9226bffc860e5ce52309e6a773ddf7`, que contiene el código validado.
 - Sigue pendiente la revisión visual/táctil/auditiva humana en Android; los checks correspondientes quedaron añadidos a `HUMAN_TEST_PLAN.md`.
+
+
+### Checkpoint confirmado — Unidad 1 validada y reglas tipográficas — 25-11-2026
+- El usuario confirma guardar como checkpoint el estado con Unidad 1 desarrollada y sus reglas de formato aplicadas.
+- Código validado: `0131e4687c4cba885c1a9524490256f191512b4d`; HEAD documental vigente al registrar el checkpoint: `0948936d0687ef0122bf951bb44b19a74cd0ea14`.
+- Rama: `feature/mobile-bottom-navigation`. Se conserva la jerarquía A1 de seis unidades.
+- Tests y Browser E2E aprobados; Render Preview LIVE, deploy `dep-dc340mk0916s73fkoni0`.
+- Este checkpoint es la base segura para limpiar los contenidos de unidades posteriores y desarrollar la Unidad 2. Unidad 1 debe permanecer intacta.
