@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: adaptive-language-tutor-preview-5b3d
+    name: adaptive-language-tutor-preview
     runtime: node
     plan: free
     region: oregon
