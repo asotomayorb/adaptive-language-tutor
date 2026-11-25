@@ -173,8 +173,29 @@ try {
   assert.match(await page.locator("#theory-tree [data-category=" + '"vocabulary"' + "] .theory-tree-category-icon").innerText().catch(() => ""), /abc/i, "vocabulary icon should expose bilingual letter glyph");
    assert.ok(await page.locator("#theory-tree .theory-tree-category-icon svg").count() > 0, "category rows should use line icons rather than the former text glyphs");
   assert.equal(await page.locator("#theory-detail .back-control").count(), 1, "detail should contain exactly one back arrow");
-  // Unit 2 remains a content skeleton; use a developed Unit 1 topic for pronunciation interaction.
+  // Unit 2 has deployed learning content and remains in the polishing phase.
   await page.locator("#theory-back").click();
+  await unitRows.nth(1).click();
+  const unitTwoTopics = page.locator("#theory-tree .theory-tree-topic");
+  assert.equal(await unitTwoTopics.count(), 4, "Unit 2 should expose its four deployed subtopics");
+  await unitTwoTopics.nth(0).click();
+  assert.ok((await page.locator("#theory-description").innerText()).includes("la madre"), "Unit 2 vocabulary should render its family vocabulary");
+  assert.equal(await page.locator("#theory-description table").count(), 1, "Unit 2 vocabulary should render a bilingual reference table");
+  await page.locator("#theory-back").click();
+  await unitTwoTopics.nth(1).click();
+  const articleIntro = page.locator("#theory-description .theory-slide-text").first();
+  const articleTable = page.locator("#theory-description table").first();
+  assert.ok(await articleIntro.count() === 1, "Unit 2 article lesson should begin with a concise rule paragraph");
+  assert.ok(await articleIntro.evaluate(el => !!(el.compareDocumentPosition(document.querySelector("#theory-description table")) & Node.DOCUMENT_POSITION_FOLLOWING)), "article rules must precede the reference tables");
+  assert.ok((await articleIntro.innerText()).includes("apóstrofo"), "article introduction should explain the key apostrophe rule");
+  const articleColumnWidths = await articleTable.locator("thead th").evaluateAll(cells => cells.map(cell => cell.getBoundingClientRect().width));
+  assert.ok(Math.max(...articleColumnWidths) - Math.min(...articleColumnWidths) <= 2, "bilingual table columns should have equal widths");
+  const articleVariants = page.locator("#theory-description .theory-speech-variant");
+  assert.ok(await articleVariants.count() >= 2, "slash-separated article variants should render independent speech fragments");
+  await page.locator("#theory-back").click();
+  await page.locator("#theory-back").click();
+  await unitRows.nth(0).click();
+  await page.locator("#theory-tree .theory-tree-topic").first().click();
   await unitRows.nth(0).click();
   await page.locator("#theory-tree .theory-tree-topic").first().click();
   const manualPronunciation = page.locator("#theory-description .theory-target-tap").first();
