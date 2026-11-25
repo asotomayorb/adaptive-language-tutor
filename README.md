@@ -1332,3 +1332,4 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Esta integración reemplaza las notas anteriores que indicaban que el pulido de Unidad 2 seguía solo en recovery. La rama recovery no se modifica y queda conservada como respaldo.
 - Pendiente: prueba humana en Android (visual, táctil y auditiva), especialmente distribución de tablas, lectura individual de variantes y navegación por los cuatro subtemas de Unidad 2.
 - Checkpoint funcional publicado: 19627135bf04bcb7c0a83330f007ebee04a0f8de. Mantenerlo como punto de retorno antes de ampliar contenidos.
+- Se ajustaron los workflows para ejecutar Tests y Browser E2E también en PR dirigidos a la rama activa, además de los eventos push.
