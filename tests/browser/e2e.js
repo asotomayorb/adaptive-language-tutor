@@ -119,7 +119,11 @@ try {
       const verbTableSizes = await verbTable.locator("tbody tr").first().locator("td").evaluateAll(cells => cells.map(cell => getComputedStyle(cell).fontSize));
       assert.equal(new Set(verbTableSizes).size, 1, "all columns in the final verb table should use the same font size");
     }
-    assert.ok(await page.locator("#theory-description .theory-slide-text em").count() > 0, "Italian expressions in each Unit 1 introduction should be italicized");
+    const italianTargets = page.locator("#theory-description table tbody td:first-child .theory-target-word");
+    assert.ok(await italianTargets.count() > 0, "each Unit 1 topic should expose Italian target expressions in its content tables");
+    const italianSpeechControls = page.locator("#theory-description table tbody td:first-child .speak-button");
+    assert.ok(await italianSpeechControls.count() > 0, "each Unit 1 topic should provide pronunciation controls for Italian target expressions");
+    assert.equal(await italianSpeechControls.first().getAttribute("data-locale"), "it-IT", "Unit 1 pronunciation controls should use the Italian locale");
     const italianCellSize = await page.locator("#theory-description table").first().locator("tbody tr").first().locator("td").first().locator(".theory-target-word").first().evaluate(el => getComputedStyle(el).fontSize);
     const spanishCellSize = await page.locator("#theory-description table").first().locator("tbody tr").first().locator("td").nth(1).evaluate(el => getComputedStyle(el).fontSize);
     assert.equal(spanishCellSize, italianCellSize, "Spanish translations should match Italian text size in bilingual tables");
