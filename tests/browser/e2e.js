@@ -120,8 +120,9 @@ try {
     const spanishCellSize = await page.locator("#theory-description table").first().locator("tbody tr").first().locator("td").nth(1).evaluate(el => getComputedStyle(el).fontSize);
     assert.equal(spanishCellSize, italianCellSize, "Spanish translations should match Italian text size in bilingual tables");
     if (i === 0) {
-      const variants = page.locator("#theory-description table").first().locator("tbody tr").first().locator("td").first().locator(".speak-button");
-      assert.equal(await variants.count(), 2, "slash-separated phrases should expose an independent pronunciation control per phrase");
+      const greetingCell = page.locator("#theory-description table").first().locator("tbody tr").first().locator("td").first();
+      const variants = greetingCell.locator(".theory-speech-variant button");
+      assert.equal(await variants.count(), 2, "slash-separated phrases should expose an independent pronunciation control per phrase: " + await greetingCell.innerHTML());
       for (let variantIndex = 0; variantIndex < 2; variantIndex++) {
         await variants.nth(variantIndex).click();
         await page.waitForFunction(count => window.__spoken?.length >= count, variantIndex + 1);
