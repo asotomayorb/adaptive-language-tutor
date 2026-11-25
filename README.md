@@ -1231,3 +1231,13 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - En esta acción se ajustó la separación TTS para tratar por separado variantes separadas por `/`, salto de línea, guion largo o guion espaciado; las tablas bilingües se fijaron a ancho completo y distribución de columnas uniforme.
 - Validación automatizada y revisión visual aún pendientes; no publicar en Render ni declarar la tarea cerrada hasta comprobar los cambios.
 - Siguiente checkpoint: tras ejecutar validaciones y revisar el contenido de Unidad 2, registrar si se aprueba el pulido o qué ajustes siguen pendientes.
+
+### Pulido de Unidad 2 y reglas globales de Teoría — 25-11-2026
+- Estado confirmado: Unidad 2 tiene contenido desplegado en la rama de recuperación; no está pendiente de creación. Su contenido estaba parcialmente desalineado con los títulos de los subtemas y continúa en fase de pulido.
+- Se ajustó Países e idiomas con pares país/idioma, Artículos y concordancia con reglas resumidas antes de las tablas, Artículos y adjetivos con concordancia de género/número y Edad y procedencia con preguntas/respuestas de edad y origen.
+- Las reglas de concordancia y artículos se presentan antes de sus tablas. Las lecciones de verbos y artículos genéricas también muestran las reglas antes de las tablas de referencia.
+- Las tablas de Teoría usan ancho completo, `table-layout: fixed` y columnas equitativas; las celdas permiten ajustar texto en pantallas estrechas.
+- TTS separa variantes por `/`, salto de línea, guion largo y guion espaciado; cada fragmento conserva su control individual.
+- Browser E2E se amplió para comprobar los cuatro subtemas de Unidad 2, la correspondencia del contenido con los títulos, la ubicación de reglas y la distribución de columnas. Se corrigió el flujo de navegación de la propia prueba tras detectar clics duplicados.
+- `npm run check` y `npm test` aprobados en Actions run [45606123743](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45606123743) para el commit `26c848e`. Browser E2E del commit de prueba `e08b88c` sigue en ejecución al registrar esta bitácora; no declararlo aprobado hasta recibir resultado.
+- No desplegar todavía en Render ni integrar a `feature/mobile-bottom-navigation`. Próximo paso: confirmar Browser E2E; si aprueba, revisar el diff completo y dejar checkpoint antes de continuar con el siguiente bloque de contenido.
