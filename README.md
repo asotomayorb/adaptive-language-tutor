@@ -1233,3 +1233,10 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Browser E2E: aprobado, run [45523103462](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45523103462).
 - Render Preview **LIVE**, deploy `dep-dc3399u8bjmc73ednf6g`, commit `395aace02fccbf51aa433a66a33a87aa32d8043e`, con limpieza de caché.
 - Los logs de Render confirman inicio correcto de `npm start`, escucha en `0.0.0.0:10000` y servicio LIVE. La revisión visual/táctil/auditiva en Android sigue pendiente.
+
+
+### Checkpoint confirmado — recuperación selectiva de Teoría italiana — 25-11-2026
+- Checkpoint funcional aceptado por el usuario: commit de código `395aace02fccbf51aa433a66a33a87aa32d8043e`; HEAD documental previo `44e22c21d90f8242c1426d87f3b8485c97fe5934`.
+- Rama: `feature/mobile-bottom-navigation`. Se preserva la jerarquía A1 de seis unidades y la recuperación de los cuatro subtemas de Unidad 1.
+- CI y Browser E2E aprobados; Render Preview LIVE en deploy `dep-dc3399u8bjmc73ednf6g`.
+- El checkpoint queda establecido como base estable para los siguientes ajustes de formato en subtemas. La prueba humana en Android permanece pendiente y no se considera aprobada.
