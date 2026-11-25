@@ -1223,3 +1223,13 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Prueba humana Android pendiente: confirmar legibilidad/anchura de tablas, navegación de los cuatro subtemas, pronunciación independiente por variante y audio audible en it-IT.
 - Checkpoint de retorno: 19627135bf04bcb7c0a83330f007ebee04a0f8de. No avanzar a nuevas unidades hasta revisar la versión publicada en móvil.
 - CI: Tests y Browser E2E ahora también se ejecutan en pull requests cuyo destino es feature/mobile-bottom-navigation; se conserva la ejecución por push.
+
+
+
+## Refinamiento de claridad de Unidad 2 — 25-11-2026
+- Rama de implementación: feature/unit-2-clarity-refinement; PR #8 abierto hacia feature/mobile-bottom-navigation.
+- Se ajustó src/app.js: países/idiomas con columnas semánticas, artículos definidos e indefinidos en tablas separadas, reglas de adjetivos en lista breve y sin párrafo genérico en edad/procedencia.
+- Se ajustó src/styles.css para la lista de reglas y tests/browser/e2e.js para cubrir el nuevo esquema.
+- Cambios aún no integrados ni publicados. Esperando CI (Tests y Browser E2E); no afirmar validación hasta ver los resultados.
+- Unidad 1 y Unidades 3–6 preservadas.
+
