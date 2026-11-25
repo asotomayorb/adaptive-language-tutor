@@ -1,21 +1,11 @@
 services:
   - type: web
-    name: adaptive-language-tutor-preview
+    name: adaptive-language-tutor-preview-5b3d
     runtime: node
     plan: free
+    region: oregon
     branch: feature/mobile-bottom-navigation
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /api/health
-    autoDeploy: false
-    envVars:
-      - key: NODE_VERSION
-        value: 20.19.0
-      - key: AI_PROVIDER
-        value: gemini
-      - key: AI_MODEL
-        value: gemini-3.5-flash-lite
-      - key: AI_API_KEY
-        sync: false
-      - key: PREVIEW_PASSWORD
-        sync: false
+    autoDeployTrigger: checksPass
