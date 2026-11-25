@@ -1232,3 +1232,12 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Commits de implementación y pruebas: c6445aae6f2979539e8dd0471abd03467462477e y 693fd3ac03d40fbfa2562bf3f22cb7625f5c331f.
 - README leído y actualizado con los criterios aplicados.
 - Pendiente: CI (npm run check, npm test, Browser E2E), revisión del diff y publicación manual en Render; Android sigue pendiente.
+
+
+### Revisión adicional: Unidad 2 sigue sin reflejar los últimos ajustes — 25-11-2026
+- Se verificó el servicio Render canónico `adaptive-language-tutor-preview-5b3d`: está configurado con la rama correcta `feature/mobile-bottom-navigation`, pero `autoDeploy=no`; por ello no publica los commits nuevos automáticamente.
+- El último deploy LIVE del servicio es `dep-dc3daucipgvc738c5k10`, que sirve el commit `19627135bf04bcb7c0a83330f007ebee04a0f8de`. No contiene la revisión de claridad posterior que se registró en el código de la rama.
+- El HEAD documental actual es `769118182623ab0004517a2e8ddca15c2bb92d6e`; su commit padre de código es `d9565981cf49ec77faa861e39b8edca2f1bea15c`. La rama contiene los cambios de Unidad 2, pero no deben publicarse todavía: Browser E2E falló en el run [45661774152](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45661774152), en `tests/browser/e2e.js:122`, porque la aserción de Unidad 1 exige cursiva en todas las introducciones y no coincide con el contenido real. Tests unitarios/check sí aprobaron en el run [45661774198](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45661774198).
+- Se confirma así la causa de que el usuario siga viendo lo mismo: Render continúa sirviendo el commit anterior y el despliegue manual está bloqueado prudentemente hasta corregir la prueba E2E sin debilitar la cobertura.
+- Próximo paso obligatorio: corregir la aserción de Unidad 1 para que valide los términos italianos que realmente deben ir en cursiva, conservar intacto su contenido, ejecutar de nuevo CI y Browser E2E, y solo entonces desplegar manualmente el commit validado y verificarlo LIVE.
+- No listo para preview ni para prueba humana. Unidad 1 y Unidades 3–6 quedan fuera del alcance de edición.
