@@ -1176,3 +1176,13 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Base protegida: jerarquía A1 de seis unidades, cuatro subtemas desarrollados en Unidad 1, pronunciación independiente por variante y tablas bilingües.
 - Render deploy LIVE: `dep-dc3399u8bjmc73ednf6g`. CI y Browser E2E aprobados.
 - La revisión humana en Android continúa pendiente. Este checkpoint es el punto de retorno si los ajustes siguientes introducen regresiones.
+
+
+## Ajustes de títulos y tablas de Teoría italiana — 25-11-2026
+- Checkpoint base confirmado: código `395aace02fccbf51aa433a66a33a87aa32d8043e`.
+- Títulos de subtemas: los términos italianos se muestran en cursiva, entre comillas angulares y con traducción española entre paréntesis. En Pronombres: «Essere» (ser) y «Stare» (estar).
+- El formato de títulos no se aplica dentro de tablas ni a sus encabezados. Última tabla de conjugación: tamaño de letra igual en sus tres columnas (19 px escritorio / 17 px móvil).
+- Código: `448503a`, `107e947`, `0131e46`.
+- CI aprobado: Tests [45529304385](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45529304385) y [45529365304](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45529365304); Browser E2E [45529304350](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45529304350) y [45529365187](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45529365187).
+- Render LIVE: deploy `dep-dc340mk0916s73fkoni0`.
+- Prueba humana Android pendiente; ver `HUMAN_TEST_PLAN.md`.
