@@ -2659,22 +2659,32 @@ function renderItalianAppliedTopic(category, index, locale) {
       '</tbody></table>';
   }
   if (category === "Gramática" && index === 1) {
-    return '<p class="theory-slide-text">En italiano, el artículo concuerda con el sustantivo en género y número. Para elegirlo, identifica primero si el sustantivo es masculino o femenino y singular o plural. En masculino singular usa <em>il</em> ante consonante común, <em>lo</em> ante s + consonante, z, gn o ps, y <em>l’</em> ante vocal. En femenino singular usa <em>la</em> ante consonante y <em>l’</em> ante vocal. En plural corresponden <em>i</em>, <em>gli</em> y <em>le</em>. Para el indefinido se usan <em>un</em>, <em>uno</em>, <em>una</em> y <em>un’</em>; solo el femenino ante vocal lleva apóstrofo.</p>' +
+    const rules = [
+      "El artículo definido concuerda con el sustantivo en género y número.",
+      "Masculino singular: il ante consonante común; lo ante s + consonante, z, gn o ps; l’ ante vocal.",
+      "Femenino singular: la ante consonante y l’ ante vocal.",
+      "Plural: i para il, gli para lo y l’, y le para la.",
+      "Indefinido: un, uno, una y un’. Solo la forma femenina ante vocal lleva apóstrofo."
+    ];
+    const ruleList = '<ul class="theory-rule-list">' + rules.map(rule => '<li>' + rule + '</li>').join("") + '</ul>';
+    return ruleList +
       '<h3>Artículos definidos</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
-      rows([["il libro","el libro (masculino singular)"],["lo studente","el estudiante (masculino; s + consonante, z, gn o ps)"],["l’amico","el amigo (masculino ante vocal)"],["la casa","la casa (femenino singular)"],["l’amica","la amiga (femenino ante vocal)"],["i libri","los libros (plural de il)"],["gli studenti / gli amici","los estudiantes / los amigos (plural de lo y l’)"],["le case","las casas (plural femenino)"]]) +
+      rows([["il libro","el libro"],["lo studente","el estudiante"],["l’amico","el amigo"],["la casa","la casa"],["l’amica","la amiga"],["i libri","los libros"],["gli studenti / gli amici","los estudiantes / los amigos"],["le case","las casas"]]) +
       '</tbody></table><h3>Artículos indefinidos</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
-      rows([["un libro","un libro"],["uno studente","un estudiante"],["un amico","un amigo (masculino, sin apóstrofo)"],["una casa","una casa"],["un’amica","una amiga (femenino, con apóstrofo)"]]) +
+      rows([["un libro","un libro"],["uno studente","un estudiante"],["un amico","un amigo"],["una casa","una casa"],["un’amica","una amiga"]]) +
       '</tbody></table>';
   }
   if (category === "Gramática" && index === 2) {
-    const adjectiveRows = [
-      ["alto","alta","alti / alte","alto/a/os/as"],
-      ["italiano","italiana","italiani / italiane","italiano/a/os/as"],
-      ["interessante","interessante","interessanti","interesante(s)"]
+    const rules = [
+      "El adjetivo normalmente va después del sustantivo y concuerda con él en género y número.",
+      "Los adjetivos en -o: masculino singular -o, femenino singular -a, masculino plural -i y femenino plural -e.",
+      "Los adjetivos en -e: la misma forma para masculino y femenino singular; plural en -i."
     ];
-    return '<p class="theory-slide-text">En italiano, el adjetivo normalmente concuerda con el sustantivo en género y número. Muchos adjetivos terminados en -o cambian a -a en femenino y a -i/-e en plural. Los terminados en -e tienen una sola forma singular para masculino y femenino, y terminan en -i en plural. Por lo general, el adjetivo va después del sustantivo.</p>' +
+    const ruleList = '<ul class="theory-rule-list">' + rules.map(rule => '<li>' + rule + '</li>').join("") + '</ul>';
+    const adjectiveRows = [["alto","alta","alti / alte"],["italiano","italiana","italiani / italiane"],["interessante","interessante","interessanti"]];
+    return ruleList +
       '<h3>Concordancia de adjetivos</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Masculino</th><th>Femenino</th><th>Plural</th></tr></thead><tbody>' +
-      adjectiveRows.map(([masc,fem,plural,meaning]) => '<tr><td>' + renderSpokenVariants(masc) + '</td><td>' + renderSpokenVariants(fem) + '</td><td>' + renderSpokenVariants(plural) + '</td></tr>').join("") +
+      adjectiveRows.map(([masc,fem,plural]) => '<tr><td>' + renderSpokenVariants(masc) + '</td><td>' + renderSpokenVariants(fem) + '</td><td>' + renderSpokenVariants(plural) + '</td></tr>').join("") +
       '</tbody></table><section class="theory-example"><span>Ejemplos</span><p class="theory-target-word">Un ragazzo italiano. ' + speakerButton("Un ragazzo italiano.",locale) + '</p><p>Un chico italiano.</p><p class="theory-target-word">Una ragazza italiana. ' + speakerButton("Una ragazza italiana.",locale) + '</p><p>Una chica italiana.</p><p class="theory-target-word">Due ragazze interessanti. ' + speakerButton("Due ragazze interessanti.",locale) + '</p><p>Dos chicas interesantes.</p></section>';
   }
   if (category === "Gramática" && index === 4) {
@@ -2704,17 +2714,25 @@ function renderItalianAppliedTopic(category, index, locale) {
       [["Buongiorno /<br>Buonasera","Buenos días /<br>buenas tardes-noches"],["Ciao","Hola / chao"],["Arrivederci /<br>A presto","Adiós /<br>hasta pronto"]],
       [["Mi chiamo… /<br>Sono…","Me llamo… /<br>soy…"],["Come ti chiami? /<br>Come si chiama?","¿Cómo te llamas? /<br>¿Cómo se llama? (formal)"],["Piacere!","¡Mucho gusto!"]],
       [["Come stai? /<br>Come sta?","¿Cómo estás? /<br>¿Cómo está? (formal)"],["Sto bene, grazie.","Estoy bien, gracias."],["Così così.","Más o menos."],["Non c'è male.","No está mal."],["E tu? /<br>E Lei?","¿Y tú? /<br>¿Y usted?"]],
-      [["Quanti anni hai? /<br>Quanti anni ha?","¿Cuántos años tienes? /<br>¿Cuántos años tiene? (formal)"],["Ho vent’anni.","Tengo veinte años."],["Di dove sei? /<br>Di dov’è?","¿De dónde eres? /<br>¿De dónde es? (formal)"],["Sono del Cile.","Soy de Chile."],["Sono cileno/a.","Soy chileno/a."]],
+      [["Quanti anni hai? /<br>Quanti anni ha?","¿Cuántos años tienes? /<br>¿Cuántos años tiene?"],["Ho vent’anni.","Tengo veinte años."],["Di dove sei? /<br>Di dov’è?","¿De dónde eres? /<br>¿De dónde es?"],["Sono del Cile.","Soy de Chile."],["Sono cileno/a.","Soy chileno/a."]],
       [["Che cosa fai oggi?","¿Qué haces hoy?"],["Ci vediamo domani.","Nos vemos mañana."]]
     ]
   };
+  if (category === "Vocabulario" && index === 0) {
+    const items = [["l’Italia","italiano","italiano"],["la Spagna","spagnolo","spagnolo"],["la Francia","francese","francese"],["la Germania","tedesco","tedesco"],["il Cile","cileno","spagnolo"],["il Brasile","brasiliano","portoghese"]];
+    return '<p class="theory-slide-text">La primera columna indica el país; la segunda, el gentilicio (persona u origen); la tercera, el idioma que se habla.</p>' +
+      '<table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>País</th><th>Gentilicio</th><th>Idioma</th></tr></thead><tbody>' +
+      items.map(([country,demonym,language]) => '<tr><td>' + renderSpokenVariants(country) + '</td><td>' + renderSpokenVariants(demonym) + '</td><td>' + renderSpokenVariants(language) + '</td></tr>').join("") +
+      '</tbody></table>';
+  }
   if (category === "Vocabulario" || category === "Expresiones") {
     const items = vocabulary[category]?.[index];
     if (!items) return null;
     const introductions = {
-      0:"Saluda y despídete según el momento y la cercanía. «<em>Buongiorno</em>» se usa durante el día y «<em>buonasera</em>» al atardecer o por la noche.",
-      1:"Preséntate y pregunta el nombre de otra persona. «<em>Come ti chiami?</em>» es informal y «<em>Come si chiama?</em>» es la forma de cortesía.",
-      2:"Pregunta por el estado de alguien y responde. «<em>Come stai?</em>» y «<em>Come sta?</em>» expresan el mismo mensaje en trato informal y formal."
+      0:"Saluda y despídete según el momento y la cercanía.",
+      1:"Preséntate y pregunta el nombre de otra persona; usa la forma informal con alguien de confianza y la formal para mostrar cortesía.",
+      2:"Pregunta cómo está alguien y responde; «Come stai?» es informal y «Come sta?» es formal.",
+      3:"Para preguntar la edad se usa «avere» (tener); para preguntar el origen, «essere» (ser). Las formas con «Lei» son de cortesía."
     };
     const introduction = category === "Expresiones" ? introductions[index] : "Palabras útiles para reconocer y utilizar en situaciones cotidianas.";
     return '<p class="theory-slide-text">' + (introduction || "Expresiones frecuentes para comunicarte en situaciones cotidianas.") + '</p><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' + rows(items) + '</tbody></table>';
