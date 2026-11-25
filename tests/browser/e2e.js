@@ -179,7 +179,7 @@ try {
   const unitTwoTopics = page.locator("#theory-tree .theory-tree-topic");
   assert.equal(await unitTwoTopics.count(), 4, "Unit 2 should expose its four deployed subtopics");
   await unitTwoTopics.nth(0).click();
-  assert.ok((await page.locator("#theory-description").innerText()).includes("la madre"), "Unit 2 vocabulary should render its family vocabulary");
+  assert.ok((await page.locator("#theory-description").innerText()).includes("ciao"), "Unit 2 vocabulary should render its greeting vocabulary");
   assert.equal(await page.locator("#theory-description table").count(), 1, "Unit 2 vocabulary should render a bilingual reference table");
   await page.locator("#theory-back").click();
   await unitTwoTopics.nth(1).click();
