@@ -782,3 +782,14 @@ Para cada escenario registrar:
 - [x] Browser E2E aprobado: [run 45317664032](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45317664032).
 - [x] Render Preview LIVE: deploy `dep-dc2g0ejrjlhs73ck877g`.
 - [ ] Revisión visual en Android real: comprobar color neutro de números, acento azul solo en nombres, filas contraídas/expandidas y caché del navegador.
+
+
+## Recuperación selectiva de Teoría italiana — 25-11-2026
+- [ ] Confirmar que A1 conserva exactamente seis unidades y los títulos anteriores a la regresión.
+- [ ] Abrir la primera unidad y comprobar los cuatro subtemas: «Saludos y despedidas», «Decir el nombre», «Cómo estás» y «Pronombres y ser/estar».
+- [ ] En expresiones con variantes separadas por «/», tocar cada control por separado y comprobar que se pronuncia solo la variante correspondiente.
+- [ ] En «Pronombres y ser/estar», comprobar que pronombres y conjugaciones están en tablas separadas.
+- [ ] Confirmar que «essere» y «stare» aparecen en cursiva y entre « » en el encabezado, y que ambas columnas tienen el mismo tamaño de letra que la tabla bilingüe.
+- [ ] Confirmar encabezados «Italiano» y «Español» en tablas de dos columnas.
+- [ ] Ejecutar Browser E2E y pruebas automatizadas antes de publicar.
+- [ ] Tras deploy LIVE, validar en Android el árbol, el tamaño de letra y la pronunciación real it-IT.
