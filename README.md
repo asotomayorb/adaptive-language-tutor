@@ -1223,3 +1223,13 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Browser E2E: aprobado en run [45522922093](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45522922093).
 - Las pruebas cubren la jerarquía de seis unidades, los cuatro subtemas de Unidad 1, la pronunciación independiente de variantes y la tipografía/encabezados de las tablas de pronombres y conjugación.
 - La revisión humana Android y el despliegue Render siguen pendientes; el preview canónico no se ha modificado.
+
+
+### Integración y despliegue Render de la recuperación selectiva — 25-11-2026
+- Pull request [#5](https://github.com/asotomayorb/adaptive-language-tutor/pull/5) integrado mediante squash en la rama `feature/mobile-bottom-navigation`.
+- Commit integrado: `395aace02fccbf51aa433a66a33a87aa32d8043e`.
+- Se conserva la jerarquía A1 de seis unidades y se recuperan los cuatro subtemas desarrollados de Unidad 1, la pronunciación independiente de variantes y el formato tipográfico de las tablas.
+- Validación CI `npm run check` + `npm test`: aprobada, run [45523103299](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45523103299).
+- Browser E2E: aprobado, run [45523103462](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45523103462).
+- Render Preview **LIVE**, deploy `dep-dc3399u8bjmc73ednf6g`, commit `395aace02fccbf51aa433a66a33a87aa32d8043e`, con limpieza de caché.
+- Los logs de Render confirman inicio correcto de `npm start`, escucha en `0.0.0.0:10000` y servicio LIVE. La revisión visual/táctil/auditiva en Android sigue pendiente.
