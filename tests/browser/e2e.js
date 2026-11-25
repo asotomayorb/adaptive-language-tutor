@@ -110,10 +110,14 @@ try {
       assert.equal(await stateQuestionCell.locator(".theory-speech-variant").count(), 2, "formal and informal state questions should share one cell with separate speech controls");
     }
     if (i === 3) {
-      assert.deepEqual(await page.locator("#theory-description h3").allInnerTexts(), ["Pronombres personales","Verbos «essere» y «stare»"], "pronouns and verb conjugations should be separated into two tables");
-      assert.deepEqual((await page.locator("#theory-description table").nth(1).locator("thead th").allInnerTexts()).map(value => value.toLowerCase()), ["persona","«essere»","«stare»"], "the verb table headings should mark Italian terms in italics and angle quotes");
-      const verbTableSizes = await page.locator("#theory-description table").nth(1).locator("tbody tr").first().locator("td").evaluateAll(cells => cells.map(cell => getComputedStyle(cell).fontSize));
-      assert.equal(verbTableSizes[1], verbTableSizes[2], "essere and stare cells should use the same font size");
+      const verbHeading = page.locator("#theory-description h3").nth(1);
+      assert.equal(await verbHeading.innerText(), "Verbos «Essere» (ser) y «Stare» (estar)", "Italian terms in subtopic headings should be italicized, quoted and translated");
+      assert.equal(await verbHeading.locator("em").count(), 2, "Italian terms should be italicized only in the heading");
+      const verbTable = page.locator("#theory-description table").nth(1);
+      assert.deepEqual((await verbTable.locator("thead th").allInnerTexts()).map(value => value.toLowerCase()), ["persona","essere","stare"], "table headers must remain plain, without italics, quotes or translations");
+      assert.equal(await verbTable.locator("thead em").count(), 0, "table headers must not inherit Italian title formatting");
+      const verbTableSizes = await verbTable.locator("tbody tr").first().locator("td").evaluateAll(cells => cells.map(cell => getComputedStyle(cell).fontSize));
+      assert.equal(new Set(verbTableSizes).size, 1, "all columns in the final verb table should use the same font size");
     }
     assert.ok(await page.locator("#theory-description .theory-slide-text em").count() > 0, "Italian expressions in each Unit 1 introduction should be italicized");
     const italianCellSize = await page.locator("#theory-description table").first().locator("tbody tr").first().locator("td").first().locator(".theory-target-word").first().evaluate(el => getComputedStyle(el).fontSize);
