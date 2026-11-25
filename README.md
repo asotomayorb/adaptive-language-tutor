@@ -1269,3 +1269,10 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Conservar el historial de esta rama y sus checkpoints. Para rescatar avances, comparar y trasladar selectivamente commits/cambios a la rama activa, con pruebas antes de publicar.
 - El pulido de Unidad 2 de esta rama está validado por CI, pero no se ha integrado en la rama activa ni desplegado. No asumir que el contenido está visible en Render.
 - La nota anterior que proponía publicar directamente esta rama queda reemplazada por esta política vigente.
+
+
+### Rescate selectivo completado en rama activa — 25-11-2026
+- El pulido de Unidad 2 registrado en esta rama fue rescatado selectivamente e integrado en feature/mobile-bottom-navigation mediante PR #7.
+- Código integrado y publicado: 19627135bf04bcb7c0a83330f007ebee04a0f8de. Render Preview LIVE: dep-dc3daucipgvc738c5k10.
+- Tests y Browser E2E aprobados en runs 45614659980 y 45614660104.
+- Esta rama se conserva sin modificaciones como respaldo histórico; no es la rama de desarrollo ni la fuente de Render. Para futuras recuperaciones, comparar antes de trasladar cambios y no fusionar esta rama completa.
