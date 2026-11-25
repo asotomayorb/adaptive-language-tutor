@@ -1169,3 +1169,10 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Browser E2E: aprobado (Actions [45523103462](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45523103462)).
 - Render Preview LIVE: deploy `dep-dc3399u8bjmc73ednf6g`, commit `395aace02fccbf51aa433a66a33a87aa32d8043e`, limpieza de caché. Logs confirman `npm start` y servidor escuchando en `0.0.0.0:10000`.
 - Pendiente: prueba humana en Android (jerarquía, tablas, tamaños y pronunciación italiana audible). No se declara validación humana completada.
+
+
+## Checkpoint funcional confirmado — 25-11-2026
+- El usuario confirma como checkpoint la recuperación selectiva integrada: código `395aace02fccbf51aa433a66a33a87aa32d8043e`, rama `feature/mobile-bottom-navigation`; HEAD documental `44e22c21d90f8242c1426d87f3b8485c97fe5934`.
+- Base protegida: jerarquía A1 de seis unidades, cuatro subtemas desarrollados en Unidad 1, pronunciación independiente por variante y tablas bilingües.
+- Render deploy LIVE: `dep-dc3399u8bjmc73ednf6g`. CI y Browser E2E aprobados.
+- La revisión humana en Android continúa pendiente. Este checkpoint es el punto de retorno si los ajustes siguientes introducen regresiones.
