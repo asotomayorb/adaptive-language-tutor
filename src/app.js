@@ -2508,7 +2508,7 @@ function renderVerbLesson(languageName) {
     }
     return '<tr><td>' + escapeHTML(row[0]) + '</td><td><strong class="theory-target-word">' + escapeHTML(row[1]) + '</strong> ' + speakerButton(row[1], locale) + '</td></tr>';
   }).join("");
-  return '<p class="theory-slide-text">' + escapeHTML(lesson.lead) + '</p><table class="theory-pronoun-table"><tbody>' + rows + '</tbody></table>' + renderGrammarRuleContent(lesson.rule,lesson.exceptions) + '<section class="theory-example"><span>Ejemplos aplicados</span>' + renderTheoryExampleTable(lesson.example,"",locale,languageName) + '</section>';
+  return '<p class="theory-slide-text">' + escapeHTML(lesson.lead) + '</p>' + renderGrammarRuleContent(lesson.rule,lesson.exceptions) + '<table class="theory-pronoun-table"><tbody>' + rows + '</tbody></table><section class="theory-example"><span>Ejemplos aplicados</span>' + renderTheoryExampleTable(lesson.example,"",locale,languageName) + '</section>';
 }
 const appliedTheoryContent = {
   "Inglés": {
@@ -2610,7 +2610,7 @@ function renderArticleLesson(languageName, locale) {
   const examples = lesson.rows.map(([form,,,example]) =>
     '<p class="theory-target-word">' + escapeHTML(example) + ' ' + speakerButton(example,locale) + '</p><p>' + escapeHTML(form) + '</p>'
   ).join("");
-  return '<p class="theory-slide-text">' + escapeHTML(lesson.intro) + '</p><table class="theory-pronoun-table"><thead><tr><th>Forma</th><th>Significado</th><th>Uso</th></tr></thead><tbody>' + rows + '</tbody></table>' + renderGrammarRuleContent(lesson.rule,lesson.exceptions) + '<section class="theory-example"><span>Ejemplos</span>' + examples + '</section>';
+  return '<p class="theory-slide-text">' + escapeHTML(lesson.intro) + '</p>' + renderGrammarRuleContent(lesson.rule,lesson.exceptions) + '<table class="theory-pronoun-table"><thead><tr><th>Forma</th><th>Significado</th><th>Uso</th></tr></thead><tbody>' + rows + '</tbody></table><section class="theory-example"><span>Ejemplos</span>' + examples + '</section>';
 }
 function renderItalianAppliedTopic(category, index, locale) {
   const renderLines = (value) => String(value).split("<br>").map(part => escapeHTML(part)).join('<br>');
@@ -2633,12 +2633,12 @@ function renderItalianAppliedTopic(category, index, locale) {
       '</tbody></table>';
   }
   if (category === "Gramática" && index === 1) {
-    return '<p class="theory-slide-text">En italiano, el artículo concuerda con el sustantivo en género y número. La forma masculina depende del sonido inicial y la femenina se contrae ante vocal.</p>' +
+    return '<p class="theory-slide-text">En italiano, el artículo concuerda con el sustantivo en género y número. Para elegirlo, identifica primero si el sustantivo es masculino o femenino y singular o plural. En masculino singular usa <em>il</em> ante consonante común, <em>lo</em> ante s + consonante, z, gn o ps, y <em>l’</em> ante vocal. En femenino singular usa <em>la</em> ante consonante y <em>l’</em> ante vocal. En plural corresponden <em>i</em>, <em>gli</em> y <em>le</em>. Para el indefinido se usan <em>un</em>, <em>uno</em>, <em>una</em> y <em>un’</em>; solo el femenino ante vocal lleva apóstrofo.</p>' +
       '<h3>Artículos definidos</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
       rows([["il libro","el libro (masculino singular)"],["lo studente","el estudiante (masculino; s + consonante, z, gn o ps)"],["l’amico","el amigo (masculino ante vocal)"],["la casa","la casa (femenino singular)"],["l’amica","la amiga (femenino ante vocal)"],["i libri","los libros (plural de il)"],["gli studenti / gli amici","los estudiantes / los amigos (plural de lo y l’)"],["le case","las casas (plural femenino)"]]) +
       '</tbody></table><h3>Artículos indefinidos</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
       rows([["un libro","un libro"],["uno studente","un estudiante"],["un amico","un amigo (masculino, sin apóstrofo)"],["una casa","una casa"],["un’amica","una amiga (femenino, con apóstrofo)"]]) +
-      '</tbody></table>' + renderGrammarRuleSections("El artículo concuerda con el sustantivo en género y número. La forma masculina depende del sonido inicial; la forma femenina se contrae ante vocal.", "No escribas *il studente ni *la amica. Memoriza el sustantivo junto con su artículo.");
+      '</tbody></table>';
   }
   if (category === "Gramática" && index === 4) {
     const people = ["io","tu","lui / lei","noi","voi","loro"];
