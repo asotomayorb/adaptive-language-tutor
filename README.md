@@ -1277,3 +1277,6 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Commits de código: `0e8b28b` (contenido Unidad 2 y limpieza), `571a0ca` (E2E), `30f7b9f` (formato de títulos italianos), `dc05ceb` (corrección de sintaxis y validación final).
 - Render deploy en curso: `dep-dc34b395efls73aor580`, código `dc05ceb51c49db20f6cebb9479e3e467d374cc76`. Registrar estado LIVE al completarse.
 - La prueba humana en Android continúa pendiente.
+
+
+- Confirmación final Render Preview: deploy `dep-dc34b395efls73aor580` terminó en estado **LIVE** el 25-11-2026, desplegando exactamente el código validado `dc05ceb51c49db20f6cebb9479e3e467d374cc76`. El auto-deploy permanece desactivado.
