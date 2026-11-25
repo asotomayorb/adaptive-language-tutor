@@ -1204,3 +1204,8 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - CI y Browser E2E aprobados: [Tests 45531925766](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45531925766), [Browser E2E 45531925531](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45531925531).
 - Código final validado: `dc05ceb51c49db20f6cebb9479e3e467d374cc76`. Render deploy `dep-dc34b395efls73aor580` pendiente de confirmación LIVE.
 - Revisión humana Android pendiente.
+
+
+### Despliegue Unidad 2 confirmado — 25-11-2026
+- Render Preview LIVE: `dep-dc34b395efls73aor580`, commit de código `dc05ceb51c49db20f6cebb9479e3e467d374cc76`.
+- El deploy corresponde al código validado por Tests y Browser E2E. Auto-deploy sigue desactivado.
