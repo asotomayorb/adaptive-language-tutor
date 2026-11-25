@@ -1225,12 +1225,26 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
 .theory-variant-separator{white-space:pre;}
 @media(max-width:620px){.theory-bilingual-table td:nth-child(n+2){font-size:17px;line-height:1.4;}}
 
-/* La tabla final de conjugación mantiene el mismo tamaño en las tres columnas. */
-.theory-verb-comparison-table tbody td{
-  font-size:19px!important;
-  font-weight:600;
-  line-height:1.4;
+/* Keep theory table columns evenly distributed, regardless of content length. */
+#screen-theory .theory-bilingual-table{
+  width:100%;
+  table-layout:fixed;
 }
-@media(max-width:620px){
-  .theory-verb-comparison-table tbody td{font-size:17px!important;}
+#screen-theory .theory-bilingual-table th,
+#screen-theory .theory-bilingual-table td{
+  overflow-wrap:anywhere;
+}
+
+
+/* All theory tables share the available width with evenly sized columns. */
+#screen-theory .theory-pronoun-table,
+#screen-theory .theory-bilingual-table{
+  width:100%;
+  table-layout:fixed;
+}
+#screen-theory .theory-pronoun-table th,
+#screen-theory .theory-pronoun-table td,
+#screen-theory .theory-bilingual-table th,
+#screen-theory .theory-bilingual-table td{
+  overflow-wrap:anywhere;
 }
