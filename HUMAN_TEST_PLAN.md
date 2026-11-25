@@ -816,3 +816,13 @@ Para cada escenario registrar:
 - [ ] Confirmar que las celdas y encabezados de tablas no heredan cursiva, comillas angulares ni traducciones de los títulos.
 - [ ] En la última tabla de conjugación, comprobar que las tres columnas usan el mismo tamaño de letra (19 px escritorio / 17 px móvil).
 - [ ] Verificar en Android que la legibilidad y el desplazamiento horizontal de la tabla siguen siendo adecuados.
+
+
+## Unidad 2 — revisión humana de contenido y formato
+- [ ] Países, gentilicios e idiomas: revisar traducciones, preposiciones y pronunciación.
+- [ ] Artículos y concordancia: revisar formas definidas/indefinidas y ejemplos.
+- [ ] Adjetivos: revisar concordancia masculino/femenino y singular/plural.
+- [ ] Edad y procedencia: comprobar uso de `avere`, `essere di` y `venire da`, incluidas variantes formales.
+- [ ] Confirmar encabezados de tabla Italiano/Español, tamaño uniforme y ausencia de cursiva/comillas/traducciones en las tablas.
+- [ ] Probar pronunciación individual de variantes separadas por «/».
+- [ ] Confirmar que Unidades 3–6 conservan títulos y no muestran contenido de lección.
