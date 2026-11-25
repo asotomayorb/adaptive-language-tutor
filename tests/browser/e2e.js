@@ -98,16 +98,16 @@ try {
     assert.deepEqual((await page.locator("#theory-description table").first().locator("thead th").allInnerTexts()).map(value => value.toLowerCase()), ["italiano","español"], "bilingual Unit 1 tables should use Italian and Spanish headings");
     if (i === 0) {
       const greetingCell = page.locator("#theory-description table tbody tr").first().locator("td").first();
-      assert.equal(await greetingCell.locator("br").count(), 1, "paired greeting variants should share one cell on separate lines");
+      assert.equal(await greetingCell.locator(".theory-speech-variant").count(), 2, "paired greeting variants should share one cell with separate speech controls");
       assert.ok((await greetingCell.innerText()).includes("Buonasera"), "the second greeting variant should remain in the same cell");
     }
     if (i === 1) {
       const nameQuestionCell = page.locator("#theory-description table tbody tr").nth(1).locator("td").first();
-      assert.equal(await nameQuestionCell.locator("br").count(), 1, "formal and informal name questions should share one cell");
+      assert.equal(await nameQuestionCell.locator(".theory-speech-variant").count(), 2, "formal and informal name questions should share one cell with separate speech controls");
     }
     if (i === 2) {
       const stateQuestionCell = page.locator("#theory-description table tbody tr").first().locator("td").first();
-      assert.equal(await stateQuestionCell.locator("br").count(), 1, "formal and informal state questions should share one cell");
+      assert.equal(await stateQuestionCell.locator(".theory-speech-variant").count(), 2, "formal and informal state questions should share one cell with separate speech controls");
     }
     if (i === 3) {
       assert.deepEqual(await page.locator("#theory-description h3").allInnerTexts(), ["Pronombres personales","Verbos «essere» y «stare»"], "pronouns and verb conjugations should be separated into two tables");
