@@ -1209,3 +1209,16 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 ### Despliegue Unidad 2 confirmado — 25-11-2026
 - Render Preview LIVE: `dep-dc34b395efls73aor580`, commit de código `dc05ceb51c49db20f6cebb9479e3e467d374cc76`.
 - El deploy corresponde al código validado por Tests y Browser E2E. Auto-deploy sigue desactivado.
+
+
+## Pulido de Unidad 2 integrado y publicado — 25-11-2026
+- Rama activa: feature/mobile-bottom-navigation. Checkpoint de código integrado: 19627135bf04bcb7c0a83330f007ebee04a0f8de.
+- Rescate selectivo desde recovery/intermediate-theory-content vía PR #7; la rama recovery permanece intacta como respaldo histórico.
+- src/app.js: contenido italiano alineado para países/idiomas, artículos, adjetivos, edad y procedencia; reglas antes de tablas; TTS fragmentado por barra y guiones; se conserva el formato de títulos y la tipografía uniforme de conjugación.
+- src/styles.css: tablas de teoría a ancho completo, columnas fijas/equitativas y ajuste de texto en pantallas estrechas.
+- tests/browser/e2e.js: cobertura de las cuatro lecciones, reglas antes de tablas, columnas equilibradas y TTS independiente de conceptos separados por guion.
+- GitHub Actions Tests aprobados: run 45614659980. Browser E2E aprobado: run 45614660104.
+- Render Preview LIVE: dep-dc3daucipgvc738c5k10, asociado al commit 19627135bf04bcb7c0a83330f007ebee04a0f8de. Build succeeded; logs confirman npm start y servidor en 0.0.0.0:10000.
+- El preview canónico sigue conectado a feature/mobile-bottom-navigation; auto-deploy continúa desactivado y la publicación se realizó manualmente.
+- Prueba humana Android pendiente: confirmar legibilidad/anchura de tablas, navegación de los cuatro subtemas, pronunciación independiente por variante y audio audible en it-IT.
+- Checkpoint de retorno: 19627135bf04bcb7c0a83330f007ebee04a0f8de. No avanzar a nuevas unidades hasta revisar la versión publicada en móvil.
