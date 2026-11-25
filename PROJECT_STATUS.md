@@ -1222,3 +1222,4 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - El preview canónico sigue conectado a feature/mobile-bottom-navigation; auto-deploy continúa desactivado y la publicación se realizó manualmente.
 - Prueba humana Android pendiente: confirmar legibilidad/anchura de tablas, navegación de los cuatro subtemas, pronunciación independiente por variante y audio audible en it-IT.
 - Checkpoint de retorno: 19627135bf04bcb7c0a83330f007ebee04a0f8de. No avanzar a nuevas unidades hasta revisar la versión publicada en móvil.
+- CI: Tests y Browser E2E ahora también se ejecutan en pull requests cuyo destino es feature/mobile-bottom-navigation; se conserva la ejecución por push.
