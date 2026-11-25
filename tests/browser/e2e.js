@@ -175,7 +175,7 @@ try {
   assert.equal(await page.locator("#theory-detail .back-control").count(), 1, "detail should contain exactly one back arrow");
   // Unit 2 has deployed learning content and remains in the polishing phase.
   assert.equal(await page.locator("#theory-title").innerText(), "Países e idiomas", "Unit 2 should open its first deployed subtopic");
-  assert.ok((await page.locator("#theory-description").innerText()).includes("ciao"), "Unit 2 vocabulary should render target-language examples");
+  assert.ok((await page.locator("#theory-description").innerText()).includes("l’Italia"), "Unit 2 vocabulary should render countries and languages");
   assert.equal(await page.locator("#theory-description table").count(), 1, "Unit 2 vocabulary should render a bilingual reference table");
   await page.locator("#theory-next").click();
   assert.equal(await page.locator("#theory-title").innerText(), "Artículos y concordancia", "Unit 2 should navigate to its article lesson");
@@ -188,6 +188,15 @@ try {
   assert.ok(Math.max(...articleColumnWidths) - Math.min(...articleColumnWidths) <= 2, "bilingual table columns should have equal widths");
   const articleVariants = page.locator("#theory-description .theory-speech-variant");
   assert.ok(await articleVariants.count() >= 2, "slash-separated article variants should render independent speech fragments");
+  await page.locator("#theory-next").click();
+  assert.equal(await page.locator("#theory-title").innerText(), "Artículos y adjetivos", "Unit 2 should navigate to its adjective lesson");
+  assert.ok((await page.locator("#theory-description").innerText()).includes("ragazzo"), "adjective lesson should show masculine and feminine examples");
+  const adjectiveWidths = await page.locator("#theory-description table").first().locator("thead th").evaluateAll(cells => cells.map(cell => cell.getBoundingClientRect().width));
+  assert.ok(Math.max(...adjectiveWidths) - Math.min(...adjectiveWidths) <= 2, "three-column adjective table should distribute widths evenly");
+  await page.locator("#theory-next").click();
+  assert.equal(await page.locator("#theory-title").innerText(), "Edad y procedencia", "Unit 2 should navigate to its age and origin expressions");
+  assert.ok((await page.locator("#theory-description").innerText()).includes("Quanti anni hai?"), "age and origin lesson should show the correct Italian expressions");
+  assert.ok(await page.locator("#theory-description .theory-speech-variant").count() >= 2, "formal and informal variants should expose separate TTS fragments");
   await page.locator("#theory-back").click();
   await unitRows.nth(0).click();
   await page.locator("#theory-tree .theory-tree-topic").first().click();
