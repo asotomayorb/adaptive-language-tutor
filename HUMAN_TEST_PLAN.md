@@ -799,3 +799,13 @@ Para cada escenario registrar:
 - [x] `npm run check` y `npm test` aprobados: [45522922228](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45522922228).
 - [x] Browser E2E aprobado: [45522922093](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45522922093).
 - [ ] Revisión visual, táctil y auditiva en Android real después del despliegue Render.
+
+## Pulido de Unidad 2 y reglas globales de Teoría — 25-11-2026
+- [ ] Abrir «Datos personales y entorno» y confirmar que «Países e idiomas» muestra pares correctos de país e idioma, no saludos.
+- [ ] Tocar cada variante separada por guion o barra y confirmar que el audio reproduce solo el fragmento seleccionado.
+- [ ] En «Artículos y concordancia», comprobar que la explicación de género, número, sonido inicial y apóstrofo aparece antes de las tablas.
+- [ ] Revisar que las columnas de las tablas se distribuyen de forma equilibrada y que el texto no provoca desbordamiento horizontal en móvil.
+- [ ] En «Artículos y adjetivos», comprobar concordancia -o/-a/-i/-e y formas en -e, con ejemplos masculino/femenino/plural.
+- [ ] En «Edad y procedencia», comprobar las preguntas y respuestas de edad y origen, incluidas las variantes formal e informal.
+- [ ] Confirmar pronunciación it-IT real en el teléfono; la aprobación de Browser E2E no sustituye esta revisión.
+- [ ] Ejecutar esta revisión solo después de publicar el commit validado en el preview Render.
