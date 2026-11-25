@@ -2654,7 +2654,7 @@ function renderItalianAppliedTopic(category, index, locale) {
     return '<p class="theory-slide-text">Los pronombres indican quién realiza la acción. «<em>Essere</em>» expresa identidad y características; «<em>stare</em>» expresa estado o condición. Observa cada elemento por separado:</p>' +
       '<h3>Pronombres personales</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
       pronouns.map(([term,meaning]) => '<tr><td><strong class="theory-target-word">' + term + '</strong> ' + speakerButton(term,locale) + '</td><td>' + meaning + '</td></tr>').join("") +
-      '</tbody></table><h3>Verbos «<em>essere</em>» y «<em>stare</em>»</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Persona</th><th>«<em>Essere</em>»</th><th>«<em>Stare</em>»</th></tr></thead><tbody>' +
+      '</tbody></table><h3>Verbos essere y stare</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Persona</th><th>Essere</th><th>Stare</th></tr></thead><tbody>' +
       verbs.map(([person,essere,stare]) => '<tr><td>' + person + '</td><td>' + renderSpokenVariants(essere) + '</td><td>' + renderSpokenVariants(stare) + '</td></tr>').join("") +
       '</tbody></table>';
   }
