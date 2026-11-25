@@ -2090,8 +2090,8 @@ const theoryContent = {
     ["Artículos y concordancia", ""],
     ["Artículos y adjetivos", ""],
     ["Presente habitual", ""],
-    ["Preguntas y negación", ""],
-    ["Tiempo y frecuencia", ""],
+    ["Pasado (passato prossimo)", ""],
+    ["Futuro simple", ""],
     ["Cantidades y artículos", ""],
     ["Preposiciones de lugar", ""]
   ]],
