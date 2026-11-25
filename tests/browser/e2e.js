@@ -153,10 +153,10 @@ try {
   const unitTwoTopics = page.locator("#theory-tree .theory-tree-topic");
   assert.deepEqual(await unitTwoTopics.locator(".theory-tree-topic-name").allInnerTexts(), ["Países e idiomas","Artículos y concordancia","Artículos y adjetivos","Edad y procedencia"], "Unit 2 should retain its four planned subtopics");
   const unitTwoChecks = [
-    {title:"Países e idiomas", terms:["Cile","spagnolo"], heading:"Paesi e nazionalità"},
+    {title:"Países e idiomas", terms:["l’Italia","italiano"]},
     {title:"Artículos y concordancia", terms:["gli studenti","un’amica"]},
-    {title:"Artículos y adjetivos", terms:["ragazzo italiano","ragazze italiane"], heading:"Aggettivi qualificativi"},
-    {title:"Edad y procedencia", terms:["Quanti anni hai?","Di dove sei?","Ho venticinque anni."]}
+    {title:"Artículos y adjetivos", terms:["ragazzo","ragazza"]},
+    {title:"Edad y procedencia", terms:["Quanti anni hai?","Di dove sei?","Ho vent’anni."]}
   ];
   for (let i=0;i<unitTwoChecks.length;i++) {
     await unitTwoTopics.nth(i).click();
@@ -171,14 +171,25 @@ try {
       assert.ok((await heading.innerText()).includes(" ("),"Italian headings should include Spanish translations");
     }
     const tables=body.locator("table");
-    assert.ok(await tables.count()>0,"each Unit 2 subtopic should contain a bilingual table");
+    assert.ok(await tables.count()>0,"each Unit 2 subtopic should contain a reference table");
     for (let tableIndex=0;tableIndex<await tables.count();tableIndex++) {
-      assert.deepEqual((await tables.nth(tableIndex).locator("thead th").allInnerTexts()).map(v=>v.toLowerCase()),["italiano","español"],"Unit 2 bilingual tables should use consistent column headings");
-      assert.equal(await tables.nth(tableIndex).locator("thead em").count(),0,"table headings must not inherit title formatting");
+      const table=tables.nth(tableIndex);
+      const headers=(await table.locator("thead th").allInnerTexts()).map(v=>v.trim().toLowerCase());
+      if(i===2) assert.deepEqual(headers,["masculino","femenino","plural"],"adjective table should distinguish gender and number");
+      else assert.deepEqual(headers,["italiano","español"],"bilingual tables should use consistent column headings");
+      assert.equal(await table.locator("thead em").count(),0,"table headings must remain plain");
+      const widths=await table.locator("thead th").evaluateAll(cells=>cells.map(cell=>cell.getBoundingClientRect().width));
+      assert.ok(Math.max(...widths)-Math.min(...widths)<=2,"table columns should be evenly distributed");
     }
+    if(i===1 || i===2) {
+      const intro=body.locator(".theory-slide-text").first();
+      assert.ok(await intro.count()>0,"grammar rules should be introduced before the reference table");
+      assert.ok(await intro.evaluate(el=>!!(el.compareDocumentPosition(el.parentElement.querySelector("table")) & Node.DOCUMENT_POSITION_FOLLOWING)),"the introductory rules must precede the tables");
+    }
+    if(i===1) assert.ok((await body.locator(".theory-slide-text").first().innerText()).includes("apóstrofo"),"article rules should explain apostrophe use before the tables");
     if(i===0) {
-      const nationalityCell=body.locator("table").nth(1).locator("tbody tr").nth(1).locator("td").first();
-      assert.equal(await nationalityCell.locator(".theory-speech-variant").count(),2,"gender variants separated by slash must have independent pronunciation controls");
+      const countryLanguageCell=body.locator("table").first().locator("tbody tr").first().locator("td").first();
+      assert.equal(await countryLanguageCell.locator(".theory-speech-variant").count(),2,"hyphen-separated country/language concepts should expose independent pronunciation controls");
     }
     await page.locator("#theory-back").click();
   }
