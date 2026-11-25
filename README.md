@@ -1193,3 +1193,10 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Se volvió a consultar Render: el servicio Preview tiene el deploy `dep-dc2g0ejrjlhs73ck877g` en estado **LIVE**, asociado al commit `b647fac64e3180fc024c99decbd115ee846fa764`. El auto-deploy permanece desactivado.
 - No se aplican más cambios CSS a ciegas: las pruebas automatizadas ya verifican los estilos, pero no permiten identificar qué versión o elemento está viendo el usuario en su Android.
 - Próximo diagnóstico pendiente: solicitar una captura actual del menú de jerarquías abierto (idealmente mostrando una unidad expandida) y confirmar que se abrió el preview Render, no una pestaña/app instalada antigua. Con esa evidencia se comparará el DOM/estilos visibles antes de modificar nuevamente.
+
+
+### Recuperación anterior a la reducción de jerarquías A1 — 25-11-2026
+- El rollback anterior a `59a8456152d63915e733f53b39e229c1add8cfe3` no recuperó el estado solicitado: ese commit ya era posterior a los cambios de teoría que dejaron el foco en A1.
+- Se identificó en el historial que `430906f742591fee14e00b54f438a28b4a3b161c` reorganizó la jerarquía A1 y limitó el desarrollo visible a la Unidad 1. Su ancestro inmediato `0d2b76035c16c96c14d1d956b721ca99ae3f0524` precede esa modificación.
+- La rama se restauró exactamente a `0d2b76035c16c96c14d1d956b721ca99ae3f0524`, sin aplicar parches al código. Este es el punto anterior a la modificación de jerarquías que se está recuperando.
+- Render debe completar el despliegue y verificarse contra ese árbol antes de considerar restaurado el servicio.
