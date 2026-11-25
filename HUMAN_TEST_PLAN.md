@@ -826,3 +826,21 @@ Para cada escenario registrar:
 - [ ] Confirmar encabezados de tabla Italiano/Español, tamaño uniforme y ausencia de cursiva/comillas/traducciones en las tablas.
 - [ ] Probar pronunciación individual de variantes separadas por «/».
 - [ ] Confirmar que Unidades 3–6 conservan títulos y no muestran contenido de lección.
+
+
+## Unidad 2 italiana — validación humana tras publicación — 25-11-2026
+- [ ] Abrir Teoría > A1 > Unidad 2 y comprobar los cuatro subtemas en orden: Países e idiomas, Artículos y concordancia, Artículos y adjetivos, Edad y procedencia.
+- [ ] En Países e idiomas, confirmar que cada país e idioma tiene su propio control TTS cuando aparece separado por guion o barra; tocar cada variante y comprobar que solo se pronuncia esa variante.
+- [ ] En Artículos y concordancia, comprobar que la explicación aparece antes de las tablas y que cubre género, número, sonidos iniciales y apóstrofo.
+- [ ] En Artículos y adjetivos, comprobar que las columnas Masculino, Femenino y Plural quedan equilibradas y que los ejemplos concuerdan.
+- [ ] En Edad y procedencia, comprobar preguntas y respuestas de edad y origen, incluidas las variantes formal e informal.
+- [ ] En móvil vertical y horizontal, confirmar que ninguna tabla produce scroll horizontal ni texto cortado; comprobar anchura de columnas y ajuste de palabras largas.
+- [ ] Confirmar que los títulos italianos conservan cursiva, comillas angulares y traducción española donde corresponde; los encabezados de tabla permanecen sin formato adicional.
+- [ ] Confirmar que la tabla de conjugación mantiene tamaño tipográfico uniforme en las tres columnas.
+- [ ] Confirmar voz it-IT audible en el teléfono y pronunciación individual de cada variante; el test de navegador no sustituye la prueba auditiva.
+
+### Automatización y despliegue — 25-11-2026
+- [x] Tests: GitHub Actions run 45614659980.
+- [x] Browser E2E: GitHub Actions run 45614660104.
+- [x] Render Preview LIVE: deploy dep-dc3daucipgvc738c5k10, commit 19627135bf04bcb7c0a83330f007ebee04a0f8de.
+- [ ] Prueba humana visual, táctil y auditiva en Android.
