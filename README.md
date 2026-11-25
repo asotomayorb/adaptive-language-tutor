@@ -1253,3 +1253,11 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - El E2E valida ahora las cuatro lecciones de Unidad 2 y la separación de pronunciación por guion simple. La revisión humana visual/táctil/auditiva en Android continúa pendiente.
 - El diff sigue aislado en `recovery/intermediate-theory-content`; no se ha integrado en la rama principal ni publicado en Render. El preview canónico permanece sin cambios.
 - **Checkpoint propuesto para aprobación:** «Unidad 2 con contenido alineado y pulido inicial; reglas antes de tablas; columnas equilibradas; TTS separado por `/`, saltos y guiones; `npm run check`, `npm test` y Browser E2E aprobados. Render y revisión Android pendientes». Esperar confirmación antes de iniciar el siguiente bloque de contenido.
+
+### Diagnóstico de preview sin reflejar Unidad 2 — 25-11-2026
+- Se confirmó en Render que el servicio canónico `adaptive-language-tutor-preview-5b3d` apunta a la rama `feature/mobile-bottom-navigation`, con auto-deploy desactivado (`autoDeploy=no`).
+- El último deploy LIVE del preview es `dep-dc34b395efls73aor580`, commit `dc05ceb51c49db20f6cebb9479e3e467d374cc76` (`fix: correct Unit 2 lesson gating syntax`). No corresponde al HEAD de recuperación con el pulido de Unidad 2 (`7737533`).
+- Se identificó además el servicio separado `adaptive-language-tutor-rebuild-preview`, conectado a `rebuild/functional-baseline`; no es el preview canónico y no contiene esta rama de recuperación.
+- Causa confirmada de la discrepancia: las correcciones de `recovery/intermediate-theory-content` no se han publicado en el servicio canónico. No es un problema de caché demostrado.
+- No se cambió la rama del servicio ni se inició un deploy: la rama de recuperación sigue aislada y el checkpoint de publicación continúa pendiente de confirmación del usuario.
+- Próximo paso sujeto a autorización: publicar el HEAD validado de `recovery/intermediate-theory-content` en el preview canónico, sin fusionarlo a `feature/mobile-bottom-navigation` ni a `main`. Después verificar deploy LIVE y contenido servido.
