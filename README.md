@@ -1312,3 +1312,11 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Verificación previa a esta publicación: Render estaba LIVE en deploy `dep-dc34b395efls73aor580`, commit `dc05ceb51c49db20f6cebb9479e3e467d374cc76`. La rama activa avanzó después únicamente con documentación de política/checkpoint; no hay cambios de código funcional posteriores a ese deploy.
 - Se solicita publicar el HEAD documental de la rama activa para dejar el preview sincronizado con el checkpoint. La versión funcional servida seguirá siendo la del código validado `dc05ceb51c49db20f6cebb9479e3e467d374cc76`; el pulido adicional de Unidad 2 de `recovery` no está integrado y no debe aparecer todavía en Render.
 - La prueba visual/táctil/auditiva humana en Android continúa pendiente.
+
+
+### Publicación Render tras confirmar el checkpoint — 25-11-2026
+- Deploy manual completado correctamente: `dep-dc3d627lot8c739r7nig`, estado **LIVE**.
+- Render quedó asociado al HEAD de la rama activa `012497be4811bc03f5939b83eaf15ba26f8a1754`. El commit contiene el registro documental del checkpoint; no introduce cambios funcionales respecto del código ya validado.
+- Los logs de la nueva instancia confirman ejecución de `npm start` y escucha de la aplicación en `0.0.0.0:10000`.
+- El código funcional servido sigue siendo el de Unidad 2 validado en `dc05ceb51c49db20f6cebb9479e3e467d374cc76`. Los criterios adicionales que siguen solo en `recovery/intermediate-theory-content` no se han desplegado ni integrado.
+- Pendiente: revisión humana visual, táctil y auditiva en Android.
