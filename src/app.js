@@ -2087,7 +2087,7 @@ $("confirm-session-close").addEventListener("click", () => {
 const theoryContent = {
   grammar: ["Gramática", [
     ["Pronombres y ser/estar", "Los pronombres permiten identificar quién habla. Se presentan junto con las formas más frecuentes para decir quién eres o cómo estás, adaptadas al idioma."],
-    ["Género y número", ""],
+    ["Artículos y concordancia", ""],
     ["Artículos y adjetivos", ""],
     ["Presente habitual", ""],
     ["Preguntas y negación", ""],
@@ -2119,8 +2119,8 @@ const theoryContent = {
 };
 const theoryUnits=[
   {title:"Primeros contactos",categories:{expressions:[0,1,2],grammar:[0]}},
-  {title:"Datos personales y entorno",categories:{vocabulary:[0],grammar:[1],expressions:[3]}},
-  {title:"Rutinas y tiempo",categories:{vocabulary:[1,2,3,4],grammar:[2,3,4,5],expressions:[4,5]}},
+  {title:"Datos personales y entorno",categories:{vocabulary:[0],grammar:[1,2],expressions:[3]}},
+  {title:"Rutinas y tiempo",categories:{vocabulary:[1,2,3,4],grammar:[3,4,5],expressions:[4,5]}},
   {title:"Comida y compras",categories:{vocabulary:[5],expressions:[6,7]}},
   {title:"Viajes y orientación",categories:{vocabulary:[6],grammar:[7],expressions:[8,9]}},
   {title:"Números y cantidades",categories:{grammar:[6]}}
