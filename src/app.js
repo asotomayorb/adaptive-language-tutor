@@ -2747,7 +2747,8 @@ function renderItalianAppliedTopic(category, index, locale) {
       2:"Pregunta por el estado de alguien y responde. «<em>Come stai?</em>» y «<em>Come sta?</em>» expresan el mismo mensaje en trato informal y formal."
     };
     const introduction = category === "Expresiones" ? introductions[index] : "Palabras útiles para reconocer y utilizar en situaciones cotidianas.";
-    return '<p class="theory-slide-text">' + (introduction || "Expresiones frecuentes para comunicarte en situaciones cotidianas.") + '</p><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' + rows(items) + '</tbody></table>';
+    const introMarkup = category === "Expresiones" && index === 3 ? "" : '<p class="theory-slide-text">' + (introduction || "Expresiones frecuentes para comunicarte en situaciones cotidianas.") + '</p>';
+    return introMarkup + '<table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' + rows(items) + '</tbody></table>';
   }
   return null;
 }
