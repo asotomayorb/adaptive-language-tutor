@@ -2808,7 +2808,8 @@ function openTheoryTopic(index) {
   else if (activeTheoryCategory === "Gramática" && sourceIndex === 2) detailMarkup = renderVerbLesson(languageName);
   else if (activeTheoryCategory === "Gramática" && sourceIndex >= 3) detailMarkup = renderTenseLesson(languageName, sourceIndex);
   else if (sampleByTopic) detailMarkup += '<section class="theory-example"><span>' + escapeHTML(sampleLabel) + ' · ' + escapeHTML(languageDefinitions[$("language").value]?.label || languageName) + '</span><p class="theory-target-word">' + escapeHTML(sampleByTopic) + '</p></section>';
-  if (activeTheoryUnit >= 2) detailMarkup = "";\n  detailMarkup = detailMarkup.replace(/<h3>([\s\S]*?)<\/h3>/g, (_, heading) => '<h3>' + formatItalianTheoryTitle(heading) + '</h3>');
+  if (activeTheoryUnit >= 2) detailMarkup = "";
+  detailMarkup = detailMarkup.replace(/<h3>([\s\S]*?)<\/h3>/g, (_, heading) => '<h3>' + formatItalianTheoryTitle(heading) + '</h3>');
   $("theory-title").innerHTML = formatItalianTheoryTitle(title);
   const categoryIcon = theoryCategoryIcons[activeTheoryTopics[activeTheoryIndex]?.[3]] || "";
   $("theory-category").innerHTML = '<span class="theory-category-icon" aria-hidden="true">' + categoryIcon + '</span><span>' + escapeHTML(activeTheoryCategory) + '</span>';
