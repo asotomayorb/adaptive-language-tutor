@@ -1207,3 +1207,19 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - La comparación directa `0d2b760...430906f` confirma que entre ambos existe un único commit posterior de código: `430906f742591fee14e00b54f438a28b4a3b161c`. Su diff afecta solo `src/app.js` y reemplaza el contenido anterior de teoría por una nueva distribución de temas/unidades, dejando los desarrollos descriptivos concentrados en la primera unidad.
 - Por tanto, el punto intermedio recuperable y más completo antes de esa regresión es `0d2b760`; no corresponde cherry-pickear los ajustes visuales porque ya están incorporados en ese árbol. Si en el preview no aparecen, la discrepancia debe diagnosticarse contra el commit realmente servido o el estado/caché del navegador, no rehaciendo los cambios.
 - Render Preview confirmó LIVE el deploy `dep-dc32ro8m7kps73cvansg`, commit `d330e3fcb1624a80854e48821b90c256a143f063`, cuyo árbol de código corresponde a `0d2b760` más este registro documental.
+
+
+### Recuperación selectiva de avances de Teoría sin reducir la jerarquía — 25-11-2026
+- Se parte de la base restaurada anterior a la reducción A1 y se recuperan selectivamente los avances posteriores de contenido italiano, sin reincorporar el commit que cambió el árbol a ocho unidades.
+- Se conserva la jerarquía original de seis unidades y sus títulos. La primera unidad vuelve a mostrar cuatro subtemas desarrollados: saludos y despedidas, decir el nombre, cómo estás, y pronombres/ser-estar.
+- Se recupera la pronunciación independiente para cada variante de una celda separada por «/» o salto de línea: cada control reproduce únicamente su frase.
+- En la comparación verbal se separan las tablas de pronombres y conjugación; los términos «essere» y «stare» se muestran en cursiva y entre comillas angulares. Se iguala el tamaño de las columnas verbales y las tablas bilingües (19 px escritorio / 17 px móvil).
+- Se adaptó Browser E2E para comprobar los cuatro subtemas, las variantes de pronunciación, el formato de encabezados y la conservación de las seis unidades.
+- Implementación en revisión: rama `recovery/intermediate-theory-content`. No publicar en Render ni integrar a la rama principal hasta completar CI y revisar el diff.
+
+
+### Validación automatizada de recuperación selectiva — 25-11-2026
+- `npm run check` y `npm test`: aprobados en GitHub Actions run [45522922228](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45522922228).
+- Browser E2E: aprobado en run [45522922093](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45522922093).
+- Las pruebas cubren la jerarquía de seis unidades, los cuatro subtemas de Unidad 1, la pronunciación independiente de variantes y la tipografía/encabezados de las tablas de pronombres y conjugación.
+- La revisión humana Android y el despliegue Render siguen pendientes; el preview canónico no se ha modificado.

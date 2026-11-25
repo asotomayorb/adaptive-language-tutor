@@ -2,7 +2,7 @@ name: Tests
 
 on:
   push:
-    branches: [main, feature/ai-tutor-pedagogy, feature/mobile-bottom-navigation]
+    branches: [main, feature/ai-tutor-pedagogy, feature/mobile-bottom-navigation, recovery/intermediate-theory-content]
   pull_request:
     branches: [main]
 
