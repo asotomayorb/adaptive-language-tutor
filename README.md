@@ -1333,3 +1333,15 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Pendiente: prueba humana en Android (visual, táctil y auditiva), especialmente distribución de tablas, lectura individual de variantes y navegación por los cuatro subtemas de Unidad 2.
 - Checkpoint funcional publicado: 19627135bf04bcb7c0a83330f007ebee04a0f8de. Mantenerlo como punto de retorno antes de ampliar contenidos.
 - Se ajustaron los workflows para ejecutar Tests y Browser E2E también en PR dirigidos a la rama activa, además de los eventos push.
+
+
+### Refinamiento de claridad de Unidad 2 — 25-11-2026
+- El usuario confirmó el esquema de revisión: eliminar párrafos genéricos; explicar solo lo que no queda claro con la tabla; distinguir explícitamente país, gentilicio e idioma; simplificar artículos y adjetivos con reglas breves antes de las tablas; evitar aclaraciones entre paréntesis en las traducciones.
+- Rama de trabajo: feature/unit-2-clarity-refinement; PR #8 hacia feature/mobile-bottom-navigation. Unidad 1 y los contenidos vacíos de Unidades 3–6 se conservan.
+- Países e idiomas: tabla con columnas País, Gentilicio e Idioma; cada forma de gentilicio con variante de género tiene control TTS independiente.
+- Artículos: introducción breve y dos tablas separadas (definidos e indefinidos) con columnas Artículo / Se usa antes de. Se retiraron reglas largas y ejemplos con notas parentéticas.
+- Adjetivos: reglas de terminaciones en lista breve antes de la tabla; ejemplos traducidos completos.
+- Edad y procedencia: se elimina el párrafo genérico y las etiquetas parentéticas de formalidad en las traducciones.
+- Se actualizó Browser E2E para verificar encabezados, separación de tablas, reglas breves y controles TTS de gentilicios. Validación CI y publicación Render aún pendientes; no considerar aprobado hasta que Tests y Browser E2E pasen.
+- Próximo checkpoint: después de validar CI, integrar a la rama activa y publicar manualmente Render; luego solicitar revisión visual/táctil/auditiva en Android.
+
