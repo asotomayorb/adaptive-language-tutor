@@ -174,14 +174,11 @@ try {
    assert.ok(await page.locator("#theory-tree .theory-tree-category-icon svg").count() > 0, "category rows should use line icons rather than the former text glyphs");
   assert.equal(await page.locator("#theory-detail .back-control").count(), 1, "detail should contain exactly one back arrow");
   // Unit 2 has deployed learning content and remains in the polishing phase.
-  await page.locator("#theory-back").click();
-  const unitTwoTopics = page.locator("#theory-tree .theory-tree-topic");
-  assert.equal(await unitTwoTopics.count(), 4, "Unit 2 should expose its four deployed subtopics");
-  await unitTwoTopics.nth(0).click();
-  assert.ok((await page.locator("#theory-description").innerText()).includes("ciao"), "Unit 2 vocabulary should render its greeting vocabulary");
+  assert.equal(await page.locator("#theory-title").innerText(), "Países e idiomas", "Unit 2 should open its first deployed subtopic");
+  assert.ok((await page.locator("#theory-description").innerText()).includes("ciao"), "Unit 2 vocabulary should render target-language examples");
   assert.equal(await page.locator("#theory-description table").count(), 1, "Unit 2 vocabulary should render a bilingual reference table");
-  await page.locator("#theory-back").click();
-  await unitTwoTopics.nth(1).click();
+  await page.locator("#theory-next").click();
+  assert.equal(await page.locator("#theory-title").innerText(), "Artículos y concordancia", "Unit 2 should navigate to its article lesson");
   const articleIntro = page.locator("#theory-description .theory-slide-text").first();
   const articleTable = page.locator("#theory-description table").first();
   assert.ok(await articleIntro.count() === 1, "Unit 2 article lesson should begin with a concise rule paragraph");
