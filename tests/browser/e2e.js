@@ -200,8 +200,6 @@ try {
   await page.locator("#theory-back").click();
   await unitRows.nth(0).click();
   await page.locator("#theory-tree .theory-tree-topic").first().click();
-  await unitRows.nth(0).click();
-  await page.locator("#theory-tree .theory-tree-topic").first().click();
   const manualPronunciation = page.locator("#theory-description .theory-target-tap").first();
   assert.ok(await manualPronunciation.count() > 0, "short target-language text should be directly tappable");
   assert.equal(await manualPronunciation.getAttribute("data-locale"), "it-IT", "Italian target text must declare the it-IT locale");
