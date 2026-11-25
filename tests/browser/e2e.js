@@ -150,6 +150,46 @@ try {
   assert.equal(await page.locator("#theory-tree .theory-unit-row[aria-expanded='true']").count(), 1, "only one unit may remain expanded at a time");
   assert.equal(await unitRows.nth(0).getAttribute("aria-expanded"), "false", "opening another unit should collapse the previous one");
   assert.equal(await unitRows.nth(1).getAttribute("aria-expanded"), "true", "the newly selected unit should be expanded");
+  const unitTwoTopics = page.locator("#theory-tree .theory-tree-topic");
+  assert.deepEqual(await unitTwoTopics.locator(".theory-tree-topic-name").allInnerTexts(), ["Países e idiomas","Artículos y concordancia","Artículos y adjetivos","Edad y procedencia"], "Unit 2 should retain its four planned subtopics");
+  const unitTwoChecks = [
+    {title:"Países e idiomas", terms:["Cile","spagnolo"], heading:"Paesi e nazionalità"},
+    {title:"Artículos y concordancia", terms:["gli studenti","un’amica"]},
+    {title:"Artículos y adjetivos", terms:["ragazzo italiano","ragazze italiane"], heading:"Aggettivi qualificativi"},
+    {title:"Edad y procedencia", terms:["Quanti anni hai?","Di dove sei?","Ho venticinque anni."]}
+  ];
+  for (let i=0;i<unitTwoChecks.length;i++) {
+    await unitTwoTopics.nth(i).click();
+    const check=unitTwoChecks[i];
+    assert.equal(await page.locator("#theory-title").innerText(),check.title,"Unit 2 topic title should match its content");
+    const body=page.locator("#theory-description");
+    const bodyText=await body.innerText();
+    for (const term of check.terms) assert.ok(bodyText.includes(term), "Unit 2 content should include "+term);
+    if (check.heading) {
+      const heading=body.locator("h3").filter({hasText:check.heading}).first();
+      assert.ok(await heading.locator("em").count()>0,"Italian headings should use italics and angle quotes");
+      assert.ok((await heading.innerText()).includes(" ("),"Italian headings should include Spanish translations");
+    }
+    const tables=body.locator("table");
+    assert.ok(await tables.count()>0,"each Unit 2 subtopic should contain a bilingual table");
+    for (let tableIndex=0;tableIndex<await tables.count();tableIndex++) {
+      assert.deepEqual((await tables.nth(tableIndex).locator("thead th").allInnerTexts()).map(v=>v.toLowerCase()),["italiano","español"],"Unit 2 bilingual tables should use consistent column headings");
+      assert.equal(await tables.nth(tableIndex).locator("thead em").count(),0,"table headings must not inherit title formatting");
+    }
+    if(i===0) {
+      const nationalityCell=body.locator("table").nth(1).locator("tbody tr").nth(1).locator("td").first();
+      assert.equal(await nationalityCell.locator(".theory-speech-variant").count(),2,"gender variants separated by slash must have independent pronunciation controls");
+    }
+    await page.locator("#theory-back").click();
+  }
+  await unitRows.nth(2).click();
+  const unitThreeTopics=page.locator("#theory-tree .theory-tree-topic");
+  const unitThreeTitle=await unitThreeTopics.first().locator(".theory-tree-topic-name").innerText();
+  await unitThreeTopics.first().click();
+  assert.equal(await page.locator("#theory-title").innerText(),unitThreeTitle,"later-unit subtopic titles must be preserved");
+  assert.equal((await page.locator("#theory-description").innerText()).trim(),"","later-unit subtopics should have no lesson content until developed");
+  await page.locator("#theory-back").click();
+  await unitRows.nth(1).click();
   const topicButton = page.locator("#theory-tree .theory-tree-topic").first();
   await topicButton.click();
   assert.equal(await page.locator("#theory-detail").isVisible(), true, "Theory topic detail should open");
