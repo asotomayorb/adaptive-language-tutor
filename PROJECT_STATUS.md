@@ -1253,3 +1253,11 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - El servicio todavía sirve el deploy LIVE anterior `dep-dc3daucipgvc738c5k10` / commit `19627135bf04bcb7c0a83330f007ebee04a0f8de` al momento de esta anotación; el próximo push documental generará la primera ejecución bajo la nueva política automática. Verificar deploy LIVE con el nuevo HEAD antes de declarar el preview actualizado.
 - El código de Unidad 2 no se modificó en esta corrección de pruebas/infraestructura. Unidad 1 y Unidades 3–6 permanecen fuera del alcance de edición.
 - Pendiente: confirmar el primer auto-deploy LIVE del nuevo HEAD y realizar prueba humana Android de los cuatro subtemas de Unidad 2.
+
+
+### Primer deploy con auto-despliegue habilitado — 25-11-2026
+- Render confirmó `autoDeploy=yes`, `autoDeployTrigger=checksPass`, Blueprint `autoSync=true`, rama `feature/mobile-bottom-navigation`; se conserva el servicio existente y sus variables de entorno.
+- Los checks del commit `4bb81c7814867c5ddd0b9e0347839ab724307224` finalizaron correctamente: Tests [45674813867](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45674813867) y Browser E2E [45674813911](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45674813911).
+- Aunque la configuración automática ya estaba activa, Render no inició un deploy al detectar esos pushes. Para no dejar el preview desactualizado, se lanzó un deploy de recuperación manual del HEAD validado: `dep-dc3iga0u01pc73eobuog`, estado LIVE, commit `4bb81c7814867c5ddd0b9e0347839ab724307224`.
+- Se comprobó que el servicio sigue con autoDeploy habilitado después del deploy manual. La política está configurada para futuros pushes, pero la ejecución automática aún requiere una comprobación adicional con un próximo cambio de código; si vuelve a no dispararse, revisar webhook/integración GitHub-Render antes de declarar la automatización plenamente verificada.
+- Preview LIVE actual: https://adaptive-language-tutor-preview-5b3d.onrender.com. Prueba humana Android de Unidad 2 pendiente.
