@@ -1200,3 +1200,10 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Se identificó en el historial que `430906f742591fee14e00b54f438a28b4a3b161c` reorganizó la jerarquía A1 y limitó el desarrollo visible a la Unidad 1. Su ancestro inmediato `0d2b76035c16c96c14d1d956b721ca99ae3f0524` precede esa modificación.
 - La rama se restauró exactamente a `0d2b76035c16c96c14d1d956b721ca99ae3f0524`, sin aplicar parches al código. Este es el punto anterior a la modificación de jerarquías que se está recuperando.
 - Render debe completar el despliegue y verificarse contra ese árbol antes de considerar restaurado el servicio.
+
+
+### Reconstrucción del punto intermedio previo a la regresión — 24-11-2026
+- Se comparó el árbol restaurado `0d2b76035c16c96c14d1d956b721ca99ae3f0524` con los commits de ajustes visuales y E2E del 24-11: el árbol restaurado ya contiene esos cambios (incluidos los commits `88a4ce2`, `29b5357`, `2ac2b2a`, `3713d59` y `e6e7f06` como ancestros).
+- La comparación directa `0d2b760...430906f` confirma que entre ambos existe un único commit posterior de código: `430906f742591fee14e00b54f438a28b4a3b161c`. Su diff afecta solo `src/app.js` y reemplaza el contenido anterior de teoría por una nueva distribución de temas/unidades, dejando los desarrollos descriptivos concentrados en la primera unidad.
+- Por tanto, el punto intermedio recuperable y más completo antes de esa regresión es `0d2b760`; no corresponde cherry-pickear los ajustes visuales porque ya están incorporados en ese árbol. Si en el preview no aparecen, la discrepancia debe diagnosticarse contra el commit realmente servido o el estado/caché del navegador, no rehaciendo los cambios.
+- Render Preview confirmó LIVE el deploy `dep-dc32ro8m7kps73cvansg`, commit `d330e3fcb1624a80854e48821b90c256a143f063`, cuyo árbol de código corresponde a `0d2b760` más este registro documental.
