@@ -799,3 +799,12 @@ Para cada escenario registrar:
 - [x] `npm run check` y `npm test` aprobados: [45522922228](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45522922228).
 - [x] Browser E2E aprobado: [45522922093](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45522922093).
 - [ ] Revisión visual, táctil y auditiva en Android real después del despliegue Render.
+
+
+### Publicación lista para prueba humana — 25-11-2026
+- [x] Cambios integrados en `feature/mobile-bottom-navigation`.
+- [x] Render Preview LIVE: deploy `dep-dc3399u8bjmc73ednf6g`, commit `395aace02fccbf51aa433a66a33a87aa32d8043e`.
+- [x] CI y Browser E2E aprobados antes de integrar.
+- [ ] En Android, confirmar las seis unidades A1 y los cuatro subtemas de la primera unidad.
+- [ ] Tocar por separado cada variante con «/» y verificar que el audio reproduce solo esa frase en italiano.
+- [ ] Confirmar que las columnas «essere» y «stare» se ven del mismo tamaño y que sus encabezados aparecen en cursiva y entre « ».
