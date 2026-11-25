@@ -1194,3 +1194,13 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Rama: `feature/mobile-bottom-navigation`. Se conserva la jerarquía A1 de seis unidades.
 - Tests y Browser E2E aprobados; Render Preview LIVE, deploy `dep-dc340mk0916s73fkoni0`.
 - Este checkpoint es la base segura para limpiar los contenidos de unidades posteriores y desarrollar la Unidad 2. Unidad 1 debe permanecer intacta.
+
+
+## Unidad 2 desarrollada y unidades posteriores vaciadas — 25-11-2026
+- Unidad 1 queda protegida por el checkpoint previo y sin cambios de contenido.
+- Unidad 2 contiene los cuatro subtemas italianos: países e idiomas; artículos y concordancia; artículos y adjetivos; edad y procedencia.
+- Unidades 3–6 mantienen sus títulos y jerarquía, con el cuerpo de sus subtemas vacío hasta su desarrollo.
+- Se aplican tablas Italiano/Español, TTS separado por variante, formato de títulos italianos con traducción y exclusión de tablas.
+- CI y Browser E2E aprobados: [Tests 45531925766](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45531925766), [Browser E2E 45531925531](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45531925531).
+- Código final validado: `dc05ceb51c49db20f6cebb9479e3e467d374cc76`. Render deploy `dep-dc34b395efls73aor580` pendiente de confirmación LIVE.
+- Revisión humana Android pendiente.
