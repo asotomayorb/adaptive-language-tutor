@@ -1280,3 +1280,16 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 
 
 - Confirmación final Render Preview: deploy `dep-dc34b395efls73aor580` terminó en estado **LIVE** el 25-11-2026, desplegando exactamente el código validado `dc05ceb51c49db20f6cebb9479e3e467d374cc76`. El auto-deploy permanece desactivado.
+
+
+### Checkpoint confirmado — Unidad 2 y nuevas reglas globales de teoría — 25-11-2026
+- El usuario confirma guardar checkpoint sobre el estado de Unidad 2: código validado `dc05ceb51c49db20f6cebb9479e3e467d374cc76`; Render Preview LIVE en deploy `dep-dc34b395efls73aor580`.
+- Se conserva Unidad 1 intacta, la jerarquía A1 de seis unidades y los cuerpos de Unidades 3–6 vacíos, manteniendo sus títulos.
+- Nuevos criterios globales pendientes de implementar y validar en todos los subtemas:
+  1. Distribuir el ancho de las columnas de tablas de la forma más equitativa posible, incluida la tabla de edad.
+  2. Separar en controles TTS independientes cada expresión italiana dividida por «/», guion u otro separador de variantes; aplica a países, nacionalidades y cualquier otro subtema.
+  3. Explicar las reglas antes de la tabla correspondiente, nunca dentro de sus celdas.
+  4. Formular las reglas en un párrafo introductorio simple; cuando ayude, mostrar terminaciones en líneas breves, por ejemplo `-o (masculino) / -e → -i` y `-a (femenino) → -e`.
+  5. No repetir la regla en un cuadro inferior de la tabla. Las excepciones pueden ir en un cuadro posterior, pero deben explicarse claramente y no presentarse como ejemplos aislados.
+- El checkpoint registra el estado previo a estos cambios; no implica que los nuevos criterios ya estén implementados. Pendiente aplicar los cambios, añadir cobertura de pruebas, validar CI/E2E y actualizar Render si corresponde.
+- Prueba humana en Android sigue pendiente.
