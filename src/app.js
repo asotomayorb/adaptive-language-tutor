@@ -2614,7 +2614,7 @@ function renderArticleLesson(languageName, locale) {
 }
 function renderItalianAppliedTopic(category, index, locale) {
   const renderLines = (value) => String(value).split("<br>").map(part => escapeHTML(part)).join('<br>');
-  const renderSpokenVariants = (value) => String(value).replace(/<br\s*\/?>/gi, " / ").split(/\s*(\/|–|—|\s-\s)\s*/).filter((part, i) => i % 2 === 0).map(part => {
+  const renderSpokenVariants = (value) => String(value).replace(/<br\s*\/?>/gi, " / ").split(/\s*(\/|–|—|-)\s*/).filter((part, i) => i % 2 === 0).map(part => {
     const phrase = part.trim();
     if (!phrase) return "";
     return '<span class="theory-speech-variant"><strong class="theory-target-word">' + escapeHTML(phrase) + '</strong> ' + speakerButton(phrase, locale) + '</span>';
@@ -2668,7 +2668,7 @@ function renderItalianAppliedTopic(category, index, locale) {
   }
   const vocabulary = {
     "Vocabulario": [
-      [["l’Italia / italiano","Italia / italiano"],["la Spagna / spagnolo","España / español"],["la Francia / francese","Francia / francés"],["la Germania / tedesco","Alemania / alemán"],["il Cile / cileno","Chile / chileno"],["il Brasile / portoghese","Brasil / portugués"]],
+      [["l’Italia - italiano","Italia - italiano"],["la Spagna / spagnolo","España / español"],["la Francia / francese","Francia / francés"],["la Germania / tedesco","Alemania / alemán"],["il Cile / cileno","Chile / chileno"],["il Brasile / portoghese","Brasil / portugués"]],
       [["la madre","la madre"],["il padre","el padre"],["il fratello","el hermano"],["la sorella","la hermana"],["i genitori","los padres"],["il figlio / la figlia","el hijo / la hija"]],
       [["oggi","hoy"],["domani","mañana"],["ieri","ayer"],["lunedì","lunes"],["la settimana","la semana"],["alle otto","a las ocho"]],
       [["il conto","la cuenta"],["un tavolo per due","una mesa para dos"],["l’acqua naturale","agua sin gas"],["il menù","el menú"],["vorrei…","quisiera…"],["senza…","sin…"]],
