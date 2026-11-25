@@ -793,3 +793,9 @@ Para cada escenario registrar:
 - [ ] Confirmar encabezados «Italiano» y «Español» en tablas de dos columnas.
 - [ ] Ejecutar Browser E2E y pruebas automatizadas antes de publicar.
 - [ ] Tras deploy LIVE, validar en Android el árbol, el tamaño de letra y la pronunciación real it-IT.
+
+
+### Estado de automatización — 25-11-2026
+- [x] `npm run check` y `npm test` aprobados: [45522922228](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45522922228).
+- [x] Browser E2E aprobado: [45522922093](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45522922093).
+- [ ] Revisión visual, táctil y auditiva en Android real después del despliegue Render.
