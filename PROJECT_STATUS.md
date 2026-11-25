@@ -1160,3 +1160,12 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Browser E2E: aprobado, run [45522922093](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45522922093).
 - El E2E verifica seis unidades, cuatro subtemas de Unidad 1, dos destinos tocables/pronunciables por variante, encabezados italianos en cursiva con comillas angulares y tamaños equivalentes en columnas verbales.
 - No se desplegó a Render ni se integró aún en `feature/mobile-bottom-navigation`. Pendiente revisión del diff/merge y después prueba humana Android.
+
+
+## 25-11-2026 — Recuperación integrada y publicada
+- PR #5 integrado por squash; commit de código `395aace02fccbf51aa433a66a33a87aa32d8043e`.
+- A1 mantiene seis unidades. Unidad 1 tiene cuatro subtemas revisados y el TTS individual por variante.
+- `npm run check` + `npm test`: aprobados (Actions [45523103299](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45523103299)).
+- Browser E2E: aprobado (Actions [45523103462](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45523103462)).
+- Render Preview LIVE: deploy `dep-dc3399u8bjmc73ednf6g`, commit `395aace02fccbf51aa433a66a33a87aa32d8043e`, limpieza de caché. Logs confirman `npm start` y servidor escuchando en `0.0.0.0:10000`.
+- Pendiente: prueba humana en Android (jerarquía, tablas, tamaños y pronunciación italiana audible). No se declara validación humana completada.
