@@ -175,7 +175,9 @@ try {
     for (let tableIndex=0;tableIndex<await tables.count();tableIndex++) {
       const table=tables.nth(tableIndex);
       const headers=(await table.locator("thead th").allInnerTexts()).map(v=>v.trim().toLowerCase());
-      if(i===2) assert.deepEqual(headers,["masculino","femenino","plural"],"adjective table should distinguish gender and number");
+      if(i===0) assert.deepEqual(headers,["país","gentilicio","idioma"],"country table should identify country, demonym and language explicitly");
+      else if(i===1) assert.deepEqual(headers,["artículo","se usa antes de"],"article tables should list forms and their contexts");
+      else if(i===2) assert.deepEqual(headers,["masculino singular","femenino singular","plural"],"adjective table should distinguish gender and number");
       else assert.deepEqual(headers,["italiano","español"],"bilingual tables should use consistent column headings");
       assert.equal(await table.locator("thead em").count(),0,"table headings must remain plain");
       const widths=await table.locator("thead th").evaluateAll(cells=>cells.map(cell=>cell.getBoundingClientRect().width));
@@ -186,10 +188,16 @@ try {
       assert.ok(await intro.count()>0,"grammar rules should be introduced before the reference table");
       assert.ok(await intro.evaluate(el=>!!(el.compareDocumentPosition(el.parentElement.querySelector("table")) & Node.DOCUMENT_POSITION_FOLLOWING)),"the introductory rules must precede the tables");
     }
-    if(i===1) assert.ok((await body.locator(".theory-slide-text").first().innerText()).includes("apóstrofo"),"article rules should explain apostrophe use before the tables");
+    if(i===1) {
+      assert.ok((await body.locator(".theory-slide-text").first().innerText()).length<260,"article introduction should stay concise");
+      assert.equal(await body.locator(".theory-slide-text").first().innerText().includes("apóstrofo"),false,"article-specific details belong in the tables, not a long introduction");
+      assert.equal(await body.locator("table").count(),2,"defined and indefinite articles should have separate tables");
+    }
+    if(i===2) assert.equal(await body.locator(".theory-rule-list li").count(),3,"adjective endings should be presented as separate concise rules");
     if(i===0) {
-      const countryLanguageCell=body.locator("table").first().locator("tbody tr").first().locator("td").first();
-      assert.equal(await countryLanguageCell.locator(".theory-speech-variant").count(),2,"hyphen-separated country/language concepts should expose independent pronunciation controls");
+      const countryRow=body.locator("table").first().locator("tbody tr").first();
+      assert.deepEqual((await body.locator("table thead th").allInnerTexts()).map(v=>v.trim().toLowerCase()),["país","gentilicio","idioma"],"country table should label each concept");
+      assert.equal(await countryRow.locator("td").nth(1).locator("button").count(),2,"each gendered demonym variant should have its own pronunciation control");
     }
     await page.locator("#theory-back").click();
   }
