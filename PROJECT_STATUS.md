@@ -1141,3 +1141,14 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - En el HEAD `b647fac64e3180fc024c99decbd115ee846fa764`, Tests aprobados en [45317664026](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45317664026) y Browser E2E aprobado en [45317664032](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45317664032).
 - Render Preview confirmado **LIVE**, deploy `dep-dc2g0ejrjlhs73ck877g`, asociado al HEAD `b647fac64e3180fc024c99decbd115ee846fa764`. Se publicó manualmente con limpieza de caché porque el auto-deploy está desactivado.
 - Pendiente únicamente la comprobación visual/táctil humana en Android. La aprobación E2E confirma el comportamiento en el navegador automatizado, pero no sustituye la revisión en el teléfono del usuario.
+
+
+## 25-11-2026 — Recuperación selectiva de contenido italiano sobre base de seis unidades
+- Rama de trabajo aislada: `recovery/intermediate-theory-content`, creada desde el punto restaurado de `feature/mobile-bottom-navigation`.
+- Se recuperó desde los commits de trabajo posteriores el render de Teoría italiana de Unidad 1, conservando la jerarquía de seis unidades de la base funcional. No se incorporó la reorganización de ocho unidades ni el cambio de distribución que provocó la regresión.
+- Unidad 1: cuatro subtemas desarrollados (Saludos y despedidas, Decir el nombre, Cómo estás, Pronombres y ser/estar), con tablas bilingües «Italiano» / «Español».
+- TTS: cada variante separada por «/» o salto de línea dispone de su propio control y reproduce únicamente su texto.
+- Conjugación: tablas separadas de pronombres y verbos; encabezados «essere» y «stare» en cursiva y entre comillas angulares; columnas con tamaño tipográfico uniforme. CSS: 19 px escritorio / 17 px móvil.
+- Browser E2E actualizado para verificar el árbol de seis unidades, contenido de los cuatro subtemas, pronunciación por variante y tipografía.
+- Commits de código: `bd01acf` (contenido/render), `59006e1` (CSS), `8e23221` y `1b48823` (alineación de títulos). Pruebas: `b70baaa`.
+- Estado: CI, `npm run check`, `npm test`, Browser E2E y revisión de diff pendientes. Render no actualizado; no solicitar prueba humana todavía.
