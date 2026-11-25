@@ -844,3 +844,15 @@ Para cada escenario registrar:
 - [x] Browser E2E: GitHub Actions run 45614660104.
 - [x] Render Preview LIVE: deploy dep-dc3daucipgvc738c5k10, commit 19627135bf04bcb7c0a83330f007ebee04a0f8de.
 - [ ] Prueba humana visual, táctil y auditiva en Android.
+
+
+
+### Unidad 2 — revisión refinada (pendiente de publicación y prueba humana)
+- [ ] Países e idiomas: identificar de inmediato País / Gentilicio / Idioma y probar TTS individual en cada variante de género.
+- [ ] Artículos: confirmar que la introducción es breve, hay tablas separadas para definido e indefinido y cada tabla tiene encabezados Artículo / Se usa antes de.
+- [ ] Artículos: comprobar que las reglas de uso quedan claras sin ejemplos con aclaraciones parentéticas.
+- [ ] Adjetivos: comprobar que las terminaciones se presentan en líneas breves antes de la tabla y que las traducciones de ejemplos están completas.
+- [ ] Edad y procedencia: verificar que no aparece párrafo genérico ni aclaraciones parentéticas de formalidad; confirmar variantes formal/informal y traducciones completas.
+- [ ] En Android, comprobar legibilidad, anchura equilibrada de tablas, ausencia de scroll horizontal y pronunciación TTS individual.
+- Estado previo: estos cambios están en PR #8; realizar esta prueba solo después de integrar y publicar el commit validado.
+
