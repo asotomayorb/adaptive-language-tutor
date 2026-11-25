@@ -2614,7 +2614,7 @@ function renderArticleLesson(languageName, locale) {
 }
 function renderItalianAppliedTopic(category, index, locale) {
   const renderLines = (value) => String(value).split("<br>").map(part => escapeHTML(part)).join('<br>');
-  const renderSpokenVariants = (value) => String(value).replace(/<br\s*\/?>/gi, " / ").split(/\s*\/\s*/).map(part => {
+  const renderSpokenVariants = (value) => String(value).replace(/<br\s*\/?>/gi, " / ").split(/\s*(\/|–|—|\s-\s)\s*/).filter((part, i) => i % 2 === 0).map(part => {
     const phrase = part.trim();
     if (!phrase) return "";
     return '<span class="theory-speech-variant"><strong class="theory-target-word">' + escapeHTML(phrase) + '</strong> ' + speakerButton(phrase, locale) + '</span>';
