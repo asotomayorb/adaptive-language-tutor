@@ -1409,3 +1409,12 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Antes de implementar, presentar y revisar en conversación el esquema visual de interfaz; el esquema se ha presentado como propuesta inicial y queda sujeto a aprobación/ajustes del usuario.
 - Auto-render: sigue siendo un pendiente operativo separado. Aunque el Blueprint/servicio se configuró previamente con autoSync y auto-deploy, no se ha demostrado un disparo automático tras push. No declarar automatización lista hasta verificarla con un deploy automático real.
 - Prueba humana Android sigue pendiente.
+
+
+### Verificación posterior del auto-deploy y checkpoint documental — 25-11-2026
+- El checkpoint documental de este nuevo ciclo quedó guardado en el commit `ce18e012b0322c3032f0916609e538bc32ae062f`; el checkpoint funcional de Unidad 2 permanece en `19627135bf04bcb7c0a83330f007ebee04a0f8de`.
+- CI del commit documental aprobado: Tests [45685124705](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45685124705) y Browser E2E [45685124945](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45685124945).
+- Tras el push del commit `ce18e012...`, Render no creó un deploy nuevo. La lista de deploys sigue mostrando como LIVE el deploy manual `dep-dc3iga0u01pc73eobuog`, asociado a `4bb81c7814867c5ddd0b9e0347839ab724307224`; no existe evidencia de trigger automático para el nuevo push.
+- Configuración consultada: servicio `srv-dbus3hnf3r2c739j9ir0`, rama `feature/mobile-bottom-navigation`, `autoDeploy=yes`, `autoDeployTrigger=commit`; Blueprint `exs-dbus1io8v5cc73a0tjsg`, `autoSync=true`, estado `in_sync`. Esta configuración por sí sola no demuestra que el webhook GitHub–Render esté operativo.
+- El panel de herramientas Render disponible permite consultar servicio/Blueprint y disparar deploys manuales, pero no cambiar la integración Git provider/repositorio del servicio existente. No se creó un servicio duplicado ni se hizo un deploy manual para ocultar el fallo automático.
+- Acción pendiente necesaria en Render Dashboard: revisar Settings → Repository y conectar el servicio mediante la integración GitHub del repositorio, no como URL pública/clone source. Después, hacer un push de prueba y verificar que el nuevo deploy tenga trigger automático. Hasta entonces, auto-render permanece NO operativo/verificado; el preview sigue en el último deploy LIVE manual.
