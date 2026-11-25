@@ -1320,3 +1320,15 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Los logs de la nueva instancia confirman ejecución de `npm start` y escucha de la aplicación en `0.0.0.0:10000`.
 - El código funcional servido sigue siendo el de Unidad 2 validado en `dc05ceb51c49db20f6cebb9479e3e467d374cc76`. Los criterios adicionales que siguen solo en `recovery/intermediate-theory-content` no se han desplegado ni integrado.
 - Pendiente: revisión humana visual, táctil y auditiva en Android.
+
+
+## Integración selectiva y publicación del pulido de Unidad 2 — 25-11-2026
+- Se corrigió la discrepancia del preview: el deploy anterior había publicado únicamente documentación, por lo que la interfaz seguía mostrando el código previo.
+- El usuario confirmó el checkpoint de política de ramas: feature/mobile-bottom-navigation sigue como rama activa y origen del Render canónico; recovery/intermediate-theory-content permanece como respaldo histórico, sin desarrollo diario ni despliegue directo.
+- Se rescató selectivamente el pulido de Unidad 2 desde recovery mediante PR #7; no se fusionó la rama de respaldo completa. Código integrado en 19627135bf04bcb7c0a83330f007ebee04a0f8de.
+- Cambios: contenido de países/idiomas con variantes TTS independientes por / y guiones; reglas de artículos antes de tablas; concordancia de adjetivos con tabla de tres columnas; edad y procedencia; tablas de teoría a ancho completo, columnas equitativas y ajuste de texto móvil. Se conserva el formato de títulos italianos y el tamaño uniforme de la tabla de conjugación.
+- Tests aprobados: https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45614659980. Browser E2E aprobado: https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45614660104.
+- Render Preview LIVE: deploy dep-dc3daucipgvc738c5k10, commit 19627135bf04bcb7c0a83330f007ebee04a0f8de. Logs confirman inicio con npm start y escucha en 0.0.0.0:10000. El servicio conserva la rama activa y auto-deploy desactivado.
+- Esta integración reemplaza las notas anteriores que indicaban que el pulido de Unidad 2 seguía solo en recovery. La rama recovery no se modifica y queda conservada como respaldo.
+- Pendiente: prueba humana en Android (visual, táctil y auditiva), especialmente distribución de tablas, lectura individual de variantes y navegación por los cuatro subtemas de Unidad 2.
+- Checkpoint funcional publicado: 19627135bf04bcb7c0a83330f007ebee04a0f8de. Mantenerlo como punto de retorno antes de ampliar contenidos.
