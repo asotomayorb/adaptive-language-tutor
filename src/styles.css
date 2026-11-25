@@ -1235,3 +1235,17 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
 #screen-theory .theory-bilingual-table td{
   overflow-wrap:anywhere;
 }
+
+
+/* All theory tables share the available width with evenly sized columns. */
+#screen-theory .theory-pronoun-table,
+#screen-theory .theory-bilingual-table{
+  width:100%;
+  table-layout:fixed;
+}
+#screen-theory .theory-pronoun-table th,
+#screen-theory .theory-pronoun-table td,
+#screen-theory .theory-bilingual-table th,
+#screen-theory .theory-bilingual-table td{
+  overflow-wrap:anywhere;
+}
