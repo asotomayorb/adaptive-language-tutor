@@ -1388,3 +1388,11 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Esta modalidad publica cada commit sin esperar el resultado de CI. Mantener CI activo y evitar pushes de cambios incompletos.
 - Prueba de automatización: el siguiente commit posterior a esta configuración debe generar un deploy automático. Verificar su trigger y commit antes de declarar la automatización comprobada.
 - Preview actualmente LIVE: commit `4bb81c7814867c5ddd0b9e0347839ab724307224`, deploy `dep-dc3iga0u01pc73eobuog`.
+
+
+### Verificación de webhook auto-deploy — 25-11-2026
+- Se activó el modo Render `On Commit`: `autoDeploy=yes`, `autoDeployTrigger=commit`; Blueprint `autoSync=true`. Se mantiene la rama correcta y el servicio existente.
+- Se hizo un nuevo push posterior a la activación (`1fac8472ef9e6ed19c7c0ad001e0a77eef216939`), pero no apareció un nuevo deploy automático ni evento de auto-deploy. Por tanto, la configuración está activa en Render, pero el disparo automático aún no está funcionando/verificado.
+- El preview sigue LIVE en `dep-dc3iga0u01pc73eobuog`, commit `4bb81c7814867c5ddd0b9e0347839ab724307224`; los cambios posteriores son solo documentación/configuración, no alteran el código de la app.
+- Diagnóstico pendiente: confirmar en Render que el repositorio está conectado mediante la integración GitHub (no como URL pública de repositorio). La documentación de Render indica que los auto-deploys requieren un Git provider conectado; servicios configurados solo con una URL pública del repositorio requieren deploy manual.
+- No declarar auto-deploy plenamente operativo hasta observar un deploy cuyo `trigger` sea automático tras un push nuevo. No se modificó código funcional de Unidad 1 ni Unidades 3–6.
