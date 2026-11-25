@@ -177,6 +177,7 @@ try {
   assert.equal(await page.locator("#theory-title").innerText(), "Países e idiomas", "Unit 2 should open its first deployed subtopic");
   assert.ok((await page.locator("#theory-description").innerText()).includes("l’Italia"), "Unit 2 vocabulary should render countries and languages");
   assert.equal(await page.locator("#theory-description table").count(), 1, "Unit 2 vocabulary should render a bilingual reference table");
+  assert.equal(await page.locator("#theory-description table tbody tr").first().locator("td").first().locator(".theory-speech-variant").count(), 2, "hyphen-separated country/language concepts should expose separate TTS fragments");
   await page.locator("#theory-next").click();
   assert.equal(await page.locator("#theory-title").innerText(), "Artículos y concordancia", "Unit 2 should navigate to its article lesson");
   const articleIntro = page.locator("#theory-description .theory-slide-text").first();
