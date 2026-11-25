@@ -1396,3 +1396,16 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - El preview sigue LIVE en `dep-dc3iga0u01pc73eobuog`, commit `4bb81c7814867c5ddd0b9e0347839ab724307224`; los cambios posteriores son solo documentación/configuración, no alteran el código de la app.
 - Diagnóstico pendiente: confirmar en Render que el repositorio está conectado mediante la integración GitHub (no como URL pública de repositorio). La documentación de Render indica que los auto-deploys requieren un Git provider conectado; servicios configurados solo con una URL pública del repositorio requieren deploy manual.
 - No declarar auto-deploy plenamente operativo hasta observar un deploy cuyo `trigger` sea automático tras un push nuevo. No se modificó código funcional de Unidad 1 ni Unidades 3–6.
+
+
+### Checkpoint confirmado — base Unidad 2 antes de nuevo rediseño de tablas — 25-11-2026
+- El usuario confirma guardar el checkpoint funcional previo a los siguientes ajustes didácticos y visuales.
+- Punto de retorno funcional publicado: commit `19627135bf04bcb7c0a83330f007ebee04a0f8de`; Render Preview LIVE en deploy `dep-dc3daucipgvc738c5k10` según la verificación previa. Este checkpoint no incluye los cambios solicitados en esta nueva revisión.
+- Alcance siguiente: solo Unidad 2, sin modificar contenido de Unidad 1 ni Unidades 3–6.
+- Países e idiomas: añadir traducción española del país entre paréntesis en la primera columna; evaluar más ejemplos sin saturar la tabla.
+- Mantener tipografía de párrafos uniforme, también cuando el texto se presenta en viñetas.
+- Artículos y concordancia: reemplazar explicaciones extensas por dos tablas de reglas (definidos e indefinidos), con género en filas y singular/plural en columnas; ajustar ancho de encabezados al texto; mantener ejemplos en una única fila compacta debajo de los encabezados.
+- Artículos y adjetivos: aplicar el mismo criterio de síntesis visual mediante reglas estructuradas y tabla compacta.
+- Antes de implementar, presentar y revisar en conversación el esquema visual de interfaz; el esquema se ha presentado como propuesta inicial y queda sujeto a aprobación/ajustes del usuario.
+- Auto-render: sigue siendo un pendiente operativo separado. Aunque el Blueprint/servicio se configuró previamente con autoSync y auto-deploy, no se ha demostrado un disparo automático tras push. No declarar automatización lista hasta verificarla con un deploy automático real.
+- Prueba humana Android sigue pendiente.
