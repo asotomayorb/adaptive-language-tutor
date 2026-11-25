@@ -1360,3 +1360,15 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Se confirma así la causa de que el usuario siga viendo lo mismo: Render continúa sirviendo el commit anterior y el despliegue manual está bloqueado prudentemente hasta corregir la prueba E2E sin debilitar la cobertura.
 - Próximo paso obligatorio: corregir la aserción de Unidad 1 para que valide los términos italianos que realmente deben ir en cursiva, conservar intacto su contenido, ejecutar de nuevo CI y Browser E2E, y solo entonces desplegar manualmente el commit validado y verificarlo LIVE.
 - No listo para preview ni para prueba humana. Unidad 1 y Unidades 3–6 quedan fuera del alcance de edición.
+
+
+### E2E corregido y auto-despliegue Render habilitado — 25-11-2026
+- Se corrigió la aserción heredada de Unidad 1 que exigía cursiva en todas las introducciones aunque el contenido real no usa ese formato en cada subtema. La cobertura ahora verifica expresiones italianas objetivo en las tablas y conserva la comprobación explícita de pronunciación independiente de variantes del primer subtema. No se modificó el contenido de Unidad 1.
+- Se ajustó la comprobación de Países e idiomas de Unidad 2: los encabezados País/Gentilicio/Idioma se validan directamente en el encabezado semántico de la tabla, sin exigir que aparezcan duplicados en el texto plano del cuerpo. La prueba sigue exigiendo tres columnas, pronunciación independiente y encabezados exactos.
+- Validación sobre el commit de código/pruebas `9d4744a01935347b99948044ec7d65ac4e6c2ad7`: Tests `npm run check` + `npm test` aprobados en [run 45674658722](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45674658722); Browser E2E aprobado en [run 45674659254](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45674659254).
+- Render Blueprint existente `exs-dbus1io8v5cc73a0tjsg` conserva el recurso actual `srv-dbus3hnf3r2c739j9ir0`, la rama `feature/mobile-bottom-navigation` y el servicio/URL actuales; no se creó un servicio adicional.
+- Se aprobó el único cambio de infraestructura del plan: `autoDeployTrigger: checksPass` (antes `off`). Render confirma `autoDeploy=yes`, `autoDeployTrigger=checksPass`; el Blueprint quedó con `autoSync=true` y estado `in_sync`.
+- A partir de ahora, los pushes a la rama activa sincronizan el Blueprint automáticamente y Render despliega cuando los checks de GitHub pasan. Los cambios con checks fallidos no deben publicarse. Las variables de entorno existentes se preservan.
+- El servicio todavía sirve el deploy LIVE anterior `dep-dc3daucipgvc738c5k10` / commit `19627135bf04bcb7c0a83330f007ebee04a0f8de` al momento de esta anotación; el próximo push documental generará la primera ejecución bajo la nueva política automática. Verificar deploy LIVE con el nuevo HEAD antes de declarar el preview actualizado.
+- El código de Unidad 2 no se modificó en esta corrección de pruebas/infraestructura. Unidad 1 y Unidades 3–6 permanecen fuera del alcance de edición.
+- Pendiente: confirmar el primer auto-deploy LIVE del nuevo HEAD y realizar prueba humana Android de los cuatro subtemas de Unidad 2.
