@@ -808,3 +808,11 @@ Para cada escenario registrar:
 - [ ] En Android, confirmar las seis unidades A1 y los cuatro subtemas de la primera unidad.
 - [ ] Tocar por separado cada variante con «/» y verificar que el audio reproduce solo esa frase en italiano.
 - [ ] Confirmar que las columnas «essere» y «stare» se ven del mismo tamaño y que sus encabezados aparecen en cursiva y entre « ».
+
+
+## Ajustes tipográficos de subtemas — 25-11-2026
+- [ ] Confirmar que los términos italianos incluidos en títulos de subtemas se muestran en cursiva, entre « », y seguidos de su traducción española entre paréntesis.
+- [ ] En «Pronombres y ser/estar», comprobar que el encabezado dice «Verbos «Essere» (ser) y «Stare» (estar)».
+- [ ] Confirmar que las celdas y encabezados de tablas no heredan cursiva, comillas angulares ni traducciones de los títulos.
+- [ ] En la última tabla de conjugación, comprobar que las tres columnas usan el mismo tamaño de letra (19 px escritorio / 17 px móvil).
+- [ ] Verificar en Android que la legibilidad y el desplazamiento horizontal de la tabla siguen siendo adecuados.
