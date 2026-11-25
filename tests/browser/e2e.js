@@ -116,7 +116,7 @@ try {
       assert.equal(verbTableSizes[1], verbTableSizes[2], "essere and stare cells should use the same font size");
     }
     assert.ok(await page.locator("#theory-description .theory-slide-text em").count() > 0, "Italian expressions in each Unit 1 introduction should be italicized");
-    const italianCellSize = await page.locator("#theory-description table").first().locator("tbody tr").first().locator("td").first().locator(".theory-target-word").evaluate(el => getComputedStyle(el).fontSize);
+    const italianCellSize = await page.locator("#theory-description table").first().locator("tbody tr").first().locator("td").first().locator(".theory-target-word").first().evaluate(el => getComputedStyle(el).fontSize);
     const spanishCellSize = await page.locator("#theory-description table").first().locator("tbody tr").first().locator("td").nth(1).evaluate(el => getComputedStyle(el).fontSize);
     assert.equal(spanishCellSize, italianCellSize, "Spanish translations should match Italian text size in bilingual tables");
     if (i === 0) {
