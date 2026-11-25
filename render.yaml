@@ -8,4 +8,4 @@ services:
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /api/health
-    autoDeployTrigger: checksPass
+    autoDeployTrigger: commit
