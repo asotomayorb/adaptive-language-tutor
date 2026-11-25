@@ -2612,6 +2612,20 @@ function renderArticleLesson(languageName, locale) {
   ).join("");
   return '<p class="theory-slide-text">' + escapeHTML(lesson.intro) + '</p><table class="theory-pronoun-table"><thead><tr><th>Forma</th><th>Significado</th><th>Uso</th></tr></thead><tbody>' + rows + '</tbody></table>' + renderGrammarRuleContent(lesson.rule,lesson.exceptions) + '<section class="theory-example"><span>Ejemplos</span>' + examples + '</section>';
 }
+function formatItalianTheoryTitle(value) {
+  const translations = {
+    "essere":"ser",
+    "stare":"estar",
+    "passato prossimo":"pretérito perfecto compuesto",
+    "parlare":"hablar",
+    "andare":"ir"
+  };
+  return String(value).replace(/\b(essere|stare|passato prossimo|parlare|andare)\b/gi, match => {
+    const translation = translations[match.toLowerCase()];
+    const label = match.charAt(0).toUpperCase() + match.slice(1);
+    return '«<em>' + label + '</em>» (' + translation + ')';
+  });
+}
 function renderItalianAppliedTopic(category, index, locale) {
   const renderLines = (value) => String(value).split("<br>").map(part => escapeHTML(part)).join('<br>');
   const renderSpokenVariants = (value) => String(value).replace(/<br\s*\/?>/gi, " / ").split(/\s*\/\s*/).map(part => {
@@ -2628,7 +2642,7 @@ function renderItalianAppliedTopic(category, index, locale) {
     return '<p class="theory-slide-text">Los pronombres indican quién realiza la acción. «<em>Essere</em>» expresa identidad y características; «<em>stare</em>» expresa estado o condición. Observa cada elemento por separado:</p>' +
       '<h3>Pronombres personales</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
       pronouns.map(([term,meaning]) => '<tr><td><strong class="theory-target-word">' + term + '</strong> ' + speakerButton(term,locale) + '</td><td>' + meaning + '</td></tr>').join("") +
-      '</tbody></table><h3>Verbos «<em>essere</em>» y «<em>stare</em>»</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Persona</th><th>«<em>Essere</em>»</th><th>«<em>Stare</em>»</th></tr></thead><tbody>' +
+      '</tbody></table><h3>Verbos essere y stare</h3><table class="theory-pronoun-table theory-bilingual-table theory-verb-comparison-table"><thead><tr><th>Persona</th><th>Essere</th><th>Stare</th></tr></thead><tbody>' +
       verbs.map(([person,essere,stare]) => '<tr><td>' + person + '</td><td>' + renderSpokenVariants(essere) + '</td><td>' + renderSpokenVariants(stare) + '</td></tr>').join("") +
       '</tbody></table>';
   }
@@ -2724,7 +2738,8 @@ function openTheoryTopic(index) {
   else if (activeTheoryCategory === "Gramática" && sourceIndex === 2) detailMarkup = renderVerbLesson(languageName);
   else if (activeTheoryCategory === "Gramática" && sourceIndex >= 3) detailMarkup = renderTenseLesson(languageName, sourceIndex);
   else if (sampleByTopic) detailMarkup += '<section class="theory-example"><span>' + escapeHTML(sampleLabel) + ' · ' + escapeHTML(languageDefinitions[$("language").value]?.label || languageName) + '</span><p class="theory-target-word">' + escapeHTML(sampleByTopic) + '</p></section>';
-  $("theory-title").textContent = title;
+  detailMarkup = detailMarkup.replace(/<h3>([\s\S]*?)<\/h3>/g, (_, heading) => '<h3>' + formatItalianTheoryTitle(heading) + '</h3>');
+  $("theory-title").innerHTML = formatItalianTheoryTitle(title);
   const categoryIcon = theoryCategoryIcons[activeTheoryTopics[activeTheoryIndex]?.[3]] || "";
   $("theory-category").innerHTML = '<span class="theory-category-icon" aria-hidden="true">' + categoryIcon + '</span><span>' + escapeHTML(activeTheoryCategory) + '</span>';
   $("theory-breadcrumb").textContent = "A1 · Principiante > " + (theoryUnits[activeTheoryUnit]?.title || "");
