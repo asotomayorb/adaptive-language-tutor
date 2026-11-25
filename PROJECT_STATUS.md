@@ -1170,3 +1170,9 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Browser E2E amplía cobertura a los cuatro subtemas de Unidad 2 y valida títulos, contenido, reglas previas a tablas, variantes TTS y columnas equilibradas. Se corrigieron errores de navegación de la prueba; último run `45606335111` sobre `e08b88c` pendiente al registrar este estado.
 - `npm run check` y `npm test` aprobados en run [45606123743](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45606123743), commit `26c848e`.
 - Render no actualizado; rama principal intacta. No integrar ni desplegar hasta Browser E2E aprobado y revisión del diff.
+### Validación final de pulido de Unidad 2 — 25-11-2026
+- Browser E2E aprobado en [run 45606335111](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45606335111), commit `e08b88c`.
+- `npm run check` y `npm test` aprobados en [run 45606123743](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45606123743), commit `26c848e`.
+- La cobertura E2E confirma los cuatro subtemas de Unidad 2, contenido asociado a cada título, reglas antes de las tablas, anchuras equilibradas y TTS fragmentado.
+- Sin deploy Render ni integración a la rama principal. Pendiente revisión visual/táctil Android.
+- Checkpoint propuesto para aprobación del usuario: «Unidad 2 con contenido alineado y pulido inicial; reglas antes de tablas, columnas equilibradas y TTS por variantes; CI aprobado; Render y revisión Android pendientes». No iniciar el siguiente bloque hasta confirmación.
