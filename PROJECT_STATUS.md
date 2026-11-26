@@ -1386,3 +1386,11 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 
 - Corrección de cascada posterior: el selector de alta especificidad que aún fijaba 13px fue actualizado para respetar 17px en escritorio y 15px en móvil, incluidos los términos italianos destacados. Commit CSS final: `c3f704d`.
 - Estado de validación: pendiente de ejecución automatizada en GitHub Actions y de publicación/verificación en Render. La prueba humana queda pendiente hasta confirmar ambos.
+
+
+### Uniformidad tipográfica de tablas en todos los subtemas — 26-11-2026
+- Checkpoint previo registrado en README: commit `fc8ef46dbc5c9bddfb028c8bbe9f10298acc3c27`.
+- CSS global de teoría fuerza el mismo tamaño de cuerpo en todas las tablas: 17px escritorio / 15px móvil. Incluye traducciones, formas italianas resaltadas, párrafos/listas dentro de celdas y controles TTS; encabezados mantienen tamaño propio.
+- E2E recorre subtemas de Unidades 1 y 2 y comprueba que todas las celdas de cuerpo de tabla midan 15px en viewport móvil.
+- Commits: `36c6944` (CSS), `b8353b8` (E2E), documentación en curso.
+- Validación automatizada, inspección visual y Render deploy pendientes. La revisión no está marcada como validada.
