@@ -2670,7 +2670,7 @@ function renderItalianAppliedTopic(category, index, locale) {
     const articleTable = (title, rows) =>
       '<h3>' + title + '</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Singular</th><th>Plural</th><th>Sustantivo / regla</th></tr></thead><tbody>' +
       rows.map(([singular, plural, rule]) => {
-        const match = singular.match(/^(.*?) \\((masculino|femenino)\\)$/);
+        const match = singular.match(/^(.*?) \((masculino|femenino)\)$/);
         const singularCell = match ? renderSpokenVariants(match[1]) + ' <span>(' + match[2] + ')</span>' : renderSpokenVariants(singular);
         return '<tr><td>' + singularCell + '</td><td>' + (plural === "—" ? "—" : renderSpokenVariants(plural)) + '</td><td>' + escapeHTML(rule) + '</td></tr>';
       }).join("") +
