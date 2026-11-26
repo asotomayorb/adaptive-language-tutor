@@ -862,3 +862,10 @@ Para cada escenario registrar:
 - [x] Browser E2E aprobado: [run 45826567302](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826567302).
 - [ ] Render Preview actualizado al commit final y verificado LIVE.
 - [ ] Prueba visual, táctil y auditiva en Android real.
+
+
+### Publicación Render — ajuste de adjetivos — 26-11-2026
+- [x] Render Preview LIVE: deploy `dep-dc430l3l550s7381s230`, commit `89aa6ccd2380f8a1000d89876be791fd591e2ad4`.
+- [x] Build y arranque de aplicación confirmados en logs Render.
+- [x] Tests y Browser E2E aprobados para el HEAD publicado.
+- [ ] Prueba visual, táctil y auditiva en Android real: vocabulario previo a ejemplos, tablas de ancho y tipografía uniformes, seis controles de pronunciación.
