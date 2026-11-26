@@ -1,28 +1,62 @@
 # Registro de estado del proyecto — Adaptive Language Tutor
 
-**Última actualización:** 18-11-2026  
-**Rama activa de preview:** `feature/mobile-bottom-navigation`  
-**Pull request:** [#2 – Improve adaptive tutor pedagogy and AI integration](https://github.com/asotomayorb/adaptive-language-tutor/pull/2)  
-**Estado global:** sesiones reales Gemini aprobadas en `pt-BR` y `fr-FR` (3 turnos y 5 fragmentos de voz por idioma); una sesión real adicional de navegador en francés completó persistencia y exportación. Tests unitarios (71) y Browser E2E aprobados en el commit `2425e81` (runs [#44127681116](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44127681116) y [#44127681802](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/44127681802)). Se añadió repaso espaciado de patrones lingüísticos mediante autoevaluación, incluyendo conversaciones libres sin respuesta única, y pistas adicionales generadas bajo demanda sin consumir turnos, con reproducción manual de sus fragmentos en el idioma objetivo. La comprobación inicial de salud tiene timeout de 5 s; se corrigió la exposición de archivos estáticos y se añadieron pruebas de rutas privadas y cabeceras de seguridad. Audio TTS está parcialmente implementado y probado en Chromium; la validación auditiva en dispositivos reales y la revisión de seguridad siguen pendientes. No declarar listo para prueba humana amplia ni desplegar públicamente todavía.
+**Última actualización del resumen operativo:** 26-11-2026  
+**Rama activa de desarrollo/Preview:** `feature/mobile-bottom-navigation`  
+**HEAD actual:** `dcea0b5554fe0ec9a114518123b6c0a58b329f78`  
+**Pull requests relacionados:** [#3 – Mobile navigation](https://github.com/asotomayorb/adaptive-language-tutor/pull/3) y [#2 – AI tutor pedagogy](https://github.com/asotomayorb/adaptive-language-tutor/pull/2) permanecen abiertos; [#8 – Unit 2 clarity](https://github.com/asotomayorb/adaptive-language-tutor/pull/8) también permanece abierto y requiere conservar su rama mientras exista.
 
-Este documento es el registro detallado del proyecto. El README principal mantiene únicamente la etapa actual y enlaza aquí para evitar duplicar información y mantener la documentación operativa breve.
+## Estado operativo vigente — 26-11-2026
 
-## Resumen ejecutivo
+- **Workspace Render confirmado:** My Workspace, ID `tea-dbus0u5g1s2s73coteeg`.
+- **Servicio Preview:** `adaptive-language-tutor-preview-5b3d`, ID `srv-dbus3hnf3r2c739j9ir0`; URL https://adaptive-language-tutor-preview-5b3d.onrender.com/.
+- **Deploy LIVE:** `dep-dc44gf56e07s73e58ajg`, commit servido `a9470686a65fba54c4e2bbb192326d3b58fe12ab`.
+- **HEAD de desarrollo:** `dcea0b5554fe0ec9a114518123b6c0a58b329f78`.
+- La comparación GitHub entre el commit LIVE y HEAD muestra 10 commits posteriores que modifican únicamente `README.md`, `PROJECT_STATUS.md` y `PRODUCT_SPEC.md`; no hay cambios en archivos de ejecución, contenido, estilos ni pruebas. Por tanto, el código de aplicación desplegado coincide con el código del HEAD actual. No confundir esta equivalencia funcional con que Render esté sirviendo el mismo SHA.
+- **Tests:** aprobados en HEAD `dcea0b5`, run [45859331932](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45859331932).
+- **Browser E2E:** aprobado en HEAD `dcea0b5`, run [45859331888](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45859331888).
+- **Prueba humana:** queda pendiente la revisión visual, táctil y auditiva en Android real de tablas de Teoría en Unidades 1 y 2, TTS individual y saltos de palabra. La versión Preview contiene el código correspondiente y la automatización está aprobada.
+- **Checkpoint de recuperación:** rama `recovery/intermediate-theory-content`, commit `59c87d6a02d9dfe8ebc84de6e9417e29401f4a74`. Debe conservarse; no usarla como rama de desarrollo ni como fuente de Render.
 
-| Etapa | Área | Estado |
+## Auditoría de vigencia de archivos y ramas — 26-11-2026
+
+### Archivos: clasificación actual
+
+| Elemento | Diagnóstico | Acción |
 |---|---|---|
-| 1 | Base del repositorio y ejecución | Implementada; CI correcto en el último commit validado |
-| 2 | Tutor IA, proveedores y pedagogía | Implementada; sesión real Gemini validada en 3 turnos |
-| 3 | Pruebas automatizadas y CI | Aprobadas: 71 tests y Browser E2E en `2425e81` |
-| 4 | Auditoría funcional y técnica | En curso; quedan comprobaciones funcionales y de seguridad |
-| 5 | Validación con proveedor IA real | Smoke test Gemini aprobado; evaluación de calidad/costos y fallos pendiente |
-| 6 | Prueba humana y ajustes de experiencia | Pendiente |
-| 7 | Seguridad y preparación de producción | Pendiente |
-| 8 | Reintegración y comprobación de Replit | Aplazada hasta el final |
+| `.replit` | Configuración de ejecución Replit (`npm run dev`); el proyecto original Replit se conserva aparte. No prueba que el archivo esté abandonado. | Conservar; no sincronizar ni modificar Replit sin autorización. |
+| `src/content/en.js`, `src/content/pt-BR.js` | Catálogos de ejercicios de idiomas previos; el alcance UI vigente prioriza Teoría/Estadísticas e Italiano, pero los módulos tutor/entrenamiento permanecen en el repositorio. | Conservar como contenido de módulos retenidos; no borrar por estar fuera de navegación actual. |
+| `server/*`, `src/core/pedagogy.js`, `src/core/tutor-client.js` | Backend y lógica del tutor IA conservados para módulos y flujos no expuestos en la navegación actual. | Conservar; validar dependencias antes de cualquier retirada. |
+| `scripts/live-provider-smoke.js`, `scripts/live-browser-smoke.js` | Scripts declarados en `package.json` y usados por el workflow de smoke test real. | Activos; no obsoletos. |
+| `.github/workflows/live-provider-smoke.yml` | Se ejecuta manualmente o en la rama `feature/ai-tutor-pedagogy`; sigue relacionada con el PR #2. | Conservar mientras PR #2 y la validación del proveedor sigan vigentes. |
+| `HUMAN_TEST_PLAN.md` — apartados iniciales de tutor local/IA y múltiples idiomas | Reflejan flujos anteriores del producto; no describen la UI de alcance actual (Teoría/Estadísticas, Italiano). | Mantener como regresión de módulos retenidos, etiquetados como tales; no tratarlos como aceptación de la versión UI actual. |
+| `render.yaml` | Declara un servicio llamado `adaptive-language-tutor-preview`, mientras el servicio administrado actual tiene sufijo `-5b3d`. Puede ser nombre de Blueprint/instancia y no se verificó una sincronización Blueprint. | Revisar antes de usar Blueprint; no cambiar nombre ni crear recursos automáticamente. |
 
-**Etapa actual: 4.** La sesión real, CI y E2E están aprobados. Continuar con auditoría de flujo, cobertura real de audio y seguridad; todavía no avanzar a prueba humana.
+### Ramas: clasificación actual
+
+- **Conservar obligatoriamente:** `recovery/intermediate-theory-content` (checkpoint).
+- **Activa:** `feature/mobile-bottom-navigation` (Preview y PR #3).
+- **Mantener por dependencia de PR:** `feature/ai-tutor-pedagogy` (base de PR #3 y PR #2 abierto).
+- **Mantener por PR abierto:** `feature/unit-2-clarity-refinement` (PR #8 abierto; contiene commits propios respecto de la rama activa).
+- **Mantener por servicio Preview separado:** `rebuild/functional-baseline`.
+- **Candidatas a archivo/limpieza, no borradas:** `feature/openai-tutor-pedagogy` (PR #1 cerrado sin merge; su historia está contenida en la rama actual), `integration/unit-2-polish` (PR #6 cerrado sin merge, superado por el flujo v2) e `integration/unit-2-polish-v2` (PR #7 integrado; conserva commits históricos divergentes).
+- No se eliminó ninguna rama ni archivo en esta auditoría. Antes de borrar candidatas, confirmar que no hay enlaces externos, ramas de trabajo locales ni necesidad de recuperación.
+
+### Política de versiones
+
+No se recomienda numerar cada iteración de desarrollo. Para este proyecto es más útil registrar hitos verificables mediante SHA de commit, rama, runs de Tests/E2E y deploy LIVE. Mantener `package.json` versionado para metadatos del paquete y reservar tags/versiones semánticas para releases explícitos.
+
+### Pendientes derivados de la auditoría
+
+1. Etiquetar claramente el contenido inicial de `HUMAN_TEST_PLAN.md` como regresión de módulos retenidos y distinguirlo de la prueba de aceptación de la UI actual.
+2. Decidir más adelante si archivar las tres ramas candidatas indicadas; no hacerlo mientras no se autorice.
+3. Revisar `render.yaml` antes de cualquier operación Blueprint, por la diferencia de nombre frente al servicio Render existente.
+4. Completar prueba humana Android de tablas y pronunciación antes de dar por validada la experiencia visual/auditiva.
 
 ---
+
+Este documento es el registro detallado del proyecto. Las entradas antiguas se conservan como bitácora histórica; para conocer el estado actual, usar primero este resumen y después la entrada histórica más reciente del área correspondiente.
+
+## Resumen histórico de etapas — corte del 18-11-2026 (no vigente)
 
 ## Etapa 1 — Base del repositorio y ejecución
 
