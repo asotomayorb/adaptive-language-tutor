@@ -1594,3 +1594,6 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Último estado consultado: `update_in_progress`; todavía no hay confirmación LIVE ni verificación visual de la página publicada. No solicitar prueba humana ni declarar el preview listo hasta comprobarlo.
 - GitHub no reporta status checks ni workflow runs asociados directamente al commit CSS `c3f704d8914c7dec69e1193e4b966936da9f953c`; la validación automatizada de esta revisión sigue sin confirmación.
 - El preview anterior permanece en el último deploy LIVE `dep-dc430l3l550s7381s230` mientras el nuevo deploy no finalice.
+
+
+- Actualización de estado — 26-11-2026: Render finalizó el deploy `dep-dc446sm1egvs73f9mrs0` con estado `live` para el commit `b27534a3dfa7d5741a19cd0064aa57089c18ed29`. El preview ya sirve la rama que contiene los cambios de legibilidad. Sigue pendiente la comprobación visual en navegador y no hay status checks/workflow runs asociados al commit CSS, por lo que no se marca la revisión como validada ni se solicita todavía el checkpoint.
