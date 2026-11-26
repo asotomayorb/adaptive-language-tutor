@@ -34,7 +34,7 @@ try {
     localStorage.clear();
     window.__spoken = [];
     const synth = {
-      getVoices: () => [{ name: "French", lang: "fr-FR" }],
+      getVoices: () => [{ name: "Italian", lang: "it-IT" }],
       speak: utterance => window.__spoken.push({ text: utterance.text, lang: utterance.lang, voice: utterance.voice?.name }),
       cancel: () => {}
     };
@@ -52,9 +52,7 @@ try {
     return button && !button.disabled;
   }, null, { timeout: 10_000 });
 
-  await page.locator("#language").selectOption("other");
-  await page.locator("#custom-language-name").fill("Francés");
-  await page.locator("#custom-language-locale").fill("fr-FR");
+  await page.locator("#language").selectOption("Italiano");
   await page.locator("#duration").evaluate(select => {
     const option = document.createElement("option");
     option.value = "3";
@@ -67,11 +65,11 @@ try {
   await page.locator("#start-session").click();
   await waitForTutorState(page);
   assert.ok(await page.locator("#ai-answer").count(), "live AI session should present its first answer field");
-  assert.ok(await page.evaluate(() => window.__spoken.some(item => item.lang === "fr-FR")),
-    "live French tutor response should trigger target-locale speech");
+  assert.ok(await page.evaluate(() => window.__spoken.some(item => item.lang === "it-IT")),
+    "live Italian tutor response should trigger target-locale speech");
 
   for (let turn = 1; turn <= 3; turn += 1) {
-    await page.locator("#ai-answer").fill("Bonjour, je voudrais pratiquer.");
+    await page.locator("#ai-answer").fill("Vorrei esercitarmi in italiano.");
     await page.locator("#submit-ai-answer").click();
     await waitForTutorState(page);
     if (turn < 3) {
@@ -84,7 +82,7 @@ try {
   await page.locator("#finish-ai-session").click();
   await page.locator("#summary-panel").waitFor({ state: "visible" });
   const summaryText = await page.locator("#summary-content").innerText();
-  assert.match(summaryText, /Francés/, "summary should retain the selected custom language");
+  assert.match(summaryText, /Italiano/, "summary should retain the selected custom language");
   const stored = await page.evaluate(() =>
     JSON.parse(localStorage.getItem("adaptive-language-tutor.progress") || "{}")
   );
@@ -100,11 +98,11 @@ try {
   console.log(JSON.stringify({
     status: "passed",
     provider: "gemini",
-    targetLocale: "fr-FR",
+    targetLocale: "it-IT",
     turns: 3,
     persistedSessions: stored.sessions.length,
     exported: true,
-    speechSegments: await page.evaluate(() => window.__spoken.filter(item => item.lang === "fr-FR").length)
+    speechSegments: await page.evaluate(() => window.__spoken.filter(item => item.lang === "it-IT").length)
   }, null, 2));
 } finally {
   await browser.close();

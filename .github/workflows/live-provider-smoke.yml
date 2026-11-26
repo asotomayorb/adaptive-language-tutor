@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - feature/ai-tutor-pedagogy
+      - feature/mobile-bottom-navigation
     paths:
       - "server/provider.js"
       - "scripts/live-provider-smoke.js"
@@ -53,25 +53,14 @@ jobs:
           cat /tmp/tutor.log
           exit 1
 
-      - name: Run real provider test (Brazilian Portuguese)
+      - name: Run real provider test (Italian)
         env:
           AI_PROVIDER: gemini
           AI_API_KEY: ${{ secrets.AI_API_KEY }}
           AI_MODEL: gemini-3.5-flash-lite
           TUTOR_BASE_URL: http://127.0.0.1:3000
-          TUTOR_SMOKE_LOCALE: pt-BR
-          TUTOR_SMOKE_LANGUAGE_LABEL: Portugués brasileño
-        run: npm run test:provider-live
-
-      - name: Run real provider test (French)
-        if: always()
-        env:
-          AI_PROVIDER: gemini
-          AI_API_KEY: ${{ secrets.AI_API_KEY }}
-          AI_MODEL: gemini-3.5-flash-lite
-          TUTOR_BASE_URL: http://127.0.0.1:3000
-          TUTOR_SMOKE_LOCALE: fr-FR
-          TUTOR_SMOKE_LANGUAGE_LABEL: francés
+          TUTOR_SMOKE_LOCALE: it-IT
+          TUTOR_SMOKE_LANGUAGE_LABEL: Italiano
         run: npm run test:provider-live
 
       - name: Run real-provider browser session

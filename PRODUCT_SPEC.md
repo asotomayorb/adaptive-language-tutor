@@ -43,14 +43,16 @@ Reglas:
 
 ## 3. Idioma y audio
 
-- Idioma activo: italiano, locale `it-IT`.
-- El selector actual ofrece Italiano como única opción habilitada. No habilitar idiomas adicionales ni cambiar el catálogo sin una solicitud explícita.
-- Mantener el locale objetivo consistente en contenido, controles TTS y actividad.
+- Idioma de origen fijo: español (`es-CL`).
+- Idioma objetivo activo y único: italiano (`it-IT`).
+- La interfaz no ofrece selección de otros idiomas. No mantener catálogos, traducciones didácticas ni flujos paralelos para otras lenguas.
+- Si en el futuro se decide incorporar otro idioma, se reconstruirá desde cero replicando los criterios pedagógicos, editoriales y de presentación validados para italiano; no se reactivarán versiones antiguas.
+- Las consignas auxiliares, reglas, traducciones y explicaciones se presentan en español. El contenido que se aprende, produce o escucha se presenta en italiano.
 - En Teoría, la lectura automática está desactivada. El usuario activa la pronunciación manual del fragmento italiano.
 - Palabras y frases italianas breves se pueden pronunciar tocando directamente el texto subrayado; no llevan icono Play. Los fragmentos largos pueden usar un control Play individual. Cada control reproduce únicamente su fragmento y usa `it-IT`.
 - No reproducir traducciones españolas como si fueran italiano ni sustituir la voz objetivo por una voz española.
 - Al retroceder o cambiar de sección, detener audio y cancelar reproducciones pendientes.
-- En otros módulos, cada fragmento de audio debe declarar su locale explícitamente. Las consignas auxiliares en español usan `es-CL`; el contenido objetivo usa el locale del idioma elegido.
+- En los módulos futuros de Ruta y Entrenamiento, las consignas auxiliares usan `es-CL` y el contenido objetivo usa `it-IT`.
 - Si no hay una voz compatible, no asignar la voz de otro idioma. En Android/Chrome, gestionar la carga de voces y validar el sonido real en dispositivo; una llamada TTS sin error no demuestra que se haya oído.
 
 ## 4. Teoría: jerarquía y navegación
@@ -125,7 +127,7 @@ Unidad 2 conserva cuatro subtemas desarrollados:
 - Artículos y adjetivos: conservar el párrafo introductorio breve, tabla de reglas Terminación / Femenino / Plural y tabla de ejemplos Terminación / Ejemplo aplicado. Para adjetivos en -o: femenino -a; plural -i masculino y -e femenino. Para adjetivos en -e: misma forma en singular masculino/femenino y plural -i. Las frases italianas llevan TTS individual y traducción española.
 - Edad y procedencia: explicar el uso de `avere`, `essere di` y `venire da`, además del trato formal/informal cuando corresponda; evitar aclaraciones parentéticas redundantes en las traducciones.
 
-Unidad 1 debe permanecer intacta durante cambios limitados a Unidad 2. Las Unidades 3–6 conservan sus títulos y jerarquía, pero su contenido desarrollado está pendiente; no inventar que ya está completo.
+Unidad 1 debe permanecer intacta durante cambios limitados a Unidad 2. Las Unidades 3–6 conservan únicamente títulos de unidades y subtemas, categorías y jerarquía. El cuerpo de cada subtema debe permanecer vacío hasta su reconstrucción, tomando como referencia el contenido validado de las Unidades 1 y 2.
 
 ## 6. Estética general
 
@@ -141,13 +143,13 @@ Unidad 1 debe permanecer intacta durante cambios limitados a Unidad 2. Las Unida
 
 - Estadísticas es la única sección disponible para métricas, historial y evolución.
 - Mostrar únicamente datos reales guardados; sin sesiones, usar estado vacío y no datos ficticios.
-- La tabla comparativa por idioma puede mostrar sesiones, palabras, precisión y progreso de Ruta cuando esos datos existan.
+- La tabla y los gráficos muestran únicamente actividad del idioma italiano. Los registros locales heredados de otros idiomas no se mezclan en las métricas actuales.
 - Los gráficos deben priorizar el viewport móvil, usar el ancho disponible y evitar scroll horizontal de la página.
 - No duplicar métricas en Teoría ni en pantallas de Ruta/Entrenamiento.
 
 ## 8. Requisitos conservados para Ruta y Entrenamiento
 
-Estos módulos permanecen temporalmente inaccesibles desde la navegación. Las siguientes reglas documentan su comportamiento previsto/implementado en el repositorio para evitar regresiones al reactivarlos; antes de habilitarlos, revisar el código y el estado técnico real.
+Estos módulos permanecen temporalmente inaccesibles desde la navegación y en espera de desarrollo. Se conserva solo la infraestructura que tenga utilidad para su futura reactivación; antes de habilitarlos, revisar el código y el estado técnico real. Su par lingüístico será español (`es-CL`) → italiano (`it-IT`).
 
 ### Ruta
 - Ruta es el recorrido principal, no una sección adicional llamada «Modo historia».
@@ -177,10 +179,12 @@ Estos módulos permanecen temporalmente inaccesibles desde la navegación. Las s
 
 ## 12. Registro breve de decisiones vigentes
 
-- **26-11-2026:** el usuario confirma que el aspecto y funcionamiento de Teoría en Unidades 1 y 2 es correcto. Se toma como checkpoint de producto antes de continuar con código.
+- **26-11-2026:** se fija el par español (`es-CL`) → italiano (`it-IT`) como único alcance activo. Las versiones anteriores de otros idiomas se descartan; si se amplía el producto, se reconstruirá desde el modelo italiano.
+- **26-11-2026:** las Unidades 3–6 conservan solo títulos y jerarquía; los cuerpos de todos sus subtemas permanecen vacíos hasta su reconstrucción desde Unidades 1 y 2.
+- **26-11-2026:** el usuario confirma que Render Preview funciona correctamente.
 - **26-11-2026:** el cuerpo de texto de las tablas de Teoría usa 17 px en escritorio y 15 px en móvil; encabezados con jerarquía propia y palabras sin cortes arbitrarios.
 - **26-11-2026:** tablas y ejemplos deben tener columnas proporcionadas al contenido, encabezados breves, reglas antes de tablas y TTS individual por variante italiana.
-- **25-11-2026:** se conserva A1 con seis unidades; Unidad 1 intacta y cuatro subtemas desarrollados en Unidad 2. Unidades 3–6 mantienen títulos, con contenido pendiente.
+- **25-11-2026 (criterio vigente):** se conserva A1 con seis unidades; Unidad 1 intacta y cuatro subtemas desarrollados en Unidad 2. Unidades 3–6 mantienen títulos y cuerpos vacíos.
 - **26-11-2026:** se confirma conservar `recovery/intermediate-theory-content` como rama destinada a guardar checkpoints; no eliminarla ni usarla para desarrollo cotidiano o despliegue. Rama activa: `feature/mobile-bottom-navigation`; Render canónico asociado a esta rama.
 - **21-11-2026:** la app abre en Teoría; Ruta y Entrenamiento están temporalmente bloqueados; Italiano es la única opción de idioma habilitada.
 

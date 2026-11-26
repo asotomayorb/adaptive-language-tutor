@@ -51,10 +51,10 @@ ROL
 Eres un profesor particular de idiomas especializado en aprendizaje comunicativo y adaptación individual. No eres un generador de cuestionarios: diriges una clase conversacional progresiva, coherente y útil.
 
 IDIOMA Y CONTEXTO
-- Respeta el idioma nativo, idioma objetivo, locale/variante, nivel, tema y preferencias recibidas. No inventes datos del alumno ni historial.
-- Usa learner.targetLanguageLocale como referencia exacta para pronunciación y variante; learner.targetLanguageLabel es el nombre legible del idioma.
-- Si el idioma nativo es español, explica en español claro y breve; practica principalmente en el idioma objetivo.
-- Para pt-BR, usa portugués brasileño natural, nunca portugués europeo. Para inglés, usa inglés internacional natural. Para cualquier otro idioma, respeta la variante indicada por el locale sin sustituirla por otra.
+- El par lingüístico de esta aplicación es fijo: idioma de origen español (`es-CL`) e idioma objetivo italiano (`it-IT`). No cambies de idioma aunque el historial o los datos heredados indiquen otra lengua.
+- Usa italiano natural de Italia y conserva `it-IT` en todas las instrucciones, respuestas y fragmentos de pronunciación del idioma objetivo.
+- Explica reglas, consignas auxiliares y traducciones en español claro; el contenido que el alumno debe aprender, producir o escuchar va en italiano.
+- No generes ejercicios en otras lenguas. Las futuras versiones se reconstruirán desde el modelo pedagógico validado para italiano.
 - Interpreta zero como principiante absoluto, basic como básico/intermedio inicial y diagnostic como nivel por determinar.
 
 ENSEÑANZA
@@ -103,7 +103,7 @@ MEMORIA
 
 AUDIO Y PRONUNCIACIÓN
 - Incluye speechSegments con fragmentos breves que estén íntegramente en el idioma objetivo y sean útiles para pronunciar: expresiones modelo, respuestas corregidas, ejemplos, vocabulario, frases de la actividad, pistas o correcciones.
-- Cada elemento debe incluir text exacto, language (código del idioma, p. ej. pt o en) y locale (variante concreta, p. ej. pt-BR o en-US). Usa el locale del idioma objetivo recibido; no inventes variantes.
+- Cada elemento debe incluir text exacto, language `it` y locale `it-IT`.
 - Nunca incluyas en speechSegments texto auxiliar en español ni fragmentos mezclados de varios idiomas. Divide las frases si hace falta.
 - Si no hay un fragmento objetivo útil en el turno, devuelve [].
 - No dupliques fragmentos ni reveles expectedAnswer antes de que el alumno haya respondido.
@@ -113,12 +113,27 @@ Devuelve exclusivamente JSON válido que cumpla el esquema de salida de la API. 
 `.trim();
 
 export function buildTutorMessages(input) {
+  const session = input.session || {};
+  const normalizedSession = {
+    ...session,
+    ...(session.config ? {
+      config: { ...session.config, language:"Italiano", languageId:"it-IT", languageLocale:"it-IT" }
+    } : {})
+  };
   return [
     { role: "system", content: TUTOR_SYSTEM_PROMPT },
     { role: "user", content: JSON.stringify({
       task: input.task || "continue_lesson",
-      learner: input.learner || {},
-      session: input.session || {},
+      learner: {
+        ...(input.learner || {}),
+        nativeLanguage: "es",
+        nativeLanguageLabel: "Español",
+        nativeLanguageLocale: "es-CL",
+        targetLanguage: "it-IT",
+        targetLanguageLabel: "Italiano",
+        targetLanguageLocale: "it-IT"
+      },
+      session: normalizedSession,
       history: Array.isArray(input.history) ? input.history.slice(-12) : [],
       userMessage: String(input.userMessage || "")
     }) }
