@@ -1472,3 +1472,11 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Implementación registrada en commits `5cb188b`, `0934272`, `ba5fec3`, `cbdf4d4`, `bb706a3`, `83a0539`. Cambios funcionales y E2E actualizados. Validación automatizada y nuevo despliegue de esta revisión aún pendientes; no confundir con el checkpoint validado anterior.
 
 - Deploy de esta revisión: `dep-dc416g7f3r2c73a044u0`, commit `828034a732b0770b9eb8c63718d15e335083f67a`; iniciado en Render tras los cambios y confirmado aún `build_in_progress` en la última consulta. No declarado live. E2E/npm check no ejecutados y preview aún no inspeccionado.
+
+
+### Checkpoint confirmado y propuesta visual pendiente — 26-11-2026
+- El usuario confirmó como correcto el despliegue y validó el checkpoint de la revisión anterior.
+- Siguiente cambio solicitado para «Artículos y adjetivos»: conservar el primer punto introductorio como párrafo normal; transformar los dos puntos restantes en un esquema visual de reglas (presentar propuesta en chat y esperar aprobación antes de editar código).
+- La propuesta visual debe expresar: (a) adjetivos terminados en -o: femenino -a; plural -i masculino y -e femenino; (b) adjetivos terminados en -e: misma forma en singular masculino/femenino y plural -i.
+- Ejemplos: reemplazar los párrafos alternados actuales por el formato de ejemplos aplicado en otros subtemas, basado en tabla «Pronombre | Ejemplo aplicado», con frase italiana destacada + TTS y traducción española debajo. Mostrar esquema en chat y esperar aprobación antes de implementar.
+- No se modificó código en esta etapa. Mantener intactos fondo claro, tipografía común, resaltado de italiano y TTS.
