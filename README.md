@@ -1579,3 +1579,9 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 
 - Corrección de cascada posterior: el selector de alta especificidad que aún fijaba 13px fue actualizado para respetar 17px en escritorio y 15px en móvil, incluidos los términos italianos destacados. Commit CSS final: `c3f704d`.
 - Estado de validación: pendiente de ejecución automatizada en GitHub Actions y de publicación/verificación en Render. La prueba humana queda pendiente hasta confirmar ambos.
+
+
+### Confirmación de cuenta Render — 26-11-2026
+- El usuario confirmó reutilizar la cuenta Render previamente utilizada para el preview `adaptive-language-tutor-preview-5b3d.onrender.com` (cuenta conectada «Render»).
+- Render solicita seleccionar explícitamente el workspace antes de consultar o modificar servicios. La cuenta muestra un único workspace disponible: `My Workspace` (`tea-dbus0u5g1s2s73coteeg`). Se solicita confirmación del usuario antes de operar sobre ese workspace.
+- No se disparó ningún deploy en esta etapa.
