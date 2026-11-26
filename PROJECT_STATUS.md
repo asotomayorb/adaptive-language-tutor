@@ -1309,3 +1309,10 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Próximo paso: ejecutar validaciones disponibles y confirmar el auto-deploy/preview; luego inspección visual móvil. Mantener checkpoint anterior registrado como aprobado, pero no marcar esta revisión como validada hasta completar pruebas.
 
 - Deploy de esta revisión: `dep-dc416g7f3r2c73a044u0`, commit `828034a732b0770b9eb8c63718d15e335083f67a`; iniciado en Render tras los cambios y confirmado aún `build_in_progress` en la última consulta. No declarado live. E2E/npm check no ejecutados y preview aún no inspeccionado.
+
+
+## Formato de tablas y ejemplos — actualización 26-11-2026
+- «Artículos y adjetivos» implementa la estructura aprobada: párrafo introductorio breve; tabla de reglas Terminación/Femenino/Plural; tabla de ejemplos Terminación/Ejemplo aplicado con traducción española y TTS individual.
+- Se reemplazó la lista de reglas y los párrafos de ejemplos por tablas compactas. Se ajustaron proporciones de columnas para dar prioridad al contenido más informativo.
+- Criterio para próximas propuestas e implementaciones: preferir tablas simples y concisas a párrafos o punteos extensos; seleccionar columnas según relevancia de los datos; mantener ejemplos vinculados a su regla/categoría y no usar pronombres como agrupador salvo que sean el eje pedagógico.
+- La revisión visual de esta modificación requiere CI, Browser E2E y verificación del preview; no declarar validada hasta completar esas comprobaciones.
