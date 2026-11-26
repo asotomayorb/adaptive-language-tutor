@@ -1496,3 +1496,9 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Criterio visual reutilizable para los siguientes subtemas/tablas/ejemplos: priorizar tablas sencillas frente a párrafos o listas extensas; definir columnas según los elementos más relevantes y su peso informativo; usar encabezados breves, distribución proporcional al contenido y ejemplos agrupados por categoría/terminación (no por pronombres cuando no corresponda). Mantener introducciones breves solo cuando aporten contexto.
 - Mantener el estilo base existente: fondo claro, tipografía actual, términos italianos destacados y controles TTS individuales. No extender automáticamente este cambio a subtemas ya aprobados sin una solicitud de revisión.
 - Se actualizó la cobertura Browser E2E para comprobar encabezados, reglas, terminaciones, traducciones y tres controles TTS. Validación y publicación quedan sujetas al resultado real de CI/Render.
+
+
+### Corrección de aserción E2E preexistente — 26-11-2026
+- La primera ejecución Browser E2E tras el nuevo formato falló antes de llegar a «Artículos y adjetivos»: la aserción de Países e idiomas buscaba l’Italia, aunque la tabla vigente y aprobada muestra Italia (Italia) sin artículo.
+- Se corrigió únicamente el término esperado por la prueba a (Italia); se conserva además la comprobación de italiano. No se cambió contenido de la lección.
+- Reejecutar Browser E2E sobre el HEAD actualizado. El fallo inicial no se atribuye al cambio de adjetivos; no desplegar hasta que E2E apruebe.
