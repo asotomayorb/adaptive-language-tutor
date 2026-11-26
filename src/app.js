@@ -2661,7 +2661,7 @@ function renderItalianAppliedTopic(category, index, locale) {
   if (category === "Gramática" && index === 1) {
     const concordanceRule = '<p class="theory-slide-text">El artículo concuerda con el sustantivo en género y número.</p>';
     const articleTable = (title, rows) =>
-      '<h3>' + title + '</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Singular</th><th>Plural</th><th>Sustantivo / regla</th></tr></thead><tbody>' +
+      '<h3>' + title + '</h3><table class="theory-pronoun-table theory-bilingual-table article-concordance-table"><thead><tr><th>Singular</th><th>Plural</th><th>Sustantivo / regla</th></tr></thead><tbody>' +
       rows.map(([singular, plural, rule]) => {
         const match = singular.match(/^(.*?) \((masculino|femenino)\)$/);
         const singularCell = match ? renderSpokenVariants(match[1]) + ' <span>(' + match[2] + ')</span>' : renderSpokenVariants(singular);
@@ -2678,11 +2678,11 @@ function renderItalianAppliedTopic(category, index, locale) {
       ]) +
       articleTable("Artículos indefinidos", [
         ["un (masculino)", "—", "Consonante ordinaria o vocal; sin apóstrofo"],
-        ["uno (masculino)", "—", "s + consonante, z, gn, ps, x…"],
+        ["uno (masculino)", "—", "s seguida de consonante; z, gn, ps o x al inicio de palabra"],
         ["una (femenino)", "—", "Consonante"],
         ["un’ (femenino)", "—", "Vocal"]
       ]) +
-      '';
+      ;
   }
   if (category === "Gramática" && index === 2) {
     const rules = [
@@ -2697,7 +2697,7 @@ function renderItalianAppliedTopic(category, index, locale) {
       ["interessante", "interessante", "interessanti"]
     ];
     return ruleList +
-      '<h3>Concordancia de adjetivos</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Adjetivo</th><th>Singular (masculino / femenino)</th><th>Plural (masculino / femenino)</th></tr></thead><tbody>' +
+      '<h3>Concordancia de adjetivos</h3><table class="theory-pronoun-table theory-bilingual-table adjective-concordance-table"><thead><tr><th>Adjetivo</th><th>Singular (masculino / femenino)</th><th>Plural (masculino / femenino)</th></tr></thead><tbody>' +
       adjectiveRows.map(([adjective,singular,plural]) => '<tr><td>' + renderSpokenVariants(adjective) + '</td><td>' + renderSpokenVariants(singular) + '</td><td>' + renderSpokenVariants(plural) + '</td></tr>').join("") +
       '</tbody></table><section class="theory-example"><span>Ejemplos</span><p class="theory-target-word">Un ragazzo italiano. ' + speakerButton("Un ragazzo italiano.",locale) + '</p><p>Un chico italiano.</p><p class="theory-target-word">Una ragazza italiana. ' + speakerButton("Una ragazza italiana.",locale) + '</p><p>Una chica italiana.</p><p class="theory-target-word">Due ragazze interessanti. ' + speakerButton("Due ragazze interessanti.",locale) + '</p><p>Dos chicas interesantes.</p></section>';
   }
@@ -2740,7 +2740,7 @@ function renderItalianAppliedTopic(category, index, locale) {
       ["Francia", "Francia", "francese", "francese"],
       ["Portogallo", "Portugal", "portoghese", "portoghese"]
     ];
-    return '<table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>País</th><th>Gentilicio</th><th>Idioma</th></tr></thead><tbody>' +
+    return '<table class="theory-pronoun-table theory-bilingual-table country-language-table"><thead><tr><th>País</th><th>Gentilicio</th><th>Idioma</th></tr></thead><tbody>' +
       items.map(([country, translation, demonym, language]) =>
         '<tr><td><strong class="theory-target-word">' + escapeHTML(country) + '</strong> ' + speakerButton(country,locale) + ' <span>(' + escapeHTML(translation) + ')</span></td><td>' + renderSpokenVariants(demonym) + '</td><td>' + renderSpokenVariants(language) + '</td></tr>'
       ).join("") +
