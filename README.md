@@ -1460,3 +1460,5 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - El ajuste visual no autoriza cambiar el tema global ni el diseño de los demás subtemas.
 
 - Ajuste de implementación: las etiquetas de género y el guion de plural de indefinidos no se envían a TTS; solo las formas italianas conservan lectura individual.
+
+- 26-11-2026: el usuario confirmó que el preview continúa igual. La versión desplegada sigue desactualizada porque el auto-deploy GitHub–Render no ha funcionado. Render devuelve un único workspace disponible (`My Workspace`, `tea-dbus0u5g1s2s73coteeg`); antes de consultar/modificar deploys se requiere confirmación explícita del usuario para operar en ese workspace. No se disparó deploy manual ni se afirmó que los cambios estén visibles.
