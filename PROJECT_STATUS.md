@@ -1359,3 +1359,11 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Segunda E2E detectó que la normalización de espacios de la aserción nueva estaba escapada incorrectamente y Playwright devolvía tabulaciones entre celdas. Se corrigió para normalizar cualquier espacio en blanco antes de comparar las seis filas.
 - No se modificó contenido funcional en estas dos correcciones; ambas afectan solo al test Browser E2E. Commit de normalización: `d490b8f72ea452e1e020beb140ceb5c4740c9333`.
 - Nueva ejecución Tests y Browser E2E pendiente sobre el HEAD actualizado. Render sigue sirviendo el commit previo `e781482`; no desplegar hasta que E2E apruebe.
+
+
+### Validación automatizada del ajuste de adjetivos — 26-11-2026
+- Se resolvieron las aserciones E2E que fallaron durante la ampliación: orden de las tres tablas, normalización de espacios en las seis filas de vocabulario y consistencia tipográfica/ancho.
+- Para igualar el ancho exterior, la tabla de ejemplos dejó de quedar limitada por el padding de su contenedor de resaltado; las tres tablas comparten ahora el mismo marco de ancho completo.
+- Se reforzó la especificidad CSS para que todas las celdas del cuerpo de las tres tablas usen 13px, incluso en columnas que antes heredaban el tamaño grande de tablas bilingües.
+- HEAD de código validado: `990430b17264f20fb60ba633d1b64746f8a56339`. Tests aprobados: [45826567300](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826567300). Browser E2E aprobado: [45826567302](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826567302).
+- La publicación Render sigue pendiente: el servicio Preview aún sirve `e781482dba287f8ac812bd6aff1abacee5b95988`; el auto-deploy no generó un deploy tras el push. No solicitar todavía prueba humana.
