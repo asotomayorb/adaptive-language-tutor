@@ -179,7 +179,8 @@ try {
       if(i===0) assert.deepEqual(headers,["país","gentilicio","idioma"],"country table should identify country, demonym and language separately");
       else if(i===1) assert.deepEqual(headers,["singular","plural","sustantivo / regla"],"article tables should use the approved three-column scheme");
       else if(i===2 && tableIndex===0) assert.deepEqual(headers,["terminación","femenino","plural"],"adjective rule table should show endings, feminine and plural forms");
-      else if(i===2 && tableIndex===1) assert.deepEqual(headers,["terminación","ejemplo aplicado"],"adjective examples should be organized by ending");
+      else if(i===2 && tableIndex===1) assert.deepEqual(headers,["italiano","español"],"adjective vocabulary should use Italian and Spanish columns");
+      else if(i===2 && tableIndex===2) assert.deepEqual(headers,["terminación","ejemplo aplicado"],"adjective examples should be organized by ending");
       else assert.deepEqual(headers,["italiano","español"],"bilingual tables should use consistent column headings");
       assert.equal(await table.locator("thead em").count(),0,"table headings must remain plain");
       const widths=await table.locator("thead th").evaluateAll(cells=>cells.map(cell=>cell.getBoundingClientRect().width));
