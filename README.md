@@ -1605,3 +1605,12 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - El estado guardado incluye el criterio ya establecido para «Artículos y adjetivos»: tablas con ancho exterior y tipografía de cuerpo uniforme; en móvil, el tamaño de referencia es 15px (escritorio 17px), con encabezados de jerarquía diferenciada.
 - Alcance pendiente de esta revisión: aplicar ese mismo tamaño de texto de cuerpo a todas las tablas de todos los subtemas de Teoría, tomando «Artículos y adjetivos» y las tablas de artículos como referencia. No cambiar tamaños de encabezados ni el diseño/contenido de las tablas.
 - Este checkpoint registra el punto de partida solicitado; no equivale a validación visual integral. La comprobación automatizada de la revisión anterior no aparece asociada al commit CSS y queda pendiente.
+
+
+### Uniformidad tipográfica de tablas en todos los subtemas — 26-11-2026
+- Checkpoint previo guardado por solicitud del usuario en el commit `fc8ef46dbc5c9bddfb028c8bbe9f10298acc3c27`.
+- Se extiende a todas las tablas del contenido de Teoría el tamaño de cuerpo ya aplicado en «Artículos y adjetivos»: 17px en escritorio y 15px en móvil, incluidos los términos italianos resaltados, traducciones, texto en párrafos dentro de celdas y controles de pronunciación.
+- Los encabezados de tabla conservan su jerarquía y tamaño independiente; no se cambian contenido, estructura, proporciones de columnas ni estilo visual de las tablas.
+- Browser E2E amplía las comprobaciones para recorrer las tablas de los subtemas de las unidades 1 y 2 y verificar 15px en móvil.
+- Commits de esta revisión: CSS `36c6944`; Browser E2E `b8353b8`.
+- Estado: pendiente de ejecutar validaciones automatizadas y publicar/verificar el preview Render. No declarar validado hasta que Tests, Browser E2E y el deploy estén confirmados.
