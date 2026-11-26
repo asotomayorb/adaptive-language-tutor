@@ -195,9 +195,15 @@ try {
       assert.equal(await body.locator(".theory-rule-list").count(),0,"adjective rules should use a simple table, not extended bullets");
       const rules=body.locator(".adjective-rules-table");
       assert.deepEqual((await rules.locator("tbody tr").allInnerTexts()).map(value=>value.replace(/\s+/g," ").trim()),["-o -a -i (masculino) / -e (femenino)","-e — -i (masculino y femenino)"],"adjective endings should map to feminine and plural forms");
+      const vocabulary=body.locator(".adjective-vocabulary-table");
+      assert.deepEqual((await vocabulary.locator("tbody tr").allInnerTexts()).map(value=>value.replace(/\\s+/g," ").trim()),["bello bonito","buono bueno","grande grande","nuovo nuevo","piccolo pequeño","interessante interesante"],"frequent adjectives should appear with Spanish meanings before the examples");
+      assert.equal(await vocabulary.locator(".theory-target-tap[role=button]").count(),6,"each vocabulary adjective should have its own tappable TTS control");
       const examples=body.locator(".adjective-examples-table");
       assert.deepEqual(await examples.locator("tbody tr td:first-child").allInnerTexts(),["-o","-a","-e → -i"],"examples should be keyed by ending, not pronoun");
       assert.equal(await examples.locator(".theory-target-tap[role=button]").count(),3,"each Italian example should have its own tappable TTS control");
+      const adjectiveTables=body.locator(".adjective-rules-table, .adjective-vocabulary-table, .adjective-examples-table");
+      const dimensions=await adjectiveTables.evaluateAll(nodes=>nodes.map(node=>({width:Math.round(node.getBoundingClientRect().width),font:getComputedStyle(node.querySelector("td")).fontSize})));
+      assert.ok(dimensions.every(item=>item.width===dimensions[0].width && item.font===dimensions[0].font),"adjective tables should share the same width and cell font size");
       assert.ok((await examples.innerText()).includes("Un chico italiano.") && (await examples.innerText()).includes("Dos chicas interesantes."),"examples should retain Spanish translations");
     }
     if(i===0) {
