@@ -2706,7 +2706,7 @@ function renderItalianAppliedTopic(category, index, locale) {
       adjectiveRules.map(([ending,feminine,plural]) => '<tr><td><strong>' + ending + '</strong></td><td>' + feminine + '</td><td>' + plural + '</td></tr>').join("") +
       '</tbody></table><h3>Adjetivos frecuentes</h3><table class="theory-pronoun-table theory-bilingual-table adjective-vocabulary-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
       adjectives.map(([word,meaning]) => '<tr><td><strong class="theory-target-word">' + word + '</strong> ' + speakerButton(word,locale) + '</td><td>' + meaning + '</td></tr>').join("") +
-      '</tbody></table><section class="theory-example"><h3>Ejemplos</h3><table class="theory-pronoun-table theory-bilingual-table adjective-examples-table"><thead><tr><th>Terminación</th><th>Ejemplo aplicado</th></tr></thead><tbody>' +
+      '</tbody></table><section class="theory-example adjective-example-block"><h3>Ejemplos</h3><table class="theory-pronoun-table theory-bilingual-table adjective-examples-table"><thead><tr><th>Terminación</th><th>Ejemplo aplicado</th></tr></thead><tbody>' +
       examples.map(([ending,phrase,translation]) => '<tr><td><strong>' + ending + '</strong></td><td><span class="theory-target-word">' + phrase + '</span> ' + speakerButton(phrase,locale) + '<p>' + translation + '</p></td></tr>').join("") +
       '</tbody></table></section>';
   }
