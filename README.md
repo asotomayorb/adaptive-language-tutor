@@ -44,7 +44,7 @@ Aplicación móvil-first para aprender idiomas mediante contenido progresivo, pr
 | 7 | Estadísticas |
 | 8 | Requisitos conservados para Ruta y Entrenamiento |
 | 9 | Privacidad de contenido y derechos |
-| 10 | Registro breve de decisiones vigentes |
+| 12 | Registro breve de decisiones vigentes |
 
 ## 4. Arquitectura y comandos
 
