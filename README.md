@@ -17,7 +17,7 @@ Aplicación móvil-first para aprender idiomas mediante contenido progresivo, pr
 | Validación visual o prueba humana | HUMAN_TEST_PLAN.md y estado LIVE de Render |
 | Checkpoint o recuperación | Rama recovery/intermediate-theory-content; comparar commits/diff antes de recuperar |
 
-**Regla de lectura:** no releer todos los documentos por defecto. Consultar las secciones necesarias y ampliar el alcance solo si aparecen dependencias o contradicciones.
+**Regla de lectura:** no releer todos los documentos por defecto. Consultar las secciones necesarias y ampliar el alcance solo si aparecen dependencias o contradicciones. PROJECT_STATUS.md contiene una bitácora histórica extensa: consultar su resumen y la entrada más reciente relacionada con la tarea; no recorrer las 1.400 líneas completas salvo auditoría histórica. Confirmar siempre la realidad contra HEAD, pruebas y estado LIVE, porque una entrada antigua puede estar desactualizada.
 
 ## 2. Estado y entorno de trabajo
 
