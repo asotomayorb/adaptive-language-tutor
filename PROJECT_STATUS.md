@@ -1323,3 +1323,10 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Browser E2E [45811507747](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45811507747) falló en la comprobación de Países e idiomas antes de ejecutar las nuevas aserciones de adjetivos: la prueba esperaba l’Italia, pero el contenido aprobado presenta Italia (Italia) sin artículo.
 - Se corrigió la expectativa E2E a (Italia) sin alterar el contenido pedagógico. Nueva ejecución pendiente.
 - No desplegar la revisión hasta que Browser E2E pase. Preview continúa sirviendo el último deploy previo; auto-deploy GitHub–Render no está demostrado.
+
+
+### Segunda corrección de E2E — 26-11-2026
+- Tests generales aprobados en run [45811703278](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45811703278) para HEAD `ea9b0c68`.
+- Browser E2E [45811703268](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45811703268) falló en la aserción de pronunciación del país italiano: la implementación hace que el propio término sea pulsable (`.theory-target-tap`) y elimina el botón TTS adyacente para evitar controles duplicados.
+- Se ajustó la prueba para verificar el comportamiento funcional existente sin modificar Países e idiomas. Nueva ejecución pendiente.
+- El formato de adjetivos ya está integrado en código y documentado, pero aún no se despliega porque E2E debe aprobar primero.
