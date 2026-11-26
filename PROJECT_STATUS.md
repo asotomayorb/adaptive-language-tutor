@@ -1351,3 +1351,11 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Browser E2E incorpora comprobaciones de las seis entradas, TTS individual y uniformidad de dimensiones/tamaño de texto.
 - Cambios de código/tests en commits: app `5d0a1d0`, CSS `79ca84f`, E2E `49a05f6`. HEAD actual `49a05f632ca3847567cb2d18b949b5d5a62141ca`.
 - Validación automatizada y publicación Render pendientes. No solicitar prueba humana hasta que Tests, Browser E2E y Render estén verificados.
+
+
+### Diagnóstico y correcciones de Browser E2E — adjetivos — 26-11-2026
+- Tests generales aprobaron en HEAD `fbdbdd5` (run [45826167381](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826167381)).
+- Primera E2E detectó que el verificador esperaba la tabla de ejemplos en la segunda posición; con el nuevo vocabulario intermedio, los encabezados correctos ahora se comprueban como regla → vocabulario → ejemplos.
+- Segunda E2E detectó que la normalización de espacios de la aserción nueva estaba escapada incorrectamente y Playwright devolvía tabulaciones entre celdas. Se corrigió para normalizar cualquier espacio en blanco antes de comparar las seis filas.
+- No se modificó contenido funcional en estas dos correcciones; ambas afectan solo al test Browser E2E. Commit de normalización: `d490b8f72ea452e1e020beb140ceb5c4740c9333`.
+- Nueva ejecución Tests y Browser E2E pendiente sobre el HEAD actualizado. Render sigue sirviendo el commit previo `e781482`; no desplegar hasta que E2E apruebe.
