@@ -1514,3 +1514,9 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Browser E2E detectó otra expectativa antigua: las celdas de gentilicio/idioma comprueban botones TTS separados, pero el enlazado de teoría transforma cada término breve en control pulsable y elimina el botón adyacente para evitar duplicación.
 - Se actualizó la prueba para verificar los controles individuales `.theory-target-tap[role=button]` en ambos campos. No se alteró el contenido ni la funcionalidad de audio.
 - Repetir E2E sobre el HEAD actualizado; despliegue sigue bloqueado hasta su aprobación.
+
+
+### Alineación adicional de E2E para Artículos y concordancia — 26-11-2026
+- Browser E2E del commit `747be438` llegó a la revisión de Unidad 2 y falló porque la prueba aún esperaba ejemplos antiguos (`gli studenti`, `un’amica`) que no forman parte del formato de reglas aprobado.
+- Se actualizaron las expectativas para comprobar las formas y reglas presentes en las tablas actuales (`lo`, `gli`, grupos consonánticos y `un’` femenino), sin modificar el contenido ni el código funcional de la lección.
+- Commit de ajuste E2E: `89014ec9224d1efdfa34c5bd61e89e670467e727`. Repetir CI y Browser E2E; no desplegar hasta que ambos aprueben.
