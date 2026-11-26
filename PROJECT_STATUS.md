@@ -1367,3 +1367,11 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Se reforzó la especificidad CSS para que todas las celdas del cuerpo de las tres tablas usen 13px, incluso en columnas que antes heredaban el tamaño grande de tablas bilingües.
 - HEAD de código validado: `990430b17264f20fb60ba633d1b64746f8a56339`. Tests aprobados: [45826567300](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826567300). Browser E2E aprobado: [45826567302](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826567302).
 - La publicación Render sigue pendiente: el servicio Preview aún sirve `e781482dba287f8ac812bd6aff1abacee5b95988`; el auto-deploy no generó un deploy tras el push. No solicitar todavía prueba humana.
+
+
+### Preview Render publicado — ajuste de vocabulario y tablas de adjetivos — 26-11-2026
+- Preview deploy `dep-dc430l3l550s7381s230` completado con estado `live`; build succeeded.
+- Commit servido: `89aa6ccd2380f8a1000d89876be791fd591e2ad4`. La app inició con `npm start`, escuchó en `0.0.0.0:10000` y Render confirmó «Your service is live».
+- URL: https://adaptive-language-tutor-preview-5b3d.onrender.com
+- Tests y Browser E2E del HEAD servido aprobaron: [Tests 45826853426](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826853426), [Browser E2E 45826852955](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826852955). Además, la validación del commit funcional de código fue aprobada en [45826567300](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826567300) y [45826567302](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826567302).
+- Estado: listo para prueba humana en Preview. Revisar en Android la ubicación de la tabla de vocabulario, uniformidad de ancho/tipografía y pronunciación individual de los seis adjetivos.
