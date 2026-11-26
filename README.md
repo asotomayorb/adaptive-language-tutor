@@ -69,7 +69,7 @@ npm test
 npm run test:e2e
 ```
 
-La app queda en http://localhost:3000; desarrollo: npm run dev. Los smoke tests reales requieren secretos/variables privados configurados. Nunca subir claves API al repositorio.
+La app queda en http://localhost:3000; desarrollo: npm run dev. El smoke test directo del proveedor requiere secretos/variables privados configurados. No hay smoke de navegador del tutor IA mientras esa UI permanezca en espera. Nunca subir claves API al repositorio.
 
 ## 6. Protocolo de trabajo
 
@@ -98,3 +98,4 @@ La app queda en http://localhost:3000; desarrollo: npm run dev. Los smoke tests 
 
 - **26-11-2026:** workspace Render confirmado por el usuario: `My Workspace` (`tea-dbus0u5g1s2s73coteeg`).
 - **26-11-2026:** el usuario confirma que Render Preview funciona correctamente. Se fija español (`es-CL`) → italiano (`it-IT`) como único par lingüístico; se retiran los catálogos antiguos de otros idiomas y el código multilingüe asociado. Las Unidades 3–6 conservan solo títulos y jerarquía, sin contenido. Se mantienen en espera los módulos futuros con utilidad demostrable; no se eliminan ramas ni el checkpoint de recuperación.
+- **26-11-2026:** se retira el smoke de navegador del tutor IA porque esa interfaz no está activa; se conserva el smoke directo del backend italiano.

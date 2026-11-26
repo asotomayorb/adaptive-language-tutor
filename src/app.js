@@ -2277,7 +2277,6 @@ $("theory-back").addEventListener("click", () => {
 $("theory-prev").addEventListener("click", () => openTheoryTopic(activeTheoryIndex - 1));
 $("theory-next").addEventListener("click", () => openTheoryTopic(activeTheoryIndex + 1));
 populateTheoryUnits();
-$("variant-close").addEventListener("click", () => $("variant-dialog").close());
 function persistSettings() {
   const savedSettings = {
     selectedLanguage: $("language").value,

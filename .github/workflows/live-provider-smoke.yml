@@ -10,7 +10,6 @@ on:
       - "server/prompts.js"
       - "tests/provider.test.js"
       - "scripts/live-provider-smoke.js"
-      - "scripts/live-browser-smoke.js"
       - "package.json"
       - ".github/workflows/live-provider-smoke.yml"
 
@@ -64,11 +63,6 @@ jobs:
           TUTOR_SMOKE_LOCALE: it-IT
           TUTOR_SMOKE_LANGUAGE_LABEL: Italiano
         run: npm run test:provider-live
-
-      - name: Run real-provider browser session
-        env:
-          TUTOR_BASE_URL: http://127.0.0.1:3000
-        run: npm run test:browser-live
 
       - name: Show application diagnostics
         if: always()

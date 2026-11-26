@@ -28,7 +28,7 @@
 | Helpers y datos de teoría para múltiples idiomas | Obsoletos | Eliminar definiciones de idiomas, muestras, verbos, artículos y contenido aplicado que no correspondan al modelo italiano. |
 | `server/prompts.js` | Infraestructura en espera | Fijar el contrato español → italiano, también al normalizar datos de sesión heredados. |
 | `src/core/pedagogy.js`, `src/core/storage.js`, `src/core/speech.js`, `src/core/tutor-client.js`, `server/*` | En espera / dependencias | Conservar para los módulos futuros; ajustar las pruebas y el prompt al par español-italiano. |
-| `scripts/live-provider-smoke.js`, `scripts/live-browser-smoke.js` y workflow asociado | Herramientas de validación | Mantener, pero probar únicamente Italiano. |
+| `scripts/live-provider-smoke.js` y workflow asociado | Validación del backend en espera | Mantener la prueba directa del proveedor en italiano. El smoke de navegador se retira porque prueba una UI de tutor IA que no está expuesta en la versión activa. |
 | `tests/content.test.js`, `tests/content-speech.test.js` | Obsoletos | Retirar pruebas específicas de los catálogos eliminados; añadir cobertura de alcance lingüístico y normalización del par activo en `tests/prompts.test.js`. |
 | `HUMAN_TEST_PLAN.md`, `PRODUCT_SPEC.md`, `README.md` | Documentación | Reescribir el alcance para evitar instrucciones históricas que parezcan vigentes. |
 
