@@ -203,8 +203,8 @@ try {
       assert.deepEqual(await examples.locator("tbody tr td:first-child").allInnerTexts(),["-o","-a","-e → -i"],"examples should be keyed by ending, not pronoun");
       assert.equal(await examples.locator(".theory-target-tap[role=button]").count(),3,"each Italian example should have its own tappable TTS control");
       const adjectiveTables=body.locator(".adjective-rules-table, .adjective-vocabulary-table, .adjective-examples-table");
-      const dimensions=await adjectiveTables.evaluateAll(nodes=>nodes.map(node=>({width:Math.round(node.getBoundingClientRect().width),font:getComputedStyle(node.querySelector("td")).fontSize})));
-      assert.ok(dimensions.every(item=>item.width===dimensions[0].width && item.font===dimensions[0].font),"adjective tables should share the same width and cell font size");
+      const dimensions=await adjectiveTables.evaluateAll(nodes=>nodes.map(node=>({width:Math.round(node.getBoundingClientRect().width),fonts:[...node.querySelectorAll("tbody td")].map(cell=>getComputedStyle(cell).fontSize)})));
+      assert.ok(dimensions.every(item=>item.width===dimensions[0].width && item.fonts.every(font=>font==="13px")),"adjective tables should share the same width and a uniform 13px body font");
       assert.ok((await examples.innerText()).includes("Un chico italiano.") && (await examples.innerText()).includes("Dos chicas interesantes."),"examples should retain Spanish translations");
     }
     if(i===0) {
