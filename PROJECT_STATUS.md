@@ -1342,3 +1342,12 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Browser E2E run [45812021554](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45812021554) falló al comprobar Artículos y concordancia porque esperaba dos ejemplos (`gli studenti`, `un’amica`) que no están en las tablas vigentes aprobadas.
 - La prueba se actualizó para validar formas/reglas reales de las tablas: `lo (masculino)`, `gli`, grupos consonánticos `z, gn, ps o x` y `un’ (femenino)`. No se modificó la lección.
 - Commit E2E: `89014ec9224d1efdfa34c5bd61e89e670467e727`. CI y Browser E2E deben repetirse sobre este HEAD; Render permanece sin publicar esta revisión hasta aprobación.
+
+
+### Checkpoint confirmado y siguiente ajuste de adjetivos — 26-11-2026
+- El usuario confirmó el checkpoint anterior de Unidad 2 y autorizó continuar con la revisión siguiente. Se considera aceptado el estado anterior como base; no implica validar automáticamente cambios nuevos.
+- En «Artículos y adjetivos», antes de los ejemplos se incorpora una tabla de vocabulario con seis adjetivos frecuentes: bello, buono, grande, nuovo, piccolo e interessante, cada uno con traducción española y control TTS individual.
+- Las tablas de regla, vocabulario y ejemplos comparten ahora el mismo ancho total y tipografía de celdas; las proporciones internas se ajustan al contenido de cada tabla.
+- Browser E2E incorpora comprobaciones de las seis entradas, TTS individual y uniformidad de dimensiones/tamaño de texto.
+- Cambios de código/tests en commits: app `5d0a1d0`, CSS `79ca84f`, E2E `49a05f6`. HEAD actual `49a05f632ca3847567cb2d18b949b5d5a62141ca`.
+- Validación automatizada y publicación Render pendientes. No solicitar prueba humana hasta que Tests, Browser E2E y Render estén verificados.
