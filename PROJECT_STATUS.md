@@ -1330,3 +1330,9 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Browser E2E [45811703268](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45811703268) falló en la aserción de pronunciación del país italiano: la implementación hace que el propio término sea pulsable (`.theory-target-tap`) y elimina el botón TTS adyacente para evitar controles duplicados.
 - Se ajustó la prueba para verificar el comportamiento funcional existente sin modificar Países e idiomas. Nueva ejecución pendiente.
 - El formato de adjetivos ya está integrado en código y documentado, pero aún no se despliega porque E2E debe aprobar primero.
+
+
+### Tercera corrección de aserciones E2E — 26-11-2026
+- Browser E2E [45811851960](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45811851960) detectó que las celdas de gentilicio e idioma también usan términos pulsables como controles TTS, no botones separados. Esto es el comportamiento existente de `bindTheoryTargetText`.
+- Se actualizó la aserción para validar que ambos términos sean individualmente pulsables. No se cambió el código funcional ni el contenido de Países e idiomas.
+- Tests generales previos aprobados; nueva ejecución E2E y tests tras este ajuste pendiente.
