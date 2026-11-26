@@ -53,10 +53,13 @@ Los registros históricos de sesiones de otros idiomas pueden permanecer en el a
 
 ## 5. Render y validación
 
-- El usuario confirma el 26-11-2026 que Render Preview funciona correctamente.
-- Último deploy comprobado antes de esta limpieza: `dep-dc44gf56e07s73e58ajg`, commit `a9470686a65fba54c4e2bbb192326d3b58fe12ab`.
-- La rama activa tiene auto-deploy por commit; la limpieza debe validarse con Tests, Browser E2E y un nuevo deploy LIVE antes de la siguiente prueba humana.
-- Prueba humana Android pendiente para tipografía, tablas y TTS de Unidades 1 y 2; además, verificar que Unidades 3–6 continúen vacías.
+- El usuario confirma el 26-11-2026 que el Preview Render anterior funciona correctamente.
+- **Commit funcional auditado:** `8dc529f6b417371b2b60f8b7dc013941aa6cd67f`.
+- **Tests:** aprobados, ejecución [45867787511](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45867787511).
+- **Browser E2E:** aprobado, ejecución [45867787428](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45867787428). Comprueba navegación y que cada subtema de Unidades 3–6 conserve el título pero no tenga texto ni tablas.
+- **Smoke del proveedor italiano:** aprobado, ejecución [45867480519](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45867480519), commit `099411344f613e6a508c3fac783310997f757c22`. No hubo cambios posteriores al backend.
+- **Render:** servicio configurado con auto-deploy (`autoDeploy=yes`), pero el último deploy visible sigue siendo `dep-dc44gf56e07s73e58ajg`, commit `a9470686a65fba54c4e2bbb192326d3b58fe12ab`. No aparece todavía un deploy de los commits de auditoría. Por tanto, el Preview actual no contiene aún esta limpieza y no debe usarse para la prueba de persistencia de la nueva versión.
+- **Prueba humana pendiente:** después de confirmar el nuevo deploy, validar persistencia/recarga, tipografía, tablas y TTS de Unidades 1–2, además del contenido vacío de Unidades 3–6.
 
 ## 6. Criterio de limpieza
 
@@ -68,8 +71,7 @@ Los registros históricos de sesiones de otros idiomas pueden permanecer en el a
 
 ## 7. Próximos pasos
 
-1. Validar el commit de limpieza con `npm run check`, `npm test` y Browser E2E.
-2. Confirmar que Render despliega el commit y que el usuario puede abrir la Preview.
-3. Ejecutar prueba humana de persistencia/recarga, navegación y contenido de Teoría.
-4. Solo después de la prueba, decidir si se archivan las ramas históricas candidatas.
-5. Reconstruir Unidades 3–6 de forma progresiva, usando Unidades 1–2 como referencia; no introducir contenido provisional.
+1. Confirmar que Render publica el commit funcional `8dc529f6b417371b2b60f8b7dc013941aa6cd67f`; no iniciar la prueba de persistencia hasta verificarlo.
+2. Ejecutar la prueba humana de persistencia/recarga, navegación y contenido de Teoría en el Preview actualizado.
+3. Solo después de la prueba, decidir si se eliminan las ramas históricas candidatas; no tocar la rama de checkpoint.
+4. Reconstruir Unidades 3–6 de forma progresiva, usando Unidades 1–2 como referencia; no introducir contenido provisional.
