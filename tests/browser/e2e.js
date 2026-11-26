@@ -164,7 +164,7 @@ try {
     const check=unitTwoChecks[i];
     assert.equal(await page.locator("#theory-title").innerText(),check.title,"Unit 2 topic title should match its content");
     const body=page.locator("#theory-description");
-    const bodyText=(await body.innerText()).replace(/\\s+/g," ").trim();
+    const bodyText=(await body.innerText()).replace(/\s+/g," ").trim();
     for (const term of check.terms) assert.ok(bodyText.includes(term), "Unit 2 content should include "+term);
     if (check.heading) {
       const heading=body.locator("h3").filter({hasText:check.heading}).first();
