@@ -1449,3 +1449,12 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - El usuario aprueba la propuesta A para las tablas de artículos definidos e indefinidos (tres columnas: Singular, Plural, Sustantivo/regla).
 - Países e idiomas queda aprobado sin cambios; la objeción sobre el ejemplo correspondía al subtema **Artículos y adjetivos**, no a Países e idiomas.
 - Preparar y mostrar una nueva propuesta visual de Artículos y adjetivos retomando el ejemplo anterior que el usuario prefería. No implementar código ni contenido hasta que esta propuesta quede aprobada.
+
+
+### Criterio visual y contenido de Unidad 2 — aclaración del usuario — 26-11-2026
+- La estética de cada subtema conserva la base ya implementada: fondo claro, tamaños tipográficos existentes, palabras extranjeras destacadas y controles TTS individuales.
+- Las capturas de referencia indican únicamente la disposición y estructura de las tablas; no son una instrucción para copiar el fondo oscuro ni el estilo tipográfico de la captura.
+- Países e idiomas: tres columnas País / Gentilicio / Idioma; conservar nombre italiano con traducción española entre paréntesis, y TTS para las formas italianas.
+- Artículos definidos e indefinidos: tablas separadas de tres columnas Singular / Plural / Sustantivo-regla; género identificado entre paréntesis en Singular. Reglas breves antes de las tablas.
+- Artículos y adjetivos: mantener la base visual de teoría y destacar las formas italianas con TTS; la tabla debe exponer claramente singular y plural con las variantes de género.
+- El ajuste visual no autoriza cambiar el tema global ni el diseño de los demás subtemas.
