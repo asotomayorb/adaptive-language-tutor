@@ -1286,3 +1286,8 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
 #screen-theory .adjective-concordance-table td:nth-child(2){width:30%}
 #screen-theory .adjective-concordance-table th:nth-child(3),
 #screen-theory .adjective-concordance-table td:nth-child(3){width:45%}
+
+
+/* Shared typography for all rendered lesson copy, paragraphs and lists. */
+#screen-theory #theory-description p,
+#screen-theory #theory-description li{font-size:14px!important;line-height:1.6!important}
