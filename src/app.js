@@ -2681,8 +2681,7 @@ function renderItalianAppliedTopic(category, index, locale) {
         ["uno (masculino)", "—", "s seguida de consonante; z, gn, ps o x al inicio de palabra"],
         ["una (femenino)", "—", "Consonante"],
         ["un’ (femenino)", "—", "Vocal"]
-      ]) +
-      ;
+      ]);
   }
   if (category === "Gramática" && index === 2) {
     const rules = [
