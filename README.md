@@ -1418,3 +1418,13 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Configuración consultada: servicio `srv-dbus3hnf3r2c739j9ir0`, rama `feature/mobile-bottom-navigation`, `autoDeploy=yes`, `autoDeployTrigger=commit`; Blueprint `exs-dbus1io8v5cc73a0tjsg`, `autoSync=true`, estado `in_sync`. Esta configuración por sí sola no demuestra que el webhook GitHub–Render esté operativo.
 - El panel de herramientas Render disponible permite consultar servicio/Blueprint y disparar deploys manuales, pero no cambiar la integración Git provider/repositorio del servicio existente. No se creó un servicio duplicado ni se hizo un deploy manual para ocultar el fallo automático.
 - Acción pendiente necesaria en Render Dashboard: revisar Settings → Repository y conectar el servicio mediante la integración GitHub del repositorio, no como URL pública/clone source. Después, hacer un push de prueba y verificar que el nuevo deploy tenga trigger automático. Hasta entonces, auto-render permanece NO operativo/verificado; el preview sigue en el último deploy LIVE manual.
+
+
+### Ajustes de propuesta visual Unidad 2 — 26-11-2026
+- El usuario aclara que el ejemplo anterior de países duplicó el nombre español en ambas partes. La forma correcta es el nombre italiano primero y su traducción española entre paréntesis: `Germania (Alemania)`, `Spagna (España)`, `Francia (Francia)`. Evaluar ejemplos adicionales sin convertir el subtema en un listado demasiado largo.
+- Artículos y concordancia: explicar brevemente cada forma antes de las tablas. Definidos: `il` ante consonante ordinaria; `lo` ante s impura y grupos/sonidos como z, gn, ps, x; `l’` ante vocal. Femenino: `la` ante consonante y `l’` ante vocal. Indefinidos: `un` masculino ante consonante ordinaria o vocal (sin apóstrofo); `uno` ante s impura y grupos como z, gn, ps, x; `una` femenino ante consonante y `un’` ante vocal. Verificar ejemplos/reglas finales con el contenido existente antes de implementación.
+- Conservar ejemplos en formato compacto de una sola fila bajo encabezados.
+- Artículos y adjetivos: mantener el enfoque de reglas breves y tabla compacta ya propuesto.
+- Tipografía: párrafos y viñetas deben conservar el mismo tamaño. Ajustar ancho de encabezados/celdas al contenido y al viewport móvil.
+- Estos son criterios de propuesta; aún no se modifica el contenido de Unidad 2 hasta cerrar la revisión visual. Unidad 1 y Unidades 3–6 permanecen fuera de alcance.
+- Se intentará comprobar el auto-render mediante un push documental posterior a esta nota. Si no aparece deploy automático, registrar el intento como fallido y mantener como pendiente la conexión GitHub–Render; no reemplazarlo con deploy manual ni declararlo resuelto.
