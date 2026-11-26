@@ -203,8 +203,10 @@ try {
       assert.deepEqual(await examples.locator("tbody tr td:first-child").allInnerTexts(),["-o","-a","-e → -i"],"examples should be keyed by ending, not pronoun");
       assert.equal(await examples.locator(".theory-target-tap[role=button]").count(),3,"each Italian example should have its own tappable TTS control");
       const adjectiveTables=body.locator(".adjective-rules-table, .adjective-vocabulary-table, .adjective-examples-table");
-      const dimensions=await adjectiveTables.evaluateAll(nodes=>nodes.map(node=>({width:Math.round(node.getBoundingClientRect().width),fonts:[...node.querySelectorAll("tbody td")].map(cell=>getComputedStyle(cell).fontSize)})));
-      assert.ok(dimensions.every(item=>item.width===dimensions[0].width && item.fonts.every(font=>font==="13px")),"adjective tables should share the same width and a uniform 13px body font");
+      const dimensions=await adjectiveTables.evaluateAll(nodes=>nodes.map(node=>({width:Math.round(node.getBoundingClientRect().width),fonts:[...node.querySelectorAll("tbody td")].map(cell=>getComputedStyle(cell).fontSize),wrap:[...node.querySelectorAll("th,td")].map(cell=>({overflow:getComputedStyle(cell).overflowWrap,word:getComputedStyle(cell).wordBreak,hyphens:getComputedStyle(cell).hyphens}))})));
+      assert.ok(dimensions.every(item=>item.width===dimensions[0].width && item.fonts.every(font=>font==="15px")),"adjective tables should share the same width and readable, uniform 15px mobile body text");
+      assert.ok(dimensions.every(item=>item.wrap.every(style=>style.overflow==="normal" && style.word==="normal" && style.hyphens==="none")),"table cells must wrap only between words and never split a word");
+      assert.equal(await body.locator(".theory-slide-text").first().evaluate(el=>getComputedStyle(el).overflowWrap),"normal","explanatory paragraphs must not split words either");
       assert.ok((await examples.innerText()).includes("Un chico italiano.") && (await examples.innerText()).includes("Dos chicas interesantes."),"examples should retain Spanish translations");
     }
     if(i===0) {
