@@ -1295,3 +1295,5 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Artículos y adjetivos se reorganizó en una tabla compacta de adjetivo, singular masculino/femenino y plural masculino/femenino; formas extranjeras conservan resaltado y TTS.
 - Se actualizaron aserciones Browser E2E para las nuevas cabeceras y estructura. No se ejecutaron todavía npm run check, npm test ni Browser E2E; el cambio no está validado ni listo para prueba humana.
 - No se modificaron contenidos de Unidad 1 ni Unidades 3–6. Pendiente: ejecutar CI/E2E, revisar el preview móvil real y validar visualmente el estilo claro, el ajuste de columnas y TTS.
+
+- Commit de código más reciente: e80c762ee90fdf46a7335df5d4ccc969196ee630. El parsing de las etiquetas de género se corrigió para que el TTS lea únicamente la forma italiana; validación automatizada aún pendiente.
