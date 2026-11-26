@@ -1585,3 +1585,12 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - El usuario confirmó reutilizar la cuenta Render previamente utilizada para el preview `adaptive-language-tutor-preview-5b3d.onrender.com` (cuenta conectada «Render»).
 - Render solicita seleccionar explícitamente el workspace antes de consultar o modificar servicios. La cuenta muestra un único workspace disponible: `My Workspace` (`tea-dbus0u5g1s2s73coteeg`). Se solicita confirmación del usuario antes de operar sobre ese workspace.
 - No se disparó ningún deploy en esta etapa.
+
+
+### Despliegue del ajuste de legibilidad — 26-11-2026
+- El usuario confirmó el uso del workspace Render `My Workspace` para actualizar el preview existente.
+- Se identificó el servicio `adaptive-language-tutor-preview-5b3d`, asociado a la rama `feature/mobile-bottom-navigation` y al repositorio correcto.
+- Se inició el deploy manual `dep-dc446sm1egvs73f9mrs0`, que toma el HEAD de la rama en el commit `b27534a3dfa7d5741a19cd0064aa57089c18ed29` (incluye el CSS de legibilidad y la cobertura E2E añadida en los commits anteriores).
+- Último estado consultado: `update_in_progress`; todavía no hay confirmación LIVE ni verificación visual de la página publicada. No solicitar prueba humana ni declarar el preview listo hasta comprobarlo.
+- GitHub no reporta status checks ni workflow runs asociados directamente al commit CSS `c3f704d8914c7dec69e1193e4b966936da9f953c`; la validación automatizada de esta revisión sigue sin confirmación.
+- El preview anterior permanece en el último deploy LIVE `dep-dc430l3l550s7381s230` mientras el nuevo deploy no finalice.
