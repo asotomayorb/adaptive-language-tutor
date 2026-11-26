@@ -2661,30 +2661,47 @@ function renderItalianAppliedTopic(category, index, locale) {
   if (category === "Gramática" && index === 1) {
     const rules = [
       "El artículo definido concuerda con el sustantivo en género y número.",
-      "Masculino singular: il ante consonante común; lo ante s + consonante, z, gn o ps; l’ ante vocal.",
+      "Masculino singular: il ante consonante ordinaria; lo ante s + consonante, z, gn, ps o x; l’ ante vocal.",
       "Femenino singular: la ante consonante y l’ ante vocal.",
-      "Plural: i para il, gli para lo y l’, y le para la.",
-      "Indefinido: un, uno, una y un’. Solo la forma femenina ante vocal lleva apóstrofo."
+      "Plural: i corresponde a il; gli, a lo y l’; le, a la.",
+      "Indefinidos: un ante consonante ordinaria o vocal, sin apóstrofo; uno ante s + consonante, z, gn, ps o x; una ante consonante y un’ ante vocal."
     ];
     const ruleList = '<ul class="theory-rule-list">' + rules.map(rule => '<li>' + rule + '</li>').join("") + '</ul>';
-    return ruleList +
-      '<h3>Artículos definidos</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
-      rows([["il libro","el libro"],["lo studente","el estudiante"],["l’amico","el amigo"],["la casa","la casa"],["l’amica","la amiga"],["i libri","los libros"],["gli studenti / gli amici","los estudiantes / los amigos"],["le case","las casas"]]) +
-      '</tbody></table><h3>Artículos indefinidos</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
-      rows([["un libro","un libro"],["uno studente","un estudiante"],["un amico","un amigo"],["una casa","una casa"],["un’amica","una amiga"]]) +
+    const articleTable = (title, rows) =>
+      '<h3>' + title + '</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Singular</th><th>Plural</th><th>Sustantivo / regla</th></tr></thead><tbody>' +
+      rows.map(([singular, plural, rule]) => '<tr><td>' + renderSpokenVariants(singular) + '</td><td>' + renderSpokenVariants(plural) + '</td><td>' + escapeHTML(rule) + '</td></tr>').join("") +
       '</tbody></table>';
+    return ruleList +
+      articleTable("Artículos definidos", [
+        ["il (masculino)", "i", "Consonante ordinaria"],
+        ["lo (masculino)", "gli", "s + consonante, z, gn, ps, x…"],
+        ["l’ (masculino)", "gli", "Vocal"],
+        ["la (femenino)", "le", "Consonante"],
+        ["l’ (femenino)", "le", "Vocal"]
+      ]) +
+      articleTable("Artículos indefinidos", [
+        ["un (masculino)", "—", "Consonante ordinaria o vocal; sin apóstrofo"],
+        ["uno (masculino)", "—", "s + consonante, z, gn, ps, x…"],
+        ["una (femenino)", "—", "Consonante"],
+        ["un’ (femenino)", "—", "Vocal"]
+      ]) +
+      '<p class="theory-slide-text"><em>En los indefinidos, el guion indica que no existe una forma plural directa equivalente.</em></p>';
   }
   if (category === "Gramática" && index === 2) {
     const rules = [
       "El adjetivo normalmente va después del sustantivo y concuerda con él en género y número.",
-      "Los adjetivos en -o: masculino singular -o, femenino singular -a, masculino plural -i y femenino plural -e.",
-      "Los adjetivos en -e: la misma forma para masculino y femenino singular; plural en -i."
+      "Los adjetivos en -o cambian a -a en femenino; en plural, -i (masculino) y -e (femenino).",
+      "Los adjetivos en -e mantienen la misma forma en singular masculino y femenino; el plural termina en -i."
     ];
     const ruleList = '<ul class="theory-rule-list">' + rules.map(rule => '<li>' + rule + '</li>').join("") + '</ul>';
-    const adjectiveRows = [["alto","alta","alti / alte"],["italiano","italiana","italiani / italiane"],["interessante","interessante","interessanti"]];
+    const adjectiveRows = [
+      ["alto", "alto / alta", "alti / alte"],
+      ["italiano", "italiano / italiana", "italiani / italiane"],
+      ["interessante", "interessante", "interessanti"]
+    ];
     return ruleList +
-      '<h3>Concordancia de adjetivos</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Masculino</th><th>Femenino</th><th>Plural</th></tr></thead><tbody>' +
-      adjectiveRows.map(([masc,fem,plural]) => '<tr><td>' + renderSpokenVariants(masc) + '</td><td>' + renderSpokenVariants(fem) + '</td><td>' + renderSpokenVariants(plural) + '</td></tr>').join("") +
+      '<h3>Concordancia de adjetivos</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Adjetivo</th><th>Singular (masculino / femenino)</th><th>Plural (masculino / femenino)</th></tr></thead><tbody>' +
+      adjectiveRows.map(([adjective,singular,plural]) => '<tr><td>' + renderSpokenVariants(adjective) + '</td><td>' + renderSpokenVariants(singular) + '</td><td>' + renderSpokenVariants(plural) + '</td></tr>').join("") +
       '</tbody></table><section class="theory-example"><span>Ejemplos</span><p class="theory-target-word">Un ragazzo italiano. ' + speakerButton("Un ragazzo italiano.",locale) + '</p><p>Un chico italiano.</p><p class="theory-target-word">Una ragazza italiana. ' + speakerButton("Una ragazza italiana.",locale) + '</p><p>Una chica italiana.</p><p class="theory-target-word">Due ragazze interessanti. ' + speakerButton("Due ragazze interessanti.",locale) + '</p><p>Dos chicas interesantes.</p></section>';
   }
   if (category === "Gramática" && index === 4) {
@@ -2719,11 +2736,18 @@ function renderItalianAppliedTopic(category, index, locale) {
     ]
   };
   if (category === "Vocabulario" && index === 0) {
-    const items = [["l’Italia","italiano","italiano"],["la Spagna","spagnolo","spagnolo"],["la Francia","francese","francese"],["la Germania","tedesco","tedesco"],["il Cile","cileno","spagnolo"],["il Brasile","brasiliano","portoghese"]];
-    return '<p class="theory-slide-text">La primera columna indica el país; la segunda, el gentilicio (persona u origen); la tercera, el idioma que se habla.</p>' +
-      '<table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>País</th><th>Gentilicio</th><th>Idioma</th></tr></thead><tbody>' +
-      items.map(([country,demonym,language]) => '<tr><td>' + renderSpokenVariants(country) + '</td><td>' + renderSpokenVariants(demonym) + '</td><td>' + renderSpokenVariants(language) + '</td></tr>').join("") +
-      '</tbody></table>';
+    const items = [
+      ["Italia", "Italia", "italiano / italiana", "italiano"],
+      ["Germania", "Alemania", "tedesco / tedesca", "tedesco"],
+      ["Spagna", "España", "spagnolo / spagnola", "spagnolo"],
+      ["Francia", "Francia", "francese", "francese"],
+      ["Portogallo", "Portugal", "portoghese", "portoghese"]
+    ];
+    return '<table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>País</th><th>Gentilicio</th><th>Idioma</th></tr></thead><tbody>' +
+      items.map(([country, translation, demonym, language]) =>
+        '<tr><td><strong class="theory-target-word">' + escapeHTML(country) + '</strong> ' + speakerButton(country,locale) + ' <span>(' + escapeHTML(translation) + ')</span></td><td>' + renderSpokenVariants(demonym) + '</td><td>' + renderSpokenVariants(language) + '</td></tr>'
+      ).join("") +
+      '</tbody></table><p class="theory-slide-text">Se conserva el nombre italiano como entrada y se añade la traducción española entre paréntesis. Los gentilicios muestran masculino y femenino cuando corresponde.</p>';
   }
   if (category === "Vocabulario" || category === "Expresiones") {
     const items = vocabulary[category]?.[index];
