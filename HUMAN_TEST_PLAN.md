@@ -844,3 +844,14 @@ Para cada escenario registrar:
 - [x] Browser E2E: GitHub Actions run 45614660104.
 - [x] Render Preview LIVE: deploy dep-dc3daucipgvc738c5k10, commit 19627135bf04bcb7c0a83330f007ebee04a0f8de.
 - [ ] Prueba humana visual, táctil y auditiva en Android.
+
+
+## Unidad 2 — adjetivos: vocabulario y uniformidad de tablas (26-11-2026)
+- [ ] En «Artículos y adjetivos», confirmar que la tabla «Adjetivos frecuentes» aparece después de la regla y antes de los ejemplos.
+- [ ] Verificar los seis pares: bello/bonito, buono/bueno, grande/grande, nuovo/nuevo, piccolo/pequeño e interessante/interesante.
+- [ ] Tocar cada adjetivo italiano y comprobar que reproduce únicamente esa palabra.
+- [ ] Confirmar que las tablas de regla, vocabulario y ejemplos tienen el mismo ancho exterior y el mismo tamaño de texto en sus celdas.
+- [ ] Revisar ajuste de columnas, traducciones y ausencia de scroll horizontal en móvil vertical y horizontal.
+- [ ] Confirmar que los ejemplos siguen vinculados a las terminaciones -o, -a y -e → -i y conservan traducción española y TTS.
+- [ ] Ejecutar Tests y Browser E2E; no marcar como validado hasta que ambos aprueben.
+- [ ] Tras publicación Render LIVE, comprobar el preview en Android.
