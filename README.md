@@ -1443,3 +1443,9 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Cada tabla debe presentar las formas en filas separadas por género cuando facilite la lectura móvil; la tercera columna resume los contextos de uso (por ejemplo, consonante ordinaria, vocal o grupos consonánticos específicos). No repetir una explicación extensa fuera de la tabla.
 - Para el subtema de países, recuperar el ejemplo/formato anterior que el usuario aprobó, evitando la muestra que rechazó. La propuesta se presenta primero en conversación; todavía no se implementa contenido ni código.
 - Preparar nuevas propuestas visuales mobile-first y esperar aprobación antes de implementar.
+
+
+### Aclaración de alcance de la propuesta visual — 26-11-2026
+- El usuario aprueba la propuesta A para las tablas de artículos definidos e indefinidos (tres columnas: Singular, Plural, Sustantivo/regla).
+- Países e idiomas queda aprobado sin cambios; la objeción sobre el ejemplo correspondía al subtema **Artículos y adjetivos**, no a Países e idiomas.
+- Preparar y mostrar una nueva propuesta visual de Artículos y adjetivos retomando el ejemplo anterior que el usuario prefería. No implementar código ni contenido hasta que esta propuesta quede aprobada.
