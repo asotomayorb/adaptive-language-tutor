@@ -1576,3 +1576,6 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Se amplía la primera columna de la tabla de reglas para acomodar términos completos sin cortes ni desbordamiento.
 - Browser E2E actualizado para comprobar tamaño uniforme, estilos de ajuste de línea y ausencia de división de palabras. La validación automatizada y la publicación Render quedan pendientes; no solicitar prueba humana hasta completarlas.
 - Commits: CSS `8cf9645`; E2E `0775396`.
+
+- Corrección de cascada posterior: el selector de alta especificidad que aún fijaba 13px fue actualizado para respetar 17px en escritorio y 15px en móvil, incluidos los términos italianos destacados. Commit CSS final: `c3f704d`.
+- Estado de validación: pendiente de ejecución automatizada en GitHub Actions y de publicación/verificación en Render. La prueba humana queda pendiente hasta confirmar ambos.
