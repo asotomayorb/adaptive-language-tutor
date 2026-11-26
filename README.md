@@ -1428,3 +1428,11 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Tipografía: párrafos y viñetas deben conservar el mismo tamaño. Ajustar ancho de encabezados/celdas al contenido y al viewport móvil.
 - Estos son criterios de propuesta; aún no se modifica el contenido de Unidad 2 hasta cerrar la revisión visual. Unidad 1 y Unidades 3–6 permanecen fuera de alcance.
 - Se intentará comprobar el auto-render mediante un push documental posterior a esta nota. Si no aparece deploy automático, registrar el intento como fallido y mantener como pendiente la conexión GitHub–Render; no reemplazarlo con deploy manual ni declararlo resuelto.
+
+
+### Intento de auto-render tras push documental — 26-11-2026
+- Se hizo push del commit documental `8b0aeda865ba5b32be70a0650f9dfda247839dbe` para probar el disparo automático sin cambiar el código de la app.
+- Consulta posterior a Render: no se creó un deploy nuevo. El último sigue siendo el deploy manual `dep-dc3iga0u01pc73eobuog`, commit `4bb81c7814867c5ddd0b9e0347839ab724307224`, trigger `api`. El intento de auto-render no tuvo éxito.
+- El servicio aún reporta `autoDeploy=yes`, `autoDeployTrigger=commit`, rama correcta; no obstante, la integración de eventos GitHub–Render no está operativa/verificada. No disparar deploy manual como sustituto de la prueba solicitada.
+- Para resolverlo se requiere revisar/reconectar la integración GitHub en Render Dashboard → servicio → Settings → Repository y luego repetir un push de prueba. Esta acción de conexión no está disponible en las herramientas actuales.
+- El commit `8b0aeda...` solo actualiza documentación; no contiene cambios funcionales de la app ni modifica el contenido de Unidad 2.
