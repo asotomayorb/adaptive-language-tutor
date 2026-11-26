@@ -194,7 +194,7 @@ try {
       assert.equal(await body.locator(".theory-slide-text").count(),1,"adjectives should retain one introductory paragraph");
       assert.equal(await body.locator(".theory-rule-list").count(),0,"adjective rules should use a simple table, not extended bullets");
       const rules=body.locator(".adjective-rules-table");
-      assert.deepEqual((await rules.locator("tbody tr").allInnerTexts()).map(value=>value.replace(/\\s+/g," ").trim()),["-o -a -i (masculino) / -e (femenino)","-e — -i (masculino y femenino)"],"adjective endings should map to feminine and plural forms");
+      assert.deepEqual((await rules.locator("tbody tr").allInnerTexts()).map(value=>value.replace(/\s+/g," ").trim()),["-o -a -i (masculino) / -e (femenino)","-e — -i (masculino y femenino)"],"adjective endings should map to feminine and plural forms");
       const examples=body.locator(".adjective-examples-table");
       assert.deepEqual(await examples.locator("tbody tr td:first-child").allInnerTexts(),["-o","-a","-e → -i"],"examples should be keyed by ending, not pronoun");
       assert.equal(await examples.locator(".speak-button").count(),3,"each Italian example should have its own TTS control");
