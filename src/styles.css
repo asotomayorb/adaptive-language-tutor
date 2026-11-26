@@ -1258,3 +1258,31 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
 @media(max-width:620px){
   #screen-theory .theory-verb-comparison-table tbody td{font-size:17px!important;}
 }
+
+
+/* Consistent readable prose and list typography across every theory subtopic. */
+#screen-theory .theory-slide-content p,
+#screen-theory .theory-slide-content li{font-size:14px!important;line-height:1.6!important}
+
+/* Content-led columns, without forcing equal widths. */
+#screen-theory .theory-bilingual-table{table-layout:auto!important;width:100%}
+#screen-theory .theory-bilingual-table th,
+#screen-theory .theory-bilingual-table td{overflow-wrap:normal;word-break:normal}
+#screen-theory .country-language-table th:nth-child(1),
+#screen-theory .country-language-table td:nth-child(1){width:34%}
+#screen-theory .country-language-table th:nth-child(2),
+#screen-theory .country-language-table td:nth-child(2){width:33%}
+#screen-theory .country-language-table th:nth-child(3),
+#screen-theory .country-language-table td:nth-child(3){width:33%}
+#screen-theory .article-concordance-table th:nth-child(1),
+#screen-theory .article-concordance-table td:nth-child(1){width:23%}
+#screen-theory .article-concordance-table th:nth-child(2),
+#screen-theory .article-concordance-table td:nth-child(2){width:15%}
+#screen-theory .article-concordance-table th:nth-child(3),
+#screen-theory .article-concordance-table td:nth-child(3){width:62%}
+#screen-theory .adjective-concordance-table th:nth-child(1),
+#screen-theory .adjective-concordance-table td:nth-child(1){width:25%}
+#screen-theory .adjective-concordance-table th:nth-child(2),
+#screen-theory .adjective-concordance-table td:nth-child(2){width:30%}
+#screen-theory .adjective-concordance-table th:nth-child(3),
+#screen-theory .adjective-concordance-table td:nth-child(3){width:45%}
