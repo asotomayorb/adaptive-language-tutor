@@ -1280,12 +1280,17 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
 #screen-theory .article-concordance-table td:nth-child(2){width:15%}
 #screen-theory .article-concordance-table th:nth-child(3),
 #screen-theory .article-concordance-table td:nth-child(3){width:62%}
-#screen-theory .adjective-concordance-table th:nth-child(1),
-#screen-theory .adjective-concordance-table td:nth-child(1){width:25%}
-#screen-theory .adjective-concordance-table th:nth-child(2),
-#screen-theory .adjective-concordance-table td:nth-child(2){width:30%}
-#screen-theory .adjective-concordance-table th:nth-child(3),
-#screen-theory .adjective-concordance-table td:nth-child(3){width:45%}
+#screen-theory .adjective-rules-table th:nth-child(1),
+#screen-theory .adjective-rules-table td:nth-child(1){width:25%}
+#screen-theory .adjective-rules-table th:nth-child(2),
+#screen-theory .adjective-rules-table td:nth-child(2){width:25%}
+#screen-theory .adjective-rules-table th:nth-child(3),
+#screen-theory .adjective-rules-table td:nth-child(3){width:50%}
+#screen-theory .adjective-examples-table th:nth-child(1),
+#screen-theory .adjective-examples-table td:nth-child(1){width:27%}
+#screen-theory .adjective-examples-table th:nth-child(2),
+#screen-theory .adjective-examples-table td:nth-child(2){width:73%}
+#screen-theory .adjective-examples-table td p{margin:.2rem 0 0}
 
 
 /* Shared typography for all rendered lesson copy, paragraphs and lists. */
