@@ -8,7 +8,13 @@ Aplicación móvil-first para aprender idiomas mediante contenido progresivo, pr
 
 - Repositorio: [asotomayorb/adaptive-language-tutor](https://github.com/asotomayorb/adaptive-language-tutor).
 - Rama activa: `feature/mobile-bottom-navigation`.
-- Preview canónico: https://adaptive-language-tutor-preview-5b3d.onrender.com/
+- Repositorio GitHub: https://github.com/asotomayorb/adaptive-language-tutor
+- Rama de trabajo: `feature/mobile-bottom-navigation` — https://github.com/asotomayorb/adaptive-language-tutor/tree/feature/mobile-bottom-navigation
+- README vigente: https://github.com/asotomayorb/adaptive-language-tutor/blob/feature/mobile-bottom-navigation/README.md
+- Archivos principales: [app](https://github.com/asotomayorb/adaptive-language-tutor/blob/feature/mobile-bottom-navigation/src/app.js), [estilos](https://github.com/asotomayorb/adaptive-language-tutor/blob/feature/mobile-bottom-navigation/src/styles.css), [backend](https://github.com/asotomayorb/adaptive-language-tutor/blob/feature/mobile-bottom-navigation/server/index.js), [pruebas](https://github.com/asotomayorb/adaptive-language-tutor/tree/feature/mobile-bottom-navigation/tests).
+- Rama de respaldo: [recovery/intermediate-theory-content](https://github.com/asotomayorb/adaptive-language-tutor/tree/recovery/intermediate-theory-content); no es rama de trabajo ni fuente de despliegue.
+- Preview Render: https://adaptive-language-tutor-preview-5b3d.onrender.com/
+- Servicio Render: `adaptive-language-tutor-preview-5b3d` (ID `srv-dbus3hnf3r2c739j9ir0`). En el Dashboard: workspace **My Workspace** → servicio **adaptive-language-tutor-preview-5b3d**. El enlace anterior es la aplicación publicada; el Dashboard es el lugar para revisar deploys, estado y configuración.
 - Render se utiliza para el preview; el estado LIVE debe verificarse antes de afirmar que una revisión está publicada.
 - El proyecto original de Replit permanece intacto. No modificarlo ni sincronizarlo sin autorización expresa.
 - La rama `recovery/intermediate-theory-content` es respaldo histórico; no usarla para desarrollo cotidiano ni conectarla directamente a Render. Rescatar cambios de ella de forma selectiva, revisando diff y pruebas.
