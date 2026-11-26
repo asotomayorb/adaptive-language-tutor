@@ -205,7 +205,7 @@ try {
       const firstRow=body.locator("table").first().locator("tbody tr").first();
       assert.equal(await firstRow.locator("td").count(),3,"country, demonym and language must have separate columns");
       assert.ok((await firstRow.locator("td").first().innerText()).includes("(Italia)"),"country cell should keep Spanish translation in parentheses");
-      assert.equal(await firstRow.locator("td").first().locator("button").count(),1,"Italian country name should have its own pronunciation control");
+      assert.equal(await firstRow.locator("td").first().locator(".theory-target-tap[role=button]").count(),1,"Italian country name should remain individually tappable for pronunciation");
       for(let cellIndex=1;cellIndex<3;cellIndex++) assert.ok(await firstRow.locator("td").nth(cellIndex).locator("button").count()>0,"foreign demonym/language cells should retain TTS controls");
     }
     if(i===3) assert.ok(!(await body.innerText()).includes("(formal)"),"translations should not contain parenthetical mini-explanations");
