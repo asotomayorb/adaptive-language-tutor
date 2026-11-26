@@ -1487,3 +1487,12 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Reglas: tabla compacta con columnas **Terminación | Femenino | Plural**. Para `-o`, mostrar femenino `-a` y plural `-i` masculino / `-e` femenino. Para `-e`, dejar la columna Femenino sin transformación (celda vacía o raya) y mostrar plural `-i` para ambos géneros.
 - Ejemplos: sustituir la columna/categoría «Pronombre» por **Terminación**. Relacionar `-o` con `Un ragazzo italiano`, `-a` con `Una ragazza italiana` y `-e → -i` con `Due ragazze interessanti`; conservar traducción española y TTS individual.
 - Esta es una propuesta visual en conversación, no una aprobación ni una implementación. Mantener intactos código y contenido hasta confirmación explícita del usuario.
+
+
+### Implementación aprobada: formato compacto de adjetivos y criterio reutilizable — 26-11-2026
+- El usuario aprueba la segunda propuesta visual de «Artículos y adjetivos» y solicita aplicarla.
+- Se conserva el primer punto como párrafo introductorio; las dos reglas se presentan en una tabla sencilla **Terminación | Femenino | Plural**: `-o | -a | -i (masculino) / -e (femenino)` y `-e | — | -i (masculino y femenino)`.
+- Los ejemplos se muestran en una tabla **Terminación | Ejemplo aplicado**, con `-o`, `-a` y `-e → -i`; cada frase italiana mantiene TTS individual y traducción española.
+- Criterio visual reutilizable para los siguientes subtemas/tablas/ejemplos: priorizar tablas sencillas frente a párrafos o listas extensas; definir columnas según los elementos más relevantes y su peso informativo; usar encabezados breves, distribución proporcional al contenido y ejemplos agrupados por categoría/terminación (no por pronombres cuando no corresponda). Mantener introducciones breves solo cuando aporten contexto.
+- Mantener el estilo base existente: fondo claro, tipografía actual, términos italianos destacados y controles TTS individuales. No extender automáticamente este cambio a subtemas ya aprobados sin una solicitud de revisión.
+- Se actualizó la cobertura Browser E2E para comprobar encabezados, reglas, terminaciones, traducciones y tres controles TTS. Validación y publicación quedan sujetas al resultado real de CI/Render.
