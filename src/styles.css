@@ -1331,3 +1331,16 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
 /* Shared typography for all rendered lesson copy, paragraphs and lists. */
 #screen-theory #theory-description p,
 #screen-theory #theory-description li{font-size:14px!important;line-height:1.6!important}
+
+
+/* Final override: adjective tables use a common full-width frame and identical body text sizing. */
+#screen-theory #theory-description .adjective-example-block{width:100%;padding:0!important;background:transparent!important;border-radius:0!important}
+#screen-theory #theory-description table.adjective-rules-table,
+#screen-theory #theory-description table.adjective-vocabulary-table,
+#screen-theory #theory-description table.adjective-examples-table{display:table;width:100%!important;max-width:100%!important;table-layout:fixed!important}
+#screen-theory #theory-description table.adjective-rules-table tbody td:nth-child(n),
+#screen-theory #theory-description table.adjective-vocabulary-table tbody td:nth-child(n),
+#screen-theory #theory-description table.adjective-examples-table tbody td:nth-child(n){font-size:13px!important;line-height:1.45!important;font-weight:400!important}
+#screen-theory #theory-description table.adjective-rules-table tbody td .theory-target-word,
+#screen-theory #theory-description table.adjective-vocabulary-table tbody td .theory-target-word,
+#screen-theory #theory-description table.adjective-examples-table tbody td .theory-target-word{font-size:13px!important;line-height:1.45!important;font-weight:700!important}
