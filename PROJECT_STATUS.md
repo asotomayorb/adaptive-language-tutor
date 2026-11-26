@@ -1278,3 +1278,11 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Configuración consultada: servicio `srv-dbus3hnf3r2c739j9ir0`, rama `feature/mobile-bottom-navigation`, `autoDeploy=yes`, `autoDeployTrigger=commit`; Blueprint `exs-dbus1io8v5cc73a0tjsg`, `autoSync=true`, estado `in_sync`. Esta configuración por sí sola no demuestra que el webhook GitHub–Render esté operativo.
 - El panel de herramientas Render disponible permite consultar servicio/Blueprint y disparar deploys manuales, pero no cambiar la integración Git provider/repositorio del servicio existente. No se creó un servicio duplicado ni se hizo un deploy manual para ocultar el fallo automático.
 - Acción pendiente necesaria en Render Dashboard: revisar Settings → Repository y conectar el servicio mediante la integración GitHub del repositorio, no como URL pública/clone source. Después, hacer un push de prueba y verificar que el nuevo deploy tenga trigger automático. Hasta entonces, auto-render permanece NO operativo/verificado; el preview sigue en el último deploy LIVE manual.
+
+
+### Intento de auto-render tras push documental — 26-11-2026
+- Se hizo push del commit documental `8b0aeda865ba5b32be70a0650f9dfda247839dbe` para probar el disparo automático sin cambiar el código de la app.
+- Consulta posterior a Render: no se creó un deploy nuevo. El último sigue siendo el deploy manual `dep-dc3iga0u01pc73eobuog`, commit `4bb81c7814867c5ddd0b9e0347839ab724307224`, trigger `api`. El intento de auto-render no tuvo éxito.
+- El servicio aún reporta `autoDeploy=yes`, `autoDeployTrigger=commit`, rama correcta; no obstante, la integración de eventos GitHub–Render no está operativa/verificada. No disparar deploy manual como sustituto de la prueba solicitada.
+- Para resolverlo se requiere revisar/reconectar la integración GitHub en Render Dashboard → servicio → Settings → Repository y luego repetir un push de prueba. Esta acción de conexión no está disponible en las herramientas actuales.
+- El commit `8b0aeda...` solo actualiza documentación; no contiene cambios funcionales de la app ni modifica el contenido de Unidad 2.
