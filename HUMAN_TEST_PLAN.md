@@ -2,6 +2,8 @@
 
 **Objetivo:** validar la experiencia completa antes de declarar la aplicación lista para pruebas más amplias. Ejecutar con datos ficticios; nunca introducir información personal.
 
+> **Alcance vigente — 26-11-2026:** la UI principal actual prioriza Teoría y Estadísticas, con Italiano activo. Los apartados 2, 3 y 5 describen regresiones del tutor local/IA y del seguimiento de sesiones que permanecen en el repositorio, pero no forman parte de la aceptación de la UI actualmente expuesta; ejecutarlos cuando esos módulos se habiliten o modifiquen. El apartado 4 contiene verificaciones de audio compartidas: para la aceptación actual, priorizar los controles TTS de Teoría indicados en las secciones específicas de Unidades 1 y 2. El apartado 6 de seguridad sigue siendo aplicable al backend. Las entradas históricas al final conservan sus resultados de cada fecha; el último bloque de cada área determina el estado vigente.
+
 ## 1. Preparación
 
 1. Clonar el repositorio y usar la rama `feature/mobile-bottom-navigation`.
@@ -877,8 +879,11 @@ Para cada escenario registrar:
 - [ ] Comprobar que las celdas largas saltan de línea entre palabras sin provocar desplazamiento horizontal.
 
 
-### Revisión de tipografía de tablas en todos los subtemas — 26-11-2026
-- En móvil, recorrer los subtemas de las Unidades 1 y 2 y comprobar que todas las celdas de cuerpo de tabla tengan el mismo tamaño que «Artículos y adjetivos» (15px).
-- Confirmar que se mantienen los encabezados con tamaño diferenciado, las columnas adaptadas al contenido, el texto completo sin cortes de palabra y los controles TTS individuales.
-- En escritorio, comprobar que el cuerpo de todas las tablas conserva el tamaño de referencia de 17px.
-- Esta revisión sigue pendiente de validación automatizada y visual en Preview.
+### Revisión de tipografía de tablas en todos los subtemas — estado actualizado 26-11-2026
+- [x] Tests aprobados en HEAD `dcea0b5554fe0ec9a114518123b6c0a58b329f78`: [run 45859331932](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45859331932).
+- [x] Browser E2E aprobado en el mismo HEAD: [run 45859331888](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45859331888).
+- [x] Preview Render LIVE: deploy `dep-dc44gf56e07s73e58ajg`, commit `a9470686a65fba54c4e2bbb192326d3b58fe12ab`. La comparación con HEAD actual muestra únicamente diferencias documentales; los archivos de ejecución son idénticos.
+- [ ] En móvil, recorrer los subtemas de las Unidades 1 y 2 y comprobar que todas las celdas de cuerpo de tabla tengan 15px.
+- [ ] Confirmar encabezados diferenciados, columnas adaptadas al contenido, palabras sin cortes arbitrarios y controles TTS individuales.
+- [ ] En escritorio, comprobar que el cuerpo de todas las tablas conserva 17px.
+- **Estado:** automatización y publicación verificadas; revisión visual, táctil y auditiva en Android real pendiente.
