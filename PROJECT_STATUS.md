@@ -1401,3 +1401,13 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - PROJECT_STATUS.md sigue siendo la fuente del estado técnico y HUMAN_TEST_PLAN.md la fuente de comprobaciones manuales.
 - Objetivo de eficiencia: evitar releer la especificación completa en tareas acotadas. Leer las secciones indicadas por el índice y ampliar solo ante dependencias.
 - No se modificó código de aplicación ni se ejecutaron pruebas de producto por tratarse de una reorganización documental.
+
+
+## Checkpoint de continuidad — 26-11-2026
+
+- Se guardó el estado actual de `feature/mobile-bottom-navigation` en `recovery/intermediate-theory-content` mediante el commit de checkpoint `59c87d6a02d9dfe8ebc84de6e9417e29401f4a74`.
+- El commit preserva el checkpoint anterior como primer padre (`b4b985507a398e51e3b72953613dce89e08ee806`) y agrega el HEAD activo (`e2f930645d2655de4493edb258501a38ce292766`) como segundo padre. No se eliminó ni reemplazó el historial previo.
+- La rama activa de desarrollo no cambió. El trabajo pendiente es validar la uniformidad global de tablas (17 px escritorio / 15 px móvil), saltos solo entre palabras y vocabulario de adjetivos antes de los ejemplos.
+- El código de esos ajustes ya está presente en la rama activa según la inspección de `src/app.js` y `src/styles.css`; en esta continuación no se modificó código funcional ni se ejecutaron pruebas.
+- Estado de publicación/validación de este HEAD: no confirmado en esta sesión. No declarar Render listo para nueva prueba humana hasta verificar Tests, Browser E2E y commit LIVE del servicio Preview.
+- Próximo paso: ejecutar/consultar validación automatizada del HEAD activo y verificar Render LIVE; si ambos coinciden, habilitar prueba humana Android y registrar su resultado.
