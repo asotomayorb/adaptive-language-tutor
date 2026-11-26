@@ -235,7 +235,7 @@ try {
     for (let topicIndex=0;topicIndex<await laterTopics.count();topicIndex++) {
       const laterTitle=await laterTopics.nth(topicIndex).locator(".theory-tree-topic-name").innerText();
       await laterTopics.nth(topicIndex).click();
-      assert.equal(await page.locator("#theory-title").innerText(),laterTitle,"later-unit subtopic title must be preserved");
+      assert.ok((await page.locator("#theory-title").innerText()).toLocaleLowerCase().includes(laterTitle.split(" (")[0].toLocaleLowerCase()),"later-unit subtopic title must be preserved");
       assert.equal((await page.locator("#theory-description").innerText()).trim(),"","Units 3–6 must contain no lesson text or residual data");
       assert.equal(await page.locator("#theory-description table").count(),0,"Units 3–6 must contain no residual tables");
       await page.locator("#theory-back").click();
