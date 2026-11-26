@@ -25,7 +25,7 @@ Aplicación móvil-first para aprender idiomas mediante contenido progresivo, pr
 - Rama activa de desarrollo: feature/mobile-bottom-navigation.
 - Rama de checkpoints que debe conservarse: [recovery/intermediate-theory-content](https://github.com/asotomayorb/adaptive-language-tutor/tree/recovery/intermediate-theory-content). No es rama de desarrollo ni fuente directa de Render.
 - Preview Render: https://adaptive-language-tutor-preview-5b3d.onrender.com/
-- Servicio Render: adaptive-language-tutor-preview-5b3d, workspace **My Workspace**. Verificar el deploy LIVE y su commit antes de afirmar que el preview contiene un cambio.
+- Servicio Render: adaptive-language-tutor-preview-5b3d, workspace confirmado **My Workspace** (`tea-dbus0u5g1s2s73coteeg`). Verificar el deploy LIVE y su commit antes de afirmar que el preview contiene un cambio.
 - El proyecto original de Replit permanece intacto; no modificarlo ni sincronizarlo sin autorización expresa.
 - El estado técnico, commits, pruebas y pendientes verificados están en [PROJECT_STATUS.md](PROJECT_STATUS.md).
 - Las comprobaciones manuales pendientes están en [HUMAN_TEST_PLAN.md](HUMAN_TEST_PLAN.md).
@@ -81,8 +81,11 @@ La app queda en http://localhost:3000; desarrollo: npm run dev. Los smoke tests 
 6. Verificar Render LIVE y su commit antes de afirmar que el preview está actualizado.
 7. Solicitar prueba humana solo cuando la versión publicada corresponda al cambio validado; E2E no sustituye la revisión visual, táctil y auditiva en Android.
 8. Registrar checkpoints aprobados en la rama recovery/intermediate-theory-content y documentar claramente su referencia. No sobrescribir ni eliminar checkpoints existentes.
+9. No asignar una versión numerada a cada iteración: registrar hitos con commit, resultados CI y deploy. Reservar versiones semánticas/tags para releases identificables.
 
 ## 6. Historial de documentación
 
 - **26-11-2026:** reorganización documental para reducir lectura repetida: README convertido en índice operativo, especificación de producto separada en PRODUCT_SPEC.md, estado técnico y plan humano conservados en sus documentos respectivos. No se modificó código de la aplicación.
 - **26-11-2026:** checkpoint de continuidad guardado en `recovery/intermediate-theory-content`, commit `59c87d6a02d9dfe8ebc84de6e9417e29401f4a74`. El checkpoint conserva como padre el estado previo de recuperación y añade como segundo padre el HEAD activo `e2f930645d2655de4493edb258501a38ce292766`; no se sobrescribió el historial anterior. La rama de desarrollo permanece `feature/mobile-bottom-navigation`.
+
+- **26-11-2026:** workspace Render confirmado por el usuario: `My Workspace` (`tea-dbus0u5g1s2s73coteeg`). Auditoría de vigencia iniciada; no se eliminan archivos ni ramas sin verificar dependencias y autorización.
