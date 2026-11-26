@@ -1394,3 +1394,10 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - E2E recorre subtemas de Unidades 1 y 2 y comprueba que todas las celdas de cuerpo de tabla midan 15px en viewport móvil.
 - Commits: `36c6944` (CSS), `b8353b8` (E2E), documentación en curso.
 - Validación automatizada, inspección visual y Render deploy pendientes. La revisión no está marcada como validada.
+## Reorganización documental — 26-11-2026
+
+- README reducido a índice operativo: contiene orientación por tipo de tarea, enlaces, arquitectura y protocolo de edición.
+- Reglas de producto extraídas sin intención de cambiar su contenido a PRODUCT_SPEC.md; conserva las secciones de alcance, navegación, audio, Teoría, estética, Estadísticas, Ruta/Entrenamiento, privacidad y decisiones vigentes.
+- PROJECT_STATUS.md sigue siendo la fuente del estado técnico y HUMAN_TEST_PLAN.md la fuente de comprobaciones manuales.
+- Objetivo de eficiencia: evitar releer la especificación completa en tareas acotadas. Leer las secciones indicadas por el índice y ampliar solo ante dependencias.
+- No se modificó código de aplicación ni se ejecutaron pruebas de producto por tratarse de una reorganización documental.
