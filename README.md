@@ -1530,3 +1530,11 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Tests aprobados: [45822259293](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45822259293). Browser E2E aprobado: [45822259276](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45822259276).
 - Render Preview continúa LIVE en el commit documental anterior `828034a732b0770b9eb8c63718d15e335083f67a`; no se generó un deploy tras los pushes validados. La configuración reporta `autoDeploy=yes`, `autoDeployTrigger=commit`, pero el webhook GitHub–Render sigue sin disparar. No declarar el preview actualizado ni solicitar prueba humana hasta que Render sirva el commit validado y se compruebe la versión publicada.
 - Pendiente operativo: reconectar el repositorio mediante GitHub Integration en Render Dashboard → servicio → Settings → Repository, o resolver la integración de eventos. Después verificar un deploy con el HEAD validado y revisar el preview móvil.
+
+
+### Preview Render actualizado para prueba humana — 26-11-2026
+- Tras verificar que Tests y Browser E2E aprobaron en el commit `213164e852da005275d95012d11a3584dfa63d71`, se solicitó el despliegue manual porque el auto-deploy no había actualizado el servicio pese a tener autoDeploy habilitado.
+- Render confirmó el deploy `dep-dc42l05g1s2s73d516g0` como `live`; el build terminó correctamente, la aplicación inició con `npm start` y Render registró «Your service is live».
+- Commit servido: `213164e852da005275d95012d11a3584dfa63d71`. Preview: https://adaptive-language-tutor-preview-5b3d.onrender.com
+- La versión ya está disponible para prueba humana. Si el navegador mantiene recursos antiguos, recargar la página sin caché antes de evaluar.
+- Se mantiene pendiente investigar por qué los eventos de auto-deploy no actualizaron el servicio automáticamente; el despliegue manual resolvió esta publicación.
