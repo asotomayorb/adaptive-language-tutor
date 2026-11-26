@@ -800,12 +800,85 @@ Para cada escenario registrar:
 - [x] Browser E2E aprobado: [45522922093](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45522922093).
 - [ ] Revisión visual, táctil y auditiva en Android real después del despliegue Render.
 
-## Pulido de Unidad 2 y reglas globales de Teoría — 25-11-2026
-- [ ] Abrir «Datos personales y entorno» y confirmar que «Países e idiomas» muestra pares correctos de país e idioma, no saludos.
-- [ ] Tocar cada variante separada por guion o barra y confirmar que el audio reproduce solo el fragmento seleccionado.
-- [ ] En «Artículos y concordancia», comprobar que la explicación de género, número, sonido inicial y apóstrofo aparece antes de las tablas.
-- [ ] Revisar que las columnas de las tablas se distribuyen de forma equilibrada y que el texto no provoca desbordamiento horizontal en móvil.
-- [ ] En «Artículos y adjetivos», comprobar concordancia -o/-a/-i/-e y formas en -e, con ejemplos masculino/femenino/plural.
-- [ ] En «Edad y procedencia», comprobar las preguntas y respuestas de edad y origen, incluidas las variantes formal e informal.
-- [ ] Confirmar pronunciación it-IT real en el teléfono; la aprobación de Browser E2E no sustituye esta revisión.
-- [ ] Ejecutar esta revisión solo después de publicar el commit validado en el preview Render.
+
+### Publicación lista para prueba humana — 25-11-2026
+- [x] Cambios integrados en `feature/mobile-bottom-navigation`.
+- [x] Render Preview LIVE: deploy `dep-dc3399u8bjmc73ednf6g`, commit `395aace02fccbf51aa433a66a33a87aa32d8043e`.
+- [x] CI y Browser E2E aprobados antes de integrar.
+- [ ] En Android, confirmar las seis unidades A1 y los cuatro subtemas de la primera unidad.
+- [ ] Tocar por separado cada variante con «/» y verificar que el audio reproduce solo esa frase en italiano.
+- [ ] Confirmar que las columnas «essere» y «stare» se ven del mismo tamaño y que sus encabezados aparecen en cursiva y entre « ».
+
+
+## Ajustes tipográficos de subtemas — 25-11-2026
+- [ ] Confirmar que los términos italianos incluidos en títulos de subtemas se muestran en cursiva, entre « », y seguidos de su traducción española entre paréntesis.
+- [ ] En «Pronombres y ser/estar», comprobar que el encabezado dice «Verbos «Essere» (ser) y «Stare» (estar)».
+- [ ] Confirmar que las celdas y encabezados de tablas no heredan cursiva, comillas angulares ni traducciones de los títulos.
+- [ ] En la última tabla de conjugación, comprobar que las tres columnas usan el mismo tamaño de letra (19 px escritorio / 17 px móvil).
+- [ ] Verificar en Android que la legibilidad y el desplazamiento horizontal de la tabla siguen siendo adecuados.
+
+
+## Unidad 2 — revisión humana de contenido y formato
+- [ ] Países, gentilicios e idiomas: revisar traducciones, preposiciones y pronunciación.
+- [ ] Artículos y concordancia: revisar formas definidas/indefinidas y ejemplos.
+- [ ] Adjetivos: revisar concordancia masculino/femenino y singular/plural.
+- [ ] Edad y procedencia: comprobar uso de `avere`, `essere di` y `venire da`, incluidas variantes formales.
+- [ ] Confirmar encabezados de tabla Italiano/Español, tamaño uniforme y ausencia de cursiva/comillas/traducciones en las tablas.
+- [ ] Probar pronunciación individual de variantes separadas por «/».
+- [ ] Confirmar que Unidades 3–6 conservan títulos y no muestran contenido de lección.
+
+
+## Unidad 2 italiana — validación humana tras publicación — 25-11-2026
+- [ ] Abrir Teoría > A1 > Unidad 2 y comprobar los cuatro subtemas en orden: Países e idiomas, Artículos y concordancia, Artículos y adjetivos, Edad y procedencia.
+- [ ] En Países e idiomas, confirmar que cada país e idioma tiene su propio control TTS cuando aparece separado por guion o barra; tocar cada variante y comprobar que solo se pronuncia esa variante.
+- [ ] En Artículos y concordancia, comprobar que la explicación aparece antes de las tablas y que cubre género, número, sonidos iniciales y apóstrofo.
+- [ ] En Artículos y adjetivos, comprobar que las columnas Masculino, Femenino y Plural quedan equilibradas y que los ejemplos concuerdan.
+- [ ] En Edad y procedencia, comprobar preguntas y respuestas de edad y origen, incluidas las variantes formal e informal.
+- [ ] En móvil vertical y horizontal, confirmar que ninguna tabla produce scroll horizontal ni texto cortado; comprobar anchura de columnas y ajuste de palabras largas.
+- [ ] Confirmar que los títulos italianos conservan cursiva, comillas angulares y traducción española donde corresponde; los encabezados de tabla permanecen sin formato adicional.
+- [ ] Confirmar que la tabla de conjugación mantiene tamaño tipográfico uniforme en las tres columnas.
+- [ ] Confirmar voz it-IT audible en el teléfono y pronunciación individual de cada variante; el test de navegador no sustituye la prueba auditiva.
+
+### Automatización y despliegue — 25-11-2026
+- [x] Tests: GitHub Actions run 45614659980.
+- [x] Browser E2E: GitHub Actions run 45614660104.
+- [x] Render Preview LIVE: deploy dep-dc3daucipgvc738c5k10, commit 19627135bf04bcb7c0a83330f007ebee04a0f8de.
+- [ ] Prueba humana visual, táctil y auditiva en Android.
+
+
+## Unidad 2 — adjetivos: vocabulario y uniformidad de tablas (26-11-2026)
+- [ ] En «Artículos y adjetivos», confirmar que la tabla «Adjetivos frecuentes» aparece después de la regla y antes de los ejemplos.
+- [ ] Verificar los seis pares: bello/bonito, buono/bueno, grande/grande, nuovo/nuevo, piccolo/pequeño e interessante/interesante.
+- [ ] Tocar cada adjetivo italiano y comprobar que reproduce únicamente esa palabra.
+- [ ] Confirmar que las tablas de regla, vocabulario y ejemplos tienen el mismo ancho exterior y el mismo tamaño de texto en sus celdas.
+- [ ] Revisar ajuste de columnas, traducciones y ausencia de scroll horizontal en móvil vertical y horizontal.
+- [ ] Confirmar que los ejemplos siguen vinculados a las terminaciones -o, -a y -e → -i y conservan traducción española y TTS.
+- [ ] Ejecutar Tests y Browser E2E; no marcar como validado hasta que ambos aprueben.
+- [ ] Tras publicación Render LIVE, comprobar el preview en Android.
+
+
+### Validación automatizada del ajuste de adjetivos — 26-11-2026
+- [x] Tests CI aprobados: [run 45826567300](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826567300).
+- [x] Browser E2E aprobado: [run 45826567302](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826567302).
+- [ ] Render Preview actualizado al commit final y verificado LIVE.
+- [ ] Prueba visual, táctil y auditiva en Android real.
+
+
+### Publicación Render — ajuste de adjetivos — 26-11-2026
+- [x] Render Preview LIVE: deploy `dep-dc430l3l550s7381s230`, commit `89aa6ccd2380f8a1000d89876be791fd591e2ad4`.
+- [x] Build y arranque de aplicación confirmados en logs Render.
+- [x] Tests y Browser E2E aprobados para el HEAD publicado.
+- [ ] Prueba visual, táctil y auditiva en Android real: vocabulario previo a ejemplos, tablas de ancho y tipografía uniformes, seis controles de pronunciación.
+
+
+## Revisión de tablas y cortes de palabras — 26-11-2026
+- [ ] En Teoría, revisar que ninguna palabra quede dividida entre dos renglones, especialmente en las tablas de regla, vocabulario y ejemplos de «Artículos y adjetivos».
+- [ ] Confirmar que las tres tablas conservan el mismo ancho exterior y que el texto de cuerpo tiene tamaño uniforme y legible en móvil y escritorio.
+- [ ] Comprobar que las celdas largas saltan de línea entre palabras sin provocar desplazamiento horizontal.
+
+
+### Revisión de tipografía de tablas en todos los subtemas — 26-11-2026
+- En móvil, recorrer los subtemas de las Unidades 1 y 2 y comprobar que todas las celdas de cuerpo de tabla tengan el mismo tamaño que «Artículos y adjetivos» (15px).
+- Confirmar que se mantienen los encabezados con tamaño diferenciado, las columnas adaptadas al contenido, el texto completo sin cortes de palabra y los controles TTS individuales.
+- En escritorio, comprobar que el cuerpo de todas las tablas conserva el tamaño de referencia de 17px.
+- Esta revisión sigue pendiente de validación automatizada y visual en Preview.

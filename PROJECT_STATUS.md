@@ -1161,25 +1161,243 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - El E2E verifica seis unidades, cuatro subtemas de Unidad 1, dos destinos tocables/pronunciables por variante, encabezados italianos en cursiva con comillas angulares y tamaños equivalentes en columnas verbales.
 - No se desplegó a Render ni se integró aún en `feature/mobile-bottom-navigation`. Pendiente revisión del diff/merge y después prueba humana Android.
 
-## 25-11-2026 — Pulido de contenido y estructura de Unidad 2
-- Se confirmó en código que Unidad 2 ya tenía cuatro subtemas desplegados, aunque algunos datos no correspondían a los títulos: Países e idiomas mostraba saludos, Artículos y adjetivos heredaba una lección de verbos, y Edad y procedencia mostraba indicaciones de transporte.
-- Se corrigió la correspondencia pedagógica: pares país/idioma; concordancia de adjetivos italianos (-o/-a/-i/-e y formas en -e); expresiones de edad y procedencia con variantes formales e informales.
-- Artículos y concordancia: reglas prácticas de artículos definidos/indefinidos, género, número, sonido inicial y apóstrofo se presentan en el párrafo introductorio antes de las tablas.
-- CSS: todas las tablas de Teoría usan ancho completo y distribución uniforme de columnas, con ajuste de texto para móvil.
-- TTS: variantes divididas por barra, salto de línea, guion largo y guion espaciado conservan controles de pronunciación separados.
-- Browser E2E amplía cobertura a los cuatro subtemas de Unidad 2 y valida títulos, contenido, reglas previas a tablas, variantes TTS y columnas equilibradas. Se corrigieron errores de navegación de la prueba; último run `45606335111` sobre `e08b88c` pendiente al registrar este estado.
-- `npm run check` y `npm test` aprobados en run [45606123743](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45606123743), commit `26c848e`.
-- Render no actualizado; rama principal intacta. No integrar ni desplegar hasta Browser E2E aprobado y revisión del diff.
-### Validación final de pulido de Unidad 2 — 25-11-2026
-- Browser E2E aprobado en [run 45606335111](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45606335111), commit `e08b88c`.
-- `npm run check` y `npm test` aprobados en [run 45606123743](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45606123743), commit `26c848e`.
-- La cobertura E2E confirma los cuatro subtemas de Unidad 2, contenido asociado a cada título, reglas antes de las tablas, anchuras equilibradas y TTS fragmentado.
-- Sin deploy Render ni integración a la rama principal. Pendiente revisión visual/táctil Android.
-- Checkpoint propuesto para aprobación del usuario: «Unidad 2 con contenido alineado y pulido inicial; reglas antes de tablas, columnas equilibradas y TTS por variantes; CI aprobado; Render y revisión Android pendientes». No iniciar el siguiente bloque hasta confirmación.
-### Validación final ampliada — 25-11-2026
-- TTS ahora separa también guiones simples sin espacios; el E2E comprueba la variante país–idioma con guion.
-- Browser E2E aprobado: [run 45606584095](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45606584095), HEAD `7737533`.
-- `npm run check` y `npm test` aprobados: [run 45606584094](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45606584094), HEAD `7737533`.
-- Unidad 2 queda con contenido alineado a sus cuatro títulos, reglas previas a tablas, columnas equitativas y variantes TTS independientes. Prueba humana Android pendiente.
-- Sin despliegue Render ni integración a la rama móvil principal. Preview canónico sin cambios.
-- Checkpoint propuesto para confirmación del usuario: «Unidad 2 con contenido alineado y pulido inicial; reglas antes de tablas; columnas equilibradas; TTS separado por `/`, saltos y guiones; CI completo aprobado. Render y Android pendientes». Esperar confirmación antes del siguiente bloque.
+
+## 25-11-2026 — Recuperación integrada y publicada
+- PR #5 integrado por squash; commit de código `395aace02fccbf51aa433a66a33a87aa32d8043e`.
+- A1 mantiene seis unidades. Unidad 1 tiene cuatro subtemas revisados y el TTS individual por variante.
+- `npm run check` + `npm test`: aprobados (Actions [45523103299](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45523103299)).
+- Browser E2E: aprobado (Actions [45523103462](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45523103462)).
+- Render Preview LIVE: deploy `dep-dc3399u8bjmc73ednf6g`, commit `395aace02fccbf51aa433a66a33a87aa32d8043e`, limpieza de caché. Logs confirman `npm start` y servidor escuchando en `0.0.0.0:10000`.
+- Pendiente: prueba humana en Android (jerarquía, tablas, tamaños y pronunciación italiana audible). No se declara validación humana completada.
+
+
+## Checkpoint funcional confirmado — 25-11-2026
+- El usuario confirma como checkpoint la recuperación selectiva integrada: código `395aace02fccbf51aa433a66a33a87aa32d8043e`, rama `feature/mobile-bottom-navigation`; HEAD documental `44e22c21d90f8242c1426d87f3b8485c97fe5934`.
+- Base protegida: jerarquía A1 de seis unidades, cuatro subtemas desarrollados en Unidad 1, pronunciación independiente por variante y tablas bilingües.
+- Render deploy LIVE: `dep-dc3399u8bjmc73ednf6g`. CI y Browser E2E aprobados.
+- La revisión humana en Android continúa pendiente. Este checkpoint es el punto de retorno si los ajustes siguientes introducen regresiones.
+
+
+## Ajustes de títulos y tablas de Teoría italiana — 25-11-2026
+- Checkpoint base confirmado: código `395aace02fccbf51aa433a66a33a87aa32d8043e`.
+- Títulos de subtemas: los términos italianos se muestran en cursiva, entre comillas angulares y con traducción española entre paréntesis. En Pronombres: «Essere» (ser) y «Stare» (estar).
+- El formato de títulos no se aplica dentro de tablas ni a sus encabezados. Última tabla de conjugación: tamaño de letra igual en sus tres columnas (19 px escritorio / 17 px móvil).
+- Código: `448503a`, `107e947`, `0131e46`.
+- CI aprobado: Tests [45529304385](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45529304385) y [45529365304](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45529365304); Browser E2E [45529304350](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45529304350) y [45529365187](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45529365187).
+- Render LIVE: deploy `dep-dc340mk0916s73fkoni0`.
+- Prueba humana Android pendiente; ver `HUMAN_TEST_PLAN.md`.
+
+
+### Checkpoint confirmado — Unidad 1 validada y reglas tipográficas — 25-11-2026
+- El usuario confirma guardar como checkpoint el estado con Unidad 1 desarrollada y sus reglas de formato aplicadas.
+- Código validado: `0131e4687c4cba885c1a9524490256f191512b4d`; HEAD documental vigente al registrar el checkpoint: `0948936d0687ef0122bf951bb44b19a74cd0ea14`.
+- Rama: `feature/mobile-bottom-navigation`. Se conserva la jerarquía A1 de seis unidades.
+- Tests y Browser E2E aprobados; Render Preview LIVE, deploy `dep-dc340mk0916s73fkoni0`.
+- Este checkpoint es la base segura para limpiar los contenidos de unidades posteriores y desarrollar la Unidad 2. Unidad 1 debe permanecer intacta.
+
+
+## Unidad 2 desarrollada y unidades posteriores vaciadas — 25-11-2026
+- Unidad 1 queda protegida por el checkpoint previo y sin cambios de contenido.
+- Unidad 2 contiene los cuatro subtemas italianos: países e idiomas; artículos y concordancia; artículos y adjetivos; edad y procedencia.
+- Unidades 3–6 mantienen sus títulos y jerarquía, con el cuerpo de sus subtemas vacío hasta su desarrollo.
+- Se aplican tablas Italiano/Español, TTS separado por variante, formato de títulos italianos con traducción y exclusión de tablas.
+- CI y Browser E2E aprobados: [Tests 45531925766](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45531925766), [Browser E2E 45531925531](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45531925531).
+- Código final validado: `dc05ceb51c49db20f6cebb9479e3e467d374cc76`. Render deploy `dep-dc34b395efls73aor580` pendiente de confirmación LIVE.
+- Revisión humana Android pendiente.
+
+
+### Despliegue Unidad 2 confirmado — 25-11-2026
+- Render Preview LIVE: `dep-dc34b395efls73aor580`, commit de código `dc05ceb51c49db20f6cebb9479e3e467d374cc76`.
+- El deploy corresponde al código validado por Tests y Browser E2E. Auto-deploy sigue desactivado.
+
+
+## Pulido de Unidad 2 integrado y publicado — 25-11-2026
+- Rama activa: feature/mobile-bottom-navigation. Checkpoint de código integrado: 19627135bf04bcb7c0a83330f007ebee04a0f8de.
+- Rescate selectivo desde recovery/intermediate-theory-content vía PR #7; la rama recovery permanece intacta como respaldo histórico.
+- src/app.js: contenido italiano alineado para países/idiomas, artículos, adjetivos, edad y procedencia; reglas antes de tablas; TTS fragmentado por barra y guiones; se conserva el formato de títulos y la tipografía uniforme de conjugación.
+- src/styles.css: tablas de teoría a ancho completo, columnas fijas/equitativas y ajuste de texto en pantallas estrechas.
+- tests/browser/e2e.js: cobertura de las cuatro lecciones, reglas antes de tablas, columnas equilibradas y TTS independiente de conceptos separados por guion.
+- GitHub Actions Tests aprobados: run 45614659980. Browser E2E aprobado: run 45614660104.
+- Render Preview LIVE: dep-dc3daucipgvc738c5k10, asociado al commit 19627135bf04bcb7c0a83330f007ebee04a0f8de. Build succeeded; logs confirman npm start y servidor en 0.0.0.0:10000.
+- El preview canónico sigue conectado a feature/mobile-bottom-navigation; auto-deploy continúa desactivado y la publicación se realizó manualmente.
+- Prueba humana Android pendiente: confirmar legibilidad/anchura de tablas, navegación de los cuatro subtemas, pronunciación independiente por variante y audio audible en it-IT.
+- Checkpoint de retorno: 19627135bf04bcb7c0a83330f007ebee04a0f8de. No avanzar a nuevas unidades hasta revisar la versión publicada en móvil.
+- CI: Tests y Browser E2E ahora también se ejecutan en pull requests cuyo destino es feature/mobile-bottom-navigation; se conserva la ejecución por push.
+
+
+### Ajustes de claridad Unidad 2 — 25-11-2026
+- Se actualizó src/app.js: tabla País/Gentilicio/Idioma, reglas de artículos y adjetivos en viñetas, tablas separadas de definidos/indefinidos y texto de edad/procedencia más específico.
+- Se eliminaron notas entre paréntesis en traducciones de ejemplos; se mantienen los controles de pronunciación separados por variante.
+- tests/browser/e2e.js cubre la nueva estructura y el orden de reglas antes de tablas.
+- Commits de implementación y pruebas: c6445aae6f2979539e8dd0471abd03467462477e y 693fd3ac03d40fbfa2562bf3f22cb7625f5c331f.
+- README leído y actualizado con los criterios aplicados.
+- Pendiente: CI (npm run check, npm test, Browser E2E), revisión del diff y publicación manual en Render; Android sigue pendiente.
+
+
+### Revisión adicional: Unidad 2 sigue sin reflejar los últimos ajustes — 25-11-2026
+- Se verificó el servicio Render canónico `adaptive-language-tutor-preview-5b3d`: está configurado con la rama correcta `feature/mobile-bottom-navigation`, pero `autoDeploy=no`; por ello no publica los commits nuevos automáticamente.
+- El último deploy LIVE del servicio es `dep-dc3daucipgvc738c5k10`, que sirve el commit `19627135bf04bcb7c0a83330f007ebee04a0f8de`. No contiene la revisión de claridad posterior que se registró en el código de la rama.
+- El HEAD documental actual es `769118182623ab0004517a2e8ddca15c2bb92d6e`; su commit padre de código es `d9565981cf49ec77faa861e39b8edca2f1bea15c`. La rama contiene los cambios de Unidad 2, pero no deben publicarse todavía: Browser E2E falló en el run [45661774152](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45661774152), en `tests/browser/e2e.js:122`, porque la aserción de Unidad 1 exige cursiva en todas las introducciones y no coincide con el contenido real. Tests unitarios/check sí aprobaron en el run [45661774198](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45661774198).
+- Se confirma así la causa de que el usuario siga viendo lo mismo: Render continúa sirviendo el commit anterior y el despliegue manual está bloqueado prudentemente hasta corregir la prueba E2E sin debilitar la cobertura.
+- Próximo paso obligatorio: corregir la aserción de Unidad 1 para que valide los términos italianos que realmente deben ir en cursiva, conservar intacto su contenido, ejecutar de nuevo CI y Browser E2E, y solo entonces desplegar manualmente el commit validado y verificarlo LIVE.
+- No listo para preview ni para prueba humana. Unidad 1 y Unidades 3–6 quedan fuera del alcance de edición.
+
+
+### E2E corregido y auto-despliegue Render habilitado — 25-11-2026
+- Se corrigió la aserción heredada de Unidad 1 que exigía cursiva en todas las introducciones aunque el contenido real no usa ese formato en cada subtema. La cobertura ahora verifica expresiones italianas objetivo en las tablas y conserva la comprobación explícita de pronunciación independiente de variantes del primer subtema. No se modificó el contenido de Unidad 1.
+- Se ajustó la comprobación de Países e idiomas de Unidad 2: los encabezados País/Gentilicio/Idioma se validan directamente en el encabezado semántico de la tabla, sin exigir que aparezcan duplicados en el texto plano del cuerpo. La prueba sigue exigiendo tres columnas, pronunciación independiente y encabezados exactos.
+- Validación sobre el commit de código/pruebas `9d4744a01935347b99948044ec7d65ac4e6c2ad7`: Tests `npm run check` + `npm test` aprobados en [run 45674658722](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45674658722); Browser E2E aprobado en [run 45674659254](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45674659254).
+- Render Blueprint existente `exs-dbus1io8v5cc73a0tjsg` conserva el recurso actual `srv-dbus3hnf3r2c739j9ir0`, la rama `feature/mobile-bottom-navigation` y el servicio/URL actuales; no se creó un servicio adicional.
+- Se aprobó el único cambio de infraestructura del plan: `autoDeployTrigger: checksPass` (antes `off`). Render confirma `autoDeploy=yes`, `autoDeployTrigger=checksPass`; el Blueprint quedó con `autoSync=true` y estado `in_sync`.
+- A partir de ahora, los pushes a la rama activa sincronizan el Blueprint automáticamente y Render despliega cuando los checks de GitHub pasan. Los cambios con checks fallidos no deben publicarse. Las variables de entorno existentes se preservan.
+- El servicio todavía sirve el deploy LIVE anterior `dep-dc3daucipgvc738c5k10` / commit `19627135bf04bcb7c0a83330f007ebee04a0f8de` al momento de esta anotación; el próximo push documental generará la primera ejecución bajo la nueva política automática. Verificar deploy LIVE con el nuevo HEAD antes de declarar el preview actualizado.
+- El código de Unidad 2 no se modificó en esta corrección de pruebas/infraestructura. Unidad 1 y Unidades 3–6 permanecen fuera del alcance de edición.
+- Pendiente: confirmar el primer auto-deploy LIVE del nuevo HEAD y realizar prueba humana Android de los cuatro subtemas de Unidad 2.
+
+
+### Primer deploy con auto-despliegue habilitado — 25-11-2026
+- Render confirmó `autoDeploy=yes`, `autoDeployTrigger=checksPass`, Blueprint `autoSync=true`, rama `feature/mobile-bottom-navigation`; se conserva el servicio existente y sus variables de entorno.
+- Los checks del commit `4bb81c7814867c5ddd0b9e0347839ab724307224` finalizaron correctamente: Tests [45674813867](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45674813867) y Browser E2E [45674813911](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45674813911).
+- Aunque la configuración automática ya estaba activa, Render no inició un deploy al detectar esos pushes. Para no dejar el preview desactualizado, se lanzó un deploy de recuperación manual del HEAD validado: `dep-dc3iga0u01pc73eobuog`, estado LIVE, commit `4bb81c7814867c5ddd0b9e0347839ab724307224`.
+- Se comprobó que el servicio sigue con autoDeploy habilitado después del deploy manual. La política está configurada para futuros pushes, pero la ejecución automática aún requiere una comprobación adicional con un próximo cambio de código; si vuelve a no dispararse, revisar webhook/integración GitHub-Render antes de declarar la automatización plenamente verificada.
+- Preview LIVE actual: https://adaptive-language-tutor-preview-5b3d.onrender.com. Prueba humana Android de Unidad 2 pendiente.
+
+
+### Verificación de webhook auto-deploy — 25-11-2026
+- Se activó el modo Render `On Commit`: `autoDeploy=yes`, `autoDeployTrigger=commit`; Blueprint `autoSync=true`. Se mantiene la rama correcta y el servicio existente.
+- Se hizo un nuevo push posterior a la activación (`1fac8472ef9e6ed19c7c0ad001e0a77eef216939`), pero no apareció un nuevo deploy automático ni evento de auto-deploy. Por tanto, la configuración está activa en Render, pero el disparo automático aún no está funcionando/verificado.
+- El preview sigue LIVE en `dep-dc3iga0u01pc73eobuog`, commit `4bb81c7814867c5ddd0b9e0347839ab724307224`; los cambios posteriores son solo documentación/configuración, no alteran el código de la app.
+- Diagnóstico pendiente: confirmar en Render que el repositorio está conectado mediante la integración GitHub (no como URL pública de repositorio). La documentación de Render indica que los auto-deploys requieren un Git provider conectado; servicios configurados solo con una URL pública del repositorio requieren deploy manual.
+- No declarar auto-deploy plenamente operativo hasta observar un deploy cuyo `trigger` sea automático tras un push nuevo. No se modificó código funcional de Unidad 1 ni Unidades 3–6.
+
+
+### Verificación posterior del auto-deploy y checkpoint documental — 25-11-2026
+- El checkpoint documental de este nuevo ciclo quedó guardado en el commit `ce18e012b0322c3032f0916609e538bc32ae062f`; el checkpoint funcional de Unidad 2 permanece en `19627135bf04bcb7c0a83330f007ebee04a0f8de`.
+- CI del commit documental aprobado: Tests [45685124705](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45685124705) y Browser E2E [45685124945](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45685124945).
+- Tras el push del commit `ce18e012...`, Render no creó un deploy nuevo. La lista de deploys sigue mostrando como LIVE el deploy manual `dep-dc3iga0u01pc73eobuog`, asociado a `4bb81c7814867c5ddd0b9e0347839ab724307224`; no existe evidencia de trigger automático para el nuevo push.
+- Configuración consultada: servicio `srv-dbus3hnf3r2c739j9ir0`, rama `feature/mobile-bottom-navigation`, `autoDeploy=yes`, `autoDeployTrigger=commit`; Blueprint `exs-dbus1io8v5cc73a0tjsg`, `autoSync=true`, estado `in_sync`. Esta configuración por sí sola no demuestra que el webhook GitHub–Render esté operativo.
+- El panel de herramientas Render disponible permite consultar servicio/Blueprint y disparar deploys manuales, pero no cambiar la integración Git provider/repositorio del servicio existente. No se creó un servicio duplicado ni se hizo un deploy manual para ocultar el fallo automático.
+- Acción pendiente necesaria en Render Dashboard: revisar Settings → Repository y conectar el servicio mediante la integración GitHub del repositorio, no como URL pública/clone source. Después, hacer un push de prueba y verificar que el nuevo deploy tenga trigger automático. Hasta entonces, auto-render permanece NO operativo/verificado; el preview sigue en el último deploy LIVE manual.
+
+
+### Intento de auto-render tras push documental — 26-11-2026
+- Se hizo push del commit documental `8b0aeda865ba5b32be70a0650f9dfda247839dbe` para probar el disparo automático sin cambiar el código de la app.
+- Consulta posterior a Render: no se creó un deploy nuevo. El último sigue siendo el deploy manual `dep-dc3iga0u01pc73eobuog`, commit `4bb81c7814867c5ddd0b9e0347839ab724307224`, trigger `api`. El intento de auto-render no tuvo éxito.
+- El servicio aún reporta `autoDeploy=yes`, `autoDeployTrigger=commit`, rama correcta; no obstante, la integración de eventos GitHub–Render no está operativa/verificada. No disparar deploy manual como sustituto de la prueba solicitada.
+- Para resolverlo se requiere revisar/reconectar la integración GitHub en Render Dashboard → servicio → Settings → Repository y luego repetir un push de prueba. Esta acción de conexión no está disponible en las herramientas actuales.
+- El commit `8b0aeda...` solo actualiza documentación; no contiene cambios funcionales de la app ni modifica el contenido de Unidad 2.
+
+
+### Unidad 2: restauración de esquema visual aprobado — 26-11-2026
+- Se aplicó la aclaración del usuario: las capturas son referencia de disposición de tablas, no del tema oscuro. Se conserva el estilo base de los subtemas (fondo claro, tipografía existente, resaltado de términos italianos y TTS).
+- Países e idiomas se ajustó a cinco filas: Italia (Italia), Germania (Alemania), Spagna (España), Francia (Francia), Portogallo (Portugal); columnas País / Gentilicio / Idioma. Traducción española queda en texto normal entre paréntesis; el nombre italiano y las formas de gentilicio/idioma mantienen TTS.
+- Artículos definidos e indefinidos se implementaron como tablas independientes Singular / Plural / Sustantivo-regla, con género en paréntesis en Singular y reglas previas.
+- Artículos y adjetivos se reorganizó en una tabla compacta de adjetivo, singular masculino/femenino y plural masculino/femenino; formas extranjeras conservan resaltado y TTS.
+- Se actualizaron aserciones Browser E2E para las nuevas cabeceras y estructura. No se ejecutaron todavía npm run check, npm test ni Browser E2E; el cambio no está validado ni listo para prueba humana.
+- No se modificaron contenidos de Unidad 1 ni Unidades 3–6. Pendiente: ejecutar CI/E2E, revisar el preview móvil real y validar visualmente el estilo claro, el ajuste de columnas y TTS.
+
+- Commit de código más reciente: e80c762ee90fdf46a7335df5d4ccc969196ee630. El parsing de las etiquetas de género se corrigió para que el TTS lea únicamente la forma italiana; validación automatizada aún pendiente.
+
+- Render deploy `dep-dc40tbec6qcc73c63qo0` fue iniciado en el servicio `adaptive-language-tutor-preview-5b3d` después de autorización del usuario. Estado observado: `build_in_progress`; falta confirmar live y revisar preview móvil. No se ha validado la interfaz ni se solicita prueba humana todavía.
+
+
+### Revisión posterior al checkpoint confirmado — 26-11-2026
+- El usuario confirmó el deploy anterior y dio por validado ese checkpoint.
+- Se eliminaron los párrafos de cierre de Países e idiomas y Artículos indefinidos. Artículos y concordancia ahora muestra solo la frase general de concordancia antes de las tablas; se retiraron los bullets introductorios. Regla de lo/uno redactada sin elipsis: «s seguida de consonante; z, gn, ps o x al inicio de palabra».
+- Se unificó la tipografía de párrafos y listas dentro del contenido teórico (14px, line-height 1.6). Las tablas de países, artículos y adjetivos tienen clases específicas y proporciones de columna adaptadas; la columna central de artículos es menor que la final.
+- E2E actualizado para verificar ausencia de nota final de países, intro de artículos no listado, ausencia de elipsis en reglas y anchos no nulos. No se ejecutó Browser E2E ni `npm run check`; los nuevos cambios aún no están validados ni desplegados.
+- Próximo paso: ejecutar validaciones disponibles y confirmar el auto-deploy/preview; luego inspección visual móvil. Mantener checkpoint anterior registrado como aprobado, pero no marcar esta revisión como validada hasta completar pruebas.
+
+- Deploy de esta revisión: `dep-dc416g7f3r2c73a044u0`, commit `828034a732b0770b9eb8c63718d15e335083f67a`; iniciado en Render tras los cambios y confirmado aún `build_in_progress` en la última consulta. No declarado live. E2E/npm check no ejecutados y preview aún no inspeccionado.
+
+
+## Formato de tablas y ejemplos — actualización 26-11-2026
+- «Artículos y adjetivos» implementa la estructura aprobada: párrafo introductorio breve; tabla de reglas Terminación/Femenino/Plural; tabla de ejemplos Terminación/Ejemplo aplicado con traducción española y TTS individual.
+- Se reemplazó la lista de reglas y los párrafos de ejemplos por tablas compactas. Se ajustaron proporciones de columnas para dar prioridad al contenido más informativo.
+- Criterio para próximas propuestas e implementaciones: preferir tablas simples y concisas a párrafos o punteos extensos; seleccionar columnas según relevancia de los datos; mantener ejemplos vinculados a su regla/categoría y no usar pronombres como agrupador salvo que sean el eje pedagógico.
+- La revisión visual de esta modificación requiere CI, Browser E2E y verificación del preview; no declarar validada hasta completar esas comprobaciones.
+
+
+### Diagnóstico de E2E — 26-11-2026
+- Tests aprobados en run [45811507743](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45811507743) sobre HEAD 14490e4c397b5bd1ae14da3e41f5af40549287f8.
+- Browser E2E [45811507747](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45811507747) falló en la comprobación de Países e idiomas antes de ejecutar las nuevas aserciones de adjetivos: la prueba esperaba l’Italia, pero el contenido aprobado presenta Italia (Italia) sin artículo.
+- Se corrigió la expectativa E2E a (Italia) sin alterar el contenido pedagógico. Nueva ejecución pendiente.
+- No desplegar la revisión hasta que Browser E2E pase. Preview continúa sirviendo el último deploy previo; auto-deploy GitHub–Render no está demostrado.
+
+
+### Segunda corrección de E2E — 26-11-2026
+- Tests generales aprobados en run [45811703278](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45811703278) para HEAD `ea9b0c68`.
+- Browser E2E [45811703268](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45811703268) falló en la aserción de pronunciación del país italiano: la implementación hace que el propio término sea pulsable (`.theory-target-tap`) y elimina el botón TTS adyacente para evitar controles duplicados.
+- Se ajustó la prueba para verificar el comportamiento funcional existente sin modificar Países e idiomas. Nueva ejecución pendiente.
+- El formato de adjetivos ya está integrado en código y documentado, pero aún no se despliega porque E2E debe aprobar primero.
+
+
+### Tercera corrección de aserciones E2E — 26-11-2026
+- Browser E2E [45811851960](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45811851960) detectó que las celdas de gentilicio e idioma también usan términos pulsables como controles TTS, no botones separados. Esto es el comportamiento existente de `bindTheoryTargetText`.
+- Se actualizó la aserción para validar que ambos términos sean individualmente pulsables. No se cambió el código funcional ni el contenido de Países e idiomas.
+- Tests generales previos aprobados; nueva ejecución E2E y tests tras este ajuste pendiente.
+
+
+### Cuarta corrección de aserciones E2E — 26-11-2026
+- Browser E2E run [45812021554](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45812021554) falló al comprobar Artículos y concordancia porque esperaba dos ejemplos (`gli studenti`, `un’amica`) que no están en las tablas vigentes aprobadas.
+- La prueba se actualizó para validar formas/reglas reales de las tablas: `lo (masculino)`, `gli`, grupos consonánticos `z, gn, ps o x` y `un’ (femenino)`. No se modificó la lección.
+- Commit E2E: `89014ec9224d1efdfa34c5bd61e89e670467e727`. CI y Browser E2E deben repetirse sobre este HEAD; Render permanece sin publicar esta revisión hasta aprobación.
+
+
+### Checkpoint confirmado y siguiente ajuste de adjetivos — 26-11-2026
+- El usuario confirmó el checkpoint anterior de Unidad 2 y autorizó continuar con la revisión siguiente. Se considera aceptado el estado anterior como base; no implica validar automáticamente cambios nuevos.
+- En «Artículos y adjetivos», antes de los ejemplos se incorpora una tabla de vocabulario con seis adjetivos frecuentes: bello, buono, grande, nuovo, piccolo e interessante, cada uno con traducción española y control TTS individual.
+- Las tablas de regla, vocabulario y ejemplos comparten ahora el mismo ancho total y tipografía de celdas; las proporciones internas se ajustan al contenido de cada tabla.
+- Browser E2E incorpora comprobaciones de las seis entradas, TTS individual y uniformidad de dimensiones/tamaño de texto.
+- Cambios de código/tests en commits: app `5d0a1d0`, CSS `79ca84f`, E2E `49a05f6`. HEAD actual `49a05f632ca3847567cb2d18b949b5d5a62141ca`.
+- Validación automatizada y publicación Render pendientes. No solicitar prueba humana hasta que Tests, Browser E2E y Render estén verificados.
+
+
+### Diagnóstico y correcciones de Browser E2E — adjetivos — 26-11-2026
+- Tests generales aprobaron en HEAD `fbdbdd5` (run [45826167381](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826167381)).
+- Primera E2E detectó que el verificador esperaba la tabla de ejemplos en la segunda posición; con el nuevo vocabulario intermedio, los encabezados correctos ahora se comprueban como regla → vocabulario → ejemplos.
+- Segunda E2E detectó que la normalización de espacios de la aserción nueva estaba escapada incorrectamente y Playwright devolvía tabulaciones entre celdas. Se corrigió para normalizar cualquier espacio en blanco antes de comparar las seis filas.
+- No se modificó contenido funcional en estas dos correcciones; ambas afectan solo al test Browser E2E. Commit de normalización: `d490b8f72ea452e1e020beb140ceb5c4740c9333`.
+- Nueva ejecución Tests y Browser E2E pendiente sobre el HEAD actualizado. Render sigue sirviendo el commit previo `e781482`; no desplegar hasta que E2E apruebe.
+
+
+### Validación automatizada del ajuste de adjetivos — 26-11-2026
+- Se resolvieron las aserciones E2E que fallaron durante la ampliación: orden de las tres tablas, normalización de espacios en las seis filas de vocabulario y consistencia tipográfica/ancho.
+- Para igualar el ancho exterior, la tabla de ejemplos dejó de quedar limitada por el padding de su contenedor de resaltado; las tres tablas comparten ahora el mismo marco de ancho completo.
+- Se reforzó la especificidad CSS para que todas las celdas del cuerpo de las tres tablas usen 13px, incluso en columnas que antes heredaban el tamaño grande de tablas bilingües.
+- HEAD de código validado: `990430b17264f20fb60ba633d1b64746f8a56339`. Tests aprobados: [45826567300](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826567300). Browser E2E aprobado: [45826567302](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826567302).
+- La publicación Render sigue pendiente: el servicio Preview aún sirve `e781482dba287f8ac812bd6aff1abacee5b95988`; el auto-deploy no generó un deploy tras el push. No solicitar todavía prueba humana.
+
+
+### Preview Render publicado — ajuste de vocabulario y tablas de adjetivos — 26-11-2026
+- Preview deploy `dep-dc430l3l550s7381s230` completado con estado `live`; build succeeded.
+- Commit servido: `89aa6ccd2380f8a1000d89876be791fd591e2ad4`. La app inició con `npm start`, escuchó en `0.0.0.0:10000` y Render confirmó «Your service is live».
+- URL: https://adaptive-language-tutor-preview-5b3d.onrender.com
+- Tests y Browser E2E del HEAD servido aprobaron: [Tests 45826853426](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826853426), [Browser E2E 45826852955](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826852955). Además, la validación del commit funcional de código fue aprobada en [45826567300](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826567300) y [45826567302](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826567302).
+- Estado: listo para prueba humana en Preview. Revisar en Android la ubicación de la tabla de vocabulario, uniformidad de ancho/tipografía y pronunciación individual de los seis adjetivos.
+
+
+### Corrección de cortes de palabras y legibilidad de tablas — 26-11-2026
+- Se elimina el ajuste CSS que podía partir palabras en cualquier punto dentro de las tablas de adjetivos. Las explicaciones y celdas de tablas de Teoría ahora permiten saltos solo entre palabras; se desactivan la partición arbitraria y la separación silábica automática.
+- Las tablas de regla, vocabulario y ejemplos conservan el mismo ancho exterior y tipografía de cuerpo uniforme, aumentada de 13px a 17px en escritorio y 15px en móvil. Los encabezados mantienen jerarquía propia (13px escritorio / 12px móvil).
+- Se amplía la primera columna de la tabla de reglas para acomodar términos completos sin cortes ni desbordamiento.
+- Browser E2E actualizado para comprobar tamaño uniforme, estilos de ajuste de línea y ausencia de división de palabras. La validación automatizada y la publicación Render quedan pendientes; no solicitar prueba humana hasta completarlas.
+- Commits: CSS `8cf9645`; E2E `0775396`.
+
+- Corrección de cascada posterior: el selector de alta especificidad que aún fijaba 13px fue actualizado para respetar 17px en escritorio y 15px en móvil, incluidos los términos italianos destacados. Commit CSS final: `c3f704d`.
+- Estado de validación: pendiente de ejecución automatizada en GitHub Actions y de publicación/verificación en Render. La prueba humana queda pendiente hasta confirmar ambos.
+
+
+### Uniformidad tipográfica de tablas en todos los subtemas — 26-11-2026
+- Checkpoint previo registrado en README: commit `fc8ef46dbc5c9bddfb028c8bbe9f10298acc3c27`.
+- CSS global de teoría fuerza el mismo tamaño de cuerpo en todas las tablas: 17px escritorio / 15px móvil. Incluye traducciones, formas italianas resaltadas, párrafos/listas dentro de celdas y controles TTS; encabezados mantienen tamaño propio.
+- E2E recorre subtemas de Unidades 1 y 2 y comprueba que todas las celdas de cuerpo de tabla midan 15px en viewport móvil.
+- Commits: `36c6944` (CSS), `b8353b8` (E2E), documentación en curso.
+- Validación automatizada, inspección visual y Render deploy pendientes. La revisión no está marcada como validada.
+## Reorganización documental — 26-11-2026
+
+- README reducido a índice operativo: contiene orientación por tipo de tarea, enlaces, arquitectura y protocolo de edición.
+- Reglas de producto extraídas sin intención de cambiar su contenido a PRODUCT_SPEC.md; conserva las secciones de alcance, navegación, audio, Teoría, estética, Estadísticas, Ruta/Entrenamiento, privacidad y decisiones vigentes.
+- PROJECT_STATUS.md sigue siendo la fuente del estado técnico y HUMAN_TEST_PLAN.md la fuente de comprobaciones manuales.
+- Objetivo de eficiencia: evitar releer la especificación completa en tareas acotadas. Leer las secciones indicadas por el índice y ampliar solo ante dependencias.
+- No se modificó código de aplicación ni se ejecutaron pruebas de producto por tratarse de una reorganización documental.

@@ -93,6 +93,9 @@ try {
     await unitOneTopics.nth(i).click();
     assert.equal(await page.locator("#theory-title").innerText(), unitOneChecks[i].title, "Unit 1 topic title should match its content");
     const topicText = await page.locator("#theory-description").innerText();
+    const allUnitOneTableCells = page.locator("#theory-description table tbody td");
+    assert.ok(await allUnitOneTableCells.count() > 0, "each Unit 1 subtopic should render its comparison table");
+    assert.ok((await allUnitOneTableCells.evaluateAll(cells => cells.map(cell => getComputedStyle(cell).fontSize))).every(size => size === "15px"), "all Unit 1 subtopic table body cells should use the common 15px mobile size");
     assert.ok(topicText.includes(unitOneChecks[i].term), "Unit 1 topic should contain its own relevant Italian content");
     assert.ok(topicText.toLowerCase().includes(unitOneChecks[i].paired.toLowerCase()), "Unit 1 topic should include its related variant or concept");
     assert.deepEqual((await page.locator("#theory-description table").first().locator("thead th").allInnerTexts()).map(value => value.toLowerCase()), ["italiano","español"], "bilingual Unit 1 tables should use Italian and Spanish headings");
@@ -110,12 +113,17 @@ try {
       assert.equal(await stateQuestionCell.locator(".theory-speech-variant").count(), 2, "formal and informal state questions should share one cell with separate speech controls");
     }
     if (i === 3) {
-      assert.deepEqual(await page.locator("#theory-description h3").allInnerTexts(), ["Pronombres personales","Verbos «essere» y «stare»"], "pronouns and verb conjugations should be separated into two tables");
-      assert.deepEqual((await page.locator("#theory-description table").nth(1).locator("thead th").allInnerTexts()).map(value => value.toLowerCase()), ["persona","«essere»","«stare»"], "the verb table headings should mark Italian terms in italics and angle quotes");
-      const verbTableSizes = await page.locator("#theory-description table").nth(1).locator("tbody tr").first().locator("td").evaluateAll(cells => cells.map(cell => getComputedStyle(cell).fontSize));
-      assert.equal(verbTableSizes[1], verbTableSizes[2], "essere and stare cells should use the same font size");
+      const verbHeading = page.locator("#theory-description h3").nth(1);
+      assert.equal(await verbHeading.innerText(), "Verbos «Essere» (ser) y «Stare» (estar)", "Italian terms in subtopic headings should be italicized, quoted and translated");
+      assert.equal(await verbHeading.locator("em").count(), 2, "Italian terms should be italicized only in the heading");
+      const verbTable = page.locator("#theory-description table").nth(1);
+      assert.deepEqual((await verbTable.locator("thead th").allInnerTexts()).map(value => value.toLowerCase()), ["persona","essere","stare"], "table headers must remain plain, without italics, quotes or translations");
+      assert.equal(await verbTable.locator("thead em").count(), 0, "table headers must not inherit Italian title formatting");
+      const verbTableSizes = await verbTable.locator("tbody tr").first().locator("td").evaluateAll(cells => cells.map(cell => getComputedStyle(cell).fontSize));
+      assert.equal(new Set(verbTableSizes).size, 1, "all columns in the final verb table should use the same font size");
     }
-    assert.ok(await page.locator("#theory-description .theory-slide-text em").count() > 0, "Italian expressions in each Unit 1 introduction should be italicized");
+    const italianTargets = page.locator("#theory-description table tbody td:first-child .theory-target-word");
+    assert.ok(await italianTargets.count() > 0, "each Unit 1 topic should expose Italian target expressions in its content tables");
     const italianCellSize = await page.locator("#theory-description table").first().locator("tbody tr").first().locator("td").first().locator(".theory-target-word").first().evaluate(el => getComputedStyle(el).fontSize);
     const spanishCellSize = await page.locator("#theory-description table").first().locator("tbody tr").first().locator("td").nth(1).evaluate(el => getComputedStyle(el).fontSize);
     assert.equal(spanishCellSize, italianCellSize, "Spanish translations should match Italian text size in bilingual tables");
@@ -146,6 +154,88 @@ try {
   assert.equal(await page.locator("#theory-tree .theory-unit-row[aria-expanded='true']").count(), 1, "only one unit may remain expanded at a time");
   assert.equal(await unitRows.nth(0).getAttribute("aria-expanded"), "false", "opening another unit should collapse the previous one");
   assert.equal(await unitRows.nth(1).getAttribute("aria-expanded"), "true", "the newly selected unit should be expanded");
+  const unitTwoTopics = page.locator("#theory-tree .theory-tree-topic");
+  assert.deepEqual(await unitTwoTopics.locator(".theory-tree-topic-name").allInnerTexts(), ["Países e idiomas","Artículos y concordancia","Artículos y adjetivos","Edad y procedencia"], "Unit 2 should retain its four planned subtopics");
+  const unitTwoChecks = [
+    {title:"Países e idiomas", terms:["(Italia)","italiano"]},
+    {title:"Artículos y concordancia", terms:["Artículos definidos","Artículos indefinidos","lo","masculino","gli","z, gn, ps o x","un’","femenino"]},
+    {title:"Artículos y adjetivos", terms:["ragazzo","ragazza"]},
+    {title:"Edad y procedencia", terms:["Quanti anni hai?","Di dove sei?","Ho vent’anni."]}
+  ];
+  for (let i=0;i<unitTwoChecks.length;i++) {
+    await unitTwoTopics.nth(i).click();
+    const check=unitTwoChecks[i];
+    assert.equal(await page.locator("#theory-title").innerText(),check.title,"Unit 2 topic title should match its content");
+    const body=page.locator("#theory-description");
+    const allTableCells=body.locator("table tbody td");
+    if (await allTableCells.count()) {
+      const tableBodySizes=await allTableCells.evaluateAll(cells=>cells.map(cell=>getComputedStyle(cell).fontSize));
+      assert.ok(tableBodySizes.every(size=>size==="15px"),"all Unit 2 subtopic tables should use the same 15px mobile body text as Articles and Adjectives");
+    }
+    const bodyText=(await body.innerText()).replace(/\s+/g," ").trim();
+    for (const term of check.terms) assert.ok(bodyText.includes(term), "Unit 2 content should include "+term);
+    if (check.heading) {
+      const heading=body.locator("h3").filter({hasText:check.heading}).first();
+      assert.ok(await heading.locator("em").count()>0,"Italian headings should use italics and angle quotes");
+      assert.ok((await heading.innerText()).includes(" ("),"Italian headings should include Spanish translations");
+    }
+    const tables=body.locator("table");
+    assert.ok(await tables.count()>0,"each Unit 2 subtopic should contain a reference table");
+    for (let tableIndex=0;tableIndex<await tables.count();tableIndex++) {
+      const table=tables.nth(tableIndex);
+      const headers=(await table.locator("thead th").allInnerTexts()).map(v=>v.trim().toLowerCase());
+      if(i===0) assert.deepEqual(headers,["país","gentilicio","idioma"],"country table should identify country, demonym and language separately");
+      else if(i===1) assert.deepEqual(headers,["singular","plural","sustantivo / regla"],"article tables should use the approved three-column scheme");
+      else if(i===2 && tableIndex===0) assert.deepEqual(headers,["terminación","femenino","plural"],"adjective rule table should show endings, feminine and plural forms");
+      else if(i===2 && tableIndex===1) assert.deepEqual(headers,["italiano","español"],"adjective vocabulary should use Italian and Spanish columns");
+      else if(i===2 && tableIndex===2) assert.deepEqual(headers,["terminación","ejemplo aplicado"],"adjective examples should be organized by ending");
+      else assert.deepEqual(headers,["italiano","español"],"bilingual tables should use consistent column headings");
+      assert.equal(await table.locator("thead em").count(),0,"table headings must remain plain");
+      const widths=await table.locator("thead th").evaluateAll(cells=>cells.map(cell=>cell.getBoundingClientRect().width));
+      assert.ok(widths.every(width=>width>0),"table columns should have measurable widths");
+    }
+    if(i===1) {
+      assert.equal(await body.locator(".theory-rule-list").count(),0,"article intro should not be a bullet list");
+      assert.equal(await body.locator(".theory-slide-text").count(),1,"article subtopic should retain only the concordance sentence");
+      assert.ok(!(await body.innerText()).includes("…"),"article rules should not end in an unexplained ellipsis");
+    }
+    if(i===2) {
+      assert.equal(await body.locator(".theory-slide-text").count(),1,"adjectives should retain one introductory paragraph");
+      assert.equal(await body.locator(".theory-rule-list").count(),0,"adjective rules should use a simple table, not extended bullets");
+      const rules=body.locator(".adjective-rules-table");
+      assert.deepEqual((await rules.locator("tbody tr").allInnerTexts()).map(value=>value.replace(/\s+/g," ").trim()),["-o -a -i (masculino) / -e (femenino)","-e — -i (masculino y femenino)"],"adjective endings should map to feminine and plural forms");
+      const vocabulary=body.locator(".adjective-vocabulary-table");
+      assert.deepEqual((await vocabulary.locator("tbody tr").allInnerTexts()).map(value=>value.replace(/\s+/g," ").trim()),["bello bonito","buono bueno","grande grande","nuovo nuevo","piccolo pequeño","interessante interesante"],"frequent adjectives should appear with Spanish meanings before the examples");
+      assert.equal(await vocabulary.locator(".theory-target-tap[role=button]").count(),6,"each vocabulary adjective should have its own tappable TTS control");
+      const examples=body.locator(".adjective-examples-table");
+      assert.deepEqual(await examples.locator("tbody tr td:first-child").allInnerTexts(),["-o","-a","-e → -i"],"examples should be keyed by ending, not pronoun");
+      assert.equal(await examples.locator(".theory-target-tap[role=button]").count(),3,"each Italian example should have its own tappable TTS control");
+      const adjectiveTables=body.locator(".adjective-rules-table, .adjective-vocabulary-table, .adjective-examples-table");
+      const dimensions=await adjectiveTables.evaluateAll(nodes=>nodes.map(node=>({width:Math.round(node.getBoundingClientRect().width),fonts:[...node.querySelectorAll("tbody td")].map(cell=>getComputedStyle(cell).fontSize),wrap:[...node.querySelectorAll("th,td")].map(cell=>({overflow:getComputedStyle(cell).overflowWrap,word:getComputedStyle(cell).wordBreak,hyphens:getComputedStyle(cell).hyphens}))})));
+      assert.ok(dimensions.every(item=>item.width===dimensions[0].width && item.fonts.every(font=>font==="15px")),"adjective tables should share the same width and readable, uniform 15px mobile body text");
+      assert.ok(dimensions.every(item=>item.wrap.every(style=>style.overflow==="normal" && style.word==="normal" && style.hyphens==="none")),"table cells must wrap only between words and never split a word");
+      assert.equal(await body.locator(".theory-slide-text").first().evaluate(el=>getComputedStyle(el).overflowWrap),"normal","explanatory paragraphs must not split words either");
+      assert.ok((await examples.innerText()).includes("Un chico italiano.") && (await examples.innerText()).includes("Dos chicas interesantes."),"examples should retain Spanish translations");
+    }
+    if(i===0) {
+      assert.equal(await body.locator(".theory-slide-text").count(),0,"country subtopic should not contain an unnecessary closing paragraph");
+      const firstRow=body.locator("table").first().locator("tbody tr").first();
+      assert.equal(await firstRow.locator("td").count(),3,"country, demonym and language must have separate columns");
+      assert.ok((await firstRow.locator("td").first().innerText()).includes("(Italia)"),"country cell should keep Spanish translation in parentheses");
+      assert.equal(await firstRow.locator("td").first().locator(".theory-target-tap[role=button]").count(),1,"Italian country name should remain individually tappable for pronunciation");
+      for(let cellIndex=1;cellIndex<3;cellIndex++) assert.ok(await firstRow.locator("td").nth(cellIndex).locator(".theory-target-tap[role=button]").count()>0,"foreign demonym/language cells should remain individually tappable for pronunciation");
+    }
+    if(i===3) assert.ok(!(await body.innerText()).includes("(formal)"),"translations should not contain parenthetical mini-explanations");
+    await page.locator("#theory-back").click();
+  }
+  await unitRows.nth(2).click();
+  const unitThreeTopics=page.locator("#theory-tree .theory-tree-topic");
+  const unitThreeTitle=await unitThreeTopics.first().locator(".theory-tree-topic-name").innerText();
+  await unitThreeTopics.first().click();
+  assert.equal(await page.locator("#theory-title").innerText(),unitThreeTitle,"later-unit subtopic titles must be preserved");
+  assert.equal((await page.locator("#theory-description").innerText()).trim(),"","later-unit subtopics should have no lesson content until developed");
+  await page.locator("#theory-back").click();
+  await unitRows.nth(1).click();
   const topicButton = page.locator("#theory-tree .theory-tree-topic").first();
   await topicButton.click();
   assert.equal(await page.locator("#theory-detail").isVisible(), true, "Theory topic detail should open");
@@ -173,31 +263,7 @@ try {
   assert.match(await page.locator("#theory-tree [data-category=" + '"vocabulary"' + "] .theory-tree-category-icon").innerText().catch(() => ""), /abc/i, "vocabulary icon should expose bilingual letter glyph");
    assert.ok(await page.locator("#theory-tree .theory-tree-category-icon svg").count() > 0, "category rows should use line icons rather than the former text glyphs");
   assert.equal(await page.locator("#theory-detail .back-control").count(), 1, "detail should contain exactly one back arrow");
-  // Unit 2 has deployed learning content and remains in the polishing phase.
-  assert.equal(await page.locator("#theory-title").innerText(), "Países e idiomas", "Unit 2 should open its first deployed subtopic");
-  assert.ok((await page.locator("#theory-description").innerText()).includes("l’Italia"), "Unit 2 vocabulary should render countries and languages");
-  assert.equal(await page.locator("#theory-description table").count(), 1, "Unit 2 vocabulary should render a bilingual reference table");
-  assert.equal(await page.locator("#theory-description table tbody tr").first().locator("td").first().locator(".theory-speech-variant").count(), 2, "hyphen-separated country/language concepts should expose separate TTS fragments");
-  await page.locator("#theory-next").click();
-  assert.equal(await page.locator("#theory-title").innerText(), "Artículos y concordancia", "Unit 2 should navigate to its article lesson");
-  const articleIntro = page.locator("#theory-description .theory-slide-text").first();
-  const articleTable = page.locator("#theory-description table").first();
-  assert.ok(await articleIntro.count() === 1, "Unit 2 article lesson should begin with a concise rule paragraph");
-  assert.ok(await articleIntro.evaluate(el => !!(el.compareDocumentPosition(document.querySelector("#theory-description table")) & Node.DOCUMENT_POSITION_FOLLOWING)), "article rules must precede the reference tables");
-  assert.ok((await articleIntro.innerText()).includes("apóstrofo"), "article introduction should explain the key apostrophe rule");
-  const articleColumnWidths = await articleTable.locator("thead th").evaluateAll(cells => cells.map(cell => cell.getBoundingClientRect().width));
-  assert.ok(Math.max(...articleColumnWidths) - Math.min(...articleColumnWidths) <= 2, "bilingual table columns should have equal widths");
-  const articleVariants = page.locator("#theory-description .theory-speech-variant");
-  assert.ok(await articleVariants.count() >= 2, "slash-separated article variants should render independent speech fragments");
-  await page.locator("#theory-next").click();
-  assert.equal(await page.locator("#theory-title").innerText(), "Artículos y adjetivos", "Unit 2 should navigate to its adjective lesson");
-  assert.ok((await page.locator("#theory-description").innerText()).includes("ragazzo"), "adjective lesson should show masculine and feminine examples");
-  const adjectiveWidths = await page.locator("#theory-description table").first().locator("thead th").evaluateAll(cells => cells.map(cell => cell.getBoundingClientRect().width));
-  assert.ok(Math.max(...adjectiveWidths) - Math.min(...adjectiveWidths) <= 2, "three-column adjective table should distribute widths evenly");
-  await page.locator("#theory-next").click();
-  assert.equal(await page.locator("#theory-title").innerText(), "Edad y procedencia", "Unit 2 should navigate to its age and origin expressions");
-  assert.ok((await page.locator("#theory-description").innerText()).includes("Quanti anni hai?"), "age and origin lesson should show the correct Italian expressions");
-  assert.ok(await page.locator("#theory-description .theory-speech-variant").count() >= 2, "formal and informal variants should expose separate TTS fragments");
+  // Unit 2 remains a content skeleton; use a developed Unit 1 topic for pronunciation interaction.
   await page.locator("#theory-back").click();
   await unitRows.nth(0).click();
   await page.locator("#theory-tree .theory-tree-topic").first().click();

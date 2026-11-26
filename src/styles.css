@@ -1225,7 +1225,6 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
 .theory-variant-separator{white-space:pre;}
 @media(max-width:620px){.theory-bilingual-table td:nth-child(n+2){font-size:17px;line-height:1.4;}}
 
-
 /* Keep theory table columns evenly distributed, regardless of content length. */
 #screen-theory .theory-bilingual-table{
   width:100%;
@@ -1248,4 +1247,158 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
 #screen-theory .theory-bilingual-table th,
 #screen-theory .theory-bilingual-table td{
   overflow-wrap:anywhere;
+}
+
+/* Keep every column in the Italian conjugation comparison equally readable. */
+#screen-theory .theory-verb-comparison-table tbody td{
+  font-size:19px!important;
+  font-weight:600;
+  line-height:1.4;
+}
+@media(max-width:620px){
+  #screen-theory .theory-verb-comparison-table tbody td{font-size:17px!important;}
+}
+
+
+/* Consistent readable prose and list typography across every theory subtopic. */
+#screen-theory .theory-slide-content p,
+#screen-theory .theory-slide-content li{font-size:14px!important;line-height:1.6!important}
+
+/* Content-led columns, without forcing equal widths. */
+#screen-theory .theory-bilingual-table{table-layout:auto!important;width:100%}
+#screen-theory .theory-bilingual-table th,
+#screen-theory .theory-bilingual-table td{overflow-wrap:normal;word-break:normal}
+#screen-theory .country-language-table th:nth-child(1),
+#screen-theory .country-language-table td:nth-child(1){width:34%}
+#screen-theory .country-language-table th:nth-child(2),
+#screen-theory .country-language-table td:nth-child(2){width:33%}
+#screen-theory .country-language-table th:nth-child(3),
+#screen-theory .country-language-table td:nth-child(3){width:33%}
+#screen-theory .article-concordance-table th:nth-child(1),
+#screen-theory .article-concordance-table td:nth-child(1){width:23%}
+#screen-theory .article-concordance-table th:nth-child(2),
+#screen-theory .article-concordance-table td:nth-child(2){width:15%}
+#screen-theory .article-concordance-table th:nth-child(3),
+#screen-theory .article-concordance-table td:nth-child(3){width:62%}
+/* Adjective lesson: equal table footprint, readable typography and no mid-word wrapping. */
+#screen-theory .adjective-rules-table,
+#screen-theory .adjective-vocabulary-table,
+#screen-theory .adjective-examples-table{
+  width:100%!important;
+  table-layout:fixed!important;
+  margin:12px 0 16px!important;
+}
+#screen-theory .adjective-rules-table th,
+#screen-theory .adjective-rules-table td,
+#screen-theory .adjective-vocabulary-table th,
+#screen-theory .adjective-vocabulary-table td,
+#screen-theory .adjective-examples-table th,
+#screen-theory .adjective-examples-table td{
+  padding:9px 10px!important;
+  font-size:17px!important;
+  line-height:1.5!important;
+  font-weight:400;
+  vertical-align:middle;
+  white-space:normal;
+  overflow-wrap:normal;
+  word-break:normal;
+  hyphens:none;
+}
+#screen-theory .adjective-rules-table th,
+#screen-theory .adjective-vocabulary-table th,
+#screen-theory .adjective-examples-table th{
+  font-size:13px!important;
+  line-height:1.4!important;
+  font-weight:750!important;
+}
+#screen-theory .adjective-rules-table th:nth-child(1),
+#screen-theory .adjective-rules-table td:nth-child(1){width:30%}
+#screen-theory .adjective-rules-table th:nth-child(2),
+#screen-theory .adjective-rules-table td:nth-child(2){width:27%}
+#screen-theory .adjective-rules-table th:nth-child(3),
+#screen-theory .adjective-rules-table td:nth-child(3){width:43%}
+#screen-theory .adjective-vocabulary-table th:nth-child(1),
+#screen-theory .adjective-vocabulary-table td:nth-child(1){width:50%}
+#screen-theory .adjective-vocabulary-table th:nth-child(2),
+#screen-theory .adjective-vocabulary-table td:nth-child(2){width:50%}
+#screen-theory .adjective-examples-table th:nth-child(1),
+#screen-theory .adjective-examples-table td:nth-child(1){width:27%}
+#screen-theory .adjective-examples-table th:nth-child(2),
+#screen-theory .adjective-examples-table td:nth-child(2){width:73%}
+#screen-theory .adjective-examples-table td p{margin:.2rem 0 0;font-size:17px!important;line-height:1.5!important}
+
+/* Prevent splitting words in every Theory explanation and table, including mobile layouts. */
+#screen-theory #theory-description p,
+#screen-theory #theory-description li,
+#screen-theory #theory-description th,
+#screen-theory #theory-description td{
+  overflow-wrap:normal!important;
+  word-break:normal!important;
+  hyphens:none!important;
+}
+@media(max-width:620px){
+  #screen-theory .adjective-rules-table th,
+  #screen-theory .adjective-rules-table td,
+  #screen-theory .adjective-vocabulary-table th,
+  #screen-theory .adjective-vocabulary-table td,
+  #screen-theory .adjective-examples-table th,
+  #screen-theory .adjective-examples-table td{font-size:15px!important;line-height:1.5!important}
+  #screen-theory .adjective-rules-table th,
+  #screen-theory .adjective-vocabulary-table th,
+  #screen-theory .adjective-examples-table th{font-size:12px!important}
+  #screen-theory .adjective-examples-table td p{font-size:15px!important;line-height:1.5!important}
+}
+#screen-theory .adjective-vocabulary-table .speak-button,
+#screen-theory .adjective-examples-table .speak-button{margin-left:4px;vertical-align:middle}
+
+
+
+/* Shared typography for all rendered lesson copy, paragraphs and lists. */
+#screen-theory #theory-description p,
+#screen-theory #theory-description li{font-size:14px!important;line-height:1.6!important}
+
+
+/* Final override: preserve readable, matching body text in all adjective tables. */
+#screen-theory #theory-description .adjective-example-block{width:100%;padding:0!important;background:transparent!important;border-radius:0!important}
+#screen-theory #theory-description table.adjective-rules-table,
+#screen-theory #theory-description table.adjective-vocabulary-table,
+#screen-theory #theory-description table.adjective-examples-table{display:table;width:100%!important;max-width:100%!important;table-layout:fixed!important}
+#screen-theory #theory-description table.adjective-rules-table tbody td:nth-child(n),
+#screen-theory #theory-description table.adjective-vocabulary-table tbody td:nth-child(n),
+#screen-theory #theory-description table.adjective-examples-table tbody td:nth-child(n){font-size:17px!important;line-height:1.5!important;font-weight:400!important}
+#screen-theory #theory-description table.adjective-rules-table tbody td .theory-target-word,
+#screen-theory #theory-description table.adjective-vocabulary-table tbody td .theory-target-word,
+#screen-theory #theory-description table.adjective-examples-table tbody td .theory-target-word{font-size:17px!important;line-height:1.5!important;font-weight:700!important}
+@media(max-width:620px){
+  #screen-theory #theory-description table.adjective-rules-table tbody td:nth-child(n),
+  #screen-theory #theory-description table.adjective-vocabulary-table tbody td:nth-child(n),
+  #screen-theory #theory-description table.adjective-examples-table tbody td:nth-child(n),
+  #screen-theory #theory-description table.adjective-rules-table tbody td .theory-target-word,
+  #screen-theory #theory-description table.adjective-vocabulary-table tbody td .theory-target-word,
+  #screen-theory #theory-description table.adjective-examples-table tbody td .theory-target-word{font-size:15px!important;line-height:1.5!important}
+}
+
+
+/* Global standard: every Theory subtopic table uses the same body-text size as Articles and Adjectives. */
+#screen-theory #theory-description table tbody td,
+#screen-theory #theory-description table tbody td p,
+#screen-theory #theory-description table tbody td li,
+#screen-theory #theory-description table tbody td strong,
+#screen-theory #theory-description table tbody td .theory-target-word,
+#screen-theory #theory-description table tbody td .theory-target-tap,
+#screen-theory #theory-description table tbody td .speak-button{
+  font-size:17px!important;
+  line-height:1.5!important;
+}
+@media(max-width:620px){
+  #screen-theory #theory-description table tbody td,
+  #screen-theory #theory-description table tbody td p,
+  #screen-theory #theory-description table tbody td li,
+  #screen-theory #theory-description table tbody td strong,
+  #screen-theory #theory-description table tbody td .theory-target-word,
+  #screen-theory #theory-description table tbody td .theory-target-tap,
+  #screen-theory #theory-description table tbody td .speak-button{
+    font-size:15px!important;
+    line-height:1.5!important;
+  }
 }
