@@ -2188,7 +2188,6 @@ function openTheoryTopic(index) {
   $("theory-description").innerHTML = detailMarkup;
   bindSpeakerButtons($("theory-description"));
   bindTheoryTargetText($("theory-description"));
-  bindSpeakerButtons($("theory-description"));
   speech.stop();
   $("theory-counter").textContent = (activeTheoryIndex + 1) + "/" + activeTheoryTopics.length;
   $("theory-counter").classList.remove("hidden");
@@ -2199,7 +2198,7 @@ function openTheoryTopic(index) {
   $("theory-next").disabled = activeTheoryIndex === activeTheoryTopics.length - 1;
 }
 
-let expandedTheoryUnit = null;let expandedTheoryUnit = null;
+let expandedTheoryUnit = null;
 
 function populateTheoryTopics(unitIndex) {
   activeTheoryUnit = Number(unitIndex);
