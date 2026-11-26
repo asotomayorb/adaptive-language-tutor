@@ -93,6 +93,9 @@ try {
     await unitOneTopics.nth(i).click();
     assert.equal(await page.locator("#theory-title").innerText(), unitOneChecks[i].title, "Unit 1 topic title should match its content");
     const topicText = await page.locator("#theory-description").innerText();
+    const allUnitOneTableCells = page.locator("#theory-description table tbody td");
+    assert.ok(await allUnitOneTableCells.count() > 0, "each Unit 1 subtopic should render its comparison table");
+    assert.ok((await allUnitOneTableCells.evaluateAll(cells => cells.map(cell => getComputedStyle(cell).fontSize))).every(size => size === "15px"), "all Unit 1 subtopic table body cells should use the common 15px mobile size");
     assert.ok(topicText.includes(unitOneChecks[i].term), "Unit 1 topic should contain its own relevant Italian content");
     assert.ok(topicText.toLowerCase().includes(unitOneChecks[i].paired.toLowerCase()), "Unit 1 topic should include its related variant or concept");
     assert.deepEqual((await page.locator("#theory-description table").first().locator("thead th").allInnerTexts()).map(value => value.toLowerCase()), ["italiano","español"], "bilingual Unit 1 tables should use Italian and Spanish headings");
@@ -164,6 +167,11 @@ try {
     const check=unitTwoChecks[i];
     assert.equal(await page.locator("#theory-title").innerText(),check.title,"Unit 2 topic title should match its content");
     const body=page.locator("#theory-description");
+    const allTableCells=body.locator("table tbody td");
+    if (await allTableCells.count()) {
+      const tableBodySizes=await allTableCells.evaluateAll(cells=>cells.map(cell=>getComputedStyle(cell).fontSize));
+      assert.ok(tableBodySizes.every(size=>size==="15px"),"all Unit 2 subtopic tables should use the same 15px mobile body text as Articles and Adjectives");
+    }
     const bodyText=(await body.innerText()).replace(/\s+/g," ").trim();
     for (const term of check.terms) assert.ok(bodyText.includes(term), "Unit 2 content should include "+term);
     if (check.heading) {
