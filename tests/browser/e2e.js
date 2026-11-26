@@ -197,7 +197,7 @@ try {
       const rules=body.locator(".adjective-rules-table");
       assert.deepEqual((await rules.locator("tbody tr").allInnerTexts()).map(value=>value.replace(/\s+/g," ").trim()),["-o -a -i (masculino) / -e (femenino)","-e — -i (masculino y femenino)"],"adjective endings should map to feminine and plural forms");
       const vocabulary=body.locator(".adjective-vocabulary-table");
-      assert.deepEqual((await vocabulary.locator("tbody tr").allInnerTexts()).map(value=>value.replace(/\\s+/g," ").trim()),["bello bonito","buono bueno","grande grande","nuovo nuevo","piccolo pequeño","interessante interesante"],"frequent adjectives should appear with Spanish meanings before the examples");
+      assert.deepEqual((await vocabulary.locator("tbody tr").allInnerTexts()).map(value=>value.replace(/\s+/g," ").trim()),["bello bonito","buono bueno","grande grande","nuovo nuevo","piccolo pequeño","interessante interesante"],"frequent adjectives should appear with Spanish meanings before the examples");
       assert.equal(await vocabulary.locator(".theory-target-tap[role=button]").count(),6,"each vocabulary adjective should have its own tappable TTS control");
       const examples=body.locator(".adjective-examples-table");
       assert.deepEqual(await examples.locator("tbody tr td:first-child").allInnerTexts(),["-o","-a","-e → -i"],"examples should be keyed by ending, not pronoun");
