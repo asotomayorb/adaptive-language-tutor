@@ -58,7 +58,7 @@ Aplicación móvil-first para aprender italiano desde el español mediante teor�
 
 - Frontend: index.html, src/app.js, src/styles.css.
 - Backend/API: server/index.js; adaptadores IA: server/provider.js; prompts/esquemas: server/prompts.js.
-- Cliente IA: src/core/tutor-client.js; pedagogía, contenido y progreso local: src/core/, src/content/.
+- Cliente IA: src/core/tutor-client.js; pedagogía, audio y progreso local: src/core/. La teoría italiana vigente está integrada en src/app.js; los catálogos de idiomas anteriores se retiraron.
 - Pruebas: tests/. Runtime: Node.js 20.6 o superior.
 
 ```bash
