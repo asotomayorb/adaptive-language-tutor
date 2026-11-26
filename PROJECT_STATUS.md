@@ -1299,3 +1299,11 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Commit de código más reciente: e80c762ee90fdf46a7335df5d4ccc969196ee630. El parsing de las etiquetas de género se corrigió para que el TTS lea únicamente la forma italiana; validación automatizada aún pendiente.
 
 - Render deploy `dep-dc40tbec6qcc73c63qo0` fue iniciado en el servicio `adaptive-language-tutor-preview-5b3d` después de autorización del usuario. Estado observado: `build_in_progress`; falta confirmar live y revisar preview móvil. No se ha validado la interfaz ni se solicita prueba humana todavía.
+
+
+### Revisión posterior al checkpoint confirmado — 26-11-2026
+- El usuario confirmó el deploy anterior y dio por validado ese checkpoint.
+- Se eliminaron los párrafos de cierre de Países e idiomas y Artículos indefinidos. Artículos y concordancia ahora muestra solo la frase general de concordancia antes de las tablas; se retiraron los bullets introductorios. Regla de lo/uno redactada sin elipsis: «s seguida de consonante; z, gn, ps o x al inicio de palabra».
+- Se unificó la tipografía de párrafos y listas dentro del contenido teórico (14px, line-height 1.6). Las tablas de países, artículos y adjetivos tienen clases específicas y proporciones de columna adaptadas; la columna central de artículos es menor que la final.
+- E2E actualizado para verificar ausencia de nota final de países, intro de artículos no listado, ausencia de elipsis en reglas y anchos no nulos. No se ejecutó Browser E2E ni `npm run check`; los nuevos cambios aún no están validados ni desplegados.
+- Próximo paso: ejecutar validaciones disponibles y confirmar el auto-deploy/preview; luego inspección visual móvil. Mantener checkpoint anterior registrado como aprobado, pero no marcar esta revisión como validada hasta completar pruebas.
