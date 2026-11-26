@@ -1562,3 +1562,9 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Se reforzó la cascada CSS para mantener 13px en todas las celdas de cuerpo de las tres tablas, sin heredar el tamaño de las tablas bilingües generales.
 - Tests CI aprobados: [45826567300](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826567300). Browser E2E aprobado: [45826567302](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826567302), HEAD validado `990430b17264f20fb60ba633d1b64746f8a56339`.
 - Render aún no publica la revisión: último deploy LIVE observado `e781482dba287f8ac812bd6aff1abacee5b95988`. Se debe actualizar y verificar Preview antes de solicitar prueba humana.
+
+
+### Render Preview LIVE — ajuste de adjetivos — 26-11-2026
+- Deploy `dep-dc430l3l550s7381s230` LIVE con build exitoso y aplicación iniciada mediante `npm start`; commit servido `89aa6ccd2380f8a1000d89876be791fd591e2ad4`.
+- Tests aprobados: [45826853426](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826853426). Browser E2E aprobado: [45826852955](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826852955).
+- Preview listo para prueba humana: https://adaptive-language-tutor-preview-5b3d.onrender.com. Validación manual pendiente: comprobar visualmente las tres tablas y probar TTS de los seis adjetivos en Android.
