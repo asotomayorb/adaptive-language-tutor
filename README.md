@@ -1458,3 +1458,5 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Artículos definidos e indefinidos: tablas separadas de tres columnas Singular / Plural / Sustantivo-regla; género identificado entre paréntesis en Singular. Reglas breves antes de las tablas.
 - Artículos y adjetivos: mantener la base visual de teoría y destacar las formas italianas con TTS; la tabla debe exponer claramente singular y plural con las variantes de género.
 - El ajuste visual no autoriza cambiar el tema global ni el diseño de los demás subtemas.
+
+- Ajuste de implementación: las etiquetas de género y el guion de plural de indefinidos no se envían a TTS; solo las formas italianas conservan lectura individual.
