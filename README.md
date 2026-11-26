@@ -85,3 +85,4 @@ La app queda en http://localhost:3000; desarrollo: npm run dev. Los smoke tests 
 ## 6. Historial de documentación
 
 - **26-11-2026:** reorganización documental para reducir lectura repetida: README convertido en índice operativo, especificación de producto separada en PRODUCT_SPEC.md, estado técnico y plan humano conservados en sus documentos respectivos. No se modificó código de la aplicación.
+- **26-11-2026:** checkpoint de continuidad guardado en `recovery/intermediate-theory-content`, commit `59c87d6a02d9dfe8ebc84de6e9417e29401f4a74`. El checkpoint conserva como padre el estado previo de recuperación y añade como segundo padre el HEAD activo `e2f930645d2655de4493edb258501a38ce292766`; no se sobrescribió el historial anterior. La rama de desarrollo permanece `feature/mobile-bottom-navigation`.
