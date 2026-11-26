@@ -1377,3 +1377,28 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
   #screen-theory #theory-description table.adjective-vocabulary-table tbody td .theory-target-word,
   #screen-theory #theory-description table.adjective-examples-table tbody td .theory-target-word{font-size:15px!important;line-height:1.5!important}
 }
+
+
+/* Global standard: every Theory subtopic table uses the same body-text size as Articles and Adjectives. */
+#screen-theory #theory-description table tbody td,
+#screen-theory #theory-description table tbody td p,
+#screen-theory #theory-description table tbody td li,
+#screen-theory #theory-description table tbody td strong,
+#screen-theory #theory-description table tbody td .theory-target-word,
+#screen-theory #theory-description table tbody td .theory-target-tap,
+#screen-theory #theory-description table tbody td .speak-button{
+  font-size:17px!important;
+  line-height:1.5!important;
+}
+@media(max-width:620px){
+  #screen-theory #theory-description table tbody td,
+  #screen-theory #theory-description table tbody td p,
+  #screen-theory #theory-description table tbody td li,
+  #screen-theory #theory-description table tbody td strong,
+  #screen-theory #theory-description table tbody td .theory-target-word,
+  #screen-theory #theory-description table tbody td .theory-target-tap,
+  #screen-theory #theory-description table tbody td .speak-button{
+    font-size:15px!important;
+    line-height:1.5!important;
+  }
+}
