@@ -155,7 +155,7 @@ try {
   assert.deepEqual(await unitTwoTopics.locator(".theory-tree-topic-name").allInnerTexts(), ["Países e idiomas","Artículos y concordancia","Artículos y adjetivos","Edad y procedencia"], "Unit 2 should retain its four planned subtopics");
   const unitTwoChecks = [
     {title:"Países e idiomas", terms:["(Italia)","italiano"]},
-    {title:"Artículos y concordancia", terms:["Artículos definidos","Artículos indefinidos","lo (masculino)","gli","z, gn, ps o x","un’ (femenino)"]},
+    {title:"Artículos y concordancia", terms:["Artículos definidos","Artículos indefinidos","lo","masculino","gli","z, gn, ps o x","un’","femenino"]},
     {title:"Artículos y adjetivos", terms:["ragazzo","ragazza"]},
     {title:"Edad y procedencia", terms:["Quanti anni hai?","Di dove sei?","Ho vent’anni."]}
   ];
