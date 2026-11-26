@@ -1436,3 +1436,10 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - El servicio aún reporta `autoDeploy=yes`, `autoDeployTrigger=commit`, rama correcta; no obstante, la integración de eventos GitHub–Render no está operativa/verificada. No disparar deploy manual como sustituto de la prueba solicitada.
 - Para resolverlo se requiere revisar/reconectar la integración GitHub en Render Dashboard → servicio → Settings → Repository y luego repetir un push de prueba. Esta acción de conexión no está disponible en las herramientas actuales.
 - El commit `8b0aeda...` solo actualiza documentación; no contiene cambios funcionales de la app ni modifica el contenido de Unidad 2.
+
+
+### Nueva propuesta visual de artículos — 26-11-2026
+- El usuario solicita que las tablas de artículos definidos e indefinidos tengan exactamente tres columnas: **Singular** (formas masculina y femenina identificadas entre paréntesis), **Plural** y **Sustantivo / regla de uso**.
+- Cada tabla debe presentar las formas en filas separadas por género cuando facilite la lectura móvil; la tercera columna resume los contextos de uso (por ejemplo, consonante ordinaria, vocal o grupos consonánticos específicos). No repetir una explicación extensa fuera de la tabla.
+- Para el subtema de países, recuperar el ejemplo/formato anterior que el usuario aprobó, evitando la muestra que rechazó. La propuesta se presenta primero en conversación; todavía no se implementa contenido ni código.
+- Preparar nuevas propuestas visuales mobile-first y esperar aprobación antes de implementar.
