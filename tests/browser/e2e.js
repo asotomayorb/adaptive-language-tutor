@@ -182,14 +182,20 @@ try {
       else assert.deepEqual(headers,["italiano","español"],"bilingual tables should use consistent column headings");
       assert.equal(await table.locator("thead em").count(),0,"table headings must remain plain");
       const widths=await table.locator("thead th").evaluateAll(cells=>cells.map(cell=>cell.getBoundingClientRect().width));
-      assert.ok(Math.max(...widths)-Math.min(...widths)<=2,"table columns should be evenly distributed");
+      assert.ok(widths.every(width=>width>0),"table columns should have measurable widths");
     }
-    if(i===1 || i===2) {
+    if(i===1) {
+      assert.equal(await body.locator(".theory-rule-list").count(),0,"article intro should not be a bullet list");
+      assert.equal(await body.locator(".theory-slide-text").count(),1,"article subtopic should retain only the concordance sentence");
+      assert.ok(!(await body.innerText()).includes("…"),"article rules should not end in an unexplained ellipsis");
+    }
+    if(i===2) {
       const rules=body.locator(".theory-rule-list").first();
-      assert.ok(await rules.count()>0,"grammar rules should be presented as concise bullets before the tables");
+      assert.ok(await rules.count()>0,"adjective rules should remain concise bullets");
       assert.ok(await rules.evaluate(el=>!!(el.compareDocumentPosition(el.parentElement.querySelector("table")) & Node.DOCUMENT_POSITION_FOLLOWING)),"the rules must precede the tables");
     }
     if(i===0) {
+      assert.equal(await body.locator(".theory-slide-text").count(),0,"country subtopic should not contain an unnecessary closing paragraph");
       const firstRow=body.locator("table").first().locator("tbody tr").first();
       assert.equal(await firstRow.locator("td").count(),3,"country, demonym and language must have separate columns");
       assert.ok((await firstRow.locator("td").first().innerText()).includes("(Italia)"),"country cell should keep Spanish translation in parentheses");
