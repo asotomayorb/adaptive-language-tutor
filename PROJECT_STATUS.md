@@ -1297,3 +1297,5 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - No se modificaron contenidos de Unidad 1 ni Unidades 3–6. Pendiente: ejecutar CI/E2E, revisar el preview móvil real y validar visualmente el estilo claro, el ajuste de columnas y TTS.
 
 - Commit de código más reciente: e80c762ee90fdf46a7335df5d4ccc969196ee630. El parsing de las etiquetas de género se corrigió para que el TTS lea únicamente la forma italiana; validación automatizada aún pendiente.
+
+- Render deploy `dep-dc40tbec6qcc73c63qo0` fue iniciado en el servicio `adaptive-language-tutor-preview-5b3d` después de autorización del usuario. Estado observado: `build_in_progress`; falta confirmar live y revisar preview móvil. No se ha validado la interfaz ni se solicita prueba humana todavía.
