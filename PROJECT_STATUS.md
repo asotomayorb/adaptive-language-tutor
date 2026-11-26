@@ -1316,3 +1316,10 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Se reemplazó la lista de reglas y los párrafos de ejemplos por tablas compactas. Se ajustaron proporciones de columnas para dar prioridad al contenido más informativo.
 - Criterio para próximas propuestas e implementaciones: preferir tablas simples y concisas a párrafos o punteos extensos; seleccionar columnas según relevancia de los datos; mantener ejemplos vinculados a su regla/categoría y no usar pronombres como agrupador salvo que sean el eje pedagógico.
 - La revisión visual de esta modificación requiere CI, Browser E2E y verificación del preview; no declarar validada hasta completar esas comprobaciones.
+
+
+### Diagnóstico de E2E — 26-11-2026
+- Tests aprobados en run [45811507743](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45811507743) sobre HEAD 14490e4c397b5bd1ae14da3e41f5af40549287f8.
+- Browser E2E [45811507747](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45811507747) falló en la comprobación de Países e idiomas antes de ejecutar las nuevas aserciones de adjetivos: la prueba esperaba l’Italia, pero el contenido aprobado presenta Italia (Italia) sin artículo.
+- Se corrigió la expectativa E2E a (Italia) sin alterar el contenido pedagógico. Nueva ejecución pendiente.
+- No desplegar la revisión hasta que Browser E2E pase. Preview continúa sirviendo el último deploy previo; auto-deploy GitHub–Render no está demostrado.
