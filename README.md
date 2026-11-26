@@ -1502,3 +1502,9 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - La primera ejecución Browser E2E tras el nuevo formato falló antes de llegar a «Artículos y adjetivos»: la aserción de Países e idiomas buscaba l’Italia, aunque la tabla vigente y aprobada muestra Italia (Italia) sin artículo.
 - Se corrigió únicamente el término esperado por la prueba a (Italia); se conserva además la comprobación de italiano. No se cambió contenido de la lección.
 - Reejecutar Browser E2E sobre el HEAD actualizado. El fallo inicial no se atribuye al cambio de adjetivos; no desplegar hasta que E2E apruebe.
+
+
+### Ajuste de E2E: pronunciación individual en Países e idiomas — 26-11-2026
+- La segunda ejecución Browser E2E avanzó más allá de la primera aserción, pero detectó que el país italiano se valida como botón independiente. El comportamiento implementado enlaza el propio término `.theory-target-word` como control pulsable y retira el botón adyacente para evitar duplicarlo.
+- Se actualizó la prueba para comprobar que el término italiano sea individualmente pulsable (`.theory-target-tap[role=button]`), manteniendo la exigencia de TTS en gentilicio e idioma. No se modificó el código funcional de países ni la propuesta de adjetivos.
+- Repetir Tests y Browser E2E; despliegue pendiente hasta aprobación de ambos.
