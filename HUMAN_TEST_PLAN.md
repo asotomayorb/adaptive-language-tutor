@@ -855,3 +855,10 @@ Para cada escenario registrar:
 - [ ] Confirmar que los ejemplos siguen vinculados a las terminaciones -o, -a y -e → -i y conservan traducción española y TTS.
 - [ ] Ejecutar Tests y Browser E2E; no marcar como validado hasta que ambos aprueben.
 - [ ] Tras publicación Render LIVE, comprobar el preview en Android.
+
+
+### Validación automatizada del ajuste de adjetivos — 26-11-2026
+- [x] Tests CI aprobados: [run 45826567300](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826567300).
+- [x] Browser E2E aprobado: [run 45826567302](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826567302).
+- [ ] Render Preview actualizado al commit final y verificado LIVE.
+- [ ] Prueba visual, táctil y auditiva en Android real.
