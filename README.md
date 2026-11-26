@@ -1470,3 +1470,5 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Usuario confirmó el despliegue anterior como correcto y validó el checkpoint visual de esa versión.
 - Solicita: eliminar nota final de Países e idiomas; en Artículos y concordancia quitar la lista introductoria y conservar solo la frase general de concordancia; aclarar la regla de lo/uno sin puntos suspensivos ambiguos; uniformar tamaño de párrafos/listas en todos los subtemas; distribuir las columnas según contenido, con columna central de artículos más estrecha que la columna final.
 - Implementación registrada en commits `5cb188b`, `0934272`, `ba5fec3`, `cbdf4d4`, `bb706a3`, `83a0539`. Cambios funcionales y E2E actualizados. Validación automatizada y nuevo despliegue de esta revisión aún pendientes; no confundir con el checkpoint validado anterior.
+
+- Deploy de esta revisión: `dep-dc416g7f3r2c73a044u0`, commit `828034a732b0770b9eb8c63718d15e335083f67a`; iniciado en Render tras los cambios y confirmado aún `build_in_progress` en la última consulta. No declarado live. E2E/npm check no ejecutados y preview aún no inspeccionado.
