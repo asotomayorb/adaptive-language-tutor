@@ -7,6 +7,8 @@ on:
       - feature/mobile-bottom-navigation
     paths:
       - "server/provider.js"
+      - "server/prompts.js"
+      - "tests/provider.test.js"
       - "scripts/live-provider-smoke.js"
       - "scripts/live-browser-smoke.js"
       - "package.json"
