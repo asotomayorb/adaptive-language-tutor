@@ -875,3 +875,10 @@ Para cada escenario registrar:
 - [ ] En Teoría, revisar que ninguna palabra quede dividida entre dos renglones, especialmente en las tablas de regla, vocabulario y ejemplos de «Artículos y adjetivos».
 - [ ] Confirmar que las tres tablas conservan el mismo ancho exterior y que el texto de cuerpo tiene tamaño uniforme y legible en móvil y escritorio.
 - [ ] Comprobar que las celdas largas saltan de línea entre palabras sin provocar desplazamiento horizontal.
+
+
+### Revisión de tipografía de tablas en todos los subtemas — 26-11-2026
+- En móvil, recorrer los subtemas de las Unidades 1 y 2 y comprobar que todas las celdas de cuerpo de tabla tengan el mismo tamaño que «Artículos y adjetivos» (15px).
+- Confirmar que se mantienen los encabezados con tamaño diferenciado, las columnas adaptadas al contenido, el texto completo sin cortes de palabra y los controles TTS individuales.
+- En escritorio, comprobar que el cuerpo de todas las tablas conserva el tamaño de referencia de 17px.
+- Esta revisión sigue pendiente de validación automatizada y visual en Preview.
