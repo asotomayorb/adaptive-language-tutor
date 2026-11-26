@@ -1286,3 +1286,12 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - El servicio aún reporta `autoDeploy=yes`, `autoDeployTrigger=commit`, rama correcta; no obstante, la integración de eventos GitHub–Render no está operativa/verificada. No disparar deploy manual como sustituto de la prueba solicitada.
 - Para resolverlo se requiere revisar/reconectar la integración GitHub en Render Dashboard → servicio → Settings → Repository y luego repetir un push de prueba. Esta acción de conexión no está disponible en las herramientas actuales.
 - El commit `8b0aeda...` solo actualiza documentación; no contiene cambios funcionales de la app ni modifica el contenido de Unidad 2.
+
+
+### Unidad 2: restauración de esquema visual aprobado — 26-11-2026
+- Se aplicó la aclaración del usuario: las capturas son referencia de disposición de tablas, no del tema oscuro. Se conserva el estilo base de los subtemas (fondo claro, tipografía existente, resaltado de términos italianos y TTS).
+- Países e idiomas se ajustó a cinco filas: Italia (Italia), Germania (Alemania), Spagna (España), Francia (Francia), Portogallo (Portugal); columnas País / Gentilicio / Idioma. Traducción española queda en texto normal entre paréntesis; el nombre italiano y las formas de gentilicio/idioma mantienen TTS.
+- Artículos definidos e indefinidos se implementaron como tablas independientes Singular / Plural / Sustantivo-regla, con género en paréntesis en Singular y reglas previas.
+- Artículos y adjetivos se reorganizó en una tabla compacta de adjetivo, singular masculino/femenino y plural masculino/femenino; formas extranjeras conservan resaltado y TTS.
+- Se actualizaron aserciones Browser E2E para las nuevas cabeceras y estructura. No se ejecutaron todavía npm run check, npm test ni Browser E2E; el cambio no está validado ni listo para prueba humana.
+- No se modificaron contenidos de Unidad 1 ni Unidades 3–6. Pendiente: ejecutar CI/E2E, revisar el preview móvil real y validar visualmente el estilo claro, el ajuste de columnas y TTS.
