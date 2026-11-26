@@ -1464,3 +1464,9 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - 26-11-2026: el usuario confirmó que el preview continúa igual. La versión desplegada sigue desactualizada porque el auto-deploy GitHub–Render no ha funcionado. Render devuelve un único workspace disponible (`My Workspace`, `tea-dbus0u5g1s2s73coteeg`); antes de consultar/modificar deploys se requiere confirmación explícita del usuario para operar en ese workspace. No se disparó deploy manual ni se afirmó que los cambios estén visibles.
 
 - 26-11-2026: usuario autorizó operar en `My Workspace`. Se identificó el servicio correcto `adaptive-language-tutor-preview-5b3d` (rama `feature/mobile-bottom-navigation`) y se inició deploy manual `dep-dc40tbec6qcc73c63qo0` del commit `2932e1b5f783540fb0fe368c77fdefedc55b7510`; estado al último chequeo: `build_in_progress`. Aún no confirmado como live ni verificado en navegador; no afirmar que el preview ya cambió.
+
+
+### Ajustes posteriores al checkpoint visual — 26-11-2026
+- Usuario confirmó el despliegue anterior como correcto y validó el checkpoint visual de esa versión.
+- Solicita: eliminar nota final de Países e idiomas; en Artículos y concordancia quitar la lista introductoria y conservar solo la frase general de concordancia; aclarar la regla de lo/uno sin puntos suspensivos ambiguos; uniformar tamaño de párrafos/listas en todos los subtemas; distribuir las columnas según contenido, con columna central de artículos más estrecha que la columna final.
+- Implementación registrada en commits `5cb188b`, `0934272`, `ba5fec3`, `cbdf4d4`, `bb706a3`, `83a0539`. Cambios funcionales y E2E actualizados. Validación automatizada y nuevo despliegue de esta revisión aún pendientes; no confundir con el checkpoint validado anterior.
