@@ -1336,3 +1336,9 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Browser E2E [45811851960](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45811851960) detectó que las celdas de gentilicio e idioma también usan términos pulsables como controles TTS, no botones separados. Esto es el comportamiento existente de `bindTheoryTargetText`.
 - Se actualizó la aserción para validar que ambos términos sean individualmente pulsables. No se cambió el código funcional ni el contenido de Países e idiomas.
 - Tests generales previos aprobados; nueva ejecución E2E y tests tras este ajuste pendiente.
+
+
+### Cuarta corrección de aserciones E2E — 26-11-2026
+- Browser E2E run [45812021554](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45812021554) falló al comprobar Artículos y concordancia porque esperaba dos ejemplos (`gli studenti`, `un’amica`) que no están en las tablas vigentes aprobadas.
+- La prueba se actualizó para validar formas/reglas reales de las tablas: `lo (masculino)`, `gli`, grupos consonánticos `z, gn, ps o x` y `un’ (femenino)`. No se modificó la lección.
+- Commit E2E: `89014ec9224d1efdfa34c5bd61e89e670467e727`. CI y Browser E2E deben repetirse sobre este HEAD; Render permanece sin publicar esta revisión hasta aprobación.
