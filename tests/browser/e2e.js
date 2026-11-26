@@ -177,7 +177,8 @@ try {
       const table=tables.nth(tableIndex);
       const headers=(await table.locator("thead th").allInnerTexts()).map(v=>v.trim().toLowerCase());
       if(i===0) assert.deepEqual(headers,["país","gentilicio","idioma"],"country table should identify country, demonym and language separately");
-      else if(i===2) assert.deepEqual(headers,["masculino","femenino","plural"],"adjective table should distinguish gender and number");
+      else if(i===1) assert.deepEqual(headers,["singular","plural","sustantivo / regla"],"article tables should use the approved three-column scheme");
+      else if(i===2) assert.deepEqual(headers,["adjetivo","singular (masculino / femenino)","plural (masculino / femenino)"],"adjective table should show singular and plural gender variants");
       else assert.deepEqual(headers,["italiano","español"],"bilingual tables should use consistent column headings");
       assert.equal(await table.locator("thead em").count(),0,"table headings must remain plain");
       const widths=await table.locator("thead th").evaluateAll(cells=>cells.map(cell=>cell.getBoundingClientRect().width));
@@ -191,7 +192,9 @@ try {
     if(i===0) {
       const firstRow=body.locator("table").first().locator("tbody tr").first();
       assert.equal(await firstRow.locator("td").count(),3,"country, demonym and language must have separate columns");
-      for(let cellIndex=0;cellIndex<3;cellIndex++) assert.equal(await firstRow.locator("td").nth(cellIndex).locator(".theory-speech-variant").count(),1,"each country/demonym/language value should have its own pronunciation control");
+      assert.ok((await firstRow.locator("td").first().innerText()).includes("(Italia)"),"country cell should keep Spanish translation in parentheses");
+      assert.equal(await firstRow.locator("td").first().locator("button").count(),1,"Italian country name should have its own pronunciation control");
+      for(let cellIndex=1;cellIndex<3;cellIndex++) assert.ok(await firstRow.locator("td").nth(cellIndex).locator("button").count()>0,"foreign demonym/language cells should retain TTS controls");
     }
     if(i===3) assert.ok(!(await body.innerText()).includes("(formal)"),"translations should not contain parenthetical mini-explanations");
     await page.locator("#theory-back").click();
