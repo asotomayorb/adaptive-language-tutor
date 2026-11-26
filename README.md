@@ -1538,3 +1538,12 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Commit servido: `213164e852da005275d95012d11a3584dfa63d71`. Preview: https://adaptive-language-tutor-preview-5b3d.onrender.com
 - La versión ya está disponible para prueba humana. Si el navegador mantiene recursos antiguos, recargar la página sin caché antes de evaluar.
 - Se mantiene pendiente investigar por qué los eventos de auto-deploy no actualizaron el servicio automáticamente; el despliegue manual resolvió esta publicación.
+
+
+### Checkpoint confirmado y revisión de adjetivos — 26-11-2026
+- El usuario confirmó el checkpoint anterior de Unidad 2; se conserva como base aprobada antes de continuar.
+- En «Artículos y adjetivos» se añade, antes de los ejemplos, una tabla sencilla de vocabulario con seis adjetivos frecuentes (bello, buono, grande, nuovo, piccolo, interessante), traducción española y pronunciación individual.
+- Las tres tablas del subtema (regla, vocabulario y ejemplos) comparten ancho exterior y tamaño tipográfico uniforme; sus columnas internas mantienen proporciones adaptadas al contenido.
+- Browser E2E verifica el vocabulario, sus seis controles TTS y la uniformidad de dimensiones/tipografía.
+- Commits de implementación y pruebas: `5d0a1d0`, `79ca84f`, `49a05f6`; HEAD actual `49a05f632ca3847567cb2d18b949b5d5a62141ca`.
+- Estado de esta revisión: pendiente de Tests, Browser E2E y publicación/verificación Render. El checkpoint anterior sigue confirmado; esta ampliación no se considera validada hasta completar las pruebas.
