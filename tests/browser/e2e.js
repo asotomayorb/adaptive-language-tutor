@@ -178,7 +178,8 @@ try {
       const headers=(await table.locator("thead th").allInnerTexts()).map(v=>v.trim().toLowerCase());
       if(i===0) assert.deepEqual(headers,["país","gentilicio","idioma"],"country table should identify country, demonym and language separately");
       else if(i===1) assert.deepEqual(headers,["singular","plural","sustantivo / regla"],"article tables should use the approved three-column scheme");
-      else if(i===2) assert.deepEqual(headers,["adjetivo","singular (masculino / femenino)","plural (masculino / femenino)"],"adjective table should show singular and plural gender variants");
+      else if(i===2 && tableIndex===0) assert.deepEqual(headers,["terminación","femenino","plural"],"adjective rule table should show endings, feminine and plural forms");
+      else if(i===2 && tableIndex===1) assert.deepEqual(headers,["terminación","ejemplo aplicado"],"adjective examples should be organized by ending");
       else assert.deepEqual(headers,["italiano","español"],"bilingual tables should use consistent column headings");
       assert.equal(await table.locator("thead em").count(),0,"table headings must remain plain");
       const widths=await table.locator("thead th").evaluateAll(cells=>cells.map(cell=>cell.getBoundingClientRect().width));
@@ -190,9 +191,14 @@ try {
       assert.ok(!(await body.innerText()).includes("…"),"article rules should not end in an unexplained ellipsis");
     }
     if(i===2) {
-      const rules=body.locator(".theory-rule-list").first();
-      assert.ok(await rules.count()>0,"adjective rules should remain concise bullets");
-      assert.ok(await rules.evaluate(el=>!!(el.compareDocumentPosition(el.parentElement.querySelector("table")) & Node.DOCUMENT_POSITION_FOLLOWING)),"the rules must precede the tables");
+      assert.equal(await body.locator(".theory-slide-text").count(),1,"adjectives should retain one introductory paragraph");
+      assert.equal(await body.locator(".theory-rule-list").count(),0,"adjective rules should use a simple table, not extended bullets");
+      const rules=body.locator(".adjective-rules-table");
+      assert.deepEqual((await rules.locator("tbody tr").allInnerTexts()).map(value=>value.replace(/\\s+/g," ").trim()),["-o -a -i (masculino) / -e (femenino)","-e — -i (masculino y femenino)"],"adjective endings should map to feminine and plural forms");
+      const examples=body.locator(".adjective-examples-table");
+      assert.deepEqual(await examples.locator("tbody tr td:first-child").allInnerTexts(),["-o","-a","-e → -i"],"examples should be keyed by ending, not pronoun");
+      assert.equal(await examples.locator(".speak-button").count(),3,"each Italian example should have its own TTS control");
+      assert.ok((await examples.innerText()).includes("Un chico italiano.") && (await examples.innerText()).includes("Dos chicas interesantes."),"examples should retain Spanish translations");
     }
     if(i===0) {
       assert.equal(await body.locator(".theory-slide-text").count(),0,"country subtopic should not contain an unnecessary closing paragraph");
