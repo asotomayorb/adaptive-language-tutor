@@ -197,7 +197,7 @@ try {
       assert.deepEqual((await rules.locator("tbody tr").allInnerTexts()).map(value=>value.replace(/\s+/g," ").trim()),["-o -a -i (masculino) / -e (femenino)","-e — -i (masculino y femenino)"],"adjective endings should map to feminine and plural forms");
       const examples=body.locator(".adjective-examples-table");
       assert.deepEqual(await examples.locator("tbody tr td:first-child").allInnerTexts(),["-o","-a","-e → -i"],"examples should be keyed by ending, not pronoun");
-      assert.equal(await examples.locator(".speak-button").count(),3,"each Italian example should have its own TTS control");
+      assert.equal(await examples.locator(".theory-target-tap[role=button]").count(),3,"each Italian example should have its own tappable TTS control");
       assert.ok((await examples.innerText()).includes("Un chico italiano.") && (await examples.innerText()).includes("Dos chicas interesantes."),"examples should retain Spanish translations");
     }
     if(i===0) {
