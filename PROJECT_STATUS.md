@@ -1375,3 +1375,11 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - URL: https://adaptive-language-tutor-preview-5b3d.onrender.com
 - Tests y Browser E2E del HEAD servido aprobaron: [Tests 45826853426](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826853426), [Browser E2E 45826852955](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826852955). Además, la validación del commit funcional de código fue aprobada en [45826567300](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826567300) y [45826567302](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45826567302).
 - Estado: listo para prueba humana en Preview. Revisar en Android la ubicación de la tabla de vocabulario, uniformidad de ancho/tipografía y pronunciación individual de los seis adjetivos.
+
+
+### Corrección de cortes de palabras y legibilidad de tablas — 26-11-2026
+- Se elimina el ajuste CSS que podía partir palabras en cualquier punto dentro de las tablas de adjetivos. Las explicaciones y celdas de tablas de Teoría ahora permiten saltos solo entre palabras; se desactivan la partición arbitraria y la separación silábica automática.
+- Las tablas de regla, vocabulario y ejemplos conservan el mismo ancho exterior y tipografía de cuerpo uniforme, aumentada de 13px a 17px en escritorio y 15px en móvil. Los encabezados mantienen jerarquía propia (13px escritorio / 12px móvil).
+- Se amplía la primera columna de la tabla de reglas para acomodar términos completos sin cortes ni desbordamiento.
+- Browser E2E actualizado para comprobar tamaño uniforme, estilos de ajuste de línea y ausencia de división de palabras. La validación automatizada y la publicación Render quedan pendientes; no solicitar prueba humana hasta completarlas.
+- Commits: CSS `8cf9645`; E2E `0775396`.
