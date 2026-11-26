@@ -1597,3 +1597,11 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 
 
 - Actualización de estado — 26-11-2026: Render finalizó el deploy `dep-dc446sm1egvs73f9mrs0` con estado `live` para el commit `b27534a3dfa7d5741a19cd0064aa57089c18ed29`. El preview ya sirve la rama que contiene los cambios de legibilidad. Sigue pendiente la comprobación visual en navegador y no hay status checks/workflow runs asociados al commit CSS, por lo que no se marca la revisión como validada ni se solicita todavía el checkpoint.
+
+
+### Checkpoint de legibilidad previo a uniformar tablas — 26-11-2026
+- El usuario solicita guardar el estado actual como checkpoint antes de extender el criterio tipográfico a todas las tablas de subtemas.
+- Base de referencia: rama `feature/mobile-bottom-navigation`, cambios de legibilidad CSS `c3f704d` y preview Render `dep-dc446sm1egvs73f9mrs0` confirmado LIVE.
+- El estado guardado incluye el criterio ya establecido para «Artículos y adjetivos»: tablas con ancho exterior y tipografía de cuerpo uniforme; en móvil, el tamaño de referencia es 15px (escritorio 17px), con encabezados de jerarquía diferenciada.
+- Alcance pendiente de esta revisión: aplicar ese mismo tamaño de texto de cuerpo a todas las tablas de todos los subtemas de Teoría, tomando «Artículos y adjetivos» y las tablas de artículos como referencia. No cambiar tamaños de encabezados ni el diseño/contenido de las tablas.
+- Este checkpoint registra el punto de partida solicitado; no equivale a validación visual integral. La comprobación automatizada de la revisión anterior no aparece asociada al commit CSS y queda pendiente.
