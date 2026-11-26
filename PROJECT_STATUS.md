@@ -1307,3 +1307,5 @@ Los cambios están guardados en GitHub; npm run check, npm test, E2E y el deploy
 - Se unificó la tipografía de párrafos y listas dentro del contenido teórico (14px, line-height 1.6). Las tablas de países, artículos y adjetivos tienen clases específicas y proporciones de columna adaptadas; la columna central de artículos es menor que la final.
 - E2E actualizado para verificar ausencia de nota final de países, intro de artículos no listado, ausencia de elipsis en reglas y anchos no nulos. No se ejecutó Browser E2E ni `npm run check`; los nuevos cambios aún no están validados ni desplegados.
 - Próximo paso: ejecutar validaciones disponibles y confirmar el auto-deploy/preview; luego inspección visual móvil. Mantener checkpoint anterior registrado como aprobado, pero no marcar esta revisión como validada hasta completar pruebas.
+
+- Deploy de esta revisión: `dep-dc416g7f3r2c73a044u0`, commit `828034a732b0770b9eb8c63718d15e335083f67a`; iniciado en Render tras los cambios y confirmado aún `build_in_progress` en la última consulta. No declarado live. E2E/npm check no ejecutados y preview aún no inspeccionado.
