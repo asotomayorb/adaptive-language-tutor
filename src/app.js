@@ -2659,14 +2659,7 @@ function renderItalianAppliedTopic(category, index, locale) {
       '</tbody></table>';
   }
   if (category === "Gramática" && index === 1) {
-    const rules = [
-      "El artículo definido concuerda con el sustantivo en género y número.",
-      "Masculino singular: il ante consonante ordinaria; lo ante s + consonante, z, gn, ps o x; l’ ante vocal.",
-      "Femenino singular: la ante consonante y l’ ante vocal.",
-      "Plural: i corresponde a il; gli, a lo y l’; le, a la.",
-      "Indefinidos: un ante consonante ordinaria o vocal, sin apóstrofo; uno ante s + consonante, z, gn, ps o x; una ante consonante y un’ ante vocal."
-    ];
-    const ruleList = '<ul class="theory-rule-list">' + rules.map(rule => '<li>' + rule + '</li>').join("") + '</ul>';
+    const concordanceRule = '<p class="theory-slide-text">El artículo concuerda con el sustantivo en género y número.</p>';
     const articleTable = (title, rows) =>
       '<h3>' + title + '</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Singular</th><th>Plural</th><th>Sustantivo / regla</th></tr></thead><tbody>' +
       rows.map(([singular, plural, rule]) => {
@@ -2675,10 +2668,10 @@ function renderItalianAppliedTopic(category, index, locale) {
         return '<tr><td>' + singularCell + '</td><td>' + (plural === "—" ? "—" : renderSpokenVariants(plural)) + '</td><td>' + escapeHTML(rule) + '</td></tr>';
       }).join("") +
       '</tbody></table>';
-    return ruleList +
+    return concordanceRule +
       articleTable("Artículos definidos", [
         ["il (masculino)", "i", "Consonante ordinaria"],
-        ["lo (masculino)", "gli", "s + consonante, z, gn, ps, x…"],
+        ["lo (masculino)", "gli", "s seguida de consonante; z, gn, ps o x al inicio de palabra"],
         ["l’ (masculino)", "gli", "Vocal"],
         ["la (femenino)", "le", "Consonante"],
         ["l’ (femenino)", "le", "Vocal"]
@@ -2689,7 +2682,7 @@ function renderItalianAppliedTopic(category, index, locale) {
         ["una (femenino)", "—", "Consonante"],
         ["un’ (femenino)", "—", "Vocal"]
       ]) +
-      '<p class="theory-slide-text"><em>En los indefinidos, el guion indica que no existe una forma plural directa equivalente.</em></p>';
+      '';
   }
   if (category === "Gramática" && index === 2) {
     const rules = [
@@ -2751,7 +2744,7 @@ function renderItalianAppliedTopic(category, index, locale) {
       items.map(([country, translation, demonym, language]) =>
         '<tr><td><strong class="theory-target-word">' + escapeHTML(country) + '</strong> ' + speakerButton(country,locale) + ' <span>(' + escapeHTML(translation) + ')</span></td><td>' + renderSpokenVariants(demonym) + '</td><td>' + renderSpokenVariants(language) + '</td></tr>'
       ).join("") +
-      '</tbody></table><p class="theory-slide-text">Se conserva el nombre italiano como entrada y se añade la traducción española entre paréntesis. Los gentilicios muestran masculino y femenino cuando corresponde.</p>';
+      '</tbody></table>';
   }
   if (category === "Vocabulario" || category === "Expresiones") {
     const items = vocabulary[category]?.[index];
