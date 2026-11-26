@@ -1480,3 +1480,10 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - La propuesta visual debe expresar: (a) adjetivos terminados en -o: femenino -a; plural -i masculino y -e femenino; (b) adjetivos terminados en -e: misma forma en singular masculino/femenino y plural -i.
 - Ejemplos: reemplazar los párrafos alternados actuales por el formato de ejemplos aplicado en otros subtemas, basado en tabla «Pronombre | Ejemplo aplicado», con frase italiana destacada + TTS y traducción española debajo. Mostrar esquema en chat y esperar aprobación antes de implementar.
 - No se modificó código en esta etapa. Mantener intactos fondo claro, tipografía común, resaltado de italiano y TTS.
+
+
+### Segunda propuesta visual de Artículos y adjetivos — 26-11-2026
+- El usuario rechaza la propuesta anterior y solicita una nueva distribución antes de implementar.
+- Reglas: tabla compacta con columnas **Terminación | Femenino | Plural**. Para `-o`, mostrar femenino `-a` y plural `-i` masculino / `-e` femenino. Para `-e`, dejar la columna Femenino sin transformación (celda vacía o raya) y mostrar plural `-i` para ambos géneros.
+- Ejemplos: sustituir la columna/categoría «Pronombre» por **Terminación**. Relacionar `-o` con `Un ragazzo italiano`, `-a` con `Una ragazza italiana` y `-e → -i` con `Due ragazze interessanti`; conservar traducción española y TTS individual.
+- Esta es una propuesta visual en conversación, no una aprobación ni una implementación. Mantener intactos código y contenido hasta confirmación explícita del usuario.
