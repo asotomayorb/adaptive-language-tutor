@@ -1520,3 +1520,13 @@ En las respuestas de avance se muestran pantallas esquemáticas con componentes,
 - Browser E2E del commit `747be438` llegó a la revisión de Unidad 2 y falló porque la prueba aún esperaba ejemplos antiguos (`gli studenti`, `un’amica`) que no forman parte del formato de reglas aprobado.
 - Se actualizaron las expectativas para comprobar las formas y reglas presentes en las tablas actuales (`lo`, `gli`, grupos consonánticos y `un’` femenino), sin modificar el contenido ni el código funcional de la lección.
 - Commit de ajuste E2E: `89014ec9224d1efdfa34c5bd61e89e670467e727`. Repetir CI y Browser E2E; no desplegar hasta que ambos aprueben.
+
+
+### Validación automatizada del formato de adjetivos — 26-11-2026
+- Se ajustó Browser E2E para normalizar los espacios que el navegador representa como tabulaciones/saltos de línea en las celdas de tablas y para validar por separado la forma italiana y la etiqueta de género.
+- La pronunciación de los tres ejemplos de «Artículos y adjetivos» se valida mediante los términos italianos pulsables `.theory-target-tap[role=button]`, que es el control real generado por `bindTheoryTargetText`; no se exige un botón TTS adyacente duplicado.
+- Código funcional de las lecciones sin cambios en esta corrección; se modificaron únicamente aserciones E2E.
+- Commit de pruebas validado: `d5fad1e451802c9d0913c601b4cea7b45ab96a17`.
+- Tests aprobados: [45822259293](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45822259293). Browser E2E aprobado: [45822259276](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45822259276).
+- Render Preview continúa LIVE en el commit documental anterior `828034a732b0770b9eb8c63718d15e335083f67a`; no se generó un deploy tras los pushes validados. La configuración reporta `autoDeploy=yes`, `autoDeployTrigger=commit`, pero el webhook GitHub–Render sigue sin disparar. No declarar el preview actualizado ni solicitar prueba humana hasta que Render sirva el commit validado y se compruebe la versión publicada.
+- Pendiente operativo: reconectar el repositorio mediante GitHub Integration en Render Dashboard → servicio → Settings → Repository, o resolver la integración de eventos. Después verificar un deploy con el HEAD validado y revisar el preview móvil.
