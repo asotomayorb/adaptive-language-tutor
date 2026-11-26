@@ -869,3 +869,9 @@ Para cada escenario registrar:
 - [x] Build y arranque de aplicación confirmados en logs Render.
 - [x] Tests y Browser E2E aprobados para el HEAD publicado.
 - [ ] Prueba visual, táctil y auditiva en Android real: vocabulario previo a ejemplos, tablas de ancho y tipografía uniformes, seis controles de pronunciación.
+
+
+## Revisión de tablas y cortes de palabras — 26-11-2026
+- [ ] En Teoría, revisar que ninguna palabra quede dividida entre dos renglones, especialmente en las tablas de regla, vocabulario y ejemplos de «Artículos y adjetivos».
+- [ ] Confirmar que las tres tablas conservan el mismo ancho exterior y que el texto de cuerpo tiene tamaño uniforme y legible en móvil y escritorio.
+- [ ] Comprobar que las celdas largas saltan de línea entre palabras sin provocar desplazamiento horizontal.
