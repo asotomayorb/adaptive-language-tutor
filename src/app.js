@@ -2684,21 +2684,21 @@ function renderItalianAppliedTopic(category, index, locale) {
       ]);
   }
   if (category === "Gramática" && index === 2) {
-    const rules = [
-      "El adjetivo normalmente va después del sustantivo y concuerda con él en género y número.",
-      "Los adjetivos en -o cambian a -a en femenino; en plural, -i (masculino) y -e (femenino).",
-      "Los adjetivos en -e mantienen la misma forma en singular masculino y femenino; el plural termina en -i."
+    const adjectiveRules = [
+      ["-o", "-a", "-i (masculino) / -e (femenino)"],
+      ["-e", "—", "-i (masculino y femenino)"]
     ];
-    const ruleList = '<ul class="theory-rule-list">' + rules.map(rule => '<li>' + rule + '</li>').join("") + '</ul>';
-    const adjectiveRows = [
-      ["alto", "alto / alta", "alti / alte"],
-      ["italiano", "italiano / italiana", "italiani / italiane"],
-      ["interessante", "interessante", "interessanti"]
+    const examples = [
+      ["-o", "Un ragazzo italiano.", "Un chico italiano."],
+      ["-a", "Una ragazza italiana.", "Una chica italiana."],
+      ["-e → -i", "Due ragazze interessanti.", "Dos chicas interesantes."]
     ];
-    return ruleList +
-      '<h3>Concordancia de adjetivos</h3><table class="theory-pronoun-table theory-bilingual-table adjective-concordance-table"><thead><tr><th>Adjetivo</th><th>Singular (masculino / femenino)</th><th>Plural (masculino / femenino)</th></tr></thead><tbody>' +
-      adjectiveRows.map(([adjective,singular,plural]) => '<tr><td>' + renderSpokenVariants(adjective) + '</td><td>' + renderSpokenVariants(singular) + '</td><td>' + renderSpokenVariants(plural) + '</td></tr>').join("") +
-      '</tbody></table><section class="theory-example"><span>Ejemplos</span><p class="theory-target-word">Un ragazzo italiano. ' + speakerButton("Un ragazzo italiano.",locale) + '</p><p>Un chico italiano.</p><p class="theory-target-word">Una ragazza italiana. ' + speakerButton("Una ragazza italiana.",locale) + '</p><p>Una chica italiana.</p><p class="theory-target-word">Due ragazze interessanti. ' + speakerButton("Due ragazze interessanti.",locale) + '</p><p>Dos chicas interesantes.</p></section>';
+    return '<p class="theory-slide-text">El adjetivo normalmente va después del sustantivo y concuerda con él en género y número.</p>' +
+      '<h3>Formación de adjetivos</h3><table class="theory-pronoun-table theory-bilingual-table adjective-rules-table"><thead><tr><th>Terminación</th><th>Femenino</th><th>Plural</th></tr></thead><tbody>' +
+      adjectiveRules.map(([ending,feminine,plural]) => '<tr><td><strong>' + ending + '</strong></td><td>' + feminine + '</td><td>' + plural + '</td></tr>').join("") +
+      '</tbody></table><section class="theory-example"><h3>Ejemplos</h3><table class="theory-pronoun-table theory-bilingual-table adjective-examples-table"><thead><tr><th>Terminación</th><th>Ejemplo aplicado</th></tr></thead><tbody>' +
+      examples.map(([ending,phrase,translation]) => '<tr><td><strong>' + ending + '</strong></td><td><span class="theory-target-word">' + phrase + '</span> ' + speakerButton(phrase,locale) + '<p>' + translation + '</p></td></tr>').join("") +
+      '</tbody></table></section>';
   }
   if (category === "Gramática" && index === 4) {
     const people = ["io","tu","lui / lei","noi","voi","loro"];
