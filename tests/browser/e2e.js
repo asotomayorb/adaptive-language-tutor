@@ -169,6 +169,10 @@ try {
     const check=unitTwoChecks[i];
     assert.equal(await page.locator("#theory-title").innerText(),check.title,"Unit 2 topic title should match its content");
     const body=page.locator("#theory-description");
+    assert.equal(await body.locator(".theory-subtopic-content").count(),1,"every developed topic should use the shared content wrapper");
+    assert.equal(await body.locator(".theory-subtopic-intro").count(),1,"every developed topic should begin with one concise introduction");
+    assert.ok(await body.locator(".theory-content-section").count()>0,"every developed topic should group its reference material into sections");
+    assert.equal(await body.locator(".speak-button").count(),0,"Theory must not show Play or speaker buttons");
     const allTableCells=body.locator("table tbody td");
     if (await allTableCells.count()) {
       const tableBodySizes=await allTableCells.evaluateAll(cells=>cells.map(cell=>getComputedStyle(cell).fontSize));
@@ -251,7 +255,38 @@ try {
     if(i===3) { assert.ok(!(await body.innerText()).includes("(formal)"),"translations should not contain parenthetical mini-explanations"); assert.ok((await body.innerText()).includes("Hai / sei") && (await body.innerText()).includes("ha / è"),"age and origin should distinguish informal and formal forms"); }
     await page.locator("#theory-back").click();
   }
-  for (let unitIndex=2;unitIndex<await unitRows.count();unitIndex++) {
+  await unitRows.nth(2).click();
+  const unitThreeTopics=page.locator("#theory-tree .theory-tree-topic");
+  const unitThreeChecks=[
+    {title:"Familia",terms:["la madre","il padre","i genitori","Mia sorella si chiama Anna."]},
+    {title:"Profesiones",terms:["il medico","la medica","lo studente","la studentessa","Sono insegnante."]},
+    {title:"Rutinas y lugares",terms:["svegliarsi","fare colazione","la casa","l’ufficio","Mi sveglio alle sette."]},
+    {title:"Días y fechas",terms:["lunedì","domenica","gennaio","Il mio compleanno è il primo maggio."]},
+    {title:"Presente habitual",terms:["parlare","prendere","dormire","parliamo","Lavoro in ufficio."]},
+    {title:"Pasado (passato prossimo)",terms:["avere","essere","-ato","fatto","Sono arrivata a casa.","Ieri ho studiato italiano."]},
+    {title:"Futuro simple",terms:["futuro semplice","parlerò","prenderai","sar-","Domani lavorerò da casa."]},
+    {title:"Rutinas diarias",terms:["Mi sveglio alle sette.","Faccio colazione e vado al lavoro.","Vado a letto alle dieci e mezza."]},
+    {title:"La hora",terms:["Che ora è?","È l’una.","Sono le due.","e un quarto","meno un quarto","A che ora lavori?"]}
+  ];
+  assert.deepEqual(await unitThreeTopics.locator(".theory-tree-topic-name").allInnerTexts(),unitThreeChecks.map(item=>item.title),"Unit 3 should retain the nine planned subtopics in the specified order");
+  for(let i=0;i<unitThreeChecks.length;i++){
+    await unitThreeTopics.nth(i).click();
+    const check=unitThreeChecks[i];
+    assert.equal(await page.locator("#theory-title").innerText(),check.title,"Unit 3 topic title should match its content");
+    const body=page.locator("#theory-description");
+    assert.equal(await body.locator(".theory-subtopic-content").count(),1,"Unit 3 should use the shared content wrapper");
+    assert.equal(await body.locator(".theory-subtopic-intro").count(),1,"Unit 3 should include one concise introduction");
+    assert.ok(await body.locator(".theory-content-section").count()>0,"Unit 3 should group its reference content into sections");
+    assert.ok(await body.locator("table").count()>0,"each Unit 3 topic should include a reference table");
+    assert.equal(await body.locator(".speak-button").count(),0,"no Play or speaker buttons should appear in Unit 3");
+    const content=(await body.innerText()).replace(/\\s+/g," ");
+    for(const term of check.terms) assert.ok(content.includes(term),"Unit 3 content should include "+term);
+    const targets=body.locator(".theory-target-tap[role=button]");
+    assert.ok(await targets.count()>0,"Italian reference terms should be individually tappable");
+    assert.ok(await targets.evaluateAll(nodes=>nodes.every(node=>node.dataset.locale==="it-IT")),"all pronunciation targets must use Italian voice locale");
+    await page.locator("#theory-back").click();
+  }
+  for (let unitIndex=3;unitIndex<await unitRows.count();unitIndex++) {
     await unitRows.nth(unitIndex).click();
     const laterTopics=page.locator("#theory-tree .theory-tree-topic");
     assert.ok(await laterTopics.count()>0,"later units must retain their planned subtopic titles");
@@ -292,7 +327,7 @@ try {
   assert.match(await page.locator("#theory-tree [data-category=" + '"vocabulary"' + "] .theory-tree-category-icon").innerText().catch(() => ""), /abc/i, "vocabulary icon should expose bilingual letter glyph");
    assert.ok(await page.locator("#theory-tree .theory-tree-category-icon svg").count() > 0, "category rows should use line icons rather than the former text glyphs");
   assert.equal(await page.locator("#theory-detail .back-control").count(), 1, "detail should contain exactly one back arrow");
-  // Unit 2 remains a content skeleton; use a developed Unit 1 topic for pronunciation interaction.
+  // Use a developed Unit 1 topic for pronunciation interaction; Units 1–3 share the same tap-to-speak model.
   await page.locator("#theory-back").click();
   await unitRows.nth(0).click();
   await page.locator("#theory-tree .theory-tree-topic").first().click();
