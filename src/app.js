@@ -134,10 +134,6 @@ function bindTheoryTargetText(root) {
     const spokenText = target.textContent.trim();
     if (!spokenText) return;
     const adjacentSpeaker = target.nextElementSibling?.matches(".speak-button") ? target.nextElementSibling : null;
-    if (spokenText.length > 48) {
-      if (!adjacentSpeaker) target.insertAdjacentHTML("afterend", " " + speakerButton(spokenText, locale));
-      return;
-    }
     adjacentSpeaker?.remove();
     if (target.dataset.theorySpeechBound === "true") return;
     target.dataset.theorySpeechBound = "true";
@@ -2081,12 +2077,20 @@ function renderItalianAppliedTopic(category, index, locale) {
   const rows = items => items.map(([term, meaning, note = ""]) =>
     '<tr><td>' + renderSpokenVariants(term) + '</td><td>' + renderLines(meaning) + '</td>' + (note ? '<td>' + escapeHTML(note) + '</td>' : '') + '</tr>'
   ).join("");
+  const bilingualTable = (className, headers, items) =>
+    '<table class="theory-pronoun-table theory-bilingual-table ' + className + '"><thead><tr>' +
+    headers.map(header => '<th>' + escapeHTML(header) + '</th>').join("") +
+    '</tr></thead><tbody>' + items.map(([italian,spanish,note]) =>
+      '<tr><td>' + renderSpokenVariants(italian) + '</td><td>' + escapeHTML(spanish) + '</td>' +
+      (note ? '<td>' + escapeHTML(note) + '</td>' : '') + '</tr>'
+    ).join("") + '</tbody></table>';
+  const examplesTable = items => bilingualTable("theory-examples-table", ["Italiano","Español"], items);
   if (category === "Gramática" && index === 0) {
     const pronouns = [["io","yo"],["tu","tú"],["lui / lei","él / ella"],["Lei","usted (formal)"],["noi","nosotros/as"],["voi","ustedes"],["loro","ellos/as"]];
     const verbs = [["io","sono","sto"],["tu","sei","stai"],["lui / lei","è","sta"],["Lei","è","sta"],["noi","siamo","stiamo"],["voi","siete","state"],["loro","sono","stanno"]];
     return '<p class="theory-slide-text">El italiano suele omitir el pronombre sujeto porque la terminación verbal normalmente indica la persona: <em>Sono cileno</em> (soy chileno). Se usa para dar énfasis o evitar ambigüedad. «Lei» con mayúscula es el tratamiento formal de «usted» y lleva el verbo en tercera persona singular.</p>' +
       '<h3>Pronombres personales</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
-      pronouns.map(([term,meaning]) => '<tr><td><strong class="theory-target-word">' + term + '</strong> ' + speakerButton(term,locale) + '</td><td>' + meaning + '</td></tr>').join("") +
+      pronouns.map(([term,meaning]) => '<tr><td>' + renderSpokenVariants(term) + '</td><td>' + meaning + '</td></tr>').join("") +
       '</tbody></table><h3>Verbos essere y stare</h3><p class="theory-slide-text">«<em>Essere</em>» se usa para identidad, origen, profesión y características. «<em>Stare</em>» aparece, entre otros usos, en expresiones de estado o condición como <em>stare bene</em> (estar bien). No equivalen de forma automática al «ser» y «estar» españoles: el verbo depende de la construcción italiana.</p><table class="theory-pronoun-table theory-bilingual-table theory-verb-comparison-table"><thead><tr><th>Persona</th><th>Essere</th><th>Stare</th></tr></thead><tbody>' +
       verbs.map(([person,essere,stare]) => '<tr><td>' + person + '</td><td>' + renderSpokenVariants(essere) + '</td><td>' + renderSpokenVariants(stare) + '</td></tr>').join("") +
       '</tbody></table><p class="theory-slide-text"><em class="theory-target-word">Sono di Santiago.</em> (Soy de Santiago.) · <em class="theory-target-word">Sto bene.</em> (Estoy bien.)</p>';
@@ -2124,7 +2128,7 @@ function renderItalianAppliedTopic(category, index, locale) {
       '<h3>Formación de adjetivos</h3><table class="theory-pronoun-table theory-bilingual-table adjective-rules-table"><thead><tr><th>Terminación</th><th>Femenino</th><th>Plural</th></tr></thead><tbody>' +
       adjectiveRules.map(([ending,feminine,plural]) => '<tr><td><strong>' + ending + '</strong></td><td>' + feminine + '</td><td>' + plural + '</td></tr>').join("") +
       '</tbody></table><h3>Adjetivos frecuentes</h3><table class="theory-pronoun-table theory-bilingual-table adjective-vocabulary-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
-      adjectives.map(([word,meaning]) => '<tr><td><strong class="theory-target-word">' + word + '</strong> ' + speakerButton(word,locale) + '</td><td>' + meaning + '</td></tr>').join("") +
+      adjectives.map(([word,meaning]) => '<tr><td>' + renderSpokenVariants(word) + '</td><td>' + meaning + '</td></tr>').join("") +
       '</tbody></table><section class="theory-example adjective-example-block"><h3>Ejemplos</h3><table class="theory-pronoun-table theory-bilingual-table adjective-examples-table"><thead><tr><th>Terminación</th><th>Ejemplo aplicado</th></tr></thead><tbody>' +
       examples.map(([ending,phrase,translation]) => '<tr><td><strong>' + ending + '</strong></td><td>' + renderSpokenVariants(phrase) + '<p>' + translation + '</p></td></tr>').join("") +
       '</tbody></table></section>';
@@ -2149,6 +2153,64 @@ function renderItalianAppliedTopic(category, index, locale) {
     return '<table class="theory-pronoun-table theory-bilingual-table country-language-table"><thead><tr><th>País</th><th>Gentilicio</th><th>Idioma</th></tr></thead><tbody>' +
       countries.map(([country,countryEs,nationality,nationalityEs,language,languageEs]) => '<tr>' + cell(country,countryEs,true) + cell(nationality,nationalityEs) + cell(language,languageEs) + '</tr>').join("") +
       '</tbody></table>';
+  }
+  if (category === "Gramática" && index === 3) {
+    const forms = [
+      ["io","parlo","prendo","dormo"],["tu","parli","prendi","dormi"],
+      ["lui / lei","parla","prende","dorme"],["noi","parliamo","prendiamo","dormiamo"],
+      ["voi","parlate","prendete","dormite"],["loro","parlano","prendono","dormono"]
+    ];
+    return '<p class="theory-slide-text">El presente expresa hábitos, rutinas y hechos actuales. Los verbos regulares se agrupan en tres conjugaciones: <em>-are</em>, <em>-ere</em> e <em>-ire</em>. Las terminaciones cambian según la persona.</p>' +
+      '<h3>Terminaciones en presente</h3><table class="theory-pronoun-table theory-bilingual-table theory-reference-table"><thead><tr><th>Persona</th><th>Parlare (-are)</th><th>Prendere (-ere)</th><th>Dormire (-ire)</th></tr></thead><tbody>' +
+      forms.map(([person,a,e,i]) => '<tr><td>' + person + '</td><td>' + renderSpokenVariants(a) + '</td><td>' + renderSpokenVariants(e) + '</td><td>' + renderSpokenVariants(i) + '</td></tr>').join("") +
+      '</tbody></table><h3>Verbos frecuentes irregulares</h3>' +
+      bilingualTable("theory-vocabulary-table",["Italiano","Español"],[["essere","ser / estar"],["avere","tener"],["fare","hacer"],["andare","ir"]]) +
+      '<h3>Ejemplos de rutina</h3>' + examplesTable([["Lavoro in ufficio.","Trabajo en una oficina."],["Prendiamo il treno ogni mattina.","Tomamos el tren cada mañana."],["Dormono otto ore.","Duermen ocho horas."]]);
+  }
+  if (category === "Gramática" && index === 4) {
+    return '<p class="theory-slide-text">El <em>passato prossimo</em> expresa acciones terminadas relacionadas con el pasado. Se forma con el presente de <em>avere</em> o <em>essere</em> más el participio pasado.</p>' +
+      '<h3>Formación del participio regular</h3><table class="theory-pronoun-table theory-bilingual-table theory-reference-table"><thead><tr><th>Infinitivo</th><th>Participio</th><th>Ejemplo</th></tr></thead><tbody>' +
+      [["-are","-ato","parlare → parlato"],["-ere","-uto","credere → creduto"],["-ire","-ito","dormire → dormito"]].map(([inf,part,ex]) => '<tr><td>' + renderSpokenVariants(inf) + '</td><td>' + renderSpokenVariants(part) + '</td><td>' + renderSpokenVariants(ex) + '</td></tr>').join("") +
+      '</tbody></table><h3>Elección del auxiliar</h3><p class="theory-slide-text"><em>Avere</em> se usa con muchos verbos transitivos; <em>essere</em> aparece con verbos de movimiento, cambio de estado y verbos reflexivos. Con <em>essere</em>, el participio concuerda en género y número con el sujeto.</p>' +
+      bilingualTable("theory-vocabulary-table",["Auxiliar","Ejemplo"],[["avere","Ho mangiato una pizza."],["essere","Sono arrivata a casa. / Sono arrivato a casa."]]) +
+      '<h3>Participios frecuentes</h3>' + bilingualTable("theory-vocabulary-table",["Infinitivo","Participio"],[["fare","fatto"],["vedere","visto"],["prendere","preso"],["scrivere","scritto"],["leggere","letto"],["essere","stato"]]) +
+      '<h3>Ejemplos</h3>' + examplesTable([["Ieri ho studiato italiano.","Ayer estudié italiano."],["Sabato siamo andati al mercato.","El sábado fuimos al mercado."],["Maria è tornata alle sei.","Maria volvió a las seis."]]);
+  }
+  if (category === "Gramática" && index === 5) {
+    return '<p class="theory-slide-text">El <em>futuro semplice</em> permite hablar de acciones posteriores al momento actual, previsiones y promesas. En conversaciones cotidianas también se usa el presente acompañado de una expresión temporal. En A1 se presenta como introducción; conviene priorizar primero el presente para planes inmediatos.</p>' +
+      '<h3>Terminaciones del futuro</h3><table class="theory-pronoun-table theory-bilingual-table theory-reference-table"><thead><tr><th>Persona</th><th>Parlare</th><th>Prendere</th><th>Dormire</th></tr></thead><tbody>' +
+      [["io","parlerò","prenderò","dormirò"],["tu","parlerai","prenderai","dormirai"],["lui / lei","parlerà","prenderà","dormirà"],["noi","parleremo","prenderemo","dormiremo"],["voi","parlerete","prenderete","dormirete"],["loro","parleranno","prenderanno","dormiranno"]].map(row => '<tr>' + row.map(value => '<td>' + renderSpokenVariants(value) + '</td>').join("") + '</tr>').join("") +
+      '</tbody></table><p class="theory-slide-text">En los verbos en <em>-are</em>, la vocal final cambia a <em>-e-</em> antes de añadir las terminaciones. Algunos verbos tienen raíz irregular: <em>essere → sar-</em>, <em>avere → avr-</em>, <em>andare → andr-</em>, <em>fare → far-</em>.</p>' +
+      '<h3>Ejemplos</h3>' + examplesTable([["Domani lavorerò da casa.","Mañana trabajaré desde casa."],["La prossima settimana andremo a Roma.","La próxima semana iremos a Roma."],["Stasera farò una telefonata.","Esta noche haré una llamada."]]);
+  }
+  if (category === "Vocabulario" && index === 1) {
+    return '<p class="theory-slide-text">Nombres de familiares cercanos. Los artículos ayudan a reconocer el género y el plural de cada sustantivo.</p>' +
+      bilingualTable("theory-vocabulary-table",["Italiano","Español"],[["la madre","la madre"],["il padre","el padre"],["i genitori","los padres"],["il fratello","el hermano"],["la sorella","la hermana"],["il figlio / la figlia","el hijo / la hija"],["il marito / la moglie","el marido / la esposa"],["i nonni","los abuelos"]]) +
+      '<h3>Ejemplos</h3>' + examplesTable([["Mia sorella si chiama Anna.","Mi hermana se llama Anna."],["Ho due fratelli.","Tengo dos hermanos."],["I miei genitori abitano in Cile.","Mis padres viven en Chile."]]);
+  }
+  if (category === "Vocabulario" && index === 2) {
+    return '<p class="theory-slide-text">Profesiones frecuentes. En italiano, muchas profesiones cambian de forma según el género; otras mantienen la misma forma y cambian el artículo.</p>' +
+      bilingualTable("theory-vocabulary-table",["Masculino","Femenino","Español"],[["il medico","la medica","médico/a"],["lo studente","la studentessa","estudiante"],["l’insegnante","l’insegnante","docente"],["il cuoco","la cuoca","cocinero/a"],["l’impiegato","l’impiegata","empleado/a"],["l’autista","l’autista","conductor/a"]]) +
+      '<h3>Ejemplos</h3>' + examplesTable([["Sono insegnante.","Soy docente."],["Mio padre è medico.","Mi padre es médico."],["Mia sorella fa la cuoca.","Mi hermana trabaja como cocinera."]]);
+  }
+  if (category === "Vocabulario" && index === 3) {
+    return '<p class="theory-slide-text">Verbos y lugares útiles para describir un día habitual, desde el inicio de la mañana hasta el final de la jornada.</p>' +
+      bilingualTable("theory-vocabulary-table",["Italiano","Español"],[["svegliarsi","despertarse"],["fare colazione","desayunar"],["andare al lavoro","ir al trabajo"],["studiare","estudiar"],["tornare a casa","volver a casa"],["andare a letto","acostarse"],["la casa","la casa"],["l’ufficio","la oficina"],["la scuola","la escuela"],["la palestra","el gimnasio"]]) +
+      '<h3>Ejemplos</h3>' + examplesTable([["Mi sveglio alle sette.","Me despierto a las siete."],["Studio italiano a casa.","Estudio italiano en casa."],["Dopo il lavoro torno in ufficio.","Después del trabajo vuelvo a la oficina."]]);
+  }
+  if (category === "Vocabulario" && index === 4) {
+    return '<p class="theory-slide-text">Los días de la semana y los meses se escriben con minúscula en italiano. Para expresar una fecha se usa normalmente el artículo y el número; «primo» se emplea para el primer día del mes.</p>' +
+      bilingualTable("theory-vocabulary-table",["Italiano","Español"],[["lunedì","lunes"],["martedì","martes"],["mercoledì","miércoles"],["giovedì","jueves"],["venerdì","viernes"],["sabato","sábado"],["domenica","domingo"],["gennaio / febbraio / marzo / aprile","enero / febrero / marzo / abril"],["maggio / giugno / luglio / agosto","mayo / junio / julio / agosto"],["settembre / ottobre / novembre / dicembre","septiembre / octubre / noviembre / diciembre"]]) +
+      '<h3>Ejemplos de fecha</h3>' + examplesTable([["Oggi è lunedì.","Hoy es lunes."],["Il mio compleanno è il primo maggio.","Mi cumpleaños es el primero de mayo."],["Parto il ventidue giugno.","Salgo el veintidós de junio."]]);
+  }
+  if (category === "Expresiones" && index === 4) {
+    return '<p class="theory-slide-text">Frases sencillas para contar una rutina y ordenar las actividades del día. Los verbos aparecen en presente.</p>' +
+      '<h3>Rutina diaria</h3>' + examplesTable([["Mi sveglio alle sette.","Me despierto a las siete."],["Faccio colazione e vado al lavoro.","Desayuno y voy al trabajo."],["Studio italiano nel pomeriggio.","Estudio italiano por la tarde."],["Torno a casa alle sei.","Vuelvo a casa a las seis."],["Vado a letto alle dieci e mezza.","Me acuesto a las diez y media."]]);
+  }
+  if (category === "Expresiones" && index === 5) {
+    return '<p class="theory-slide-text">Para preguntar la hora se usa «Che ora è?» o «Che ore sono?». La hora va precedida por el artículo en singular o plural según corresponda.</p>' +
+      bilingualTable("theory-vocabulary-table",["Italiano","Español"],[["È l’una.","Es la una."],["Sono le due.","Son las dos."],["Sono le dodici.","Son las doce."],["È mezzogiorno.","Es mediodía."],["È mezzanotte.","Es medianoche."]]) +
+      '<h3>Minutos y horarios</h3>' + examplesTable([["Sono le tre e un quarto.","Son las tres y cuarto."],["Sono le quattro e mezza.","Son las cuatro y media."],["Sono le cinque meno un quarto.","Son las cinco menos cuarto."],["Il treno parte alle otto.","El tren sale a las ocho."],["A che ora lavori?","¿A qué hora trabajas?"]]);
   }
   if (category === "Expresiones" && index >= 0 && index <= 3) {
     const expressions = [
