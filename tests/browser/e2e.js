@@ -119,6 +119,7 @@ try {
     }
     if (i === 3) {
       assert.ok(topicText.includes("omitir el pronombre sujeto") && topicText.includes("Lei") && topicText.includes("tercera persona singular"), "Unit 1 should explain subject omission and formal Lei agreement");
+      assert.equal(await page.locator("#theory-description .theory-verb-comparison-table tbody tr td:first-child .theory-target-tap").count(),8,"all Unit 1 person labels, including lui and lei separately, should be pronounceable");
       assert.ok(topicText.includes("Sono di Santiago.") && topicText.includes("Sto bene."), "essere and stare should be contextualized with Italian examples");
       const verbHeading = page.locator("#theory-description h3").nth(1);
       assert.equal(await verbHeading.innerText(), "Verbos «Essere» (ser) y «Stare» (estar)", "Italian terms in subtopic headings should be italicized, quoted and translated");
@@ -285,6 +286,12 @@ try {
     assert.ok(await body.locator("table").count()>0,"each Unit 3 topic should include a reference table");
     assert.equal(await body.locator(".speak-button").count(),0,"no Play or speaker buttons should appear in Unit 3");
     const content=(await body.innerText()).replace(/\s+/g," ");
+    if(check.title==="Presente habitual") assert.equal(await body.locator(".theory-reference-table tbody tr td:first-child .theory-target-tap").count(),7,"all present-tense person labels should be individually pronounceable");
+    if(check.title==="Pasado (passato prossimo)") {
+      const participleExample=body.locator(".theory-reference-table tbody tr").first().locator("td").nth(2);
+      assert.equal(await participleExample.locator(".theory-target-tap").count(),2,"infinitive and participle separated by an arrow should be independently pronounceable");
+      assert.equal(await participleExample.locator(".theory-variant-separator").first().getAttribute("data-separator"),"→","the original arrow separator should remain visible");
+    }
     for(const term of check.terms) assert.ok(content.toLocaleLowerCase().includes(term.toLocaleLowerCase()),"Unit 3 content should include "+term+" in "+check.title);
     const targets=body.locator(".theory-target-tap[role=button]");
     assert.ok(await targets.count()>0,"Italian reference terms should be individually tappable");
