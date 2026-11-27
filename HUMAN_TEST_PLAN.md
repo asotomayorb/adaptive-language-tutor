@@ -17,28 +17,27 @@
 - [ ] La navegación inferior mantiene las secciones y estados establecidos en PRODUCT_SPEC.md.
 - [ ] Al cambiar de pantalla o volver desde un detalle, se conserva la navegación prevista y se detiene el audio anterior.
 
-## 3. Teoría — Unidades 1 y 2
+## 3. Teoría — Unidades 1 a 3
 
-- [ ] Unidad 1 conserva sus cuatro subtemas y contenido aprobado sin regresiones.
-- [ ] Unidad 2 conserva sus cuatro subtemas: Países e idiomas, Artículos y concordancia, Artículos y adjetivos, Edad y procedencia.
+- [ ] Unidades 1 y 2 conservan sus ocho subtemas y contenido aprobado sin regresiones.
+- [ ] Unidad 3 presenta sus nueve subtemas desarrollados: Familia, Profesiones, Rutinas y lugares, Días y fechas, Presente habitual, Pasado (passato prossimo), Futuro simple, Rutinas diarias y La hora.
+- [ ] Todos los subtemas desarrollados usan la misma estructura: introducción breve, bloques de referencia agrupados y ejemplos aplicados cuando corresponda.
 - [ ] Las tablas mantienen tamaño de texto de 15 px en móvil y 17 px en escritorio.
-- [ ] Las palabras no se cortan arbitrariamente; el texto salta entre palabras y no provoca scroll horizontal de página.
+- [ ] Las columnas se adaptan al contenido; el texto salta entre palabras, no se parte arbitrariamente y no provoca scroll horizontal de página.
 - [ ] Los encabezados, columnas, traducciones y ejemplos mantienen la jerarquía definida en PRODUCT_SPEC.md.
-- [ ] Cada fragmento italiano tiene pronunciación individual en locale `it-IT`.
-- [ ] En Países e idiomas no aparecen botones Play; tocar cada forma italiana reproduce solo esa forma.
+- [ ] Todo fragmento italiano es pronunciable al tocar el propio texto y utiliza locale `it-IT`; no aparecen botones Play ni iconos de altavoz en Teoría.
 - [ ] En formas separadas por /, guion o raya, cada variante se pronuncia por separado y el separador original sigue visible.
-- [ ] La traducción española entre paréntesis aparece solo en la primera columna (País); Gentilicio e Idioma no repiten traducciones.
-- [ ] Las tres columnas de Países e idiomas tienen el mismo ancho; las celdas de cada fila mantienen altura y alineación uniformes.
+- [ ] La traducción española aparece en su columna/contexto de explicación y nunca se reproduce con voz italiana.
+- [ ] En Países e idiomas, la traducción española entre paréntesis aparece solo junto al país; gentilicio e idioma no repiten traducciones.
+- [ ] La navegación Anterior/Siguiente y el retorno mantienen el subtema y la unidad correctos.
 
-- [ ] El español se presenta como idioma de explicación y traducción, nunca se reproduce con voz italiana.
+## 4. Teoría — Unidades 4 a 6
 
-## 4. Teoría — Unidades 3 a 6
-
-- [ ] Se mantienen los títulos y subtemas previstos de las seis unidades.
-- [ ] Al abrir cualquier subtema de Unidades 3–6, se muestra su título, categoría y ruta de navegación.
-- [ ] El cuerpo del subtema permanece completamente vacío: sin párrafos, tablas, ejemplos, texto de relleno ni datos residuales.
-- [ ] La navegación Anterior/Siguiente funciona sin introducir contenido no desarrollado.
-- [ ] Ningún cambio de estilo o navegación modifica el contenido de Unidades 1 y 2.
+- [ ] Se mantienen los títulos y subtemas previstos.
+- [ ] Al abrir cualquier subtema, se muestra su título, categoría y ruta de navegación.
+- [ ] El cuerpo permanece completamente vacío: sin párrafos, tablas, ejemplos, texto de relleno ni datos residuales.
+- [ ] La navegación Anterior/Siguiente no introduce contenido no desarrollado.
+- [ ] Ningún cambio de estilo o navegación modifica las Unidades 1–3.
 
 ## 5. Estadísticas y persistencia
 
