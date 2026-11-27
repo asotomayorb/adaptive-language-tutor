@@ -268,7 +268,7 @@ try {
     {title:"Rutinas y lugares",terms:["svegliarsi","fare colazione","la casa","l’ufficio","Mi sveglio alle sette."]},
     {title:"Días y fechas",terms:["lunedì","domenica","gennaio","Il mio compleanno è il primo maggio."]},
     {title:"Presente habitual",terms:["Modelo -are","Modelo -ere","Modelo -ire","parliamo","prendiamo","dormiamo","Lavoro in ufficio."]},
-    {title:"Pasado (passato prossimo)",terms:["avere","essere","-ato","fatto","Sono arrivata a casa.","Ieri ho studiato italiano."]},
+    {title:"Pasado («Passato prossimo» (pretérito perfecto compuesto))",terms:["avere","essere","-ato","fatto","Sono arrivata a casa.","Ieri ho studiato italiano."]},
     {title:"Futuro simple",terms:["futuro semplice","parlerò","prenderai","sar-","Domani lavorerò da casa."]},
     {title:"Rutinas diarias",terms:["Mi sveglio alle sette.","Faccio colazione e vado al lavoro.","Vado a letto alle dieci e mezza."]},
     {title:"La hora",terms:["Che ora è?","È l’una.","Sono le due.","e un quarto","meno un quarto","A che ora lavori?"]}
