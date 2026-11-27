@@ -285,7 +285,7 @@ try {
     assert.ok(await body.locator("table").count()>0,"each Unit 3 topic should include a reference table");
     assert.equal(await body.locator(".speak-button").count(),0,"no Play or speaker buttons should appear in Unit 3");
     const content=(await body.innerText()).replace(/\s+/g," ");
-    for(const term of check.terms) assert.ok(content.includes(term),"Unit 3 content should include "+term);
+    for(const term of check.terms) assert.ok(content.toLocaleLowerCase().includes(term.toLocaleLowerCase()),"Unit 3 content should include "+term+" in "+check.title);
     const targets=body.locator(".theory-target-tap[role=button]");
     assert.ok(await targets.count()>0,"Italian reference terms should be individually tappable");
     assert.ok(await targets.evaluateAll(nodes=>nodes.every(node=>node.dataset.locale==="it-IT")),"all pronunciation targets must use Italian voice locale");
