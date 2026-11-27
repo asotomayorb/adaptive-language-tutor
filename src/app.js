@@ -2137,7 +2137,7 @@ function renderItalianAppliedTopic(category, index, locale) {
       ["Brasile","Brasil","brasiliano / brasiliana","brasileño / brasileña","portoghese","portugués"]
     ];
     const cell = (term,translation,asCountry=false) => {
-      const variants = String(term).split(/\\s*(\\/|–|—|-)\\s*/).filter((part,index) => index % 2 === 0);
+      const variants = String(term).split(/\s*(\/|–|—|-)\s*/).filter((part,index) => index % 2 === 0);
       const spoken = variants.map(part => '<strong class="theory-target-word">' + escapeHTML(part.trim()) + '</strong>').join('<span class="theory-variant-separator"> / </span>');
       return '<td>' + spoken + (asCountry ? ' <span class="theory-translation">(' + escapeHTML(translation) + ')</span>' : '') + '</td>';
     };
