@@ -25,6 +25,11 @@
 - [ ] Las palabras no se cortan arbitrariamente; el texto salta entre palabras y no provoca scroll horizontal de página.
 - [ ] Los encabezados, columnas, traducciones y ejemplos mantienen la jerarquía definida en PRODUCT_SPEC.md.
 - [ ] Cada fragmento italiano tiene pronunciación individual en locale `it-IT`.
+- [ ] En Países e idiomas no aparecen botones Play; tocar cada forma italiana reproduce solo esa forma.
+- [ ] En formas separadas por /, guion o raya, cada variante se pronuncia por separado y el separador original sigue visible.
+- [ ] La traducción española entre paréntesis aparece solo en la primera columna (País); Gentilicio e Idioma no repiten traducciones.
+- [ ] Las tres columnas de Países e idiomas tienen el mismo ancho; las celdas de cada fila mantienen altura y alineación uniformes.
+
 - [ ] El español se presenta como idioma de explicación y traducción, nunca se reproduce con voz italiana.
 
 ## 4. Teoría — Unidades 3 a 6
