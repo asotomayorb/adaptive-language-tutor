@@ -2291,6 +2291,7 @@ function openTheoryTopic(index) {
     }
     (section || normalizedContent).append(node);
   });
+  normalizedContent.querySelectorAll("em").forEach(element => element.classList.add("theory-target-word"));
   $("theory-description").replaceChildren(normalizedContent);
   bindSpeakerButtons($("theory-description"));
   bindTheoryTargetText($("theory-description"));
