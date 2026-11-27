@@ -2069,10 +2069,10 @@ function formatItalianTheoryTitle(value) {
 }
 function renderItalianAppliedTopic(category, index, locale) {
   const renderLines = value => String(value).split("<br>").map(part => escapeHTML(part)).join("<br>");
-  const renderSpokenVariants = value => String(value).replace(/<br\s*\/?>/gi, " / ").split(/\s*(\/|–|—|-)\s*/).filter((part, i) => i % 2 === 0).map(part => {
+  const renderSpokenVariants = value => String(value).replace(/<br\s*\/?\s*>/gi, " / ").split(/\s*(\/|–|—|-)\s*/).filter((part, i) => i % 2 === 0).map(part => {
     const phrase = part.trim();
     if (!phrase) return "";
-    return '<span class="theory-speech-variant"><strong class="theory-target-word">' + escapeHTML(phrase) + '</strong> ' + speakerButton(phrase, locale) + '</span>';
+    return '<span class="theory-speech-variant"><strong class="theory-target-word">' + escapeHTML(phrase) + '</strong></span>';
   }).filter(Boolean).join('<span class="theory-variant-separator"> / </span>');
   const rows = items => items.map(([term, meaning, note = ""]) =>
     '<tr><td>' + renderSpokenVariants(term) + '</td><td>' + renderLines(meaning) + '</td>' + (note ? '<td>' + escapeHTML(note) + '</td>' : '') + '</tr>'
@@ -2148,9 +2148,9 @@ function renderItalianAppliedTopic(category, index, locale) {
         ? '<strong class="theory-target-word">' + escapeHTML(part.trim()) + '</strong>'
         : '<span class="theory-variant-separator">' + escapeHTML(part) + '</span>'
       ).join("");
-      return '<td>' + spoken + (asCountry ? ' <span class="theory-translation">(' + escapeHTML(translation) + ')</span>' : '') + '</td>';
+      return '<td>' + renderSpokenVariants(term) + (asCountry ? ' <span class="theory-translation">(' + escapeHTML(translation) + ')</span>' : '') + '</td>';
     };
-    return '<table class="theory-pronoun-table theory-bilingual-table country-language-table"><thead><tr><th>País</th><th>Gentilicio</th><th>Idioma</th></tr></thead><tbody>' +
+    return '<p class="theory-slide-text">Países, gentilicios e idiomas se presentan juntos para comparar las formas habituales. Las variantes de género se pronuncian por separado.</p><table class="theory-pronoun-table theory-bilingual-table country-language-table"><thead><tr><th>País</th><th>Gentilicio</th><th>Idioma</th></tr></thead><tbody>' +
       countries.map(([country,countryEs,nationality,nationalityEs,language,languageEs]) => '<tr>' + cell(country,countryEs,true) + cell(nationality,nationalityEs) + cell(language,languageEs) + '</tr>').join("") +
       '</tbody></table>';
   }
@@ -2246,7 +2246,7 @@ function openTheoryTopic(index) {
   activeTheoryCategory = theoryCategoryLabels[categoryKey] || categoryKey || "";
   const locale = getSelectedCatalog()?.locale || "it-IT";
   let detailMarkup = "";
-  if (activeTheoryUnit < 2) {
+  if (activeTheoryUnit < 3) {
     detailMarkup = renderItalianAppliedTopic(activeTheoryCategory, sourceIndex, locale) ||
       (body ? '<p class="theory-slide-text">' + escapeHTML(body) + '</p>' : "");
   }
@@ -2256,7 +2256,37 @@ function openTheoryTopic(index) {
   $("theory-category").innerHTML = '<span class="theory-category-icon" aria-hidden="true">' + categoryIcon + '</span><span>' + escapeHTML(activeTheoryCategory) + '</span>';
   $("theory-breadcrumb").textContent = "A1 · Principiante > " + (theoryUnits[activeTheoryUnit]?.title || "");
   $("theory-breadcrumb").classList.remove("hidden");
-  $("theory-description").innerHTML = detailMarkup;
+  const normalizedContent = document.createElement("div");
+  normalizedContent.className = "theory-subtopic-content";
+  normalizedContent.innerHTML = detailMarkup;
+  const originalNodes = [...normalizedContent.childNodes];
+  normalizedContent.replaceChildren();
+  let section = null;
+  originalNodes.forEach(node => {
+    if (node.nodeType === Node.ELEMENT_NODE && node.matches("p.theory-slide-text") && !normalizedContent.querySelector(".theory-subtopic-intro") && !section) {
+      node.classList.add("theory-subtopic-intro");
+      normalizedContent.append(node);
+      return;
+    }
+    if (node.nodeType === Node.ELEMENT_NODE && node.matches("h3")) {
+      section = document.createElement("section");
+      section.className = "theory-content-section";
+      normalizedContent.append(section);
+      section.append(node);
+      return;
+    }
+    if (node.nodeType === Node.ELEMENT_NODE && node.matches("table, .theory-example")) {
+      if (!section) {
+        section = document.createElement("section");
+        section.className = "theory-content-section";
+        normalizedContent.append(section);
+      }
+      section.append(node);
+      return;
+    }
+    (section || normalizedContent).append(node);
+  });
+  $("theory-description").replaceChildren(normalizedContent);
   bindSpeakerButtons($("theory-description"));
   bindTheoryTargetText($("theory-description"));
   speech.stop();
