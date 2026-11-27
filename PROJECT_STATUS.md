@@ -86,3 +86,16 @@ Los registros históricos de sesiones de otros idiomas pueden permanecer en el a
 - Edad y procedencia: añadido `venire da` y explicitada la correspondencia informal `hai/sei` frente al tratamiento formal `ha/è` con `Lei`.
 - Se actualizaron las aserciones Browser E2E para cubrir los nuevos conceptos, ejemplos y variantes. Unidad 1 solo se amplió en su subtema gramatical; las Unidades 3–6 permanecen vacías.
 - Commits de implementación: `f600190`, `acc0962`, `57c48bc`, `bcdd071`, `7a30e61`, `6336a65`, `e946ebc`. Una primera E2E detectó que las variantes de ejemplos con / compartían un solo control; se corrigió para que cada frase tenga TTS individual. Tests aprobados en [46017975532](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/46017975532) y Browser E2E aprobado en [46017975252](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/46017975252), ambos para el HEAD `e946ebc2759cf77f6670d18c61be2fccd5b086c5). Render Preview LIVE: deploy `dep-dc4pcsijnfac73b6bsb0` para ese mismo HEAD. No se requieren cambios de variables ni de configuración de build.
+
+
+## 9. Consolidación de Teoría y Unidad 3 (27-11-2026)
+
+- **Checkpoint previo:** rama `recovery/intermediate-theory-content`, commit `a5a22797a0e42e13d0402b0a9567fd8a33b82bb9`. Conserva el checkpoint anterior `ae0c064940062ccb71fdfd16a10ab74cfb3a28ae` y captura como segundo padre el estado validado de Unidades 1–2 (`55bc0b04a65fc1e70257f18867bbccd4127cd23d)).
+- **Reglas consolidadas:** todos los subtemas desarrollados comparten introducción breve, secciones de referencia agrupadas y ejemplos aplicados cuando correspondan. Se elimina el uso de botones Play/altavoz en Teoría; todo texto italiano, incluidos fragmentos largos y términos en títulos, se pronuncia tocándolo. Las variantes separadas conservan el separador y son objetivos independientes. Traducciones españolas no se pronuncian como italiano.
+- **Unidad 3 desarrollada (nueve subtemas):** Familia, Profesiones, Rutinas y lugares, Días y fechas, Presente habitual, Pasado (`passato prossimo`), Futuro simple (introducción), Rutinas diarias y La hora. El futuro se presenta como ampliación inicial, priorizando el presente para planes inmediatos.
+- **Unidad 1 y 2:** se conserva su contenido; se normaliza el contenedor y la estructura visual común. Países e idiomas ahora también tiene introducción breve. Se retiran estilos CSS residuales de botones Play en Teoría.
+- **Unidad 4–6:** continúan con títulos y jerarquía, sin cuerpo didáctico.
+- **Archivos actualizados:** `src/app.js`, `src/styles.css`, `tests/browser/e2e.js`, `PRODUCT_SPEC.md`, `HUMAN_TEST_PLAN.md`. README se actualizará al cerrar esta tarea.
+- **Validación:** Tests y Browser E2E aprobados para el commit `56da0e6b287665017d5e27e73ffdb59d9922586d`. E2E cubre los ocho subtemas existentes de Unidades 1–2, los nueve subtemas de Unidad 3, estructura común, pronunciación táctil, ausencia de botones y que Unidades 4–6 sigan vacías.
+- **Render:** pendiente de publicar y verificar el commit final de esta consolidación. No se modificaron variables de entorno ni configuración de build.
+- **Prueba humana pendiente:** revisar en Android la presentación responsive, pronunciación táctil de variantes y frases largas, y navegación por los subtemas.
