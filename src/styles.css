@@ -1399,48 +1399,42 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
   }
 }
 
-/* Países e idiomas: columnas y celdas equilibradas, con TTS directo sobre cada variante. */
-#screen-theory .country-language-table {
-  width:100%;
-  table-layout:fixed;
+/* Países e idiomas: columnas guiadas por el contenido, con ajuste de línea y celdas alineadas por fila. */
+#screen-theory #theory-description table.country-language-table {
+  display:table;
+  width:100%!important;
+  max-width:100%;
+  table-layout:auto!important;
   border-collapse:collapse;
 }
-#screen-theory .country-language-table th,
-#screen-theory .country-language-table td {
-  width:33.333%;
-  height:1px;
+#screen-theory #theory-description table.country-language-table th,
+#screen-theory #theory-description table.country-language-table td {
+  width:auto!important;
+  height:auto;
   padding:10px 8px;
   vertical-align:middle;
-  white-space:normal;
-  overflow-wrap:normal;
+  white-space:normal!important;
+  overflow-wrap:break-word;
   word-break:normal;
   hyphens:none;
   line-height:1.4;
 }
-#screen-theory .country-language-table .theory-target-word {
+#screen-theory #theory-description table.country-language-table th:first-child,
+#screen-theory #theory-description table.country-language-table td:first-child,
+#screen-theory #theory-description table.country-language-table th:last-child,
+#screen-theory #theory-description table.country-language-table td:last-child {
+  width:25%!important;
+}
+#screen-theory #theory-description table.country-language-table .theory-target-word {
   display:inline;
   font-weight:700;
 }
-#screen-theory .country-language-table .theory-translation {
+#screen-theory #theory-description table.country-language-table .theory-translation {
   display:inline;
   margin:0;
   font-size:inherit;
   line-height:inherit;
 }
-#screen-theory .country-language-table .theory-variant-separator {
-  white-space:pre;
-}
-
-/* Final country table override: supersede legacy content-proportioned column widths. */
-#screen-theory #theory-description table.country-language-table {
-  width:100%!important;
-  table-layout:fixed!important;
-}
-#screen-theory #theory-description table.country-language-table th:nth-child(1),
-#screen-theory #theory-description table.country-language-table td:nth-child(1),
-#screen-theory #theory-description table.country-language-table th:nth-child(2),
-#screen-theory #theory-description table.country-language-table td:nth-child(2),
-#screen-theory #theory-description table.country-language-table th:nth-child(3),
-#screen-theory #theory-description table.country-language-table td:nth-child(3) {
-  width:33.3333%!important;
+#screen-theory #theory-description table.country-language-table .theory-variant-separator {
+  white-space:normal;
 }
