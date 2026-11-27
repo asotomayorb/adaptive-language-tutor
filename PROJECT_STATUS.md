@@ -55,11 +55,11 @@ Los registros históricos de sesiones de otros idiomas pueden permanecer en el a
 
 - El usuario confirmó el 26-11-2026 que el Preview Render funcionaba correctamente.
 - **Checkpoint de auditoría:** `recovery/intermediate-theory-content`, commit `d14fbdd8cb1daace8a31a321cfe445b32447139f`.
-- **Cambio Países e idiomas:** commit funcional `bd4161f74ae708b71a455b0ba8f08e58c8e15320`. Se quitó Play de la tabla; las formas italianas se pronuncian al tocar cada palabra, incluidas variantes separadas por slash/guion, preservando el separador visual. La traducción española entre paréntesis aparece solo en la primera columna. Las tres columnas usan anchos iguales y celdas centradas verticalmente.
+- **Cambio Países e idiomas (ajuste de desbordamiento y distribución):** CSS actualizado para que el ancho de columnas responda al contenido, el gentilicio tenga espacio para sus variantes y el texto envuelva sin desbordarse; celdas de cada fila permanecen alineadas. Se conserva TTS por variante y traducción solo en País. Cambios en `src/styles.css`, `tests/browser/e2e.js` y `PRODUCT_SPEC.md`.
 - **Tests:** aprobados en [45988073370](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45988073370), incluyendo `npm run check` y `npm test`.
 - **Browser E2E:** aprobado en [45988073334](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45988073334). Verifica que no haya botones Play, que variantes separadas tengan TTS independiente, que las columnas sean iguales y que las traducciones solo aparezcan en País.
-- **Render LIVE:** servicio `adaptive-language-tutor-preview-5b3d`; último deploy comprobado `dep-dc4m1456e07s73fplvcg`, commit `82eebebd3565d6fca367c19ffec5c9b75684a497`. El servicio sigue operativo, pero el deploy aún no incluye los cambios de Países e idiomas del commit `bd4161f`. Aunque Render tiene auto-deploy habilitado, no aparece un deploy posterior en la lista consultada.
-- **Prueba humana pendiente:** publicar primero el commit actualizado y validar en Android pronunciación por toque, variantes, traducciones, ancho/alto de celdas y persistencia/recarga.
+- **Render LIVE antes del ajuste actual:** `dep-dc4n04h7lnhs73948v10`, commit `8f268aab801356625bf6d00fa4a1775d43ec6505`. Publicar el ajuste de desbordamiento al terminar validación.
+- **Prueba humana pendiente:** validar en Android pronunciación por toque, variantes, traducciones, ajuste de línea, distribución adaptada al contenido y persistencia/recarga.
 
 
 ## 6. Criterio de limpieza
