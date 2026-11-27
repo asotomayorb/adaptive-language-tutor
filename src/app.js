@@ -2061,10 +2061,22 @@ function formatItalianTheoryTitle(value) {
     "aggettivi":"adjetivos"
   };
   const terms = Object.keys(translations).sort((a,b) => b.length - a.length).join("|");
-  return String(value).replace(new RegExp("(" + terms + ")","gi"), match => {
+  const plainTitle = String(value).replace(/«\\s*([^»]+?)\\s*»/g, "$1");
+  return plainTitle.replace(new RegExp("(" + terms + ")","gi"), match => {
     const translation = translations[match.toLowerCase()];
     const label = match.charAt(0).toUpperCase() + match.slice(1);
-    return '«<em>' + label + '</em>» (' + translation + ')';
+    return '<em class="theory-target-word">' + label + '</em> (' + translation + ')';
+  });
+}
+function formatItalianQuotedExpressions(markup) {
+  const italianExpressions = new Set([
+    "lei", "essere", "stare", "un / una", "dei", "degli", "delle", "primo",
+    "come stai?", "come sta?", "avere", "essere di", "venire da", "hai / sei", "ha / è"
+  ]);
+  return String(markup).replace(/«([^»<>]+)»/g, (whole, expression) => {
+    const normalized = expression.trim().replace(/\\s+/g, " ").toLocaleLowerCase("it");
+    if (!italianExpressions.has(normalized)) return whole;
+    return '<em class="theory-target-word">' + escapeHTML(expression.trim()) + '</em>';
   });
 }
 function renderItalianAppliedTopic(category, index, locale) {
