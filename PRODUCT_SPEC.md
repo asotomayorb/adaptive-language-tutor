@@ -49,7 +49,7 @@ Reglas:
 - Si en el futuro se decide incorporar otro idioma, se reconstruirá desde cero replicando los criterios pedagógicos, editoriales y de presentación validados para italiano; no se reactivarán versiones antiguas.
 - Las consignas auxiliares, reglas, traducciones y explicaciones se presentan en español. El contenido que se aprende, produce o escucha se presenta en italiano.
 - En Teoría, la lectura automática está desactivada. El usuario activa la pronunciación manual del fragmento italiano.
-- Palabras y frases italianas breves se pueden pronunciar tocando directamente el texto subrayado; no llevan icono Play. Los fragmentos largos pueden usar un control Play individual. Cada control reproduce únicamente su fragmento y usa `it-IT`.
+- Todo texto italiano visible en Teoría se pronuncia tocándolo directamente; no se muestran botones Play, iconos de altavoz ni controles alternativos, tampoco en frases largas. Cada palabra o variante separada por «/», guion u otro separador es un objetivo táctil independiente y usa `it-IT`. El texto español nunca es objetivo de pronunciación italiana.
 - No reproducir traducciones españolas como si fueran italiano ni sustituir la voz objetivo por una voz española.
 - Al retroceder o cambiar de sección, detener audio y cancelar reproducciones pendientes.
 - En los módulos futuros de Ruta y Entrenamiento, las consignas auxiliares usan `es-CL` y el contenido objetivo usa `it-IT`.
@@ -94,7 +94,7 @@ La navegación vigente es:
 ### Criterios comunes
 
 - El contenido debe ser real, correcto y pertinente al idioma objetivo. No mostrar textos genéricos como si fueran material desarrollado.
-- Cada subtema tiene una introducción breve solo cuando aporta contexto. Evitar redundancias, duplicación de reglas y párrafos extensos que puedan convertirse en una tabla o lista más clara.
+- Todos los subtemas desarrollados siguen la misma estructura visual y editorial: (1) introducción breve que sitúa el contenido; (2) uno o más bloques de referencia con regla/explicación antes de la tabla o lista; (3) ejemplos aplicados con traducción española cuando aporten valor. Si una sección no aplica, se omite su contenido, pero se conserva la misma jerarquía, espaciado y agrupación. No crear excepciones de maquetación por subtema. Evitar redundancias, duplicación de reglas y párrafos extensos que puedan convertirse en una tabla o lista más clara.
 - Explicar las reglas antes de la tabla correspondiente, nunca dentro de las celdas. Los ejemplos trabajados aparecen después de las reglas.
 - Una regla por línea o elemento. Usar listas, subtítulos, tablas breves y sangría para expresar relaciones; una subregla se anida bajo su regla principal. Las excepciones forman un bloque separado y explican el caso, no son ejemplos sueltos.
 - Mantener separado el contenido de tiempos verbales distintos. Una excepción del pasado no se coloca en el futuro, aunque el mismo verbo sea irregular en ambos.
@@ -110,7 +110,7 @@ La navegación vigente es:
 - Las tablas pueden desplazarse dentro de su propio contenedor solo cuando sea necesario y sin comprimir el texto hasta volverlo ilegible.
 - Priorizar encabezados breves y columnas que reflejen las categorías relevantes. Usar tablas compactas frente a párrafos o listas extensas cuando la comparación sea más clara.
 - Agrupar ejemplos por forma, terminación o categoría gramatical pertinente; no usar pronombres como eje si no representan la regla.
-- Cada frase o variante italiana separada por «/», guion u otro separador debe tener pronunciación individual. Los controles no deben incluir etiquetas de género, traducciones ni puntuación auxiliar.
+- Cada palabra, frase o variante italiana separada por «/», guion u otro separador debe tener pronunciación individual al tocar el propio texto subrayado. No añadir botones Play, altavoces ni iconos de audio dentro de tablas o ejemplos; tampoco añadir etiquetas de género, traducciones ni puntuación auxiliar al fragmento pronunciado.
 - Las capturas de referencia aportan estructura, no instrucciones para copiar fondos oscuros o tipografía ajena. Conservar la estética clara y tipografía base de la app.
 
 ### Subtemas desarrollados
@@ -128,7 +128,13 @@ Unidad 2 conserva cuatro subtemas desarrollados:
 - Edad y procedencia: explicar `avere` para la edad, `essere di` y `venire da` para el origen, con distinción explícita entre preguntas informales (`hai/sei`) y formales (`ha/è`, tratamiento `Lei`); evitar aclaraciones parentéticas redundantes en las traducciones.
 - Pronombres y ser/estar (Unidad 1): explicar la omisión habitual del pronombre sujeto, el uso formal de `Lei` con tercera persona singular y evitar equivalencias automáticas entre `essere/stare` y «ser/estar»; incluir contextos y ejemplos italianos breves.
 
-Unidad 1 debe permanecer intacta durante cambios limitados a Unidad 2. Las Unidades 3–6 conservan únicamente títulos de unidades y subtemas, categorías y jerarquía. El cuerpo de cada subtema debe permanecer vacío hasta su reconstrucción, tomando como referencia el contenido validado de las Unidades 1 y 2.
+Unidad 3 — «Rutinas y tiempo» se desarrolla con ocho subtemas, respetando la jerarquía y la estructura común:
+- Gramática: Presente habitual, Pasado (`passato prossimo`) y Futuro simple. El presente se enseña como recurso central para hábitos y rutinas; el `passato prossimo` incluye auxiliares `avere/essere`, participios regulares y frecuentes irregulares, y concordancia básica con `essere`. El futuro se presenta como introducción/alcance ampliado, distinguiéndolo del uso del presente con marcadores temporales para planes inmediatos.
+- Vocabulario: Familia, Profesiones, Rutinas y lugares, Días y fechas.
+- Expresiones: Rutinas diarias y La hora.
+Los subtemas incluyen vocabulario y ejemplos funcionales de nivel inicial, con traducción española y pronunciación táctil independiente por frase/variante.
+
+Unidad 1 debe permanecer intacta durante cambios limitados a Unidad 2. Las Unidades 4–6 conservan únicamente títulos de unidades y subtemas, categorías y jerarquía; sus cuerpos permanecen vacíos hasta su desarrollo. Las Unidades 1–3 siguen la misma estructura visual y editorial común.
 
 ## 6. Estética general
 
