@@ -82,7 +82,7 @@ La navegación vigente es:
 
 ### Detalle de subtema
 
-- La cabecera interna contiene retorno a la izquierda, «Teoría» centrado y audio a la derecha.
+- La cabecera interna contiene retorno a la izquierda, «Teoría» centrado y un interruptor global de audio a la derecha. Este interruptor solo habilita/deshabilita la pronunciación táctil; no reproduce el contenido ni sustituye el toque sobre el texto italiano.
 - Debajo se presenta la ruta breve Etapa > Unidad, seguida de categoría e icono, y luego el título del subtema con su contador de posición alineado a la derecha cuando corresponda.
 - El bloque superior del detalle permanece fijo durante el desplazamiento; el contenido se desplaza debajo y no debe quedar oculto.
 - La flecha de retorno es el único control de regreso del detalle. Devuelve al árbol y conserva expandida la unidad de origen.
@@ -140,7 +140,7 @@ Unidad 1 debe permanecer intacta durante cambios limitados a Unidad 2. Las Unida
 
 - Mobile-first, limpia, clara y minimalista. Evitar desplazamiento horizontal de página.
 - Fondo claro, tipografía común y tamaños legibles; no copiar el tema oscuro de capturas de referencia.
-- El texto italiano se distingue visualmente del español y conserva sus controles TTS individuales.
+- El texto italiano se distingue visualmente del español y se pronuncia tocando directamente cada fragmento; no se añaden controles de reproducción junto al texto.
 - Los colores de jerarquía deben comunicar nivel/unidad/categoría sin crear tarjetas pesadas ni decoraciones innecesarias.
 - Mantener espaciado suficiente entre unidades y subtemas sin huecos excesivos; no reducir áreas táctiles para compactar.
 - Evitar textos cortados, palabras partidas, encabezados duplicados, controles repetidos y estilos contradictorios.
@@ -187,11 +187,9 @@ Estos módulos permanecen temporalmente inaccesibles desde la navegación y en e
 ## 12. Registro breve de decisiones vigentes
 
 - **26-11-2026:** se fija el par español (`es-CL`) → italiano (`it-IT`) como único alcance activo. Las versiones anteriores de otros idiomas se descartan; si se amplía el producto, se reconstruirá desde el modelo italiano.
-- **26-11-2026:** las Unidades 3–6 conservan solo títulos y jerarquía; los cuerpos de todos sus subtemas permanecen vacíos hasta su reconstrucción desde Unidades 1 y 2.
 - **26-11-2026:** el usuario confirma que Render Preview funciona correctamente.
 - **26-11-2026:** el cuerpo de texto de las tablas de Teoría usa 17 px en escritorio y 15 px en móvil; encabezados con jerarquía propia y palabras sin cortes arbitrarios.
 - **26-11-2026:** tablas y ejemplos deben tener columnas proporcionadas al contenido, encabezados breves, reglas antes de tablas y TTS individual por variante italiana.
-- **25-11-2026 (criterio vigente):** se conserva A1 con seis unidades; Unidad 1 intacta y cuatro subtemas desarrollados en Unidad 2. Unidades 3–6 mantienen títulos y cuerpos vacíos.
 - **26-11-2026:** se confirma conservar `recovery/intermediate-theory-content` como rama destinada a guardar checkpoints; no eliminarla ni usarla para desarrollo cotidiano o despliegue. Rama activa: `feature/mobile-bottom-navigation`; Render canónico asociado a esta rama.
 - **21-11-2026:** la app abre en Teoría; Ruta y Entrenamiento están temporalmente bloqueados; Italiano es la única opción de idioma habilitada.
 - **27-11-2026:** se consolida la estructura común de todos los subtemas desarrollados (introducción, bloques de referencia y ejemplos cuando aporten valor). En Teoría, todo texto italiano se pronuncia al tocarlo, sin botones Play ni iconos de altavoz, incluso en fragmentos largos y variantes; cada variante separada es independiente. Unidad 3 queda desarrollada con nueve subtemas; Unidades 4–6 permanecen vacías. Esta decisión sustituye las reglas anteriores de Play para fragmentos largos y de Unidades 3–6 vacías.
