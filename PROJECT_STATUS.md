@@ -13,8 +13,8 @@
 - **Idioma de origen:** español (`es-CL`).
 - **Idioma objetivo:** italiano (`it-IT`), único idioma disponible.
 - **UI activa:** Teoría y Estadísticas.
-- **Contenido aprobado:** Unidades 1 y 2.
-- **Unidades 3–6:** conservar títulos de unidades y subtemas, categorías y jerarquía; no conservar cuerpos, ejemplos, tablas ni datos de contenido. Deben reconstruirse desde los criterios y contenido de Unidades 1 y 2.
+- **Contenido desarrollado y validado por CI/E2E:** Unidades 1, 2 y 3.
+- **Unidad 3:** nueve subtemas desarrollados bajo la estructura común de Teoría.\n- **Unidades 4–6:** conservar títulos de unidades y subtemas, categorías y jerarquía; sus cuerpos permanecen vacíos hasta su desarrollo.
 - **Ruta, Entrenamiento y tutor IA:** en espera. Mantener únicamente infraestructura que siga siendo una dependencia útil de su futura reactivación. Cuando se reactiven, usar español como origen e italiano como destino.
 - **Versiones de portugués e inglés:** descartadas como versiones de producto. No mantener sus catálogos ni contenido; una eventual versión posterior se reconstruirá desde el modelo italiano y no se reactivarán los catálogos antiguos.
 - **Otros idiomas heredados:** descartados. No mostrar ni mantener selectores, catálogos o contenido multilingüe.
@@ -23,7 +23,7 @@
 
 | Elemento | Estado | Decisión |
 |---|---|---|
-| `src/app.js` | Activo | Reducir definiciones de idioma a Italiano; retirar lógica multilingüe; conservar teoría de Unidades 1–2; dejar sin renderer de contenido las Unidades 3–6. |
+| `src/app.js` | Activo | Reducir definiciones de idioma a Italiano; retirar lógica multilingüe; conservar teoría de Unidades 1–3; dejar sin renderer de contenido las Unidades 4–6. |
 | `src/content/pt-BR.js`, `src/content/en.js` | Obsoletos | Eliminar ambos catálogos. |
 | Helpers y datos de teoría para múltiples idiomas | Obsoletos | Eliminar definiciones de idiomas, muestras, verbos, artículos y contenido aplicado que no correspondan al modelo italiano. |
 | `server/prompts.js` | Infraestructura en espera | Fijar el contrato español → italiano, también al normalizar datos de sesión heredados. |
@@ -75,7 +75,7 @@ Los registros históricos de sesiones de otros idiomas pueden permanecer en el a
 1. Confirmar que Render publica el commit funcional `8dc529f6b417371b2b60f8b7dc013941aa6cd67f`; no iniciar la prueba de persistencia hasta verificarlo.
 2. Ejecutar la prueba humana de persistencia/recarga, navegación y contenido de Teoría en el Preview actualizado.
 3. Solo después de la prueba, decidir si se eliminan las ramas históricas candidatas; no tocar la rama de checkpoint.
-4. Reconstruir Unidades 3–6 de forma progresiva, usando Unidades 1–2 como referencia; no introducir contenido provisional.
+4. Mantener Unidades 1–3 conforme a la estructura común y desarrollar Unidades 4–6 progresivamente, sin contenido provisional.
 
 
 ## 8. Complemento de referencia A1 (27-11-2026)
@@ -84,7 +84,7 @@ Los registros históricos de sesiones de otros idiomas pueden permanecer en el a
 - Unidad 2: artículos definidos/indefinidos ahora incluyen sustantivos concretos y sus plurales; se explica que no hay plural directo de `un/una` y se introducen `dei/degli/delle` en uso partitivo frecuente. Los ejemplos italianos tienen pronunciación individual.
 - Adjetivos: ejemplos ampliados para masculino/femenino y singular/plural en terminaciones `-o` y `-e`.
 - Edad y procedencia: añadido `venire da` y explicitada la correspondencia informal `hai/sei` frente al tratamiento formal `ha/è` con `Lei`.
-- Se actualizaron las aserciones Browser E2E para cubrir los nuevos conceptos, ejemplos y variantes. Unidad 1 solo se amplió en su subtema gramatical; las Unidades 3–6 permanecen vacías.
+- Se actualizaron las aserciones Browser E2E para cubrir los nuevos conceptos, ejemplos y variantes. Unidad 1 solo se amplió en su subtema gramatical; la Unidad 3 se desarrolló posteriormente en nueve subtemas.
 - Commits de implementación: `f600190`, `acc0962`, `57c48bc`, `bcdd071`, `7a30e61`, `6336a65`, `e946ebc`. Una primera E2E detectó que las variantes de ejemplos con / compartían un solo control; se corrigió para que cada frase tenga TTS individual. Tests aprobados en [46017975532](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/46017975532) y Browser E2E aprobado en [46017975252](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/46017975252), ambos para el HEAD `e946ebc2759cf77f6670d18c61be2fccd5b086c5). Render Preview LIVE: deploy `dep-dc4pcsijnfac73b6bsb0` para ese mismo HEAD. No se requieren cambios de variables ni de configuración de build.
 
 
