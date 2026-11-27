@@ -2063,11 +2063,7 @@ function formatItalianTheoryTitle(value) {
   const terms = Object.keys(translations).sort((a,b) => b.length - a.length).join("|");
   let plainTitle = String(value).replace(/«\s*([^»]+?)\s*»/g, "$1");
   Object.entries(translations).forEach(([term,translation]) => {
-    const escapedTerm = term.replace(/[.*+?^\u0024{}()|[\]\\]/g, "\\  const plainTitle = String(value).replace(/«\s*([^»]+?)\s*»/g, "$1");
-  return plainTitle.replace(new RegExp("(" + terms + ")","gi"), match => {");
-    const escapedTranslation = translation.replace(/[.*+?^\u0024{}()|[\]\\]/g, "\\  const plainTitle = String(value).replace(/«\s*([^»]+?)\s*»/g, "$1");
-  return plainTitle.replace(new RegExp("(" + terms + ")","gi"), match => {");
-    plainTitle = plainTitle.replace(new RegExp("(" + escapedTerm + ")\\s*\\(" + escapedTranslation + "\\)", "gi"), "$1");
+    plainTitle = plainTitle.replace(new RegExp("(" + term + ")\\s*\\(" + translation + "\\)", "gi"), "$1");
   });
   return plainTitle.replace(new RegExp("(" + terms + ")","gi"), match => {
     const translation = translations[match.toLowerCase()];
