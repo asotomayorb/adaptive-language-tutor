@@ -2069,7 +2069,7 @@ function formatItalianTheoryTitle(value) {
 }
 function renderItalianAppliedTopic(category, index, locale) {
   const renderLines = value => String(value).split("<br>").map(part => escapeHTML(part)).join("<br>");
-  const renderSpokenVariants = value => String(value).replace(/<br\s*\/?\s*>/gi, " / ").split(/\s*(\/|–|—|-)\s*/).filter((part, i) => i % 2 === 0).map(part => {
+  const renderSpokenVariants = value => String(value).replace(/<br\s*\/?\s*>/gi, " / ").split(/\s*\/\s*|\s*[–—]\s*|\s+-\s+/).map(part => {
     const phrase = part.trim();
     if (!phrase) return "";
     return '<span class="theory-speech-variant"><strong class="theory-target-word">' + escapeHTML(phrase) + '</strong></span>';
@@ -2085,6 +2085,11 @@ function renderItalianAppliedTopic(category, index, locale) {
       (note ? '<td>' + escapeHTML(note) + '</td>' : '') + '</tr>'
     ).join("") + '</tbody></table>';
   const examplesTable = items => bilingualTable("theory-examples-table", ["Italiano","Español"], items);
+  const italianTable = (className, headers, items) =>
+    '<table class="theory-pronoun-table theory-bilingual-table ' + className + '"><thead><tr>' +
+    headers.map(header => '<th>' + escapeHTML(header) + '</th>').join("") +
+    '</tr></thead><tbody>' + items.map(row => '<tr>' + row.map(value => '<td>' + renderSpokenVariants(value) + '</td>').join("") + '</tr>').join("") +
+    '</tbody></table>';
   if (category === "Gramática" && index === 0) {
     const pronouns = [["io","yo"],["tu","tú"],["lui / lei","él / ella"],["Lei","usted (formal)"],["noi","nosotros/as"],["voi","ustedes"],["loro","ellos/as"]];
     const verbs = [["io","sono","sto"],["tu","sei","stai"],["lui / lei","è","sta"],["Lei","è","sta"],["noi","siamo","stiamo"],["voi","siete","state"],["loro","sono","stanno"]];
@@ -2161,7 +2166,7 @@ function renderItalianAppliedTopic(category, index, locale) {
       ["voi","parlate","prendete","dormite"],["loro","parlano","prendono","dormono"]
     ];
     return '<p class="theory-slide-text">El presente expresa hábitos, rutinas y hechos actuales. Los verbos regulares se agrupan en tres conjugaciones: <em>-are</em>, <em>-ere</em> e <em>-ire</em>. Las terminaciones cambian según la persona.</p>' +
-      '<h3>Terminaciones en presente</h3><table class="theory-pronoun-table theory-bilingual-table theory-reference-table"><thead><tr><th>Persona</th><th>Parlare (-are)</th><th>Prendere (-ere)</th><th>Dormire (-ire)</th></tr></thead><tbody>' +
+      '<h3>Terminaciones en presente</h3><table class="theory-pronoun-table theory-bilingual-table theory-reference-table"><thead><tr><th>Persona</th><th>Modelo -are</th><th>Modelo -ere</th><th>Modelo -ire</th></tr></thead><tbody>' +
       forms.map(([person,a,e,i]) => '<tr><td>' + person + '</td><td>' + renderSpokenVariants(a) + '</td><td>' + renderSpokenVariants(e) + '</td><td>' + renderSpokenVariants(i) + '</td></tr>').join("") +
       '</tbody></table><h3>Verbos frecuentes irregulares</h3>' +
       bilingualTable("theory-vocabulary-table",["Italiano","Español"],[["essere","ser / estar"],["avere","tener"],["fare","hacer"],["andare","ir"]]) +
@@ -2172,13 +2177,13 @@ function renderItalianAppliedTopic(category, index, locale) {
       '<h3>Formación del participio regular</h3><table class="theory-pronoun-table theory-bilingual-table theory-reference-table"><thead><tr><th>Infinitivo</th><th>Participio</th><th>Ejemplo</th></tr></thead><tbody>' +
       [["-are","-ato","parlare → parlato"],["-ere","-uto","credere → creduto"],["-ire","-ito","dormire → dormito"]].map(([inf,part,ex]) => '<tr><td>' + renderSpokenVariants(inf) + '</td><td>' + renderSpokenVariants(part) + '</td><td>' + renderSpokenVariants(ex) + '</td></tr>').join("") +
       '</tbody></table><h3>Elección del auxiliar</h3><p class="theory-slide-text"><em>Avere</em> se usa con muchos verbos transitivos; <em>essere</em> aparece con verbos de movimiento, cambio de estado y verbos reflexivos. Con <em>essere</em>, el participio concuerda en género y número con el sujeto.</p>' +
-      bilingualTable("theory-vocabulary-table",["Auxiliar","Ejemplo"],[["avere","Ho mangiato una pizza."],["essere","Sono arrivata a casa. / Sono arrivato a casa."]]) +
-      '<h3>Participios frecuentes</h3>' + bilingualTable("theory-vocabulary-table",["Infinitivo","Participio"],[["fare","fatto"],["vedere","visto"],["prendere","preso"],["scrivere","scritto"],["leggere","letto"],["essere","stato"]]) +
+      italianTable("theory-reference-table",["Auxiliar","Ejemplo en italiano"],[["avere","Ho mangiato una pizza."],["essere","Sono arrivata a casa. / Sono arrivato a casa."]]) +
+      '<h3>Participios frecuentes</h3>' + italianTable("theory-reference-table",["Infinitivo","Participio"],[["fare","fatto"],["vedere","visto"],["prendere","preso"],["scrivere","scritto"],["leggere","letto"],["essere","stato"]]) +
       '<h3>Ejemplos</h3>' + examplesTable([["Ieri ho studiato italiano.","Ayer estudié italiano."],["Sabato siamo andati al mercato.","El sábado fuimos al mercado."],["Maria è tornata alle sei.","Maria volvió a las seis."]]);
   }
   if (category === "Gramática" && index === 5) {
     return '<p class="theory-slide-text">El <em>futuro semplice</em> permite hablar de acciones posteriores al momento actual, previsiones y promesas. En conversaciones cotidianas también se usa el presente acompañado de una expresión temporal. En A1 se presenta como introducción; conviene priorizar primero el presente para planes inmediatos.</p>' +
-      '<h3>Terminaciones del futuro</h3><table class="theory-pronoun-table theory-bilingual-table theory-reference-table"><thead><tr><th>Persona</th><th>Parlare</th><th>Prendere</th><th>Dormire</th></tr></thead><tbody>' +
+      '<h3>Terminaciones del futuro</h3><table class="theory-pronoun-table theory-bilingual-table theory-reference-table"><thead><tr><th>Persona</th><th>Modelo -are</th><th>Modelo -ere</th><th>Modelo -ire</th></tr></thead><tbody>' +
       [["io","parlerò","prenderò","dormirò"],["tu","parlerai","prenderai","dormirai"],["lui / lei","parlerà","prenderà","dormirà"],["noi","parleremo","prenderemo","dormiremo"],["voi","parlerete","prenderete","dormirete"],["loro","parleranno","prenderanno","dormiranno"]].map(row => '<tr>' + row.map(value => '<td>' + renderSpokenVariants(value) + '</td>').join("") + '</tr>').join("") +
       '</tbody></table><p class="theory-slide-text">En los verbos en <em>-are</em>, la vocal final cambia a <em>-e-</em> antes de añadir las terminaciones. Algunos verbos tienen raíz irregular: <em>essere → sar-</em>, <em>avere → avr-</em>, <em>andare → andr-</em>, <em>fare → far-</em>.</p>' +
       '<h3>Ejemplos</h3>' + examplesTable([["Domani lavorerò da casa.","Mañana trabajaré desde casa."],["La prossima settimana andremo a Roma.","La próxima semana iremos a Roma."],["Stasera farò una telefonata.","Esta noche haré una llamada."]]);
