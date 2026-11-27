@@ -92,7 +92,12 @@ try {
   for (let i = 0; i < unitOneChecks.length; i++) {
     await unitOneTopics.nth(i).click();
     assert.equal(await page.locator("#theory-title").innerText(), unitOneChecks[i].title, "Unit 1 topic title should match its content");
-    const topicText = await page.locator("#theory-description").innerText();
+    const topicBody = page.locator("#theory-description");
+    const topicText = await topicBody.innerText();
+    assert.equal(await topicBody.locator(".theory-subtopic-content").count(),1,"Unit 1 should use the shared subtopic wrapper");
+    assert.equal(await topicBody.locator(".theory-subtopic-intro").count(),1,"Unit 1 should use the shared introduction block");
+    assert.ok(await topicBody.locator(".theory-content-section").count()>0,"Unit 1 reference content should use shared sections");
+    assert.equal(await topicBody.locator(".speak-button").count(),0,"Unit 1 should not show Play or speaker buttons");
     const allUnitOneTableCells = page.locator("#theory-description table tbody td");
     assert.ok(await allUnitOneTableCells.count() > 0, "each Unit 1 subtopic should render its comparison table");
     assert.ok((await allUnitOneTableCells.evaluateAll(cells => cells.map(cell => getComputedStyle(cell).fontSize))).every(size => size === "15px"), "all Unit 1 subtopic table body cells should use the common 15px mobile size");
