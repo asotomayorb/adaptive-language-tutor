@@ -1,6 +1,6 @@
 # Plan de prueba humana — Adaptive Language Tutor
 
-**Alcance vigente — 26-11-2026:** aplicación español (`es-CL`) → italiano (`it-IT`). La UI activa contiene Teoría y Estadísticas. Unidades 1 y 2 tienen contenido desarrollado; Unidades 3–6 conservan títulos y jerarquía, con contenido vacío hasta su reconstrucción. Ruta, Entrenamiento y tutor IA permanecen en espera, sin formar parte de la aceptación visual actual.
+**Alcance vigente — 27-11-2026:** aplicación español (`es-CL`) → italiano (`it-IT`). La UI activa contiene Teoría y Estadísticas. Unidades 1–3 tienen contenido desarrollado; Unidades 4–6 conservan títulos y jerarquía, con cuerpos vacíos. Ruta, Entrenamiento y tutor IA permanecen en espera, sin formar parte de la aceptación visual actual.
 
 ## 1. Preparación
 
@@ -67,4 +67,4 @@
 | Captura o log sin datos personales | |
 | Severidad | |
 
-**Criterio de salida:** no declarar aceptada una versión si falla una prueba de navegación, contenido, persistencia o pronunciación de las Unidades 1 y 2, o si aparece contenido dentro de Unidades 3–6.
+**Criterio de salida:** no declarar aceptada una versión si falla una prueba de navegación, contenido, persistencia o pronunciación de las Unidades 1–3, o si aparece contenido dentro de Unidades 4–6.
