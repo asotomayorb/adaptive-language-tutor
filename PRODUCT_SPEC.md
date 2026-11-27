@@ -128,7 +128,7 @@ Unidad 2 conserva cuatro subtemas desarrollados:
 - Edad y procedencia: explicar `avere` para la edad, `essere di` y `venire da` para el origen, con distinción explícita entre preguntas informales (`hai/sei`) y formales (`ha/è`, tratamiento `Lei`); evitar aclaraciones parentéticas redundantes en las traducciones.
 - Pronombres y ser/estar (Unidad 1): explicar la omisión habitual del pronombre sujeto, el uso formal de `Lei` con tercera persona singular y evitar equivalencias automáticas entre `essere/stare` y «ser/estar»; incluir contextos y ejemplos italianos breves.
 
-Unidad 3 — «Rutinas y tiempo» se desarrolla con ocho subtemas, respetando la jerarquía y la estructura común:
+Unidad 3 — «Rutinas y tiempo» se desarrolla con nueve subtemas, respetando la jerarquía y la estructura común:
 - Gramática: Presente habitual, Pasado (`passato prossimo`) y Futuro simple. El presente se enseña como recurso central para hábitos y rutinas; el `passato prossimo` incluye auxiliares `avere/essere`, participios regulares y frecuentes irregulares, y concordancia básica con `essere`. El futuro se presenta como introducción/alcance ampliado, distinguiéndolo del uso del presente con marcadores temporales para planes inmediatos.
 - Vocabulario: Familia, Profesiones, Rutinas y lugares, Días y fechas.
 - Expresiones: Rutinas diarias y La hora.
