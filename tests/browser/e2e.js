@@ -221,7 +221,11 @@ try {
       const countryTable=body.locator("table.country-language-table");
       assert.equal(await countryTable.count(),1,"country-language table should use the balanced layout");
       const headerWidths=await countryTable.locator("thead th").evaluateAll(cells=>cells.map(cell=>cell.getBoundingClientRect().width));
-      assert.ok(Math.max(...headerWidths)-Math.min(...headerWidths)<2,"country, demonym and language columns should have equal widths");
+      assert.ok(headerWidths[1]>=headerWidths[0] && headerWidths[1]>=headerWidths[2],"the longer demonym column should receive more space");
+      const tableMetrics=await countryTable.evaluate(el=>({right:el.getBoundingClientRect().right,parentRight:el.parentElement.getBoundingClientRect().right,cells:[...el.querySelectorAll("tbody tr:first-child td")].map(td=>({scrollWidth:td.scrollWidth,clientWidth:td.clientWidth}))}));
+      assert.ok(tableMetrics.right<=tableMetrics.parentRight+1,"country table must stay within its content container");
+      assert.ok(tableMetrics.cells.every(cell=>cell.scrollWidth<=cell.clientWidth+1),"country table text must wrap without overflowing its cells");
+      assert.ok(Math.max(...headerWidths)-Math.min(...headerWidths)>2,"column widths should adapt to content rather than be identical");
       const countryRows=countryTable.locator("tbody tr");
       for(let rowIndex=0;rowIndex<await countryRows.count();rowIndex++) {
         const cellHeights=await countryRows.nth(rowIndex).locator("td").evaluateAll(cells=>cells.map(cell=>cell.getBoundingClientRect().height));
