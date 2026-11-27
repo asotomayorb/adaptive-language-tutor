@@ -1398,3 +1398,35 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
     line-height:1.5!important;
   }
 }
+
+/* Países e idiomas: columnas y celdas equilibradas, con TTS directo sobre cada variante. */
+#screen-theory .country-language-table {
+  width:100%;
+  table-layout:fixed;
+  border-collapse:collapse;
+}
+#screen-theory .country-language-table th,
+#screen-theory .country-language-table td {
+  width:33.333%;
+  height:1px;
+  padding:10px 8px;
+  vertical-align:middle;
+  white-space:normal;
+  overflow-wrap:normal;
+  word-break:normal;
+  hyphens:none;
+  line-height:1.4;
+}
+#screen-theory .country-language-table .theory-target-word {
+  display:inline;
+  font-weight:700;
+}
+#screen-theory .country-language-table .theory-translation {
+  display:inline;
+  margin:0;
+  font-size:inherit;
+  line-height:inherit;
+}
+#screen-theory .country-language-table .theory-variant-separator {
+  white-space:pre;
+}

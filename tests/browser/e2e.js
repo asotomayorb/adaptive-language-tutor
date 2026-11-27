@@ -218,6 +218,27 @@ try {
       assert.ok((await examples.innerText()).includes("Un chico italiano.") && (await examples.innerText()).includes("Dos chicas interesantes."),"examples should retain Spanish translations");
     }
     if(i===0) {
+      const countryTable=body.locator("table.country-language-table");
+      assert.equal(await countryTable.count(),1,"country-language table should use the balanced layout");
+      const headerWidths=await countryTable.locator("thead th").evaluateAll(cells=>cells.map(cell=>cell.getBoundingClientRect().width));
+      assert.ok(Math.max(...headerWidths)-Math.min(...headerWidths)<2,"country, demonym and language columns should have equal widths");
+      const countryRows=countryTable.locator("tbody tr");
+      for(let rowIndex=0;rowIndex<await countryRows.count();rowIndex++) {
+        const cellHeights=await countryRows.nth(rowIndex).locator("td").evaluateAll(cells=>cells.map(cell=>cell.getBoundingClientRect().height));
+        assert.ok(Math.max(...cellHeights)-Math.min(...cellHeights)<2,"cells in each country row should have uniform heights");
+      }
+      assert.equal(await countryTable.locator(".speak-button").count(),0,"country-language table should not display Play buttons");
+      const firstRow=countryRows.first();
+      assert.equal(await firstRow.locator("td").count(),3,"country, demonym and language must have separate columns");
+      assert.ok((await firstRow.locator("td").first().innerText()).includes("(Italia)"),"country cell should keep Spanish translation in parentheses");
+      for(let cellIndex=1;cellIndex<3;cellIndex++) {
+        assert.equal(await countryRows.locator("td").nth(cellIndex).locator(".theory-translation").count(),0,"parenthetical Spanish translations belong only in the first column");
+      }
+      const countryTargets=firstRow.locator("td").first().locator(".theory-target-tap[role=button]");
+      assert.equal(await countryTargets.count(),1,"Italian country name should remain individually tappable for pronunciation");
+      const demonymTargets=firstRow.locator("td").nth(1).locator(".theory-target-tap[role=button]");
+      assert.equal(await demonymTargets.count(),2,"slash-separated demonym forms should have independent pronunciation targets");
+      for(let cellIndex=1;cellIndex<3;cellIndex++) assert.ok(await firstRow.locator("td").nth(cellIndex).locator(".theory-target-tap[role=button]").count()>0,"Italian demonym/language forms should remain individually tappable for pronunciation");
       assert.equal(await body.locator(".theory-slide-text").count(),0,"country subtopic should not contain an unnecessary closing paragraph");
       const firstRow=body.locator("table").first().locator("tbody tr").first();
       assert.equal(await firstRow.locator("td").count(),3,"country, demonym and language must have separate columns");
