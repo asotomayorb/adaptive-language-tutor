@@ -108,5 +108,5 @@ Los registros históricos de sesiones de otros idiomas pueden permanecer en el a
 - El área desplazable de Teoría reserva 170 px inferiores para separar el último elemento de los botones Anterior/Siguiente y evitar que estos lo cubran.
 - Archivos de código/pruebas: `src/app.js`, `src/theory-polish.js`, `src/theory-polish.css`, `tests/browser/e2e.js`. Documentación: `PRODUCT_SPEC.md`, `HUMAN_TEST_PLAN.md`, `PROJECT_STATUS.md` y `README.md`.
 - HEAD de código previo al registro final: `f7b6d2cfc1bbb7f1d3509cdd713321b2ff1babba`. Las aserciones E2E se actualizaron para cubrir tipografía, ausencia de comillas angulares, separadores únicos y margen inferior; no se dispone aún de resultado CI para este HEAD.
-- Render LIVE verificado antes de estos cambios: deploy `dep-dc4td0p7lnhs739q2k30`, commit `f9fb1ac98cad13a5fb8293e897c11f14c8cce106`. No se modificaron variables de entorno ni configuración de build.
-- Estado: [PENDIENTE: desplegar el HEAD actualizado y completar validación automatizada/visual en Android].
+- Render LIVE actualizado: deploy `dep-dc4tsvh5efls73ankss0`, commit desplegado `549ef530fd26b37f69b65b1410966f9879f031d0`; build y deploy finalizaron correctamente. No se modificaron variables de entorno ni configuración de build.
+- Estado: [PENDIENTE: ejecutar E2E y completar validación visual humana en Android].
