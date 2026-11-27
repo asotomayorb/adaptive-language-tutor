@@ -2069,11 +2069,15 @@ function formatItalianTheoryTitle(value) {
 }
 function renderItalianAppliedTopic(category, index, locale) {
   const renderLines = value => String(value).split("<br>").map(part => escapeHTML(part)).join("<br>");
-  const renderSpokenVariants = value => String(value).replace(/<br\s*\/?\s*>/gi, " / ").split(/\s*\/\s*|\s*[–—]\s*|\s+-\s+/).map(part => {
+  const renderSpokenVariants = value => String(value).replace(/<br\s*\/?\s*>/gi, " / ").split(/(\s*\/\s*|\s*[–—]\s*|\s+-\s+|\s*→\s*)/).map((part, partIndex) => {
+    if (partIndex % 2 === 1) {
+      const separator = part.trim();
+      return '<span class="theory-variant-separator" data-separator="' + escapeHTML(separator) + '">' + escapeHTML(part) + '</span>';
+    }
     const phrase = part.trim();
     if (!phrase) return "";
     return '<span class="theory-speech-variant"><strong class="theory-target-word">' + escapeHTML(phrase) + '</strong></span>';
-  }).filter(Boolean).join('<span class="theory-variant-separator" data-separator="/"> / </span>');
+  }).join("");
   const rows = items => items.map(([term, meaning, note = ""]) =>
     '<tr><td>' + renderSpokenVariants(term) + '</td><td>' + renderLines(meaning) + '</td>' + (note ? '<td>' + escapeHTML(note) + '</td>' : '') + '</tr>'
   ).join("");
@@ -2093,11 +2097,11 @@ function renderItalianAppliedTopic(category, index, locale) {
   if (category === "Gramática" && index === 0) {
     const pronouns = [["io","yo"],["tu","tú"],["lui / lei","él / ella"],["Lei","usted (formal)"],["noi","nosotros/as"],["voi","ustedes"],["loro","ellos/as"]];
     const verbs = [["io","sono","sto"],["tu","sei","stai"],["lui / lei","è","sta"],["Lei","è","sta"],["noi","siamo","stiamo"],["voi","siete","state"],["loro","sono","stanno"]];
-    return '<p class="theory-slide-text">El italiano suele omitir el pronombre sujeto porque la terminación verbal normalmente indica la persona: <em>Sono cileno</em> (soy chileno). Se usa para dar énfasis o evitar ambigüedad. «Lei» con mayúscula es el tratamiento formal de «usted» y lleva el verbo en tercera persona singular.</p>' +
+    return '<p class="theory-slide-text">El italiano suele omitir el pronombre sujeto porque la terminación verbal normalmente indica la persona: <em>Sono cileno</em> (soy chileno). Se usa para dar énfasis o evitar ambigüedad. «<em>Lei</em>» con mayúscula es el tratamiento formal de «usted» y lleva el verbo en tercera persona singular.</p>' +
       '<h3>Pronombres personales</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
       pronouns.map(([term,meaning]) => '<tr><td>' + renderSpokenVariants(term) + '</td><td>' + meaning + '</td></tr>').join("") +
-      '</tbody></table><h3>Verbos essere y stare</h3><p class="theory-slide-text">«<em>Essere</em>» se usa para identidad, origen, profesión y características. «<em>Stare</em>» aparece, entre otros usos, en expresiones de estado o condición como <em>stare bene</em> (estar bien). No equivalen de forma automática al «ser» y «estar» españoles: el verbo depende de la construcción italiana.</p><table class="theory-pronoun-table theory-bilingual-table theory-verb-comparison-table"><thead><tr><th>Persona</th><th>Essere</th><th>Stare</th></tr></thead><tbody>' +
-      verbs.map(([person,essere,stare]) => '<tr><td>' + person + '</td><td>' + renderSpokenVariants(essere) + '</td><td>' + renderSpokenVariants(stare) + '</td></tr>').join("") +
+      '</tbody></table><h3>Verbos <em>essere</em> y <em>stare</em></h3><p class="theory-slide-text">«<em>Essere</em>» se usa para identidad, origen, profesión y características. «<em>Stare</em>» aparece, entre otros usos, en expresiones de estado o condición como <em>stare bene</em> (estar bien). No equivalen de forma automática al «ser» y «estar» españoles: el verbo depende de la construcción italiana.</p><table class="theory-pronoun-table theory-bilingual-table theory-verb-comparison-table"><thead><tr><th>Persona</th><th>Essere</th><th>Stare</th></tr></thead><tbody>' +
+      verbs.map(([person,essere,stare]) => '<tr><td>' + renderSpokenVariants(person) + '</td><td>' + renderSpokenVariants(essere) + '</td><td>' + renderSpokenVariants(stare) + '</td></tr>').join("") +
       '</tbody></table><p class="theory-slide-text"><em class="theory-target-word">Sono di Santiago.</em> (Soy de Santiago.) · <em class="theory-target-word">Sto bene.</em> (Estoy bien.)</p>';
   }
   if (category === "Gramática" && index === 1) {
@@ -2166,8 +2170,8 @@ function renderItalianAppliedTopic(category, index, locale) {
       ["voi","parlate","prendete","dormite"],["loro","parlano","prendono","dormono"]
     ];
     return '<p class="theory-slide-text">El presente expresa hábitos, rutinas y hechos actuales. Los verbos regulares se agrupan en tres conjugaciones: <em>-are</em>, <em>-ere</em> e <em>-ire</em>. Las terminaciones cambian según la persona.</p>' +
-      '<h3>Terminaciones en presente</h3><table class="theory-pronoun-table theory-bilingual-table theory-reference-table"><thead><tr><th>Persona</th><th>Modelo -are</th><th>Modelo -ere</th><th>Modelo -ire</th></tr></thead><tbody>' +
-      forms.map(([person,a,e,i]) => '<tr><td>' + person + '</td><td>' + renderSpokenVariants(a) + '</td><td>' + renderSpokenVariants(e) + '</td><td>' + renderSpokenVariants(i) + '</td></tr>').join("") +
+      '<h3>Terminaciones en presente</h3><table class="theory-pronoun-table theory-bilingual-table theory-reference-table"><thead><tr><th>Persona</th><th>Modelo <em>-are</em></th><th>Modelo <em>-ere</em></th><th>Modelo <em>-ire</em></th></tr></thead><tbody>' +
+      forms.map(([person,a,e,i]) => '<tr><td>' + renderSpokenVariants(person) + '</td><td>' + renderSpokenVariants(a) + '</td><td>' + renderSpokenVariants(e) + '</td><td>' + renderSpokenVariants(i) + '</td></tr>').join("") +
       '</tbody></table><h3>Verbos frecuentes irregulares</h3>' +
       bilingualTable("theory-vocabulary-table",["Italiano","Español"],[["essere","ser / estar"],["avere","tener"],["fare","hacer"],["andare","ir"]]) +
       '<h3>Ejemplos de rutina</h3>' + examplesTable([["Lavoro in ufficio.","Trabajo en una oficina."],["Prendiamo il treno ogni mattina.","Tomamos el tren cada mañana."],["Dormono otto ore.","Duermen ocho horas."]]);
@@ -2201,7 +2205,7 @@ function renderItalianAppliedTopic(category, index, locale) {
   if (category === "Vocabulario" && index === 3) {
     return '<p class="theory-slide-text">Verbos y lugares útiles para describir un día habitual, desde el inicio de la mañana hasta el final de la jornada.</p>' +
       bilingualTable("theory-vocabulary-table",["Italiano","Español"],[["svegliarsi","despertarse"],["fare colazione","desayunar"],["andare al lavoro","ir al trabajo"],["studiare","estudiar"],["tornare a casa","volver a casa"],["andare a letto","acostarse"],["la casa","la casa"],["l’ufficio","la oficina"],["la scuola","la escuela"],["la palestra","el gimnasio"]]) +
-      '<h3>Ejemplos</h3>' + examplesTable([["Mi sveglio alle sette.","Me despierto a las siete."],["Studio italiano a casa.","Estudio italiano en casa."],["Dopo il lavoro torno in ufficio.","Después del trabajo vuelvo a la oficina."]]);
+      '<h3>Ejemplos</h3>' + examplesTable([["Mi sveglio alle sette.","Me despierto a las siete."],["Studio italiano a casa.","Estudio italiano en casa."],["Dopo il lavoro torno a casa.","Después del trabajo vuelvo a la oficina."]]);
   }
   if (category === "Vocabulario" && index === 4) {
     return '<p class="theory-slide-text">Los días de la semana y los meses se escriben con minúscula en italiano. Para expresar una fecha se usa normalmente el artículo y el número; «primo» se emplea para el primer día del mes.</p>' +
