@@ -248,7 +248,7 @@ try {
       assert.equal(await countryTargets.count(),1,"Italian country name should remain individually tappable for pronunciation");
       const demonymTargets=firstRow.locator("td").nth(1).locator(".theory-target-tap[role=button]");
       assert.equal(await demonymTargets.count(),2,"slash-separated demonym forms should have independent pronunciation targets");
-      assert.ok((await firstRow.locator("td").nth(1).locator(".theory-variant-separator").first().innerText()).includes("/"),"the original slash separator should remain visible between separately pronounceable forms");
+      assert.equal(await firstRow.locator("td").nth(1).locator(".theory-variant-separator").first().getAttribute("data-separator"),"/","the original slash separator should remain visible between separately pronounceable forms");
       for(let cellIndex=1;cellIndex<3;cellIndex++) assert.ok(await firstRow.locator("td").nth(cellIndex).locator(".theory-target-tap[role=button]").count()>0,"Italian demonym/language forms should remain individually tappable for pronunciation");
       assert.equal(await body.locator(".theory-subtopic-intro").count(),1,"country subtopic should use the shared introduction block");
     }
