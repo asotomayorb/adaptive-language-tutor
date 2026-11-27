@@ -279,7 +279,7 @@ try {
     assert.ok(await body.locator(".theory-content-section").count()>0,"Unit 3 should group its reference content into sections");
     assert.ok(await body.locator("table").count()>0,"each Unit 3 topic should include a reference table");
     assert.equal(await body.locator(".speak-button").count(),0,"no Play or speaker buttons should appear in Unit 3");
-    const content=(await body.innerText()).replace(/\\s+/g," ");
+    const content=(await body.innerText()).replace(/\s+/g," ");
     for(const term of check.terms) assert.ok(content.includes(term),"Unit 3 content should include "+term);
     const targets=body.locator(".theory-target-tap[role=button]");
     assert.ok(await targets.count()>0,"Italian reference terms should be individually tappable");
