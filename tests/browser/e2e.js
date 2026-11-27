@@ -138,6 +138,7 @@ try {
       const verbTableSizes = await verbTable.locator("tbody tr").first().locator("td").evaluateAll(cells => cells.map(cell => getComputedStyle(cell).fontSize));
       assert.equal(new Set(verbTableSizes).size, 1, "all columns in the final verb table should use the same font size");
     }
+    assert.equal(await page.locator("#theory-description .theory-variant-separator").evaluateAll(nodes=>nodes.some(node=>node.textContent.includes("//"))),false,"Unit 1 variants must use a single slash separator");
     const italianTargets = page.locator("#theory-description table tbody td:first-child .theory-target-word");
     assert.ok(await italianTargets.count() > 0, "each Unit 1 topic should expose Italian target expressions in its content tables");
     const italianCellSize = await page.locator("#theory-description table").first().locator("tbody tr").first().locator("td").first().locator(".theory-target-word").first().evaluate(el => getComputedStyle(el).fontSize);
