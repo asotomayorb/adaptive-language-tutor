@@ -102,16 +102,16 @@ test("tutor endpoint forwards validated context to the provider", async () => {
     provider: "test",
     generateTutorTurn: async input => {
       received = input;
-      return { message: "Vamos começar.", exercise: null, evaluation: null, learnerUpdate: null, nextAction: "answer" };
+      return { message: "Iniziamo.", exercise: null, evaluation: null, learnerUpdate: null, nextAction: "answer" };
     }
   }, async base => {
     const response = await fetch(base + "/api/tutor", {
       method: "POST", headers: { "content-type": "application/json" },
-      body: JSON.stringify({ userMessage: "Quiero practicar", learner: { targetLanguage: "pt-BR" } })
+      body: JSON.stringify({ userMessage: "Quiero practicar", learner: { targetLanguage: "it-IT" } })
     });
     assert.equal(response.status, 200);
-    assert.equal((await response.json()).message, "Vamos começar.");
-    assert.equal(received.learner.targetLanguage, "pt-BR");
+    assert.equal((await response.json()).message, "Iniziamo.");
+    assert.equal(received.learner.targetLanguage, "it-IT");
   });
 });
 

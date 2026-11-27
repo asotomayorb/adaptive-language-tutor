@@ -6,11 +6,11 @@ const tutorJson = JSON.stringify({
   message: "Vamos a practicar.",
   exercise: {
     type: "conversation",
-    prompt: "Como você se chama?",
-    expectedAnswer: "Meu nome é ...",
-    acceptedAnswers: ["Eu me chamo ..."],
-    options: ["Meu nome é Ana", "Bom dia", "Até logo"],
-    hint: "Usa a expressão meu nome é."
+    prompt: "Come ti chiami?",
+    expectedAnswer: "Mi chiamo ...",
+    acceptedAnswers: ["Sono ..."],
+    options: ["Mi chiamo Anna", "Buongiorno", "Arrivederci"],
+    hint: "Usa l’espressione «mi chiamo»."
   },
   evaluation: {
     status: "not_applicable",
@@ -23,7 +23,7 @@ const tutorJson = JSON.stringify({
     vocabulary: [],
     errorsToReview: []
   },
-  speechSegments: [{ text: "Bom dia", language: "pt", locale: "pt-BR" }],
+  speechSegments: [{ text: "Buongiorno", language: "it", locale: "it-IT" }],
   nextAction: "answer"
 });
 
@@ -50,7 +50,7 @@ test("OpenAI adapter uses strict structured outputs and server-side credentials"
       assert.equal(body.response_format.json_schema.name, "adaptive_language_tutor_turn");
     })
   );
-  const result = await provider.generateTutorTurn({ userMessage: "Olá" });
+  const result = await provider.generateTutorTurn({ userMessage: "Hola" });
   assert.equal(result.message, "Vamos a practicar.");
   assert.equal(result.exercise.type, "conversation");
   assert.equal(provider.configured, true);
@@ -63,7 +63,7 @@ test("Anthropic adapter uses its native messages format", async () => {
       content: [{ type: "text", text: tutorJson }]
     })
   );
-  assert.equal((await provider.generateTutorTurn({ userMessage: "Hello" })).nextAction, "answer");
+  assert.equal((await provider.generateTutorTurn({ userMessage: "Hola" })).nextAction, "answer");
 });
 
 test("Gemini adapter uses its native generateContent format", async () => {
@@ -84,7 +84,7 @@ test("Gemini adapter uses its native generateContent format", async () => {
       assert.equal(body.generationConfig.responseSchema.properties.speechSegments.type, "ARRAY");
     })
   );
-  assert.equal((await provider.generateTutorTurn({ userMessage: "Hello" })).message, "Vamos a practicar.");
+  assert.equal((await provider.generateTutorTurn({ userMessage: "Hola" })).message, "Vamos a practicar.");
 });
 
 test("provider rejects oversized structured tutor responses", async () => {
@@ -97,7 +97,7 @@ test("provider rejects oversized structured tutor responses", async () => {
     })
   );
   await assert.rejects(
-    () => provider.generateTutorTurn({ userMessage: "Hello" }),
+    () => provider.generateTutorTurn({ userMessage: "Hola" }),
     /exceeds the tutor size limit/i
   );
 });
@@ -111,13 +111,13 @@ test("provider preserves validated target-language speech segments", async () =>
         exercise: null,
         evaluation: null,
         learnerUpdate: null,
-        speechSegments: [{ text: "Bom dia", language: "pt", locale: "pt-BR" }],
+        speechSegments: [{ text: "Buongiorno", language: "it", locale: "it-IT" }],
         nextAction: "answer"
       }) } }]
     })
   );
-  const result = await provider.generateTutorTurn({ userMessage: "Olá" });
-  assert.deepEqual(result.speechSegments, [{ text: "Bom dia", language: "pt", locale: "pt-BR" }]);
+  const result = await provider.generateTutorTurn({ userMessage: "Hola" });
+  assert.deepEqual(result.speechSegments, [{ text: "Buongiorno", language: "it", locale: "it-IT" }]);
 });
 
 test("invalid target-language speech segments are rejected", async () => {
@@ -126,12 +126,12 @@ test("invalid target-language speech segments are rejected", async () => {
     fakeFetch("https://api.openai.com/v1/chat/completions", {}, {
       choices: [{ message: { content: JSON.stringify({
         message: "Hi", exercise: null, evaluation: null, learnerUpdate: null,
-        speechSegments: [{ text: "Bonjour", locale: "fr-FR" }],
+        speechSegments: [{ text: "Buongiorno", locale: "es-CL" }],
         nextAction: "answer"
       }) } }]
     })
   );
-  await assert.rejects(() => provider.generateTutorTurn({ userMessage: "Hi" }), /invalid speech segments/i);
+  await assert.rejects(() => provider.generateTutorTurn({ userMessage: "Hola" }), /invalid speech segments/i);
 });
 
 test("provider rejects speech segments tagged with a different target locale", async () => {
@@ -141,12 +141,12 @@ test("provider rejects speech segments tagged with a different target locale", a
       choices: [{ message: { content: JSON.stringify({
         message: "Practiquemos.",
         exercise: {
-          type: "conversation", prompt: "Comment ça va?", expectedAnswer: "Ça va bien.",
-          acceptedAnswers: ["Je vais bien."], options: ["Ça va bien.", "Au revoir.", "Merci."], hint: null
+          type: "conversation", prompt: "Come stai?", expectedAnswer: "Sto bene.",
+          acceptedAnswers: ["Sto bene."], options: ["Sto bene.", "Arrivederci.", "Grazie."], hint: null
         },
         evaluation: null,
         learnerUpdate: null,
-        speechSegments: [{ text: "Bonjour", language: "fr", locale: "fr-FR" }],
+        speechSegments: [{ text: "Buongiorno", language: "es", locale: "es-CL" }],
         nextAction: "answer"
       }) } }]
     })
@@ -154,7 +154,7 @@ test("provider rejects speech segments tagged with a different target locale", a
   await assert.rejects(
     () => provider.generateTutorTurn({
       task: "start_lesson",
-      learner: { targetLanguageLocale: "pt-BR" }
+      learner: { targetLanguageLocale: "it-IT" }
     }),
     error => error.status === 422 && /different from the selected target language/i.test(error.message)
   );
@@ -211,13 +211,13 @@ test("OpenAI-compatible providers retain the portable JSON mode", async () => {
       assert.equal(body.max_tokens, 1200);
     })
   );
-  assert.equal((await provider.generateTutorTurn({ userMessage: "Hello" })).message, "Vamos a practicar.");
+  assert.equal((await provider.generateTutorTurn({ userMessage: "Hola" })).message, "Vamos a practicar.");
 });
 
 test("missing provider configuration is reported without exposing credentials", async () => {
   const provider = createAIProvider({});
   assert.equal(provider.configured, false);
-  await assert.rejects(() => provider.generateTutorTurn({ userMessage: "Hi" }), /not configured/i);
+  await assert.rejects(() => provider.generateTutorTurn({ userMessage: "Hola" }), /not configured/i);
 });
 
 test("invalid JSON model output is rejected", async () => {
@@ -227,7 +227,7 @@ test("invalid JSON model output is rejected", async () => {
       choices: [{ message: { content: "not json" } }]
     })
   );
-  await assert.rejects(() => provider.generateTutorTurn({ userMessage: "Hi" }), /valid JSON/i);
+  await assert.rejects(() => provider.generateTutorTurn({ userMessage: "Hola" }), /valid JSON/i);
 });
 
 test("a response outside the tutor contract is rejected", async () => {
@@ -237,7 +237,7 @@ test("a response outside the tutor contract is rejected", async () => {
       choices: [{ message: { content: JSON.stringify({ message: "Hi", exercise: {}, evaluation: null, learnerUpdate: null, nextAction: "unknown" }) } }]
     })
   );
-  await assert.rejects(() => provider.generateTutorTurn({ userMessage: "Hi" }), /invalid exercise/i);
+  await assert.rejects(() => provider.generateTutorTurn({ userMessage: "Hola" }), /invalid exercise/i);
 });
 
 
@@ -254,7 +254,7 @@ test("provider logs do not include upstream error response details", async () =>
         json: async () => ({ error: { message: "sensitive upstream diagnostic detail" } })
       })
     );
-    await assert.rejects(() => provider.generateTutorTurn({ userMessage: "Hi" }), /request failed/i);
+    await assert.rejects(() => provider.generateTutorTurn({ userMessage: "Hola" }), /request failed/i);
     assert.equal(logged.length, 1);
     assert.match(logged[0], /"upstreamStatus":401/);
     assert.doesNotMatch(logged.join(" "), /sensitive upstream diagnostic detail/);
@@ -274,7 +274,7 @@ test("provider requests have a timeout and report stalled requests clearly", asy
     }
   );
   await assert.rejects(
-    () => provider.generateTutorTurn({ userMessage: "Hi" }),
+    () => provider.generateTutorTurn({ userMessage: "Hola" }),
     /timed out after 45 seconds/i
   );
 });

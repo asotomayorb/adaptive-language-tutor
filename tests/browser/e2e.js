@@ -228,13 +228,19 @@ try {
     if(i===3) assert.ok(!(await body.innerText()).includes("(formal)"),"translations should not contain parenthetical mini-explanations");
     await page.locator("#theory-back").click();
   }
-  await unitRows.nth(2).click();
-  const unitThreeTopics=page.locator("#theory-tree .theory-tree-topic");
-  const unitThreeTitle=await unitThreeTopics.first().locator(".theory-tree-topic-name").innerText();
-  await unitThreeTopics.first().click();
-  assert.equal(await page.locator("#theory-title").innerText(),unitThreeTitle,"later-unit subtopic titles must be preserved");
-  assert.equal((await page.locator("#theory-description").innerText()).trim(),"","later-unit subtopics should have no lesson content until developed");
-  await page.locator("#theory-back").click();
+  for (let unitIndex=2;unitIndex<await unitRows.count();unitIndex++) {
+    await unitRows.nth(unitIndex).click();
+    const laterTopics=page.locator("#theory-tree .theory-tree-topic");
+    assert.ok(await laterTopics.count()>0,"later units must retain their planned subtopic titles");
+    for (let topicIndex=0;topicIndex<await laterTopics.count();topicIndex++) {
+      const laterTitle=await laterTopics.nth(topicIndex).locator(".theory-tree-topic-name").innerText();
+      await laterTopics.nth(topicIndex).click();
+      assert.ok((await page.locator("#theory-title").innerText()).toLocaleLowerCase().includes(laterTitle.split(" (")[0].toLocaleLowerCase()),"later-unit subtopic title must be preserved");
+      assert.equal((await page.locator("#theory-description").innerText()).trim(),"","Units 3–6 must contain no lesson text or residual data");
+      assert.equal(await page.locator("#theory-description table").count(),0,"Units 3–6 must contain no residual tables");
+      await page.locator("#theory-back").click();
+    }
+  }
   await unitRows.nth(1).click();
   const topicButton = page.locator("#theory-tree .theory-tree-topic").first();
   await topicButton.click();

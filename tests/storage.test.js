@@ -11,16 +11,16 @@ function memoryStorage() {
 }
 
 const baseSession = () => ({
-  config: { language: "Portugués brasileño", languageId: "pt-BR", estimatedLevel: "B1" },
-  vocabulary: [{ term: "obrigado", meaning: "gracias" }],
-  errors: [{ exerciseId: "greeting-1", prompt: "Saluda", expected: "Olá", term:"Olá", meaning:"hola", promptLocale:"es-CL", explanation: "Saludo básico", skill: "Saludos" }],
+  config: { language: "Italiano", languageId: "it-IT", estimatedLevel: "B1" },
+  vocabulary: [{ term: "grazie", meaning: "gracias" }],
+  errors: [{ exerciseId: "greeting-1", prompt: "Saluda", expected: "Ciao", term:"Ciao", meaning:"hola", promptLocale:"es-CL", explanation: "Saludo básico", skill: "Saludos" }],
   errorsToReview: ["Conjugación en primera persona"]
 });
 
 test("progress persists and loads with a versioned schema", () => {
   const storage = memoryStorage();
   const progress = loadProgress(storage);
-  progress.sessions.push({ accuracy: 80, languageId: "pt-BR" });
+  progress.sessions.push({ accuracy: 80, languageId: "it-IT" });
   assert.equal(saveProgress(progress, storage), true);
   assert.equal(loadProgress(storage).sessions.length, 1);
 });
@@ -39,10 +39,10 @@ test("persisting a session records history, vocabulary and makes graded errors i
   assert.equal(progress.sessions.length, 1);
   assert.equal(progress.sessions[0].estimatedLevel, "B1");
   assert.deepEqual(progress.sessions[0].reviewPatterns, ["Conjugación en primera persona"]);
-  assert.equal(progress.vocabulary[0].term, "obrigado");
+  assert.equal(progress.vocabulary[0].term, "grazie");
   assert.equal(progress.reviewCards.length, 2, "graded error and qualitative pattern should both be scheduled");
   const answerCard = progress.reviewCards.find(card => card.cardType !== "pattern");
-  assert.equal(answerCard.term,"Olá");
+  assert.equal(answerCard.term,"Ciao");
   assert.equal(answerCard.meaning,"hola");
   const patternCard = progress.reviewCards.find(card => card.cardType === "pattern");
   assert.equal(patternCard.pattern, "Conjugación en primera persona");
@@ -54,11 +54,11 @@ test("persisting a session records history, vocabulary and makes graded errors i
 test("AI review cards from separate sessions do not overwrite each other", () => {
   const progress = loadProgress(null);
   const aiSession = () => ({
-    config: { language: "Portugués brasileño", languageId: "pt-BR" },
+    config: { language: "Italiano", languageId: "it-IT" },
     vocabulary: [],
     errors: [{
       turn: 1, exerciseId: "ai-turn-1", prompt: "Completa la frase",
-      expected: "Eu gostaria de água", explanation: "Usa gostaria"
+      expected: "Vorrei dell’acqua", explanation: "Usa gostaria"
     }]
   });
   const firstTime = Date.parse("2026-01-01T12:00:00.000Z");
@@ -70,7 +70,7 @@ test("AI review cards from separate sessions do not overwrite each other", () =>
 
 test("AI errors without an expected answer are not made into ungradable review cards", () => {
   const session = {
-    config: { language: "Portugués brasileño", languageId: "pt-BR" },
+    config: { language: "Italiano", languageId: "it-IT" },
     vocabulary: [],
     errors: [{
       turn: 1, exerciseId: "ai-turn-1", prompt: "Conversación libre",
@@ -103,9 +103,9 @@ test("successful spaced reviews advance 3, 7 and 14 day intervals; failure stays
 
 test("progress statistics can be filtered by language", () => {
   const progress = loadProgress(null);
-  progress.sessions.push({ languageId: "pt-BR", accuracy: 80 }, { languageId: "en", accuracy: 60 });
-  progress.vocabulary.push({ languageId: "pt-BR" });
-  const stats = getProgressStats(progress, "pt-BR");
+  progress.sessions.push({ languageId: "it-IT", accuracy: 80 }, { languageId: "legacy-hidden", accuracy: 60 });
+  progress.vocabulary.push({ languageId: "it-IT" });
+  const stats = getProgressStats(progress, "it-IT");
   assert.equal(stats.sessions, 1);
   assert.equal(stats.vocabulary, 1);
   assert.equal(stats.averageAccuracy, 80);
@@ -115,7 +115,7 @@ test("progress statistics can be filtered by language", () => {
 test("pattern review cards are deduplicated across sessions without resetting their schedule", () => {
   const progress = loadProgress(null);
   const session = {
-    config: { language: "Francés", languageId: "fr-FR" },
+    config: { language: "Italiano", languageId: "it-IT" },
     vocabulary: [], errors: [],
     errorsToReview: ["Acuerdo de género", "  Acuerdo de género  "]
   };

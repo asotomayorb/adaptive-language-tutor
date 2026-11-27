@@ -1,6 +1,6 @@
 # Adaptive Language Tutor
 
-Aplicación móvil-first para aprender idiomas mediante contenido progresivo, práctica, teoría contextual y seguimiento del aprendizaje.
+Aplicación móvil-first para aprender italiano desde el español mediante teoría contextual y seguimiento del aprendizaje.
 
 > **Punto de entrada operativo para personas y agentes IA.** Este README define cómo orientarse en el repositorio y qué documentación consultar. La especificación funcional completa está en [PRODUCT_SPEC.md](PRODUCT_SPEC.md); el estado técnico comprobado está en [PROJECT_STATUS.md](PROJECT_STATUS.md); las pruebas manuales pendientes están en [HUMAN_TEST_PLAN.md](HUMAN_TEST_PLAN.md).
 
@@ -17,22 +17,30 @@ Aplicación móvil-first para aprender idiomas mediante contenido progresivo, pr
 | Validación visual o prueba humana | HUMAN_TEST_PLAN.md y estado LIVE de Render |
 | Checkpoint o recuperación | Rama recovery/intermediate-theory-content; comparar commits/diff antes de recuperar |
 
-**Regla de lectura:** no releer todos los documentos por defecto. Consultar las secciones necesarias y ampliar el alcance solo si aparecen dependencias o contradicciones. PROJECT_STATUS.md contiene una bitácora histórica extensa: consultar su resumen y la entrada más reciente relacionada con la tarea; no recorrer las 1.400 líneas completas salvo auditoría histórica. Confirmar siempre la realidad contra HEAD, pruebas y estado LIVE, porque una entrada antigua puede estar desactualizada.
+**Regla de lectura:** no releer todos los documentos por defecto. Consultar las secciones necesarias y ampliar el alcance solo si aparecen dependencias o contradicciones. PROJECT_STATUS.md contiene el estado operativo y las decisiones de auditoría vigentes; consultar sus secciones relevantes y contrastarlas con el HEAD real. Confirmar siempre la realidad contra HEAD, pruebas y estado LIVE, porque una entrada antigua puede estar desactualizada.
 
-## 2. Estado y entorno de trabajo
+## 2. Alcance funcional vigente
+
+- Idioma de origen: español (`es-CL`). Idioma objetivo: italiano (`it-IT`), único idioma disponible.
+- Unidades 1 y 2 mantienen el contenido desarrollado y validado.
+- Unidades 3–6 conservan títulos y jerarquía; sus cuerpos deben permanecer vacíos hasta su reconstrucción desde las reglas establecidas en Unidades 1 y 2.
+- Las versiones anteriores de otros idiomas y sus catálogos se retiran. Si se decide incorporar otra lengua, se reconstruirá replicando el modelo italiano.
+- Ruta, Entrenamiento y tutor IA permanecen en espera. Se conserva su infraestructura solo cuando sea dependencia útil de una futura reactivación, siempre con español como origen e italiano como destino.
+
+## 3. Estado y entorno de trabajo
 
 - Repositorio: https://github.com/asotomayorb/adaptive-language-tutor
 - Rama activa de desarrollo: feature/mobile-bottom-navigation.
 - Rama de checkpoints que debe conservarse: [recovery/intermediate-theory-content](https://github.com/asotomayorb/adaptive-language-tutor/tree/recovery/intermediate-theory-content). No es rama de desarrollo ni fuente directa de Render.
 - Preview Render: https://adaptive-language-tutor-preview-5b3d.onrender.com/
-- Servicio Render: adaptive-language-tutor-preview-5b3d, workspace **My Workspace**. Verificar el deploy LIVE y su commit antes de afirmar que el preview contiene un cambio.
+- Servicio Render: adaptive-language-tutor-preview-5b3d, workspace confirmado **My Workspace** (`tea-dbus0u5g1s2s73coteeg`). Verificar el deploy LIVE y su commit antes de afirmar que el preview contiene un cambio.
 - El proyecto original de Replit permanece intacto; no modificarlo ni sincronizarlo sin autorización expresa.
 - El estado técnico, commits, pruebas y pendientes verificados están en [PROJECT_STATUS.md](PROJECT_STATUS.md).
 - Las comprobaciones manuales pendientes están en [HUMAN_TEST_PLAN.md](HUMAN_TEST_PLAN.md).
 - Las reglas funcionales y de producto están en [PRODUCT_SPEC.md](PRODUCT_SPEC.md).
 - La aprobación visual/funcional de Teoría en Unidades 1 y 2 es un checkpoint de producto; no implica que otros módulos estén terminados ni que futuras modificaciones estén aprobadas.
 
-## 3. Mapa de la especificación
+## 4. Mapa de la especificación
 
 | Sección de PRODUCT_SPEC.md | Contenido |
 |---|---|
@@ -46,11 +54,11 @@ Aplicación móvil-first para aprender idiomas mediante contenido progresivo, pr
 | 9 | Privacidad de contenido y derechos |
 | 12 | Registro breve de decisiones vigentes |
 
-## 4. Arquitectura y comandos
+## 5. Arquitectura y comandos
 
 - Frontend: index.html, src/app.js, src/styles.css.
 - Backend/API: server/index.js; adaptadores IA: server/provider.js; prompts/esquemas: server/prompts.js.
-- Cliente IA: src/core/tutor-client.js; pedagogía, contenido y progreso local: src/core/, src/content/.
+- Cliente IA: src/core/tutor-client.js; pedagogía, audio y progreso local: src/core/. La teoría italiana vigente está integrada en src/app.js; los catálogos de idiomas anteriores se retiraron.
 - Pruebas: tests/. Runtime: Node.js 20.6 o superior.
 
 ```bash
@@ -61,9 +69,9 @@ npm test
 npm run test:e2e
 ```
 
-La app queda en http://localhost:3000; desarrollo: npm run dev. Los smoke tests reales requieren secretos/variables privados configurados. Nunca subir claves API al repositorio.
+La app queda en http://localhost:3000; desarrollo: npm run dev. El smoke test directo del proveedor requiere secretos/variables privados configurados. No hay smoke de navegador del tutor IA mientras esa UI permanezca en espera. Nunca subir claves API al repositorio.
 
-## 5. Protocolo de trabajo
+## 6. Protocolo de trabajo
 
 ### Antes de editar
 1. Leer este README y verificar rama, HEAD y estado limpio/diff real.
@@ -81,7 +89,14 @@ La app queda en http://localhost:3000; desarrollo: npm run dev. Los smoke tests 
 6. Verificar Render LIVE y su commit antes de afirmar que el preview está actualizado.
 7. Solicitar prueba humana solo cuando la versión publicada corresponda al cambio validado; E2E no sustituye la revisión visual, táctil y auditiva en Android.
 8. Registrar checkpoints aprobados en la rama recovery/intermediate-theory-content y documentar claramente su referencia. No sobrescribir ni eliminar checkpoints existentes.
+9. No asignar una versión numerada a cada iteración: registrar hitos con commit, resultados CI y deploy. Reservar versiones semánticas/tags para releases identificables.
 
-## 6. Historial de documentación
+## 7. Historial de documentación
 
 - **26-11-2026:** reorganización documental para reducir lectura repetida: README convertido en índice operativo, especificación de producto separada en PRODUCT_SPEC.md, estado técnico y plan humano conservados en sus documentos respectivos. No se modificó código de la aplicación.
+- **26-11-2026:** checkpoint de continuidad guardado en `recovery/intermediate-theory-content`, commit `59c87d6a02d9dfe8ebc84de6e9417e29401f4a74`. El checkpoint conserva como padre el estado previo de recuperación y añade como segundo padre el HEAD activo `e2f930645d2655de4493edb258501a38ce292766`; no se sobrescribió el historial anterior. La rama de desarrollo permanece `feature/mobile-bottom-navigation`.
+
+- **26-11-2026:** workspace Render confirmado por el usuario: `My Workspace` (`tea-dbus0u5g1s2s73coteeg`).
+- **26-11-2026:** el usuario confirma que Render Preview funciona correctamente. Se fija español (`es-CL`) → italiano (`it-IT`) como único par lingüístico; se retiran los catálogos antiguos de otros idiomas y el código multilingüe asociado. Las Unidades 3–6 conservan solo títulos y jerarquía, sin contenido. Se mantienen en espera los módulos futuros con utilidad demostrable; no se eliminan ramas ni el checkpoint de recuperación.
+- **26-11-2026:** se retira el smoke de navegador del tutor IA porque esa interfaz no está activa; se conserva el smoke directo del backend italiano.
+- **26-11-2026:** auditoría español → italiano completada. Tests y Browser E2E aprobados en el commit `8dc529f`; smoke directo del proveedor italiano aprobado en `0994113`. Render Preview sigue mostrando el deploy anterior (`a947068`) y requiere confirmar el nuevo despliegue antes de la prueba humana de persistencia.
