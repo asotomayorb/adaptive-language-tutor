@@ -2073,7 +2073,7 @@ function renderItalianAppliedTopic(category, index, locale) {
     const phrase = part.trim();
     if (!phrase) return "";
     return '<span class="theory-speech-variant"><strong class="theory-target-word">' + escapeHTML(phrase) + '</strong></span>';
-  }).filter(Boolean).join('<span class="theory-variant-separator"> / </span>');
+  }).filter(Boolean).join('<span class="theory-variant-separator" data-separator="/"> / </span>');
   const rows = items => items.map(([term, meaning, note = ""]) =>
     '<tr><td>' + renderSpokenVariants(term) + '</td><td>' + renderLines(meaning) + '</td>' + (note ? '<td>' + escapeHTML(note) + '</td>' : '') + '</tr>'
   ).join("");
