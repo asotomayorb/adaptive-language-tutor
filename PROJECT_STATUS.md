@@ -76,3 +76,13 @@ Los registros históricos de sesiones de otros idiomas pueden permanecer en el a
 2. Ejecutar la prueba humana de persistencia/recarga, navegación y contenido de Teoría en el Preview actualizado.
 3. Solo después de la prueba, decidir si se eliminan las ramas históricas candidatas; no tocar la rama de checkpoint.
 4. Reconstruir Unidades 3–6 de forma progresiva, usando Unidades 1–2 como referencia; no introducir contenido provisional.
+
+
+## 8. Complemento de referencia A1 (27-11-2026)
+
+- Se amplió el contenido de referencia de Unidad 1: omisión habitual del pronombre sujeto, concordancia formal de `Lei` en tercera persona singular y explicación contextual de `essere/stare` sin equivalencia mecánica con «ser/estar».
+- Unidad 2: artículos definidos/indefinidos ahora incluyen sustantivos concretos y sus plurales; se explica que no hay plural directo de `un/una` y se introducen `dei/degli/delle` en uso partitivo frecuente. Los ejemplos italianos tienen pronunciación individual.
+- Adjetivos: ejemplos ampliados para masculino/femenino y singular/plural en terminaciones `-o` y `-e`.
+- Edad y procedencia: añadido `venire da` y explicitada la correspondencia informal `hai/sei` frente al tratamiento formal `ha/è` con `Lei`.
+- Se actualizaron las aserciones Browser E2E para cubrir los nuevos conceptos, ejemplos y variantes. Unidad 1 solo se amplió en su subtema gramatical; las Unidades 3–6 permanecen vacías.
+- Commits de implementación: `f600190`, `acc0962`, `57c48bc`, `bcdd071`, `7a30e61`. Validación local/CI y deploy Render pendientes de comprobación.
