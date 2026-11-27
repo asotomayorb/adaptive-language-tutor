@@ -268,7 +268,7 @@ try {
     {title:"Rutinas y lugares",terms:["svegliarsi","fare colazione","la casa","l’ufficio","Mi sveglio alle sette."]},
     {title:"Días y fechas",terms:["lunedì","domenica","gennaio","Il mio compleanno è il primo maggio."]},
     {title:"Presente habitual",terms:["Modelo -are","Modelo -ere","Modelo -ire","parliamo","prendiamo","dormiamo","Lavoro in ufficio."]},
-    {title:"Pasado («Passato prossimo» (pretérito perfecto compuesto))",terms:["avere","essere","-ato","fatto","Sono arrivata a casa.","Ieri ho studiato italiano."]},
+    {title:"Pasado (passato prossimo)",displayTitle:"Pasado («Passato prossimo» (pretérito perfecto compuesto))",terms:["avere","essere","-ato","fatto","Sono arrivata a casa.","Ieri ho studiato italiano."]},
     {title:"Futuro simple",terms:["futuro semplice","parlerò","prenderai","sar-","Domani lavorerò da casa."]},
     {title:"Rutinas diarias",terms:["Mi sveglio alle sette.","Faccio colazione e vado al lavoro.","Vado a letto alle dieci e mezza."]},
     {title:"La hora",terms:["Che ora è?","È l’una.","Sono le due.","e un quarto","meno un quarto","A che ora lavori?"]}
@@ -277,7 +277,7 @@ try {
   for(let i=0;i<unitThreeChecks.length;i++){
     await unitThreeTopics.nth(i).click();
     const check=unitThreeChecks[i];
-    assert.equal(await page.locator("#theory-title").innerText(),check.title,"Unit 3 topic title should match its content");
+    assert.equal(await page.locator("#theory-title").innerText(),check.displayTitle || check.title,"Unit 3 topic title should match its content");
     const body=page.locator("#theory-description");
     assert.equal(await body.locator(".theory-subtopic-content").count(),1,"Unit 3 should use the shared content wrapper");
     assert.equal(await body.locator(".theory-subtopic-intro").count(),1,"Unit 3 should include one concise introduction");
