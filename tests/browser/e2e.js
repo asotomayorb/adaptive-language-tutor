@@ -267,7 +267,7 @@ try {
     {title:"Profesiones",terms:["il medico","la medica","lo studente","la studentessa","Sono insegnante."]},
     {title:"Rutinas y lugares",terms:["svegliarsi","fare colazione","la casa","l’ufficio","Mi sveglio alle sette."]},
     {title:"Días y fechas",terms:["lunedì","domenica","gennaio","Il mio compleanno è il primo maggio."]},
-    {title:"Presente habitual",terms:["parlare","prendere","dormire","parliamo","Lavoro in ufficio."]},
+    {title:"Presente habitual",terms:["Modelo -are","Modelo -ere","Modelo -ire","parliamo","prendiamo","dormiamo","Lavoro in ufficio."]},
     {title:"Pasado (passato prossimo)",terms:["avere","essere","-ato","fatto","Sono arrivata a casa.","Ieri ho studiato italiano."]},
     {title:"Futuro simple",terms:["futuro semplice","parlerò","prenderai","sar-","Domani lavorerò da casa."]},
     {title:"Rutinas diarias",terms:["Mi sveglio alle sette.","Faccio colazione e vado al lavoro.","Vado a letto alle dieci e mezza."]},
