@@ -2114,7 +2114,7 @@ function renderItalianAppliedTopic(category, index, locale) {
         ["una (femenino)", "—", "Consonante", "una casa"],
         ["un’ (femenino)", "—", "Vocal", "un’amica"]
       ]) +
-      '<p class="theory-slide-text">No existe una forma plural directa de «un / una». Para hablar de una cantidad no especificada se usan con frecuencia «dei», «degli» y «delle», según el sustantivo: <em>dei libri</em> (unos libros), <em>degli amici</em> (unos amigos), <em>delle case</em> (unas casas).</p>';
+      '<p class="theory-slide-text">No existe una forma plural directa de «un / una». Para hablar de una cantidad no especificada se usan con frecuencia «dei», «degli» y «delle», según el sustantivo: <em class="theory-target-word">dei libri</em> (unos libros), <em class="theory-target-word">degli amici</em> (unos amigos), <em class="theory-target-word">delle case</em> (unas casas).</p>';
   }
   if (category === "Gramática" && index === 2) {
     const adjectiveRules = [["-o","-a","-i (masculino) / -e (femenino)"],["-e","—","-i (masculino y femenino)"]];
