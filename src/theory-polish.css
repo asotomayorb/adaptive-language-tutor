@@ -21,8 +21,9 @@
   overflow-y: auto;
   overscroll-behavior: contain;
   justify-content: flex-start;
-  padding-bottom: calc(100px + env(safe-area-inset-bottom));
+  padding-bottom: calc(170px + env(safe-area-inset-bottom)) !important;
   scroll-padding-top: 12px;
+  scroll-padding-bottom: 170px;
 }
 #screen-theory .theory-slide-footer {
   position: fixed;
@@ -54,6 +55,7 @@
 
 /* Fix scroll ownership in the inline lesson detail; keep navigation anchored. */
 #screen-theory .theory-detail-inline{min-height:0;}
+#screen-theory .theory-slide-content{box-sizing:border-box;}
 #screen-theory .theory-detail-inline .theory-slide-content{
   flex:1 1 auto!important;
   min-height:0!important;
