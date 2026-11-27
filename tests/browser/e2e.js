@@ -218,12 +218,33 @@ try {
       assert.ok((await examples.innerText()).includes("Un chico italiano.") && (await examples.innerText()).includes("Dos chicas interesantes."),"examples should retain Spanish translations");
     }
     if(i===0) {
-      assert.equal(await body.locator(".theory-slide-text").count(),0,"country subtopic should not contain an unnecessary closing paragraph");
-      const firstRow=body.locator("table").first().locator("tbody tr").first();
+      const countryTable=body.locator("table.country-language-table");
+      assert.equal(await countryTable.count(),1,"country-language table should use the balanced layout");
+      const headerWidths=await countryTable.locator("thead th").evaluateAll(cells=>cells.map(cell=>cell.getBoundingClientRect().width));
+      assert.ok(headerWidths[1]>=headerWidths[0] && headerWidths[1]>=headerWidths[2],"the longer demonym column should receive more space");
+      const tableMetrics=await countryTable.evaluate(el=>({right:el.getBoundingClientRect().right,parentRight:el.parentElement.getBoundingClientRect().right,cells:[...el.querySelectorAll("tbody tr:first-child td")].map(td=>({scrollWidth:td.scrollWidth,clientWidth:td.clientWidth}))}));
+      assert.ok(tableMetrics.right<=tableMetrics.parentRight+1,"country table must stay within its content container");
+      assert.ok(tableMetrics.cells.every(cell=>cell.scrollWidth<=cell.clientWidth+1),"country table text must wrap without overflowing its cells");
+      assert.ok(Math.max(...headerWidths)-Math.min(...headerWidths)>2,"column widths should adapt to content rather than be identical");
+      const countryRows=countryTable.locator("tbody tr");
+      for(let rowIndex=0;rowIndex<await countryRows.count();rowIndex++) {
+        const cellHeights=await countryRows.nth(rowIndex).locator("td").evaluateAll(cells=>cells.map(cell=>cell.getBoundingClientRect().height));
+        assert.ok(Math.max(...cellHeights)-Math.min(...cellHeights)<2,"cells in each country row should have uniform heights");
+      }
+      assert.equal(await countryTable.locator(".speak-button").count(),0,"country-language table should not display Play buttons");
+      const firstRow=countryRows.first();
       assert.equal(await firstRow.locator("td").count(),3,"country, demonym and language must have separate columns");
       assert.ok((await firstRow.locator("td").first().innerText()).includes("(Italia)"),"country cell should keep Spanish translation in parentheses");
-      assert.equal(await firstRow.locator("td").first().locator(".theory-target-tap[role=button]").count(),1,"Italian country name should remain individually tappable for pronunciation");
-      for(let cellIndex=1;cellIndex<3;cellIndex++) assert.ok(await firstRow.locator("td").nth(cellIndex).locator(".theory-target-tap[role=button]").count()>0,"foreign demonym/language cells should remain individually tappable for pronunciation");
+      for(let cellIndex=1;cellIndex<3;cellIndex++) {
+        assert.equal(await countryRows.locator("td").nth(cellIndex).locator(".theory-translation").count(),0,"parenthetical Spanish translations belong only in the first column");
+      }
+      const countryTargets=firstRow.locator("td").first().locator(".theory-target-tap[role=button]");
+      assert.equal(await countryTargets.count(),1,"Italian country name should remain individually tappable for pronunciation");
+      const demonymTargets=firstRow.locator("td").nth(1).locator(".theory-target-tap[role=button]");
+      assert.equal(await demonymTargets.count(),2,"slash-separated demonym forms should have independent pronunciation targets");
+      assert.ok((await firstRow.locator("td").nth(1).innerText()).includes("italiano / italiana"),"the original separator should remain visible between separately pronounceable forms");
+      for(let cellIndex=1;cellIndex<3;cellIndex++) assert.ok(await firstRow.locator("td").nth(cellIndex).locator(".theory-target-tap[role=button]").count()>0,"Italian demonym/language forms should remain individually tappable for pronunciation");
+      assert.equal(await body.locator(".theory-slide-text").count(),0,"country subtopic should not contain an unnecessary closing paragraph");
     }
     if(i===3) assert.ok(!(await body.innerText()).includes("(formal)"),"translations should not contain parenthetical mini-explanations");
     await page.locator("#theory-back").click();

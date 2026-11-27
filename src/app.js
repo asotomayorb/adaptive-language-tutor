@@ -2136,8 +2136,15 @@ function renderItalianAppliedTopic(category, index, locale) {
       ["Cile","Chile","cileno / cilena","chileno / chilena","spagnolo","español"],
       ["Brasile","Brasil","brasiliano / brasiliana","brasileño / brasileña","portoghese","portugués"]
     ];
-    const cell = (term,translation,asCountry=false) => '<td><strong class="theory-target-word">' + term.split(" / ").map(part => escapeHTML(part) + ' ' + speakerButton(part,locale)).join('<span class="theory-variant-separator"> / </span>') + '</strong>' + (asCountry ? ' <span>(' + escapeHTML(translation) + ')</span>' : '<small>' + escapeHTML(translation) + '</small>') + '</td>';
-    return '<table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>País</th><th>Gentilicio</th><th>Idioma</th></tr></thead><tbody>' +
+    const cell = (term,translation,asCountry=false) => {
+      const parts = String(term).split(/(\s*\/\s*|\s*[–—-]\s*)/);
+      const spoken = parts.map((part,index) => index % 2 === 0
+        ? '<strong class="theory-target-word">' + escapeHTML(part.trim()) + '</strong>'
+        : '<span class="theory-variant-separator">' + escapeHTML(part) + '</span>'
+      ).join("");
+      return '<td>' + spoken + (asCountry ? ' <span class="theory-translation">(' + escapeHTML(translation) + ')</span>' : '') + '</td>';
+    };
+    return '<table class="theory-pronoun-table theory-bilingual-table country-language-table"><thead><tr><th>País</th><th>Gentilicio</th><th>Idioma</th></tr></thead><tbody>' +
       countries.map(([country,countryEs,nationality,nationalityEs,language,languageEs]) => '<tr>' + cell(country,countryEs,true) + cell(nationality,nationalityEs) + cell(language,languageEs) + '</tr>').join("") +
       '</tbody></table>';
   }

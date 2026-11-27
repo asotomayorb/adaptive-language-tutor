@@ -45,7 +45,7 @@ Los registros históricos de sesiones de otros idiomas pueden permanecer en el a
 ## 4. Ramas
 
 - **Activa:** `feature/mobile-bottom-navigation` (fuente del Preview Render).
-- **Checkpoint obligatorio:** `recovery/intermediate-theory-content`, commit `59c87d6a02d9dfe8ebc84de6e9417e29401f4a74`. No borrar ni usar como rama cotidiana.
+- **Checkpoint obligatorio:** `recovery/intermediate-theory-content`, último checkpoint `d14fbdd8cb1daace8a31a321cfe445b32447139f`. Conserva el checkpoint anterior `59c87d6a…` y el estado auditado como segundo padre. No borrar ni usar como rama cotidiana.
 - **Dependencia PR #2 y base PR #3:** `feature/ai-tutor-pedagogy`; mantener mientras los PR permanezcan abiertos.
 - **PR #8:** `feature/unit-2-clarity-refinement`; mantener mientras siga abierto.
 - **Preview separado:** `rebuild/functional-baseline`; conservar mientras siga existiendo ese servicio.
@@ -53,13 +53,14 @@ Los registros históricos de sesiones de otros idiomas pueden permanecer en el a
 
 ## 5. Render y validación
 
-- El usuario confirma el 26-11-2026 que el Preview Render anterior funciona correctamente.
-- **Commit funcional auditado:** `8dc529f6b417371b2b60f8b7dc013941aa6cd67f`.
-- **Tests:** aprobados, ejecución [45867787511](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45867787511).
-- **Browser E2E:** aprobado, ejecución [45867787428](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45867787428). Comprueba navegación y que cada subtema de Unidades 3–6 conserve el título pero no tenga texto ni tablas.
-- **Smoke del proveedor italiano:** aprobado, ejecución [45867480519](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45867480519), commit `099411344f613e6a508c3fac783310997f757c22`. No hubo cambios posteriores al backend.
-- **Render:** servicio configurado con auto-deploy (`autoDeploy=yes`), pero el último deploy visible sigue siendo `dep-dc44gf56e07s73e58ajg`, commit `a9470686a65fba54c4e2bbb192326d3b58fe12ab`. No aparece todavía un deploy de los commits de auditoría. Por tanto, el Preview actual no contiene aún esta limpieza y no debe usarse para la prueba de persistencia de la nueva versión.
-- **Prueba humana pendiente:** después de confirmar el nuevo deploy, validar persistencia/recarga, tipografía, tablas y TTS de Unidades 1–2, además del contenido vacío de Unidades 3–6.
+- El usuario confirmó el 26-11-2026 que el Preview Render funcionaba correctamente.
+- **Checkpoint de auditoría:** `recovery/intermediate-theory-content`, commit `d14fbdd8cb1daace8a31a321cfe445b32447139f`.
+- **Cambio Países e idiomas (ajuste de desbordamiento y distribución):** CSS actualizado para que el ancho de columnas responda al contenido, el gentilicio tenga espacio para sus variantes y el texto envuelva sin desbordarse; celdas de cada fila permanecen alineadas. Se conserva TTS por variante y traducción solo en País. Cambios en `src/styles.css`, `tests/browser/e2e.js` y `PRODUCT_SPEC.md`.
+- **Tests:** aprobados en [45988073370](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45988073370), incluyendo `npm run check` y `npm test`.
+- **Browser E2E:** aprobado en [45988073334](https://github.com/asotomayorb/adaptive-language-tutor/actions/runs/45988073334). Verifica que no haya botones Play, que variantes separadas tengan TTS independiente, que las columnas sean iguales y que las traducciones solo aparezcan en País.
+- **Render LIVE antes del ajuste actual:** `dep-dc4n04h7lnhs73948v10`, commit `8f268aab801356625bf6d00fa4a1775d43ec6505`. Publicar el ajuste de desbordamiento al terminar validación.
+- **Prueba humana pendiente:** validar en Android pronunciación por toque, variantes, traducciones, ajuste de línea, distribución adaptada al contenido y persistencia/recarga.
+
 
 ## 6. Criterio de limpieza
 

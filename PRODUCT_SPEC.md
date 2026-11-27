@@ -122,7 +122,7 @@ Unidad 1 conserva cuatro subtemas desarrollados:
 - Pronombres y ser/estar.
 
 Unidad 2 conserva cuatro subtemas desarrollados:
-- Países e idiomas: tabla País / Gentilicio / Idioma. Mostrar el nombre italiano seguido de la traducción española entre paréntesis; pronunciar las formas italianas individualmente.
+- Países e idiomas: tabla País / Gentilicio / Idioma. Mostrar la traducción española entre paréntesis solo junto al país, en la primera columna; no repetir traducciones en las columnas de gentilicio e idioma. Eliminar botones Play: cada forma italiana se pronuncia tocando el texto, y las variantes separadas por /, guion u otro separador deben ser objetivos TTS independientes. Ajustar el ancho de las columnas al contenido para una composición equilibrada, sin forzar anchos iguales; permitir que el texto se envuelva entre palabras y variantes sin desbordarse, y mantener alineadas las celdas de cada fila.
 - Artículos y concordancia: reglas breves antes de tablas separadas para artículos definidos e indefinidos. Las tablas usan las columnas Singular / Plural / Sustantivo-regla; identificar el género en Singular. Explicar las formas de uso de manera clara y concisa.
 - Artículos y adjetivos: conservar el párrafo introductorio breve, tabla de reglas Terminación / Femenino / Plural y tabla de ejemplos Terminación / Ejemplo aplicado. Para adjetivos en -o: femenino -a; plural -i masculino y -e femenino. Para adjetivos en -e: misma forma en singular masculino/femenino y plural -i. Las frases italianas llevan TTS individual y traducción española.
 - Edad y procedencia: explicar el uso de `avere`, `essere di` y `venire da`, además del trato formal/informal cuando corresponda; evitar aclaraciones parentéticas redundantes en las traducciones.

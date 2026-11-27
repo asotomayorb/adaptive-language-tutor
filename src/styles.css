@@ -1398,3 +1398,43 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
     line-height:1.5!important;
   }
 }
+
+/* Países e idiomas: columnas guiadas por el contenido, con ajuste de línea y celdas alineadas por fila. */
+#screen-theory #theory-description table.country-language-table {
+  display:table;
+  width:100%!important;
+  max-width:100%;
+  table-layout:auto!important;
+  border-collapse:collapse;
+}
+#screen-theory #theory-description table.country-language-table th,
+#screen-theory #theory-description table.country-language-table td {
+  width:auto!important;
+  height:auto;
+  padding:10px 8px;
+  vertical-align:middle;
+  white-space:normal!important;
+  overflow-wrap:break-word;
+  word-break:normal;
+  hyphens:none;
+  line-height:1.4;
+}
+#screen-theory #theory-description table.country-language-table th:first-child,
+#screen-theory #theory-description table.country-language-table td:first-child,
+#screen-theory #theory-description table.country-language-table th:last-child,
+#screen-theory #theory-description table.country-language-table td:last-child {
+  width:25%!important;
+}
+#screen-theory #theory-description table.country-language-table .theory-target-word {
+  display:inline;
+  font-weight:700;
+}
+#screen-theory #theory-description table.country-language-table .theory-translation {
+  display:inline;
+  margin:0;
+  font-size:inherit;
+  line-height:inherit;
+}
+#screen-theory #theory-description table.country-language-table .theory-variant-separator {
+  white-space:normal;
+}
