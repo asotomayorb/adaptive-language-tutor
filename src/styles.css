@@ -1372,14 +1372,13 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
 }
 
 
-/* Global standard: every Theory subtopic table uses the same body-text size as Articles and Adjectives. */
+/* Global standard: every Theory subtopic table uses the same body-text size. */
 #screen-theory #theory-description table tbody td,
 #screen-theory #theory-description table tbody td p,
 #screen-theory #theory-description table tbody td li,
 #screen-theory #theory-description table tbody td strong,
 #screen-theory #theory-description table tbody td .theory-target-word,
-#screen-theory #theory-description table tbody td .theory-target-tap,
-#screen-theory #theory-description table tbody td .speak-button{
+#screen-theory #theory-description table tbody td .theory-target-tap{
   font-size:17px!important;
   line-height:1.5!important;
 }
@@ -1389,7 +1388,10 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
   #screen-theory #theory-description table tbody td li,
   #screen-theory #theory-description table tbody td strong,
   #screen-theory #theory-description table tbody td .theory-target-word,
-  #screen-theory #theory-description table tbody td .theory-target-tap,
+  #screen-theory #theory-description table tbody td .theory-target-tap{
+    font-size:15px!important;
+    line-height:1.5!important;
+  }
 }
 
 /* Países e idiomas: columnas guiadas por el contenido, con ajuste de línea y celdas alineadas por fila. */
