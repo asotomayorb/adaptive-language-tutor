@@ -2084,47 +2084,49 @@ function renderItalianAppliedTopic(category, index, locale) {
   if (category === "Gramática" && index === 0) {
     const pronouns = [["io","yo"],["tu","tú"],["lui / lei","él / ella"],["Lei","usted (formal)"],["noi","nosotros/as"],["voi","ustedes"],["loro","ellos/as"]];
     const verbs = [["io","sono","sto"],["tu","sei","stai"],["lui / lei","è","sta"],["Lei","è","sta"],["noi","siamo","stiamo"],["voi","siete","state"],["loro","sono","stanno"]];
-    return '<p class="theory-slide-text">Los pronombres indican quién realiza la acción. «<em>Essere</em>» expresa identidad y características; «<em>stare</em>» expresa estado o condición. Observa cada elemento por separado:</p>' +
+    return '<p class="theory-slide-text">El italiano suele omitir el pronombre sujeto porque la terminación verbal normalmente indica la persona: <em>Sono cileno</em> (soy chileno). Se usa para dar énfasis o evitar ambigüedad. «Lei» con mayúscula es el tratamiento formal de «usted» y lleva el verbo en tercera persona singular.</p>' +
       '<h3>Pronombres personales</h3><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
       pronouns.map(([term,meaning]) => '<tr><td><strong class="theory-target-word">' + term + '</strong> ' + speakerButton(term,locale) + '</td><td>' + meaning + '</td></tr>').join("") +
-      '</tbody></table><h3>Verbos essere y stare</h3><table class="theory-pronoun-table theory-bilingual-table theory-verb-comparison-table"><thead><tr><th>Persona</th><th>Essere</th><th>Stare</th></tr></thead><tbody>' +
+      '</tbody></table><h3>Verbos essere y stare</h3><p class="theory-slide-text">«<em>Essere</em>» se usa para identidad, origen, profesión y características. «<em>Stare</em>» aparece, entre otros usos, en expresiones de estado o condición como <em>stare bene</em> (estar bien). No equivalen de forma automática al «ser» y «estar» españoles: el verbo depende de la construcción italiana.</p><table class="theory-pronoun-table theory-bilingual-table theory-verb-comparison-table"><thead><tr><th>Persona</th><th>Essere</th><th>Stare</th></tr></thead><tbody>' +
       verbs.map(([person,essere,stare]) => '<tr><td>' + person + '</td><td>' + renderSpokenVariants(essere) + '</td><td>' + renderSpokenVariants(stare) + '</td></tr>').join("") +
-      '</tbody></table>';
+      '</tbody></table><p class="theory-slide-text"><em class="theory-target-word">Sono di Santiago.</em> (Soy de Santiago.) · <em class="theory-target-word">Sto bene.</em> (Estoy bien.)</p>';
   }
   if (category === "Gramática" && index === 1) {
     const articleTable = (title, tableRows) =>
       '<h3>' + title + '</h3><table class="theory-pronoun-table theory-bilingual-table article-concordance-table"><thead><tr><th>Singular</th><th>Plural</th><th>Sustantivo / regla</th></tr></thead><tbody>' +
-      tableRows.map(([singular, plural, rule]) => {
+      tableRows.map(([singular, plural, rule, example]) => {
         const match = singular.match(/^(.*?) \((masculino|femenino)\)$/);
         const singularCell = match ? renderSpokenVariants(match[1]) + ' <span>(' + match[2] + ')</span>' : renderSpokenVariants(singular);
-        return '<tr><td>' + singularCell + '</td><td>' + (plural === "—" ? "—" : renderSpokenVariants(plural)) + '</td><td>' + escapeHTML(rule) + '</td></tr>';
+        const exampleMarkup = example ? '<br><span class="theory-article-example">' + renderSpokenVariants(example) + '</span>' : '';
+        return '<tr><td>' + singularCell + '</td><td>' + (plural === "—" ? "—" : renderSpokenVariants(plural)) + '</td><td>' + escapeHTML(rule) + exampleMarkup + '</td></tr>';
       }).join("") + '</tbody></table>';
-    return '<p class="theory-slide-text">El artículo concuerda con el sustantivo en género y número.</p>' +
+    return '<p class="theory-slide-text">El artículo concuerda con el sustantivo en género y número. Elige la forma según el género y el sonido inicial del sustantivo; observa también cómo cambia el sustantivo en plural.</p>' +
       articleTable("Artículos definidos", [
-        ["il (masculino)", "i", "Consonante ordinaria"],
-        ["lo (masculino)", "gli", "s seguida de consonante; z, gn, ps o x al inicio de palabra"],
-        ["l’ (masculino)", "gli", "Vocal"],
-        ["la (femenino)", "le", "Consonante"],
-        ["l’ (femenino)", "le", "Vocal"]
+        ["il (masculino)", "i", "Consonante ordinaria", "il libro / i libri"],
+        ["lo (masculino)", "gli", "s seguida de consonante; z, gn, ps o x al inicio de palabra", "lo studente / gli studenti"],
+        ["l’ (masculino)", "gli", "Vocal", "l’amico / gli amici"],
+        ["la (femenino)", "le", "Consonante", "la casa / le case"],
+        ["l’ (femenino)", "le", "Vocal", "l’amica / le amiche"]
       ]) +
       articleTable("Artículos indefinidos", [
-        ["un (masculino)", "—", "Consonante ordinaria o vocal; sin apóstrofo"],
-        ["uno (masculino)", "—", "s seguida de consonante; z, gn, ps o x al inicio de palabra"],
-        ["una (femenino)", "—", "Consonante"],
-        ["un’ (femenino)", "—", "Vocal"]
-      ]);
+        ["un (masculino)", "—", "Consonante ordinaria o vocal; sin apóstrofo", "un libro / un amico"],
+        ["uno (masculino)", "—", "s seguida de consonante; z, gn, ps o x al inicio de palabra", "uno studente / uno zaino"],
+        ["una (femenino)", "—", "Consonante", "una casa"],
+        ["un’ (femenino)", "—", "Vocal", "un’amica"]
+      ]) +
+      '<p class="theory-slide-text">No existe una forma plural directa de «un / una». Para hablar de una cantidad no especificada se usan con frecuencia «dei», «degli» y «delle», según el sustantivo: <em class="theory-target-word">dei libri</em> (unos libros), <em class="theory-target-word">degli amici</em> (unos amigos), <em class="theory-target-word">delle case</em> (unas casas).</p>';
   }
   if (category === "Gramática" && index === 2) {
     const adjectiveRules = [["-o","-a","-i (masculino) / -e (femenino)"],["-e","—","-i (masculino y femenino)"]];
     const adjectives = [["bello","bonito"],["buono","bueno"],["grande","grande"],["nuovo","nuevo"],["piccolo","pequeño"],["interessante","interesante"]];
-    const examples = [["-o","Un ragazzo italiano.","Un chico italiano."],["-a","Una ragazza italiana.","Una chica italiana."],["-e → -i","Due ragazze interessanti.","Dos chicas interesantes."]];
+    const examples = [["-o","Un ragazzo italiano.","Un chico italiano."],["-a","Una ragazza italiana.","Una chica italiana."],["-i","Due ragazzi italiani.","Dos chicos italianos."],["-e (m./f.)","Un ragazzo interessante. / Una ragazza interessante.","Un chico interesante. / Una chica interesante."],["-i (de -e)","Due ragazzi interessanti. / Due ragazze interessanti.","Dos chicos interesantes. / Dos chicas interesantes."]];
     return '<p class="theory-slide-text">El adjetivo normalmente va después del sustantivo y concuerda con él en género y número.</p>' +
       '<h3>Formación de adjetivos</h3><table class="theory-pronoun-table theory-bilingual-table adjective-rules-table"><thead><tr><th>Terminación</th><th>Femenino</th><th>Plural</th></tr></thead><tbody>' +
       adjectiveRules.map(([ending,feminine,plural]) => '<tr><td><strong>' + ending + '</strong></td><td>' + feminine + '</td><td>' + plural + '</td></tr>').join("") +
       '</tbody></table><h3>Adjetivos frecuentes</h3><table class="theory-pronoun-table theory-bilingual-table adjective-vocabulary-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' +
       adjectives.map(([word,meaning]) => '<tr><td><strong class="theory-target-word">' + word + '</strong> ' + speakerButton(word,locale) + '</td><td>' + meaning + '</td></tr>').join("") +
       '</tbody></table><section class="theory-example adjective-example-block"><h3>Ejemplos</h3><table class="theory-pronoun-table theory-bilingual-table adjective-examples-table"><thead><tr><th>Terminación</th><th>Ejemplo aplicado</th></tr></thead><tbody>' +
-      examples.map(([ending,phrase,translation]) => '<tr><td><strong>' + ending + '</strong></td><td><span class="theory-target-word">' + phrase + '</span> ' + speakerButton(phrase,locale) + '<p>' + translation + '</p></td></tr>').join("") +
+      examples.map(([ending,phrase,translation]) => '<tr><td><strong>' + ending + '</strong></td><td>' + renderSpokenVariants(phrase) + '<p>' + translation + '</p></td></tr>').join("") +
       '</tbody></table></section>';
   }
   if (category === "Vocabulario" && index === 0) {
@@ -2153,13 +2155,13 @@ function renderItalianAppliedTopic(category, index, locale) {
       [["Buongiorno /<br>Buonasera","Buenos días /<br>buenas tardes-noches"],["Ciao","Hola / chao"],["Arrivederci /<br>A presto","Adiós /<br>hasta pronto"]],
       [["Mi chiamo… /<br>Sono…","Me llamo… /<br>soy…"],["Come ti chiami? /<br>Come si chiama?","¿Cómo te llamas? /<br>¿Cómo se llama? (formal)"],["Piacere!","¡Mucho gusto!"]],
       [["Come stai? /<br>Come sta?","¿Cómo estás? /<br>¿Cómo está? (formal)"],["Sto bene, grazie.","Estoy bien, gracias."],["Così così.","Más o menos."],["Non c'è male.","No está mal."],["E tu? /<br>E Lei?","¿Y tú? /<br>¿Y usted?"]],
-      [["Quanti anni hai? /<br>Quanti anni ha?","¿Cuántos años tienes? /<br>¿Cuántos años tiene?"],["Ho vent’anni.","Tengo veinte años."],["Di dove sei? /<br>Di dov’è?","¿De dónde eres? /<br>¿De dónde es?"],["Sono del Cile.","Soy de Chile."],["Sono cileno/a.","Soy chileno/a."]]
+      [["Quanti anni hai? /<br>Quanti anni ha?","¿Cuántos años tienes? /<br>¿Cuántos años tiene?"],["Ho vent’anni.","Tengo veinte años."],["Di dove sei? /<br>Di dov’è?","¿De dónde eres? /<br>¿De dónde es?"],["Sono del Cile.","Soy de Chile."],["Vengo dal Cile.","Vengo de Chile."],["Sono cileno/a.","Soy chileno/a."]]
     ];
     const introductions = [
       "Saluda y despídete según el momento y la cercanía.",
       "Preséntate y pregunta el nombre de otra persona; usa la forma informal con alguien de confianza y la formal para mostrar cortesía.",
       "Pregunta por el estado de alguien y responde. «Come stai?» y «Come sta?» expresan el mismo mensaje en trato informal y formal.",
-      "Para preguntar la edad se usa «avere» (tener); para preguntar el origen, «essere» (ser). Las formas con «Lei» son de cortesía."
+      "Para la edad se usa «avere» (tener). El origen puede expresarse con «essere di» (ser de) o «venire da» (venir de). «Hai / sei» se usa en trato informal; «ha / è» corresponde al tratamiento formal «Lei»."
     ];
     return '<p class="theory-slide-text">' + introductions[index] + '</p><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' + rows(expressions[index]) + '</tbody></table>';
   }

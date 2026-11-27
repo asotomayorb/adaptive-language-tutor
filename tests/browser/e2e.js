@@ -113,6 +113,8 @@ try {
       assert.equal(await stateQuestionCell.locator(".theory-speech-variant").count(), 2, "formal and informal state questions should share one cell with separate speech controls");
     }
     if (i === 3) {
+      assert.ok(topicText.includes("omitir el pronombre sujeto") && topicText.includes("Lei") && topicText.includes("tercera persona singular"), "Unit 1 should explain subject omission and formal Lei agreement");
+      assert.ok(topicText.includes("Sono di Santiago.") && topicText.includes("Sto bene."), "essere and stare should be contextualized with Italian examples");
       const verbHeading = page.locator("#theory-description h3").nth(1);
       assert.equal(await verbHeading.innerText(), "Verbos «Essere» (ser) y «Stare» (estar)", "Italian terms in subtopic headings should be italicized, quoted and translated");
       assert.equal(await verbHeading.locator("em").count(), 2, "Italian terms should be italicized only in the heading");
@@ -158,9 +160,9 @@ try {
   assert.deepEqual(await unitTwoTopics.locator(".theory-tree-topic-name").allInnerTexts(), ["Países e idiomas","Artículos y concordancia","Artículos y adjetivos","Edad y procedencia"], "Unit 2 should retain its four planned subtopics");
   const unitTwoChecks = [
     {title:"Países e idiomas", terms:["(Italia)","italiano"]},
-    {title:"Artículos y concordancia", terms:["Artículos definidos","Artículos indefinidos","lo","masculino","gli","z, gn, ps o x","un’","femenino"]},
-    {title:"Artículos y adjetivos", terms:["ragazzo","ragazza"]},
-    {title:"Edad y procedencia", terms:["Quanti anni hai?","Di dove sei?","Ho vent’anni."]}
+    {title:"Artículos y concordancia", terms:["Artículos definidos","Artículos indefinidos","lo","masculino","gli","z, gn, ps o x","un’","femenino","il libro","i libri","lo studente","gli studenti","dei libri","degli amici","delle case"]},
+    {title:"Artículos y adjetivos", terms:["ragazzo","ragazza","Due ragazzi italiani.","Un ragazzo interessante.","Una ragazza interessante.","Due ragazzi interessanti."]},
+    {title:"Edad y procedencia", terms:["Quanti anni hai?","Di dove sei?","Ho vent’anni.","Vengo dal Cile.","essere di","venire da"]}
   ];
   for (let i=0;i<unitTwoChecks.length;i++) {
     await unitTwoTopics.nth(i).click();
@@ -196,7 +198,7 @@ try {
     }
     if(i===1) {
       assert.equal(await body.locator(".theory-rule-list").count(),0,"article intro should not be a bullet list");
-      assert.equal(await body.locator(".theory-slide-text").count(),1,"article subtopic should retain only the concordance sentence");
+      assert.equal(await body.locator(".theory-slide-text").count(),2,"article subtopic should explain concordance and plural indefinite forms");
       assert.ok(!(await body.innerText()).includes("…"),"article rules should not end in an unexplained ellipsis");
     }
     if(i===2) {
@@ -208,14 +210,14 @@ try {
       assert.deepEqual((await vocabulary.locator("tbody tr").allInnerTexts()).map(value=>value.replace(/\s+/g," ").trim()),["bello bonito","buono bueno","grande grande","nuovo nuevo","piccolo pequeño","interessante interesante"],"frequent adjectives should appear with Spanish meanings before the examples");
       assert.equal(await vocabulary.locator(".theory-target-tap[role=button]").count(),6,"each vocabulary adjective should have its own tappable TTS control");
       const examples=body.locator(".adjective-examples-table");
-      assert.deepEqual(await examples.locator("tbody tr td:first-child").allInnerTexts(),["-o","-a","-e → -i"],"examples should be keyed by ending, not pronoun");
-      assert.equal(await examples.locator(".theory-target-tap[role=button]").count(),3,"each Italian example should have its own tappable TTS control");
+      assert.deepEqual(await examples.locator("tbody tr td:first-child").allInnerTexts(),["-o","-a","-i","-e (m./f.)","-i (de -e)"],"examples should cover masculine/feminine and singular/plural agreement");
+      assert.equal(await examples.locator(".theory-target-tap[role=button]").count(),7,"each Italian example phrase should have its own tappable TTS control");
       const adjectiveTables=body.locator(".adjective-rules-table, .adjective-vocabulary-table, .adjective-examples-table");
       const dimensions=await adjectiveTables.evaluateAll(nodes=>nodes.map(node=>({width:Math.round(node.getBoundingClientRect().width),fonts:[...node.querySelectorAll("tbody td")].map(cell=>getComputedStyle(cell).fontSize),wrap:[...node.querySelectorAll("th,td")].map(cell=>({overflow:getComputedStyle(cell).overflowWrap,word:getComputedStyle(cell).wordBreak,hyphens:getComputedStyle(cell).hyphens}))})));
       assert.ok(dimensions.every(item=>item.width===dimensions[0].width && item.fonts.every(font=>font==="15px")),"adjective tables should share the same width and readable, uniform 15px mobile body text");
       assert.ok(dimensions.every(item=>item.wrap.every(style=>style.overflow==="normal" && style.word==="normal" && style.hyphens==="none")),"table cells must wrap only between words and never split a word");
       assert.equal(await body.locator(".theory-slide-text").first().evaluate(el=>getComputedStyle(el).overflowWrap),"normal","explanatory paragraphs must not split words either");
-      assert.ok((await examples.innerText()).includes("Un chico italiano.") && (await examples.innerText()).includes("Dos chicas interesantes."),"examples should retain Spanish translations");
+      assert.ok((await examples.innerText()).includes("Un chico italiano.") && (await examples.innerText()).includes("Dos chicos italianos.") && (await examples.innerText()).includes("Dos chicas interesantes."),"examples should retain varied Spanish translations");
     }
     if(i===0) {
       const countryTable=body.locator("table.country-language-table");
@@ -246,7 +248,7 @@ try {
       for(let cellIndex=1;cellIndex<3;cellIndex++) assert.ok(await firstRow.locator("td").nth(cellIndex).locator(".theory-target-tap[role=button]").count()>0,"Italian demonym/language forms should remain individually tappable for pronunciation");
       assert.equal(await body.locator(".theory-slide-text").count(),0,"country subtopic should not contain an unnecessary closing paragraph");
     }
-    if(i===3) assert.ok(!(await body.innerText()).includes("(formal)"),"translations should not contain parenthetical mini-explanations");
+    if(i===3) { assert.ok(!(await body.innerText()).includes("(formal)"),"translations should not contain parenthetical mini-explanations"); assert.ok((await body.innerText()).includes("Hai / sei") && (await body.innerText()).includes("ha / è"),"age and origin should distinguish informal and formal forms"); }
     await page.locator("#theory-back").click();
   }
   for (let unitIndex=2;unitIndex<await unitRows.count();unitIndex++) {
