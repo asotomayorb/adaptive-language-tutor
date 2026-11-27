@@ -1,6 +1,6 @@
 # Estado operativo del proyecto — Adaptive Language Tutor
 
-**Fecha de auditoría:** 26-11-2026  
+**Fecha de auditoría:** 27-11-2026  
 **Repositorio:** https://github.com/asotomayorb/adaptive-language-tutor  
 **Rama de desarrollo:** `feature/mobile-bottom-navigation`  
 **Rama de checkpoints:** `recovery/intermediate-theory-content` — conservar siempre.  
@@ -14,7 +14,8 @@
 - **Idioma objetivo:** italiano (`it-IT`), único idioma disponible.
 - **UI activa:** Teoría y Estadísticas.
 - **Contenido desarrollado y validado por CI/E2E:** Unidades 1, 2 y 3.
-- **Unidad 3:** nueve subtemas desarrollados bajo la estructura común de Teoría.\n- **Unidades 4–6:** conservar títulos de unidades y subtemas, categorías y jerarquía; sus cuerpos permanecen vacíos hasta su desarrollo.
+- **Unidad 3:** nueve subtemas desarrollados bajo la estructura común de Teoría.
+- **Unidades 4–6:** conservar títulos de unidades y subtemas, categorías y jerarquía; sus cuerpos permanecen vacíos hasta su desarrollo.
 - **Ruta, Entrenamiento y tutor IA:** en espera. Mantener únicamente infraestructura que siga siendo una dependencia útil de su futura reactivación. Cuando se reactiven, usar español como origen e italiano como destino.
 - **Versiones de portugués e inglés:** descartadas como versiones de producto. No mantener sus catálogos ni contenido; una eventual versión posterior se reconstruirá desde el modelo italiano y no se reactivarán los catálogos antiguos.
 - **Otros idiomas heredados:** descartados. No mostrar ni mantener selectores, catálogos o contenido multilingüe.
