@@ -250,7 +250,7 @@ try {
       assert.equal(await demonymTargets.count(),2,"slash-separated demonym forms should have independent pronunciation targets");
       assert.ok((await firstRow.locator("td").nth(1).innerText()).includes("italiano / italiana"),"the original separator should remain visible between separately pronounceable forms");
       for(let cellIndex=1;cellIndex<3;cellIndex++) assert.ok(await firstRow.locator("td").nth(cellIndex).locator(".theory-target-tap[role=button]").count()>0,"Italian demonym/language forms should remain individually tappable for pronunciation");
-      assert.equal(await body.locator(".theory-slide-text").count(),0,"country subtopic should not contain an unnecessary closing paragraph");
+      assert.equal(await body.locator(".theory-subtopic-intro").count(),1,"country subtopic should use the shared introduction block");
     }
     if(i===3) { assert.ok(!(await body.innerText()).includes("(formal)"),"translations should not contain parenthetical mini-explanations"); assert.ok((await body.innerText()).includes("Hai / sei") && (await body.innerText()).includes("ha / è"),"age and origin should distinguish informal and formal forms"); }
     await page.locator("#theory-back").click();
