@@ -2213,7 +2213,7 @@ function renderItalianAppliedTopic(category, index, locale) {
       '<h3>Rutina diaria</h3>' + examplesTable([["Mi sveglio alle sette.","Me despierto a las siete."],["Faccio colazione e vado al lavoro.","Desayuno y voy al trabajo."],["Studio italiano nel pomeriggio.","Estudio italiano por la tarde."],["Torno a casa alle sei.","Vuelvo a casa a las seis."],["Vado a letto alle dieci e mezza.","Me acuesto a las diez y media."]]);
   }
   if (category === "Expresiones" && index === 5) {
-    return '<p class="theory-slide-text">Para preguntar la hora se usa «Che ora è?» o «Che ore sono?». La hora va precedida por el artículo en singular o plural según corresponda.</p>' +
+    return '<p class="theory-slide-text">Para preguntar la hora se usa <em>Che ora è?</em> o <em>Che ore sono?</em>. La hora va precedida por el artículo en singular o plural según corresponda.</p>' +
       bilingualTable("theory-vocabulary-table",["Italiano","Español"],[["È l’una.","Es la una."],["Sono le due.","Son las dos."],["Sono le dodici.","Son las doce."],["È mezzogiorno.","Es mediodía."],["È mezzanotte.","Es medianoche."]]) +
       '<h3>Minutos y horarios</h3>' + examplesTable([["Sono le tre e un quarto.","Son las tres y cuarto."],["Sono le quattro e mezza.","Son las cuatro y media."],["Sono le cinque meno un quarto.","Son las cinco menos cuarto."],["Il treno parte alle otto.","El tren sale a las ocho."],["A che ora lavori?","¿A qué hora trabajas?"]]);
   }
