@@ -114,3 +114,6 @@ La app queda en http://localhost:3000; desarrollo: npm run dev. El smoke test di
 
 
 - **27-11-2026:** checkpoint previo a ajustes estéticos de Teoría guardado en `recovery/theory-style-before-fixes-2026-11-27`, apuntando al HEAD `ed42e70fd00ab9238727bef5b42618ee7693da2f`. El checkpoint conserva el estado aprobado de Unidades 1–3 antes de cambios de formato, scroll y navegación. Estado de ajustes: `[PENDIENTE: implementación y validación aún no iniciadas]`.
+
+
+- **27-11-2026:** ajustes estéticos de Teoría iniciados: se agregaron `src/theory-polish.css` y `src/theory-polish.js`, enlazados desde `index.html`. Incluyen tipografía heredada uniforme, cursiva para italiano fuera de tablas, texto sin delimitadores angulares, limpieza de separadores, reinicio de scroll al cambiar de subtema y controles anterior/siguiente fijados sobre la navegación inferior. Archivos modificados: `index.html`, `src/theory-polish.css`, `src/theory-polish.js`. Tests aprobados en commit `53c10bee5df03a4c72cfd7938b2eb64ad8b0188e`; Browser E2E sigue en ejecución y Render aún no se ha sincronizado. Estado: [PENDIENTE: esperar Browser E2E, validar comportamiento visual y sincronizar Render].
