@@ -25,11 +25,11 @@
 - [ ] Las tablas mantienen tamaño de texto de 15 px en móvil y 17 px en escritorio.
 - [ ] Las columnas se adaptan al contenido; el texto salta entre palabras, no se parte arbitrariamente y no provoca scroll horizontal de página.
 - [ ] Los encabezados, columnas, traducciones y ejemplos mantienen la jerarquía definida en PRODUCT_SPEC.md.
-- [ ] Todo fragmento italiano es pronunciable al tocar el propio texto y utiliza locale `it-IT`; no aparecen botones Play ni iconos de altavoz en Teoría.
-- [ ] En formas separadas por /, guion o raya, cada variante se pronuncia por separado y el separador original sigue visible.
+- [ ] Todo fragmento italiano es pronunciable al tocar el propio texto y utiliza locale `it-IT`; no aparecen botones Play ni iconos de altavoz en Teoría. En prosa y títulos las expresiones italianas están en negrita y cursiva sin comillas angulares; en tablas, en negrita sin cursiva.
+- [ ] En formas separadas por /, guion o raya, cada variante se pronuncia por separado y se ve un solo separador «/» (nunca «//»); guiones y rayas originales se conservan.
 - [ ] La traducción española aparece en su columna/contexto de explicación y nunca se reproduce con voz italiana.
 - [ ] En Países e idiomas, la traducción española entre paréntesis aparece solo junto al país; gentilicio e idioma no repiten traducciones.
-- [ ] La navegación Anterior/Siguiente y el retorno mantienen el subtema y la unidad correctos.
+- [ ] La navegación Anterior/Siguiente y el retorno mantienen el subtema y la unidad correctos. Al llegar al final de un tema, queda un margen visible suficiente antes de los botones; el último texto no queda cubierto por ellos.
 
 ## 4. Teoría — Unidades 4 a 6
 
