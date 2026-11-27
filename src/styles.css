@@ -1430,3 +1430,17 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
 #screen-theory .country-language-table .theory-variant-separator {
   white-space:pre;
 }
+
+/* Final country table override: supersede legacy content-proportioned column widths. */
+#screen-theory #theory-description table.country-language-table {
+  width:100%!important;
+  table-layout:fixed!important;
+}
+#screen-theory #theory-description table.country-language-table th:nth-child(1),
+#screen-theory #theory-description table.country-language-table td:nth-child(1),
+#screen-theory #theory-description table.country-language-table th:nth-child(2),
+#screen-theory #theory-description table.country-language-table td:nth-child(2),
+#screen-theory #theory-description table.country-language-table th:nth-child(3),
+#screen-theory #theory-description table.country-language-table td:nth-child(3) {
+  width:33.3333%!important;
+}
