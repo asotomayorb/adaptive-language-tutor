@@ -122,8 +122,16 @@ try {
       assert.equal(await page.locator("#theory-description .theory-verb-comparison-table tbody tr td:first-child .theory-target-tap").count(),8,"all Unit 1 person labels, including lui and lei separately, should be pronounceable");
       assert.ok(topicText.includes("Sono di Santiago.") && topicText.includes("Sto bene."), "essere and stare should be contextualized with Italian examples");
       const verbHeading = page.locator("#theory-description h3").nth(1);
-      assert.equal(await verbHeading.innerText(), "Verbos «Essere» (ser) y «Stare» (estar)", "Italian terms in subtopic headings should be italicized, quoted and translated");
+      assert.equal(await verbHeading.innerText(), "Verbos Essere (ser) y Stare (estar)", "Italian terms in subtopic headings should be bold-italic and translated without quote marks");
       assert.equal(await verbHeading.locator("em").count(), 2, "Italian terms should be italicized only in the heading");
+      assert.ok(await verbHeading.locator("em").evaluateAll(nodes=>nodes.every(node=>getComputedStyle(node).fontWeight==="750")),"Italian terms in headings must also be bold");
+      assert.ok(!(await verbHeading.innerText()).includes("«") && !(await verbHeading.innerText()).includes("»"),"Italian expressions must not retain angle quote delimiters");
+      const introItalian=page.locator("#theory-description .theory-subtopic-intro .theory-target-word").first();
+      assert.equal(await introItalian.evaluate(el=>getComputedStyle(el).fontStyle),"italic","Italian expressions in prose must be italic");
+      assert.equal(await introItalian.evaluate(el=>getComputedStyle(el).fontWeight),"750","Italian expressions in prose must be bold");
+      const tableItalian=page.locator("#theory-description table .theory-target-word").first();
+      assert.equal(await tableItalian.evaluate(el=>getComputedStyle(el).fontStyle),"normal","Italian expressions in tables must not be italic");
+      assert.equal(await tableItalian.evaluate(el=>getComputedStyle(el).fontWeight),"750","Italian expressions in tables must remain bold");
       const verbTable = page.locator("#theory-description table").nth(1);
       assert.deepEqual((await verbTable.locator("thead th").allInnerTexts()).map(value => value.toLowerCase()), ["persona","essere","stare"], "table headers must remain plain, without italics, quotes or translations");
       assert.equal(await verbTable.locator("thead em").count(), 0, "table headers must not inherit Italian title formatting");
@@ -186,9 +194,10 @@ try {
     }
     const bodyText=(await body.innerText()).replace(/\s+/g," ").trim();
     for (const term of check.terms) assert.ok(bodyText.includes(term), "Unit 2 content should include "+term);
+    assert.equal(await body.locator(".theory-variant-separator").evaluateAll(nodes=>nodes.some(node=>node.textContent.includes("//"))),false,"Unit 2 variants must use a single slash separator");
     if (check.heading) {
       const heading=body.locator("h3").filter({hasText:check.heading}).first();
-      assert.ok(await heading.locator("em").count()>0,"Italian headings should use italics and angle quotes");
+      assert.ok(await heading.locator("em").count()>0,"Italian headings should use bold italics without angle quotes");
       assert.ok((await heading.innerText()).includes(" ("),"Italian headings should include Spanish translations");
     }
     const tables=body.locator("table");
@@ -269,7 +278,7 @@ try {
     {title:"Rutinas y lugares",terms:["svegliarsi","fare colazione","la casa","l’ufficio","Mi sveglio alle sette."]},
     {title:"Días y fechas",terms:["lunedì","domenica","gennaio","Il mio compleanno è il primo maggio."]},
     {title:"Presente habitual",terms:["Modelo -are","Modelo -ere","Modelo -ire","parliamo","prendiamo","dormiamo","Lavoro in ufficio."]},
-    {title:"Pasado (passato prossimo)",displayTitle:"Pasado («Passato prossimo» (pretérito perfecto compuesto))",terms:["avere","essere","-ato","fatto","Sono arrivata a casa.","Ieri ho studiato italiano."]},
+    {title:"Pasado (passato prossimo)",displayTitle:"Pasado (Passato prossimo (pretérito perfecto compuesto))",terms:["avere","essere","-ato","fatto","Sono arrivata a casa.","Ieri ho studiato italiano."]},
     {title:"Futuro simple",terms:["futuro semplice","parlerò","prenderai","sar-","Domani lavorerò da casa."]},
     {title:"Rutinas diarias",terms:["Mi sveglio alle sette.","Faccio colazione e vado al lavoro.","Vado a letto alle dieci e mezza."]},
     {title:"La hora",terms:["Che ora è?","È l’una.","Sono le due.","e un quarto","meno un quarto","A che ora lavori?"]}
@@ -293,6 +302,7 @@ try {
       assert.equal(await participleExample.locator(".theory-variant-separator").first().getAttribute("data-separator"),"→","the original arrow separator should remain visible");
     }
     for(const term of check.terms) assert.ok(content.toLocaleLowerCase().includes(term.toLocaleLowerCase()),"Unit 3 content should include "+term+" in "+check.title);
+    assert.equal(await body.locator(".theory-variant-separator").evaluateAll(nodes=>nodes.some(node=>node.textContent.includes("//"))),false,"Unit 3 variants must use a single slash separator");
     const targets=body.locator(".theory-target-tap[role=button]");
     assert.ok(await targets.count()>0,"Italian reference terms should be individually tappable");
     assert.ok(await targets.evaluateAll(nodes=>nodes.every(node=>node.dataset.locale==="it-IT")),"all pronunciation targets must use Italian voice locale");
@@ -314,6 +324,8 @@ try {
   await unitRows.nth(1).click();
   const topicButton = page.locator("#theory-tree .theory-tree-topic").first();
   await topicButton.click();
+  const lessonScroller=page.locator("#theory-detail .theory-slide-content");
+  assert.ok(parseFloat(await lessonScroller.evaluate(el=>getComputedStyle(el).paddingBottom))>=170,"lesson content must reserve at least 170px below its final element for navigation controls");
   assert.equal(await page.locator("#theory-detail").isVisible(), true, "Theory topic detail should open");
   assert.equal(await page.locator("#theory-level-list").isVisible(), false, "detail should replace the dropdown stack in-flow");
   assert.equal(await page.locator("#theory-detail").evaluate(el => getComputedStyle(el).position), "static", "detail should not be fullscreen/fixed");
