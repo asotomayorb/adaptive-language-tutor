@@ -19,6 +19,7 @@ function normalizeTheoryText(root) {
     if (next?.nodeType === Node.TEXT_NODE && next.nodeValue.startsWith("»")) next.nodeValue = next.nodeValue.slice(1);
     if (el.closest("table")) el.style.fontStyle = "normal";
     else el.style.fontStyle = "italic";
+    el.style.fontWeight = "750";
   });
   root.querySelectorAll(".theory-variant-separator").forEach(el => {
     const normalized = el.textContent.replace(/\/\s*\/+/g, " / ").replace(/\/+/g, "/");
