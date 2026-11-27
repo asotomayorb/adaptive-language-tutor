@@ -2102,15 +2102,15 @@ function renderItalianAppliedTopic(category, index, locale) {
       }).join("") + '</tbody></table>';
     return '<p class="theory-slide-text">El artículo concuerda con el sustantivo en género y número. Elige la forma según el género y el sonido inicial del sustantivo; observa también cómo cambia el sustantivo en plural.</p>' +
       articleTable("Artículos definidos", [
-        ["il (masculino)", "i", "Consonante ordinaria", "il libro → i libri"],
-        ["lo (masculino)", "gli", "s seguida de consonante; z, gn, ps o x al inicio de palabra", "lo studente → gli studenti"],
-        ["l’ (masculino)", "gli", "Vocal", "l’amico → gli amici"],
-        ["la (femenino)", "le", "Consonante", "la casa → le case"],
-        ["l’ (femenino)", "le", "Vocal", "l’amica → le amiche"]
+        ["il (masculino)", "i", "Consonante ordinaria", "il libro / i libri"],
+        ["lo (masculino)", "gli", "s seguida de consonante; z, gn, ps o x al inicio de palabra", "lo studente / gli studenti"],
+        ["l’ (masculino)", "gli", "Vocal", "l’amico / gli amici"],
+        ["la (femenino)", "le", "Consonante", "la casa / le case"],
+        ["l’ (femenino)", "le", "Vocal", "l’amica / le amiche"]
       ]) +
       articleTable("Artículos indefinidos", [
-        ["un (masculino)", "—", "Consonante ordinaria o vocal; sin apóstrofo", "un libro · un amico"],
-        ["uno (masculino)", "—", "s seguida de consonante; z, gn, ps o x al inicio de palabra", "uno studente · uno zaino"],
+        ["un (masculino)", "—", "Consonante ordinaria o vocal; sin apóstrofo", "un libro / un amico"],
+        ["uno (masculino)", "—", "s seguida de consonante; z, gn, ps o x al inicio de palabra", "uno studente / uno zaino"],
         ["una (femenino)", "—", "Consonante", "una casa"],
         ["un’ (femenino)", "—", "Vocal", "un’amica"]
       ]) +
