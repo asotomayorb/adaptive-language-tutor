@@ -2061,7 +2061,7 @@ function formatItalianTheoryTitle(value) {
     "aggettivi":"adjetivos"
   };
   const terms = Object.keys(translations).sort((a,b) => b.length - a.length).join("|");
-  const plainTitle = String(value).replace(/«\\s*([^»]+?)\\s*»/g, "$1");
+  const plainTitle = String(value).replace(/«\s*([^»]+?)\s*»/g, "$1");
   return plainTitle.replace(new RegExp("(" + terms + ")","gi"), match => {
     const translation = translations[match.toLowerCase()];
     const label = match.charAt(0).toUpperCase() + match.slice(1);
@@ -2074,14 +2074,14 @@ function formatItalianQuotedExpressions(markup) {
     "come stai?", "come sta?", "avere", "essere di", "venire da", "hai / sei", "ha / è"
   ]);
   return String(markup).replace(/«([^»<>]+)»/g, (whole, expression) => {
-    const normalized = expression.trim().replace(/\\s+/g, " ").toLocaleLowerCase("it");
+    const normalized = expression.trim().replace(/\s+/g, " ").toLocaleLowerCase("it");
     if (!italianExpressions.has(normalized)) return whole;
     return '<em class="theory-target-word">' + escapeHTML(expression.trim()) + '</em>';
   });
 }
 function renderItalianAppliedTopic(category, index, locale) {
   const renderLines = value => String(value).split("<br>").map(part => escapeHTML(part)).join("<br>");
-  const renderSpokenVariants = value => String(value).replace(/<br\s*\/?\s*>/gi, " / ").split(/(\s*\/\s*|\s*[–—]\s*|\s+-\s+|\s*→\s*)/).map((part, partIndex) => {
+  const renderSpokenVariants = value => String(value).replace(/<br\s*\/?\s*>/gi, " / ").replace(/\/\s*\/+/g, " / ").replace(/\/+/g, "/").split(/(\s*\/\s*|\s*[–—]\s*|\s+-\s+|\s*→\s*)/).map((part, partIndex) => {
     if (partIndex % 2 === 1) {
       const separator = part.trim();
       return '<span class="theory-variant-separator" data-separator="' + escapeHTML(separator) + '">' + escapeHTML(part) + '</span>';
@@ -2271,6 +2271,7 @@ function openTheoryTopic(index) {
     detailMarkup = renderItalianAppliedTopic(activeTheoryCategory, sourceIndex, locale) ||
       (body ? '<p class="theory-slide-text">' + escapeHTML(body) + '</p>' : "");
   }
+  detailMarkup = formatItalianQuotedExpressions(detailMarkup);
   detailMarkup = detailMarkup.replace(/<h3>([\s\S]*?)<\/h3>/g, (_, heading) => '<h3>' + formatItalianTheoryTitle(heading) + '</h3>');
   $("theory-title").innerHTML = formatItalianTheoryTitle(title);
   const categoryIcon = theoryCategoryIcons[activeTheoryTopics[activeTheoryIndex]?.[3]] || "";
