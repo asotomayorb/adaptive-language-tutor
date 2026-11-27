@@ -1438,3 +1438,51 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
 #screen-theory #theory-description table.country-language-table .theory-variant-separator {
   white-space:normal;
 }
+
+
+/* Canonical Theory layout: every developed subtopic shares an intro and grouped reference sections. */
+#screen-theory #theory-description .theory-subtopic-content{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  width:100%;
+  min-width:0;
+}
+#screen-theory #theory-description .theory-subtopic-intro{
+  margin:0;
+  color:#44566d;
+  font-size:15px;
+  line-height:1.6;
+}
+#screen-theory #theory-description .theory-content-section{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  min-width:0;
+}
+#screen-theory #theory-description .theory-content-section h3{
+  margin:4px 0 0;
+  color:#29425f;
+  font-size:15px;
+  line-height:1.35;
+}
+#screen-theory #theory-description .theory-content-section p{
+  margin:0;
+}
+#screen-theory #theory-description .theory-content-section table{
+  width:100%!important;
+  max-width:100%;
+  table-layout:auto!important;
+  margin:0;
+}
+#screen-theory #theory-description .theory-content-section th,
+#screen-theory #theory-description .theory-content-section td{
+  white-space:normal;
+  overflow-wrap:break-word;
+  word-break:normal;
+  hyphens:none;
+  vertical-align:middle;
+}
+#screen-theory #theory-description .theory-speech-variant{white-space:normal}
+#screen-theory #theory-description .theory-target-tap{cursor:pointer;touch-action:manipulation}
+#screen-theory #theory-description .speak-button{display:none!important}
