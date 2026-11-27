@@ -194,6 +194,7 @@ Estos módulos permanecen temporalmente inaccesibles desde la navegación y en e
 - **25-11-2026 (criterio vigente):** se conserva A1 con seis unidades; Unidad 1 intacta y cuatro subtemas desarrollados en Unidad 2. Unidades 3–6 mantienen títulos y cuerpos vacíos.
 - **26-11-2026:** se confirma conservar `recovery/intermediate-theory-content` como rama destinada a guardar checkpoints; no eliminarla ni usarla para desarrollo cotidiano o despliegue. Rama activa: `feature/mobile-bottom-navigation`; Render canónico asociado a esta rama.
 - **21-11-2026:** la app abre en Teoría; Ruta y Entrenamiento están temporalmente bloqueados; Italiano es la única opción de idioma habilitada.
+- **27-11-2026:** se consolida la estructura común de todos los subtemas desarrollados (introducción, bloques de referencia y ejemplos cuando aporten valor). En Teoría, todo texto italiano se pronuncia al tocarlo, sin botones Play ni iconos de altavoz, incluso en fragmentos largos y variantes; cada variante separada es independiente. Unidad 3 queda desarrollada con nueve subtemas; Unidades 4–6 permanecen vacías. Esta decisión sustituye las reglas anteriores de Play para fragmentos largos y de Unidades 3–6 vacías.
 
 ### Historial resumido
 
