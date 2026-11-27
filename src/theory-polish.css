@@ -51,3 +51,25 @@
     width: calc(100% - 26px);
   }
 }
+
+/* Fix scroll ownership in the inline lesson detail; keep navigation anchored. */
+#screen-theory .theory-detail-inline{min-height:0;}
+#screen-theory .theory-detail-inline .theory-slide-content{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  max-height:calc(100dvh - 250px)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:contain;
+}
+#screen-theory .theory-target-word,
+#screen-theory .theory-target-tap,
+#screen-theory em,
+#screen-theory strong.theory-target-word{font-weight:750!important;}
+#screen-theory .theory-bilingual-table .theory-target-word,
+#screen-theory .theory-bilingual-table .theory-target-tap,
+#screen-theory .theory-bilingual-table em{font-weight:750!important;font-style:normal!important;}
+@media(max-width:620px){
+  #screen-theory .theory-detail-inline .theory-slide-content{max-height:calc(100dvh - 245px)!important;}
+}
