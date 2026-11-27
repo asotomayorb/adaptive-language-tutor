@@ -9,13 +9,20 @@ function normalizeTheoryText(root) {
   while (walker.nextNode()) textNodes.push(walker.currentNode);
   for (const node of textNodes) {
     const value = node.nodeValue;
-    node.nodeValue = value
-      .replace(/«(?=<em|<span class="theory-target-word")|(?<=<\/em>)»/g, "")
-      .replace(/<([\p{L}][^<>\n]{0,90})>/gu, "$1");
+    const normalized = value.replace(/<([\\p{L}][^<>\\n]{0,90})>/gu, "$1");
+    if (normalized !== value) node.nodeValue = normalized;
   }
   root.querySelectorAll("em, .theory-target-word").forEach(el => {
+    const previous = el.previousSibling;
+    const next = el.nextSibling;
+    if (previous?.nodeType === Node.TEXT_NODE && previous.nodeValue.endsWith("«")) previous.nodeValue = previous.nodeValue.slice(0, -1);
+    if (next?.nodeType === Node.TEXT_NODE && next.nodeValue.startsWith("»")) next.nodeValue = next.nodeValue.slice(1);
     if (el.closest("table")) el.style.fontStyle = "normal";
     else el.style.fontStyle = "italic";
+  });
+  root.querySelectorAll(".theory-variant-separator").forEach(el => {
+    const normalized = el.textContent.replace(/\\/\\s*\\/+ /g, " / ").replace(/\\/+ /g, "/");
+    if (normalized !== el.textContent) el.textContent = normalized;
   });
 }
 
