@@ -2295,6 +2295,7 @@ function openTheoryTopic(index) {
   $("theory-description").replaceChildren(normalizedContent);
   bindSpeakerButtons($("theory-description"));
   bindTheoryTargetText($("theory-description"));
+  bindTheoryTargetText($("theory-title"));
   speech.stop();
   $("theory-counter").textContent = (activeTheoryIndex + 1) + "/" + activeTheoryTopics.length;
   $("theory-counter").classList.remove("hidden");
