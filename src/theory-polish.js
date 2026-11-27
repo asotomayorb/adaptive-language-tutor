@@ -9,7 +9,7 @@ function normalizeTheoryText(root) {
   while (walker.nextNode()) textNodes.push(walker.currentNode);
   for (const node of textNodes) {
     const value = node.nodeValue;
-    const normalized = value.replace(/<([\p{L}][^<>\n]{0,90})>/gu, "$1");
+    const normalized = value.replace(/<([\p{L}][^<>\n]{0,90})>/gu, "$1").replace(/\/\s*\/+/g, " / ").replace(/\/+/g, "/");
     if (normalized !== value) node.nodeValue = normalized;
   }
   root.querySelectorAll("em, .theory-target-word").forEach(el => {
