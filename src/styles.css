@@ -296,7 +296,6 @@
 .theory-pronoun-table th{background:#edf2f7;color:#53677e;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
 .theory-pronoun-table td:first-child{width:54%}
 .theory-target-word{font-size:19px;font-weight:800;color:#1e4269}
-.theory-pronoun-table .speak-button{margin-left:5px;vertical-align:middle}
 .theory-footnote{font-size:11px;color:#8491a1;line-height:1.5}
 .theory-example{margin-top:16px;padding:15px;border-radius:13px;background:#eef3f8}
 .theory-example>span{display:block;margin-bottom:8px;font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:#70839a}
@@ -1344,8 +1343,6 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
   #screen-theory .adjective-examples-table th{font-size:12px!important}
   #screen-theory .adjective-examples-table td p{font-size:15px!important;line-height:1.5!important}
 }
-#screen-theory .adjective-vocabulary-table .speak-button,
-#screen-theory .adjective-examples-table .speak-button{margin-left:4px;vertical-align:middle}
 
 
 
@@ -1393,10 +1390,6 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
   #screen-theory #theory-description table tbody td strong,
   #screen-theory #theory-description table tbody td .theory-target-word,
   #screen-theory #theory-description table tbody td .theory-target-tap,
-  #screen-theory #theory-description table tbody td .speak-button{
-    font-size:15px!important;
-    line-height:1.5!important;
-  }
 }
 
 /* Países e idiomas: columnas guiadas por el contenido, con ajuste de línea y celdas alineadas por fila. */
@@ -1485,4 +1478,3 @@ body:has(#screen-theory.is-theory-detail-open)>.app-shell>.topbar{display:none!i
 }
 #screen-theory #theory-description .theory-speech-variant{white-space:normal}
 #screen-theory #theory-description .theory-target-tap{cursor:pointer;touch-action:manipulation}
-#screen-theory #theory-description .speak-button{display:none!important}
