@@ -2061,7 +2061,14 @@ function formatItalianTheoryTitle(value) {
     "aggettivi":"adjetivos"
   };
   const terms = Object.keys(translations).sort((a,b) => b.length - a.length).join("|");
-  const plainTitle = String(value).replace(/«\s*([^»]+?)\s*»/g, "$1");
+  let plainTitle = String(value).replace(/«\s*([^»]+?)\s*»/g, "$1");
+  Object.entries(translations).forEach(([term,translation]) => {
+    const escapedTerm = term.replace(/[.*+?^\u0024{}()|[\]\\]/g, "\\  const plainTitle = String(value).replace(/«\s*([^»]+?)\s*»/g, "$1");
+  return plainTitle.replace(new RegExp("(" + terms + ")","gi"), match => {");
+    const escapedTranslation = translation.replace(/[.*+?^\u0024{}()|[\]\\]/g, "\\  const plainTitle = String(value).replace(/«\s*([^»]+?)\s*»/g, "$1");
+  return plainTitle.replace(new RegExp("(" + terms + ")","gi"), match => {");
+    plainTitle = plainTitle.replace(new RegExp("(" + escapedTerm + ")\\s*\\(" + escapedTranslation + "\\)", "gi"), "$1");
+  });
   return plainTitle.replace(new RegExp("(" + terms + ")","gi"), match => {
     const translation = translations[match.toLowerCase()];
     const label = match.charAt(0).toUpperCase() + match.slice(1);
