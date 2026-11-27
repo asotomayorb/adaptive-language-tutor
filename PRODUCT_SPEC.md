@@ -86,7 +86,7 @@ La navegación vigente es:
 - Debajo se presenta la ruta breve Etapa > Unidad, seguida de categoría e icono, y luego el título del subtema con su contador de posición alineado a la derecha cuando corresponda.
 - El bloque superior del detalle permanece fijo durante el desplazamiento; el contenido se desplaza debajo y no debe quedar oculto.
 - La flecha de retorno es el único control de regreso del detalle. Devuelve al árbol y conserva expandida la unidad de origen.
-- La navegación Anterior/Siguiente permanece disponible al final del contenido, con área táctil suficiente.
+- La navegación Anterior/Siguiente permanece disponible al final del contenido, con área táctil suficiente. El área desplazable reserva al menos 170 px de espacio inferior para que el último elemento no quede cubierto por los controles.
 - El detalle no debe mostrar encabezados o controles de audio duplicados.
 
 ## 5. Teoría: reglas editoriales, contenido y presentación
@@ -99,7 +99,7 @@ La navegación vigente es:
 - Una regla por línea o elemento. Usar listas, subtítulos, tablas breves y sangría para expresar relaciones; una subregla se anida bajo su regla principal. Las excepciones forman un bloque separado y explican el caso, no son ejemplos sueltos.
 - Mantener separado el contenido de tiempos verbales distintos. Una excepción del pasado no se coloca en el futuro, aunque el mismo verbo sea irregular en ambos.
 - Los ejemplos corresponden al idioma activo y llevan traducción española cuando sea útil.
-- En títulos de subtemas, los términos italianos se muestran en cursiva, entre comillas angulares y con traducción española entre paréntesis cuando corresponda. Los encabezados de tablas no heredan ese formato.
+- En títulos y explicaciones, las expresiones italianas se muestran en **negrita y cursiva**, sin delimitadores angulares; se añade la traducción española entre paréntesis cuando corresponda. En tablas se mantienen en **negrita sin cursiva**. Los encabezados de tablas no heredan ese formato.
 - No modificar contenido ya aprobado por una tarea de estilo que no lo incluya expresamente.
 
 ### Tablas y ejemplos
@@ -110,7 +110,7 @@ La navegación vigente es:
 - Las tablas pueden desplazarse dentro de su propio contenedor solo cuando sea necesario y sin comprimir el texto hasta volverlo ilegible.
 - Priorizar encabezados breves y columnas que reflejen las categorías relevantes. Usar tablas compactas frente a párrafos o listas extensas cuando la comparación sea más clara.
 - Agrupar ejemplos por forma, terminación o categoría gramatical pertinente; no usar pronombres como eje si no representan la regla.
-- Cada palabra, frase o variante italiana separada por «/», guion u otro separador debe tener pronunciación individual al tocar el propio texto subrayado. No añadir botones Play, altavoces ni iconos de audio dentro de tablas o ejemplos; tampoco añadir etiquetas de género, traducciones ni puntuación auxiliar al fragmento pronunciado.
+- Cada palabra, frase o variante italiana separada por «/», guion u otro separador debe tener pronunciación individual al tocar el propio texto. Si el contenido de origen trae «//» consecutivos, se normalizan visualmente a un único «/». No añadir botones Play, altavoces ni iconos de audio dentro de tablas o ejemplos; tampoco añadir etiquetas de género, traducciones ni puntuación auxiliar al fragmento pronunciado.
 - Las capturas de referencia aportan estructura, no instrucciones para copiar fondos oscuros o tipografía ajena. Conservar la estética clara y tipografía base de la app.
 
 ### Subtemas desarrollados
