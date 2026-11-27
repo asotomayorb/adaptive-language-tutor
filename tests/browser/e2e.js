@@ -113,6 +113,8 @@ try {
       assert.equal(await stateQuestionCell.locator(".theory-speech-variant").count(), 2, "formal and informal state questions should share one cell with separate speech controls");
     }
     if (i === 3) {
+      assert.ok(topicText.includes("omitir el pronombre sujeto") && topicText.includes("Lei") && topicText.includes("tercera persona singular"), "Unit 1 should explain subject omission and formal Lei agreement");
+      assert.ok(topicText.includes("Sono di Santiago.") && topicText.includes("Sto bene."), "essere and stare should be contextualized with Italian examples");
       const verbHeading = page.locator("#theory-description h3").nth(1);
       assert.equal(await verbHeading.innerText(), "Verbos «Essere» (ser) y «Stare» (estar)", "Italian terms in subtopic headings should be italicized, quoted and translated");
       assert.equal(await verbHeading.locator("em").count(), 2, "Italian terms should be italicized only in the heading");
