@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 
 const baseUrl = (process.env.TUTOR_BASE_URL || "http://127.0.0.1:3000").replace(/\/+$/, "");
 const startedAt = Date.now();
-const targetLocale = process.env.TUTOR_SMOKE_LOCALE || "pt-BR";
-const targetLanguageLabel = process.env.TUTOR_SMOKE_LANGUAGE_LABEL || targetLocale;
+const targetLocale = "it-IT";
+const targetLanguageLabel = "Italiano";
 const targetLanguageCode = targetLocale.split("-")[0].toLowerCase();
 
 async function request(path, options) {
@@ -75,7 +75,7 @@ let evaluationCount = 0;
 let speechSegmentCount = result.speechSegments.length;
 
 for (let turn = 1; turn <= session.duration; turn += 1) {
-  const answer = exercise.expectedAnswer || exercise.acceptedAnswers?.[0] || (targetLanguageCode === "fr" ? "Bonjour, je voudrais pratiquer." : targetLanguageCode === "pt" ? "Eu gostaria de praticar português." : "Hello, I would like to practice.");
+  const answer = exercise.expectedAnswer || exercise.acceptedAnswers?.[0] || "Vorrei esercitarmi in italiano.";
   history.push({ role: "assistant", content: JSON.stringify(result) });
   const next = await request("/api/tutor", {
     method: "POST",

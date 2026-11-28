@@ -1,0 +1,84 @@
+/* Teoría: tipografía uniforme, lectura italiana y controles anclados al viewport. */
+#screen-theory .theory-target-word,
+#screen-theory .theory-speech-variant,
+#screen-theory .theory-variant-separator,
+#screen-theory em,
+#screen-theory strong.theory-target-word {
+  font-size: inherit !important;
+  font-weight: inherit;
+  line-height: inherit;
+}
+#screen-theory .theory-target-word,
+#screen-theory em {
+  font-style: italic;
+}
+#screen-theory .theory-bilingual-table .theory-target-word,
+#screen-theory .theory-bilingual-table em {
+  font-style: normal;
+}
+#screen-theory .theory-slide-content {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  justify-content: flex-start;
+  padding-bottom: calc(56px + env(safe-area-inset-bottom)) !important;
+  scroll-padding-top: 12px;
+  scroll-padding-bottom: 56px;
+}
+#screen-theory .theory-slide-footer {
+  position: fixed;
+  z-index: 45;
+  left: 50%;
+  bottom: calc(76px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  width: min(900px, calc(100% - 28px));
+  margin: 0;
+  padding: 10px 0 8px;
+  background: #f3f5f8;
+  border-top: 1px solid #dfe4ec;
+}
+#screen-theory .theory-detail-inline {
+  padding-bottom: calc(90px + env(safe-area-inset-bottom));
+}
+#screen-theory .theory-detail-sticky-head {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: #f3f5f8;
+}
+@media (max-width: 620px) {
+  #screen-theory .theory-slide-footer {
+    bottom: calc(74px + env(safe-area-inset-bottom));
+    width: calc(100% - 26px);
+  }
+}
+
+/* Fix scroll ownership in the inline lesson detail; keep navigation anchored. */
+#screen-theory .theory-detail-inline{min-height:0;}
+#screen-theory .theory-slide-content{box-sizing:border-box;}
+#screen-theory .theory-detail-inline .theory-slide-content{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  max-height:calc(100dvh - 250px)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:contain;
+}
+#screen-theory .theory-target-word,
+#screen-theory .theory-target-tap,
+#screen-theory em,
+#screen-theory strong.theory-target-word{font-weight:750!important;}
+#screen-theory .theory-bilingual-table .theory-target-word,
+#screen-theory .theory-bilingual-table .theory-target-tap,
+#screen-theory .theory-bilingual-table em{font-weight:750!important;font-style:normal!important;}
+@media(max-width:620px){
+  #screen-theory .theory-detail-inline .theory-slide-content{max-height:calc(100dvh - 245px)!important;}
+}
+
+/* Balance Italian/Spanish widths in greetings so neither language dominates. */
+#screen-theory .theory-greetings-table{table-layout:fixed!important;width:100%;}
+#screen-theory .theory-greetings-table th,
+#screen-theory .theory-greetings-table td{width:50%;min-width:0;overflow-wrap:anywhere;word-break:normal;vertical-align:top;}
+#screen-theory .theory-greetings-table .theory-speech-variant{display:inline;white-space:normal;overflow-wrap:anywhere;}
+#screen-theory .theory-greetings-table .theory-target-tap{white-space:normal;overflow-wrap:anywhere;}

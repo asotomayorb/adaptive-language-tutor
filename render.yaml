@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: adaptive-language-tutor-preview
+    runtime: node
+    plan: free
+    region: oregon
+    branch: feature/mobile-bottom-navigation
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit

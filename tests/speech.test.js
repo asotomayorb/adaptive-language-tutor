@@ -5,14 +5,21 @@ import { createSpeechController, findVoiceForLocale } from "../src/core/speech.j
 function speechMock(voices = []) {
   const spoken = [];
   let cancelled = 0;
+  const listeners = new Map();
+  const api = {
+    getVoices: () => voices,
+    addEventListener: (name, callback) => listeners.set(name, callback),
+    emit: name => listeners.get(name)?.(),
+    speak: utterance => spoken.push(utterance),
+    cancel: () => { cancelled += 1; },
+    pause: () => { api.paused = true; },
+    resume: () => { api.paused = false; },
+    paused: false
+  };
   return {
     spoken,
     get cancelled() { return cancelled; },
-    api: {
-      getVoices: () => voices,
-      speak: utterance => spoken.push(utterance),
-      cancel: () => { cancelled += 1; }
-    }
+    api
   };
 }
 
@@ -47,7 +54,7 @@ test("speech uses the requested locale and matching voice", () => {
 });
 
 test("automatic speech respects saved preference but manual playback remains available", () => {
-  const mock = speechMock();
+  const mock = speechMock([{ name:"English", lang:"en-US" }]);
   const saved = new Map([["adaptive-language-tutor.audio.auto", "false"]]);
   const controller = createSpeechController({
     synthesis: mock.api,
@@ -78,6 +85,10 @@ test("speech sequences preserve the locale of each fragment", () => {
   ], { automatic: true });
   assert.equal(result.count, 2);
   assert.deepEqual(mock.spoken.map(item => [item.text, item.lang, item.voice.name]), [
+    ["Bom dia", "pt-BR", "Brazilian Portuguese"]
+  ]);
+  mock.spoken[0].onend();
+  assert.deepEqual(mock.spoken.map(item => [item.text, item.lang, item.voice.name]), [
     ["Bom dia", "pt-BR", "Brazilian Portuguese"],
     ["Good morning", "en-US", "English US"]
   ]);
@@ -90,6 +101,7 @@ test("disabling audio cancels current speech and unsupported browsers degrade sa
     Utterance: MockUtterance,
     storage: { getItem: () => null, setItem: () => {} }
   });
+  mock.api.speaking = true;
   controller.setEnabled(false);
   assert.equal(mock.cancelled, 1);
   const unsupported = createSpeechController({
@@ -102,7 +114,7 @@ test("disabling audio cancels current speech and unsupported browsers degrade sa
 });
 
 test("speech preference storage failures do not break the tutor", () => {
-  const mock = speechMock();
+  const mock = speechMock([{ name:"Portuguese", lang:"pt-BR" }]);
   const controller = createSpeechController({
     synthesis: mock.api,
     Utterance: MockUtterance,
@@ -113,4 +125,140 @@ test("speech preference storage failures do not break the tutor", () => {
   });
   assert.equal(controller.enabled, true);
   assert.equal(controller.speak("Olá", "pt-BR").spoken, true);
+});
+
+
+test("speech controller can pause and resume a passage", () => {
+  const mock = speechMock([{ name:"Portuguese", lang:"pt-BR" }]);
+  mock.api.paused = false;
+  const controller = createSpeechController({
+    synthesis: mock.api,
+    Utterance: MockUtterance,
+    storage: { getItem: () => null, setItem: () => {} }
+  });
+  assert.equal(controller.speak("Um texto de leitura", "pt-BR").spoken, true);
+  assert.equal(controller.pause(), true);
+  assert.equal(controller.paused, true);
+  assert.equal(controller.resume(), true);
+  assert.equal(controller.paused, false);
+});
+
+
+test("speech delegates to the OS TTS engine with an explicit target locale when no matching Voice object is exposed", () => {
+  const mock = speechMock([{ name:"Spanish", lang:"es-CL" }]);
+  const controller = createSpeechController({
+    synthesis:mock.api,
+    Utterance:MockUtterance,
+    storage:{getItem:()=>null,setItem:()=>{}}
+  });
+  const result = controller.speak("Bom dia","pt-BR");
+  assert.equal(result.spoken,true);
+  assert.equal(mock.spoken.length,1);
+  assert.equal(mock.spoken[0].lang,"pt-BR");
+  assert.equal(mock.spoken[0].voice,null);
+});
+
+test("speech sequence preserves each explicit locale even when Android exposes no matching voice object", () => {
+  const mock = speechMock([{name:"Spanish",lang:"es-CL"}]);
+  const controller = createSpeechController({
+    synthesis:mock.api,
+    Utterance:MockUtterance,
+    storage:{getItem:()=>null,setItem:()=>{}}
+  });
+  const result = controller.speakSequence([
+    {text:"Instrucción en español",locale:"es-CL"},
+    {text:"Bom dia",locale:"pt-BR"}
+  ]);
+  assert.equal(result.count,2);
+  assert.deepEqual(mock.spoken.map(item=>[item.lang,item.voice?.lang || null]),[["es-CL","es-CL"]]);
+  mock.spoken[0].onend();
+  assert.deepEqual(mock.spoken.map(item=>[item.lang,item.voice?.lang || null]),[["es-CL","es-CL"],["pt-BR",null]]);
+});
+
+
+test("speech waits for Android voiceschanged before giving up on the target voice", () => {
+  const mock = speechMock([]);
+  const controller = createSpeechController({
+    synthesis:mock.api,
+    Utterance:MockUtterance,
+    storage:{getItem:()=>null,setItem:()=>{}}
+  });
+  const result = controller.speak("Bom dia","pt-BR",{automatic:true});
+  assert.equal(result.spoken,true);
+  assert.equal(result.pending,true);
+  assert.equal(mock.spoken.length,0);
+  mock.api.getVoices = () => [{name:"Brazilian Portuguese",lang:"pt-BR"}];
+  mock.api.emit("voiceschanged");
+  assert.equal(mock.spoken.length,1);
+  assert.equal(mock.spoken[0].text,"Bom dia");
+  assert.equal(mock.spoken[0].lang,"pt-BR");
+  assert.equal(mock.spoken[0].voice.name,"Brazilian Portuguese");
+});
+
+
+test("speech retries with the explicit system locale if Android never emits voiceschanged", async () => {
+  const mock = speechMock([]);
+  const controller = createSpeechController({
+    synthesis:mock.api,
+    Utterance:MockUtterance,
+    storage:{getItem:()=>null,setItem:()=>{}}
+  });
+  const result = controller.speak("Bom dia","pt-BR",{automatic:true});
+  assert.equal(result.pending,true);
+  await new Promise(resolve => setTimeout(resolve,950));
+  assert.equal(mock.spoken.length,1);
+  assert.equal(mock.spoken[0].lang,"pt-BR");
+  assert.equal(mock.spoken[0].voice,null);
+  controller.stop();
+});
+
+
+test("stopping a serialized speech sequence prevents stale fragments from playing", () => {
+  const mock = speechMock([
+    {name:"Portuguese",lang:"pt-BR"},
+    {name:"English",lang:"en-US"}
+  ]);
+  const controller = createSpeechController({
+    synthesis:mock.api,
+    Utterance:MockUtterance,
+    storage:{getItem:()=>null,setItem:()=>{}}
+  });
+  controller.speakSequence([
+    {text:"Bom dia",locale:"pt-BR"},
+    {text:"Good morning",locale:"en-US"}
+  ]);
+  assert.equal(mock.spoken.length,1);
+  controller.stop();
+  mock.spoken[0].onend?.();
+  assert.equal(mock.spoken.length,1,"navigation stop must invalidate the pending second fragment");
+});
+
+
+test("stopping a single utterance suppresses its stale completion callback", () => {
+  const mock = speechMock([{name:"Portuguese",lang:"pt-BR"}]);
+  const controller = createSpeechController({
+    synthesis:mock.api,
+    Utterance:MockUtterance,
+    storage:{getItem:()=>null,setItem:()=>{}}
+  });
+  let ended = false;
+  controller.speak("Bom dia","pt-BR",{onEnd:()=>{ended=true;}});
+  controller.stop();
+  mock.spoken[0].onend?.();
+  assert.equal(ended,false,"a stopped passage must not report completion after navigation");
+});
+
+
+test("first playback does not cancel an idle TTS engine", () => {
+  const mock = speechMock([{name:"Portuguese",lang:"pt-BR"}]);
+  const controller = createSpeechController({
+    synthesis:mock.api,
+    Utterance:MockUtterance,
+    storage:{getItem:()=>null,setItem:()=>{}}
+  });
+  controller.speak("Bom dia","pt-BR");
+  assert.equal(mock.cancelled,0,"calling cancel on an idle Android engine can suppress its first utterance");
+  mock.api.speaking = true;
+  controller.speak("Boa tarde","pt-BR");
+  assert.equal(mock.cancelled,1,"an active utterance should be canceled before it is replaced");
 });

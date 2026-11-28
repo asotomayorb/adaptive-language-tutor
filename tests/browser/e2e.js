@@ -26,299 +26,362 @@ async function waitForServer() {
 try {
   await waitForServer();
   browser = await chromium.launch({ headless: true });
-  const context = await browser.newContext({ acceptDownloads: true });
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const page = await context.newPage();
   const pageErrors = [];
-  page.on("pageerror", error => {
-    pageErrors.push(error.message);
-    console.error("[browser pageerror]", error.stack || error.message);
-  });
-  page.on("console", message => {
-    if (message.type() === "error") console.error("[browser console]", message.text());
-  });
-  page.on("requestfailed", request => {
-    console.error("[browser request failed]", request.url(), request.failure()?.errorText || "unknown");
-  });
-  page.on("response", response => {
-    if (response.status() >= 400) console.error("[browser HTTP error]", response.status(), response.url());
-  });
+  page.on("pageerror", error => pageErrors.push(error.message));
   await page.addInitScript(() => {
     window.__spoken = [];
     const synth = {
-      getVoices: () => [
-        { name: "Brazilian Portuguese", lang: "pt-BR" },
-        { name: "English", lang: "en-US" }
-      ],
-      speak: utterance => window.__spoken.push({ text: utterance.text, lang: utterance.lang, voice: utterance.voice?.name }),
-      cancel: () => {}
+      getVoices: () => [{ name: "Italian", lang: "it-IT" }, { name: "Spanish", lang: "es-CL" }],
+      speak: utterance => { window.__spoken.push({ text:utterance.text, lang:utterance.lang }); setTimeout(() => utterance.onend?.(), 0); },
+      cancel: () => {}, pause: () => {}, resume: () => {}, paused: false, speaking: false
     };
-    Object.defineProperty(window, "speechSynthesis", { configurable: true, value: synth });
-    window.SpeechSynthesisUtterance = class {
-      constructor(text) { this.text = text; this.lang = ""; this.voice = null; }
-    };
-  });
-
-  await page.goto(baseUrl, { waitUntil: "networkidle" });
-  assert.match(await page.title(), /Adaptive Language Tutor/);
-  await page.locator("#ai-status").waitFor();
-  await page.locator("#start-session").waitFor({ state: "visible" });
-  await page.locator("#level").selectOption("diagnostic");
-  await page.locator("#duration").selectOption("8");
-  await page.locator("#start-session").click();
-  // Complete the four-question diagnostic, then verify guided practice.
-  for (let question = 0; question < 4; question += 1) {
-    await page.locator("#answer-area .answer-option").first().click();
-  }
-  await page.locator("#answer-area [data-speak]").first().waitFor();
-  const firstSpeech = await page.evaluate(() => window.__spoken[0]);
-  assert.equal(firstSpeech.lang, "pt-BR", "automatic speech should use the selected target locale");
-  assert.equal(firstSpeech.voice, "Brazilian Portuguese", "speech should select the matching installed voice");
-  await page.locator("#answer-area [data-speak]").first().click();
-  assert.ok(await page.evaluate(() => window.__spoken.length >= 2), "manual pronunciation should be available per phrase");
-  await page.locator("#audio-toggle").click();
-  assert.equal(await page.locator("#audio-toggle").getAttribute("aria-pressed"), "false", "global audio toggle should disable automatic speech");
-  const speechCountBeforeReenable = await page.evaluate(() => window.__spoken.length);
-  await page.locator("#audio-toggle").click();
-  assert.equal(await page.locator("#audio-toggle").getAttribute("aria-pressed"), "true", "global audio toggle should re-enable automatic speech");
-  assert.ok(await page.evaluate(count => window.__spoken.length > count, speechCountBeforeReenable), "re-enabling audio should read the currently visible target fragments");
-  await page.locator("#hint-btn").click();
-  await page.locator("#feedback").waitFor({ state: "visible" });
-  assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "dia" && item.lang === "pt-BR")), "local hints should pronounce explicitly annotated target-language fragments");
-
-  // Complete the configured eight-turn local session.
-  for (let turn = 0; turn < 8; turn += 1) {
-    await page.locator("#answer-area [data-choice]").first().click();
-    if (turn === 0) {
-      assert.ok(await page.evaluate(() => window.__spoken.some(item => item.text === "Bom dia" && item.lang === "pt-BR")), "local feedback should pronounce only explicitly annotated target-language explanation fragments");
-    }
-    await page.getByRole("button", { name: "Continuar →" }).click();
-  }
-  await page.locator("#summary-panel").waitFor({ state: "visible" });
-
-  const stored = await page.evaluate(() =>
-    JSON.parse(localStorage.getItem("adaptive-language-tutor.progress") || "{}")
-  );
-  assert.equal(stored.sessions?.length, 1, "completed session should persist once");
-  assert.ok(stored.sessions[0].languageId, "persisted session should include its language");
-  assert.ok(await page.locator("#summary-content").innerText());
-
-  const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "Exportar progreso" }).click();
-  const download = await downloadPromise;
-  assert.equal(download.suggestedFilename(), "language-tutor-progress.json");
-
-  await page.getByRole("button", { name: "Nueva sesión →" }).click();
-  await page.locator("#setup-panel").waitFor({ state: "visible" });
-  assert.deepEqual(pageErrors, [], "browser should not report uncaught page errors");
-
-  // Exercise the AI-mode interface with deterministic API responses, including both retry paths.
-  const aiContext = await browser.newContext();
-  const aiPage = await aiContext.newPage();
-  const aiPageErrors = [];
-  aiPage.on("pageerror", error => aiPageErrors.push(error.message));
-  await aiPage.addInitScript(() => {
-    window.__spoken = [];
-    window.__speechCancelled = 0;
-    const synth = {
-      getVoices: () => [{ name: "French", lang: "fr-FR" }],
-      speak: utterance => window.__spoken.push({ text: utterance.text, lang: utterance.lang, voice: utterance.voice?.name }),
-      cancel: () => { window.__speechCancelled += 1; }
-    };
-    Object.defineProperty(window, "speechSynthesis", { configurable: true, value: synth });
-    window.SpeechSynthesisUtterance = class {
-      constructor(text) { this.text = text; this.lang = ""; this.voice = null; }
-    };
-  });
-  let startCalls = 0;
-  let answerCalls = 0;
-  let hintCalls = 0;
-  await aiPage.route("**/api/health", route => route.fulfill({
-    status: 200,
-    contentType: "application/json",
-    body: JSON.stringify({ status: "ok", ai: { configured: true, provider: "e2e-mock" } })
-  }));
-  await aiPage.route("**/api/tutor", async route => {
-    const input = route.request().postDataJSON();
-    if (input.task === "start_lesson") {
-      assert.equal(input.learner.targetLanguageLabel, "Francés");
-      assert.equal(input.learner.targetLanguageLocale, "fr-FR", "AI requests should carry the selected locale explicitly");
-      startCalls += 1;
-      if (startCalls === 1) {
-        return route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ error: "Mock temporary failure" }) });
-      }
-      return route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({
-          message: "Vamos praticar uma situação cotidiana.",
-          exercise: { type: "production", prompt: "Comment tu t’appelles ?", expectedAnswer: "Je m’appelle Ana.", acceptedAnswers: ["Je m’appelle Ana."], hint: "Usa la expresión Je m’appelle..." },
-          evaluation: null,
-          learnerUpdate: { estimatedLevel: "A1", vocabulary: [{ term: "s’appeler", meaning: "llamarse" }], errorsToReview: [] },
-          speechSegments: [{ text: "Comment tu t’appelles ?", language: "fr", locale: "fr-FR" }, { text: "Je m’appelle", language: "fr", locale: "fr-FR" }],
-          nextAction: "answer"
-        })
-      });
-    }
-    if (input.task === "request_hint") {
-      hintCalls += 1;
-      assert.equal(input.session.turn, 0, "asking for a hint must not consume a practice turn");
-      assert.equal(input.session.currentExercise.prompt, "Comment tu t’appelles ?", "hint request must preserve the active exercise");
-      return route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({
-          message: "Pista adicional.",
-          exercise: { type: "production", prompt: "Comment tu t’appelles ?", expectedAnswer: "Je m’appelle Ana.", acceptedAnswers: ["Je m’appelle Ana."], hint: "Piensa en el verbo que expresa tu nombre." },
-          evaluation: null,
-          learnerUpdate: null,
-          speechSegments: [{ text: "s’appeler", language: "fr", locale: "fr-FR" }],
-          nextAction: "answer"
-        })
-      });
-    }
-    answerCalls += 1;
-    if (answerCalls === 1) {
-      return route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ error: "Mock temporary failure" }) });
-    }
-    await new Promise(resolve => setTimeout(resolve, 250));
-    return route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({
-        message: "Très bien. Terminamos esta práctica.",
-        exercise: null,
-        evaluation: { status: "partially_correct", feedback: "La idea se entiende, pero revisa la conjugación.", correction: "Je m’appelle Ana.", skill: "Producción" },
-        learnerUpdate: { estimatedLevel: "A1", vocabulary: [], errorsToReview: ["Conjugación verbal en primera persona"] },
-        speechSegments: [{ text: "Je m’appelle Ana.", language: "fr", locale: "fr-FR" }],
-        nextAction: "finish"
-      })
-    });
-  });
-
-  await aiPage.goto(baseUrl, { waitUntil: "networkidle" });
-  await aiPage.locator("#language").selectOption("other");
-  await aiPage.locator("#custom-language-name").fill("Francés");
-  await aiPage.locator("#custom-language-locale").fill("fr-FR");
-  await aiPage.locator("#duration").selectOption("8");
-  await aiPage.locator("#start-session").click();
-  await aiPage.getByRole("button", { name: "Reintentar sesión" }).click();
-  await aiPage.locator("#lesson-content").getByRole("heading", { name: "Comment tu t’appelles ?" }).waitFor();
-  assert.equal(await aiPage.evaluate(() => window.__spoken[0]?.lang), "fr-FR", "custom AI language should use its explicit target locale");
-  assert.equal(await aiPage.evaluate(() => window.__spoken[0]?.voice), "French", "custom AI locale should select the matching system voice");
-  await aiPage.locator("#lesson-content [data-speak]").first().click();
-  assert.ok(await aiPage.evaluate(() => window.__spoken.length >= 2), "AI fragments should offer manual playback");
-  const spokenBeforeFirstHint = await aiPage.evaluate(() => window.__spoken.length);
-  await aiPage.locator("#hint-btn").click();
-  await aiPage.locator("#feedback").getByText(/Je m’appelle/).waitFor();
-  assert.ok(await aiPage.evaluate(count => window.__spoken.length > count && window.__spoken.at(-1)?.text === "Je m’appelle" && window.__spoken.at(-1)?.lang === "fr-FR", spokenBeforeFirstHint), "the first AI hint should automatically pronounce its target-language fragment");
-  const turnBeforeExtraHint = await aiPage.locator("#turn-count").innerText();
-  const cancellationsBeforeExtraHint = await aiPage.evaluate(() => window.__speechCancelled);
-  await aiPage.locator("#hint-btn").click();
-  assert.ok(await aiPage.evaluate(count => window.__speechCancelled > count, cancellationsBeforeExtraHint), "requesting another hint should cancel any previous speech");
-  await aiPage.locator("#feedback").getByText(/verbo que expresa tu nombre/).waitFor();
-  assert.equal(await aiPage.locator("#turn-count").innerText(), turnBeforeExtraHint, "an additional hint must not advance the session");
-  assert.equal(hintCalls, 1, "a second hint should call the AI tutor once");
-  const hintSpeaker = aiPage.locator("#feedback [data-speak]").first();
-  await hintSpeaker.waitFor();
-  await hintSpeaker.click();
-  assert.ok(await aiPage.evaluate(() => window.__spoken.some(item => item.text === "s’appeler" && item.lang === "fr-FR")), "additional hint fragments should support manual pronunciation");
-  await aiPage.locator("#ai-answer").fill("Je m’appelle Ana.");
-  const cancellationsBeforeAnswer = await aiPage.evaluate(() => window.__speechCancelled);
-  await aiPage.locator("#submit-ai-answer").click();
-  assert.ok(await aiPage.evaluate(count => window.__speechCancelled > count, cancellationsBeforeAnswer), "submitting an answer should immediately cancel speech from the previous turn");
-  await aiPage.getByRole("button", { name: "Reintentar envío" }).click();
-  assert.equal(await aiPage.locator("#retry-ai").isDisabled(), true, "retry control should disable immediately to prevent duplicate requests");
-  await aiPage.getByRole("button", { name: "Ver resumen →" }).click();
-  await aiPage.locator("#summary-panel").waitFor({ state: "visible" });
-  const summarySpeaker = aiPage.locator("#summary-content [data-speak]").first();
-  await summarySpeaker.waitFor();
-  assert.ok(await aiPage.evaluate(() => window.__spoken.some(item => item.text === "s’appeler" && item.lang === "fr-FR")), "summary vocabulary should be read automatically in the selected target locale");
-  const spokenBeforeSummaryReplay = await aiPage.evaluate(() => window.__spoken.length);
-  await summarySpeaker.click();
-  assert.ok(await aiPage.evaluate(count => window.__spoken.length > count, spokenBeforeSummaryReplay), "summary vocabulary should support manual replay");
-  await aiPage.locator("#audio-toggle").click();
-  const spokenBeforeSummaryReenable = await aiPage.evaluate(() => window.__spoken.length);
-  await aiPage.locator("#audio-toggle").click();
-  assert.ok(await aiPage.evaluate(count => window.__spoken.length > count, spokenBeforeSummaryReenable), "re-enabling automatic speech on the summary should replay visible target vocabulary");
-  assert.equal(await aiPage.evaluate(() => window.__spoken.at(-1)?.lang), "fr-FR", "summary replay should preserve the selected target locale");
-
-  // Hidden panels must not be replayed when automatic speech is re-enabled.
-  await aiPage.evaluate(() => {
-    document.querySelector("#summary-panel").classList.add("hidden");
-    document.querySelector("#lesson-panel").classList.remove("hidden");
-    document.querySelector("#lesson-content").innerHTML = '<button data-speak="visible lesson phrase" data-locale="fr-FR">play</button>';
-  });
-  await aiPage.locator("#audio-toggle").click();
-  const spokenBeforeVisibleReplay = await aiPage.evaluate(() => window.__spoken.length);
-  await aiPage.locator("#audio-toggle").click();
-  const replayedAfterPanelSwitch = await aiPage.evaluate(count => window.__spoken.slice(count).map(item => item.text), spokenBeforeVisibleReplay);
-  assert.deepEqual(replayedAfterPanelSwitch, ["visible lesson phrase"], "audio re-enable should ignore speech buttons inside hidden panels");
-
-  const aiStored = await aiPage.evaluate(() =>
-    JSON.parse(localStorage.getItem("adaptive-language-tutor.progress") || "{}")
-  );
-  assert.equal(aiStored.sessions?.length, 1, "mock AI session should persist once");
-  assert.equal(aiStored.reviewCards?.length, 2, "evaluated errors and qualitative learning patterns should both create review cards");
-  assert.equal(aiStored.reviewCards[0].expected, "Je m’appelle Ana.");
-
-  // Make the AI review card due and verify that the real spaced-review UI grades it.
-  await aiPage.evaluate(() => {
-    const key = "adaptive-language-tutor.progress";
-    const progress = JSON.parse(localStorage.getItem(key));
-    progress.reviewCards.forEach(card => { card.dueAt = new Date(Date.now() - 1000).toISOString(); });
-    localStorage.setItem(key, JSON.stringify(progress));
-  });
-  await aiPage.reload({ waitUntil: "networkidle" });
-  await aiPage.locator("#language").selectOption("other");
-  await aiPage.locator("#custom-language-name").fill("Francés");
-  await aiPage.locator("#custom-language-locale").fill("fr-FR");
-  await aiPage.getByRole("button", { name: /Iniciar repaso/ }).click();
-  await aiPage.locator("#spaced-answer").fill("Je m’appelle Ana.");
-  await aiPage.locator("#check-spaced").click();
-  const cancellationsBeforeNextReview = await aiPage.evaluate(() => window.__speechCancelled);
-  await aiPage.getByRole("button", { name: "Siguiente →" }).click();
-  assert.ok(await aiPage.evaluate(count => window.__speechCancelled > count, cancellationsBeforeNextReview), "moving to the next spaced-review card should cancel speech from the previous card");
-  await aiPage.getByRole("button", { name: "Lo recordé" }).click();
-  await aiPage.getByRole("button", { name: "Siguiente →" }).click();
-  const reviewed = await aiPage.evaluate(() => JSON.parse(localStorage.getItem("adaptive-language-tutor.progress")));
-  assert.equal(reviewed.reviewCards[0].repetitions, 1, "a correct AI review should increment repetitions");
-  const patternCard = reviewed.reviewCards.find(card => card.cardType === "pattern");
-  assert.equal(patternCard.repetitions, 1, "self-assessed pattern review should increment repetitions");
-  assert.ok(new Date(reviewed.reviewCards[0].dueAt).getTime() > Date.now(), "a correct AI review should schedule the next interval");
-
-  assert.equal(startCalls, 2, "initial AI session request should be retried once");
-  assert.equal(answerCalls, 2, "AI answer request should be retried once");
-  assert.deepEqual(aiPageErrors, [], "AI-mode browser should not report uncaught page errors");
-  await aiContext.close();
-
-  const mobileContext = await browser.newContext({
-    viewport: { width: 390, height: 844 },
-    isMobile: true,
-    hasTouch: true
-  });
-  await mobileContext.addInitScript(() => {
-    const synth = { getVoices: () => [{ name: "Portuguese", lang: "pt-BR" }], speak: () => {}, cancel: () => {} };
     Object.defineProperty(window, "speechSynthesis", { configurable: true, value: synth });
     window.SpeechSynthesisUtterance = class { constructor(text) { this.text = text; this.lang = ""; this.voice = null; } };
   });
-  const mobilePage = await mobileContext.newPage();
-  const mobileErrors = [];
-  mobilePage.on("pageerror", error => mobileErrors.push(error.message));
-  await mobilePage.goto(baseUrl, { waitUntil: "networkidle" });
-  await mobilePage.waitForFunction(() => {
-    const button = document.querySelector("#start-session");
-    return button && !button.disabled;
-  }, null, { timeout: 10_000 });
-  const setupWidth = await mobilePage.evaluate(() => ({ viewport: innerWidth, document: document.documentElement.scrollWidth }));
-  assert.ok(setupWidth.document <= setupWidth.viewport, "mobile setup should not overflow horizontally");
-  await mobilePage.locator("#start-session").click();
-  await mobilePage.locator("#lesson-content h3").waitFor({ state: "visible" });
-  const lessonWidth = await mobilePage.evaluate(() => ({ viewport: innerWidth, document: document.documentElement.scrollWidth }));
-  assert.ok(lessonWidth.document <= lessonWidth.viewport, "mobile lesson should not overflow horizontally");
-  assert.equal(mobileErrors.length, 0, "mobile layout should not produce JavaScript errors");
-  await mobileContext.close();
 
-  console.log("Browser E2E passed: local and mocked-AI flows, retries, hints, summary, persistence, export, restart and 390px mobile layout.");
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  assert.deepEqual(pageErrors, [], "the app should initialize without uncaught browser errors");
+  await page.locator("#screen-theory").waitFor({ state: "visible" });
+  assert.equal(await page.locator("#welcome-screen").isVisible(), false, "the app should open directly on its available section");
+  assert.equal(await page.locator("#nav-language-button").isVisible(), true, "the central language icon should be visible immediately");
+  const languageOptions = page.locator(".language-mosaic [data-language]");
+  await page.locator("#nav-language-button").click();
+  assert.equal(await page.locator("#language-picker").isVisible(), true, "the central icon should open language selection");
+  assert.equal(await languageOptions.count(), 1, "Italian should be the only visible language option");
+  assert.equal(await languageOptions.first().getAttribute("data-language"), "Italiano");
+  await languageOptions.first().click();
+  await page.locator("#screen-theory").waitFor({ state: "visible" });
+
+  const routeButton = page.locator('.bottom-nav [data-screen="route"]');
+  const trainingButton = page.locator('.bottom-nav [data-screen="exercises"]');
+  assert.equal(await routeButton.isDisabled(), true, "Route must remain visible but disabled");
+  assert.equal(await trainingButton.isDisabled(), true, "Training must remain visible but disabled");
+  assert.equal(await page.locator("#nav-language-button").isVisible(), true, "central language selector should be visible");
+  assert.equal(await page.locator("#selected-language-flag").innerText(), "🇮🇹");
+  assert.equal(await page.locator('.bottom-nav [data-screen="theory"]').isEnabled(), true);
+  assert.equal(await page.locator('.bottom-nav [data-screen="stats"]').isEnabled(), true);
+
+  await page.locator("#nav-language-button").click();
+  assert.equal(await page.locator("#language-picker").isVisible(), true, "central icon should open the language picker");
+  assert.equal(await page.locator(".language-mosaic [data-language]").count(), 1);
+  await page.locator("#language-cancel").click();
+  assert.equal(await page.locator("#screen-theory").isVisible(), true, "cancel should keep the current section");
+
+  assert.equal(await page.locator("#screen-theory .screen-heading h1").evaluate(el => getComputedStyle(el).textAlign), "center", "section titles should remain centered");
+  assert.equal(await page.locator("#theory-level-heading").innerText(), "A1 · Principiante", "the stage should remain as a simple hierarchy heading");
+  const unitRows = page.locator("#theory-tree .theory-unit-row");
+  assert.equal(await unitRows.count(), 6, "A1 should preserve its six-unit hierarchy");
+  assert.deepEqual(await page.locator("#theory-tree .theory-unit-number").allInnerTexts(), ["1.","2.","3.","4.","5.","6."], "only units should carry Arabic numbering");
+  await unitRows.nth(0).click();
+  assert.equal(await unitRows.nth(0).getAttribute("aria-expanded"), "true", "the first unit should expand");
+  assert.ok(await page.locator("#theory-tree .theory-tree-topic").count() > 0, "the expanded unit should reveal its subtopics");
+  assert.equal(await page.locator("#theory-tree .theory-tree-topic").first().locator(".theory-tree-topic-name").innerText(), "Saludos y despedidas", "Unit 1 should begin with its greeting topic");
+  assert.equal(await page.locator("#theory-tree .theory-tree-topic .theory-unit-number").count(), 0, "subtopics must not receive unit numbering");
+  assert.equal(await page.locator("#theory-tree .theory-tree-connector").count(), 0, "subtopics must not retain duplicate branch connectors");
+  assert.equal(await page.locator("#theory-tree .theory-tree-marker").evaluateAll(nodes => nodes.every(el => getComputedStyle(el).display === "none")), true, "subtopic bullets should be removed while category glyphs remain");
+  const unitOneTopics = page.locator("#theory-tree .theory-tree-topic");
+  assert.equal(await unitOneTopics.count(), 4, "Unit 1 should contain exactly four focused subtopics");
+  const unitOneChecks = [
+    { title:"Saludos y despedidas", term:"Buongiorno", paired:"Buonasera" },
+    { title:"Decir el nombre", term:"Mi chiamo", paired:"Come si chiama?" },
+    { title:"Cómo estás", term:"Come stai?", paired:"Come sta?" },
+    { title:"Pronombres y ser/estar", term:"Essere", paired:"Stare" }
+  ];
+  for (let i = 0; i < unitOneChecks.length; i++) {
+    await unitOneTopics.nth(i).click();
+    assert.equal(await page.locator("#theory-title").innerText(), unitOneChecks[i].title, "Unit 1 topic title should match its content");
+    const topicBody = page.locator("#theory-description");
+    const topicText = await topicBody.innerText();
+    assert.equal(await topicBody.locator(".theory-subtopic-content").count(),1,"Unit 1 should use the shared subtopic wrapper");
+    assert.equal(await topicBody.locator(".theory-subtopic-intro").count(),1,"Unit 1 should use the shared introduction block");
+    assert.ok(await topicBody.locator(".theory-content-section").count()>0,"Unit 1 reference content should use shared sections");
+    assert.equal(await topicBody.locator(".speak-button").count(),0,"Unit 1 should not show Play or speaker buttons");
+    const allUnitOneTableCells = page.locator("#theory-description table tbody td");
+    assert.ok(await allUnitOneTableCells.count() > 0, "each Unit 1 subtopic should render its comparison table");
+    assert.ok((await allUnitOneTableCells.evaluateAll(cells => cells.map(cell => getComputedStyle(cell).fontSize))).every(size => size === "15px"), "all Unit 1 subtopic table body cells should use the common 15px mobile size");
+    assert.ok(topicText.includes(unitOneChecks[i].term), "Unit 1 topic should contain its own relevant Italian content");
+    assert.ok(topicText.toLowerCase().includes(unitOneChecks[i].paired.toLowerCase()), "Unit 1 topic should include its related variant or concept");
+    assert.deepEqual((await page.locator("#theory-description table").first().locator("thead th").allInnerTexts()).map(value => value.toLowerCase()), ["italiano","español"], "bilingual Unit 1 tables should use Italian and Spanish headings");
+    if (i === 0) {
+      const greetingCell = page.locator("#theory-description table tbody tr").first().locator("td").first();
+      assert.equal(await greetingCell.locator(".theory-speech-variant").count(), 2, "paired greeting variants should share one cell with separate speech controls");
+      assert.ok((await greetingCell.innerText()).includes("Buonasera"), "the second greeting variant should remain in the same cell");
+      const greetingTable = page.locator("#theory-description .theory-greetings-table");
+      const columnWidths = await greetingTable.locator("thead th").evaluateAll(nodes=>nodes.map(node=>Math.round(node.getBoundingClientRect().width)));
+      assert.ok(Math.abs(columnWidths[0]-columnWidths[1])<=2,"greeting columns should have balanced widths");
+      assert.equal(await greetingCell.locator(".theory-speech-variant").first().evaluate(el=>getComputedStyle(el).whiteSpace),"normal","Italian greeting phrases should wrap instead of pushing the Spanish column");
+    }
+    if (i === 1) {
+      const nameQuestionCell = page.locator("#theory-description table tbody tr").nth(1).locator("td").first();
+      assert.equal(await nameQuestionCell.locator(".theory-speech-variant").count(), 2, "formal and informal name questions should share one cell with separate speech controls");
+    }
+    if (i === 2) {
+      const stateQuestionCell = page.locator("#theory-description table tbody tr").first().locator("td").first();
+      assert.equal(await stateQuestionCell.locator(".theory-speech-variant").count(), 2, "formal and informal state questions should share one cell with separate speech controls");
+    }
+    if (i === 3) {
+      assert.ok(topicText.includes("omitir el pronombre sujeto") && topicText.includes("Lei") && topicText.includes("tercera persona singular"), "Unit 1 should explain subject omission and formal Lei agreement");
+      assert.equal(await page.locator("#theory-description .theory-verb-comparison-table tbody tr td:first-child .theory-target-tap").count(),8,"all Unit 1 person labels, including lui and lei separately, should be pronounceable");
+      assert.ok(topicText.includes("Sono di Santiago.") && topicText.includes("Sto bene."), "essere and stare should be contextualized with Italian examples");
+      const verbHeading = page.locator("#theory-description h3").nth(1);
+      assert.equal(await verbHeading.innerText(), "Verbos Essere (ser) y Stare (estar)", "Italian terms in subtopic headings should be bold-italic and translated without quote marks");
+      assert.equal(await verbHeading.locator("em").count(), 2, "Italian terms should be italicized only in the heading");
+      assert.ok(await verbHeading.locator("em").evaluateAll(nodes=>nodes.every(node=>getComputedStyle(node).fontWeight==="750")),"Italian terms in headings must also be bold");
+      assert.ok(!(await verbHeading.innerText()).includes("«") && !(await verbHeading.innerText()).includes("»"),"Italian expressions must not retain angle quote delimiters");
+      const introItalian=page.locator("#theory-description .theory-subtopic-intro .theory-target-word").first();
+      assert.equal(await introItalian.evaluate(el=>getComputedStyle(el).fontStyle),"italic","Italian expressions in prose must be italic");
+      assert.equal(await introItalian.evaluate(el=>getComputedStyle(el).fontWeight),"750","Italian expressions in prose must be bold");
+      const tableItalian=page.locator("#theory-description table .theory-target-word").first();
+      assert.equal(await tableItalian.evaluate(el=>getComputedStyle(el).fontStyle),"normal","Italian expressions in tables must not be italic");
+      assert.equal(await tableItalian.evaluate(el=>getComputedStyle(el).fontWeight),"750","Italian expressions in tables must remain bold");
+      const verbTable = page.locator("#theory-description table").nth(1);
+      assert.deepEqual((await verbTable.locator("thead th").allInnerTexts()).map(value => value.toLowerCase()), ["persona","essere","stare"], "table headers must remain plain, without italics, quotes or translations");
+      assert.equal(await verbTable.locator("thead em").count(), 0, "table headers must not inherit Italian title formatting");
+      const verbTableSizes = await verbTable.locator("tbody tr").first().locator("td").evaluateAll(cells => cells.map(cell => getComputedStyle(cell).fontSize));
+      assert.equal(new Set(verbTableSizes).size, 1, "all columns in the final verb table should use the same font size");
+    }
+    assert.equal(await page.locator("#theory-description .theory-variant-separator").evaluateAll(nodes=>nodes.some(node=>node.textContent.includes("//"))),false,"Unit 1 variants must use a single slash separator");
+    const italianTargets = page.locator("#theory-description table tbody td:first-child .theory-target-word");
+    assert.ok(await italianTargets.count() > 0, "each Unit 1 topic should expose Italian target expressions in its content tables");
+    const italianCellSize = await page.locator("#theory-description table").first().locator("tbody tr").first().locator("td").first().locator(".theory-target-word").first().evaluate(el => getComputedStyle(el).fontSize);
+    const spanishCellSize = await page.locator("#theory-description table").first().locator("tbody tr").first().locator("td").nth(1).evaluate(el => getComputedStyle(el).fontSize);
+    assert.equal(spanishCellSize, italianCellSize, "Spanish translations should match Italian text size in bilingual tables");
+    if (i === 0) {
+      const greetingCell = page.locator("#theory-description table").first().locator("tbody tr").first().locator("td").first();
+      const variants = greetingCell.locator(".theory-speech-variant .theory-target-tap");
+      assert.equal(await variants.count(), 2, "slash-separated phrases should expose independent tappable pronunciation targets");
+      for (let variantIndex = 0; variantIndex < 2; variantIndex++) {
+        await variants.nth(variantIndex).click();
+        await page.waitForFunction(count => window.__spoken?.length >= count, variantIndex + 1);
+        const expected = await variants.nth(variantIndex).getAttribute("data-speak");
+        assert.equal(await page.evaluate(() => window.__spoken.at(-1).text), expected, "each variant control should pronounce only its own phrase");
+      }
+    }
+    await page.locator("#theory-back").click();
+  }
+  assert.equal(await page.locator("#screen-theory .screen-heading").evaluate(el => getComputedStyle(el).position), "sticky", "only the Theory section heading should stick in the hierarchy menu");
+  assert.equal(await page.locator("#theory-level-heading").evaluate(el => getComputedStyle(el).position), "static", "stage heading should scroll normally");
+  assert.equal(await page.locator("#theory-tree .theory-tree-unit.is-expanded .theory-unit-row").evaluate(el => getComputedStyle(el).position), "static", "expanded unit heading should scroll normally");
+  assert.equal(await page.locator("#theory-tree .theory-tree-topic").first().evaluate(el => getComputedStyle(el).backgroundColor), "rgba(0, 0, 0, 0)", "subtopics should remain visually open rather than becoming cards");
+  assert.equal(await page.locator("#theory-tree .theory-tree-topic").first().locator(".theory-topic-completion-slot").count(), 1, "subtopics should reserve a left slot for future Route completion checks");
+  assert.equal(await page.locator("#theory-tree .theory-tree-branches").first().evaluate(el => parseFloat(getComputedStyle(el).marginLeft)) >= 34, true, "subtopics should be indented to make room for future checks");
+
+  assert.equal(await page.locator("#theory-tree .theory-tree-unit").first().evaluate(el => getComputedStyle(el).borderLeftWidth), "0px", "unit hierarchy should use the approved blue cells without a duplicate branch border");
+  const hierarchyFontSizes = await page.locator("#theory-level-heading, #theory-tree .theory-unit-name, #theory-tree .theory-tree-topic-name").evaluateAll(nodes => nodes.map(el => getComputedStyle(el).fontSize));
+  assert.ok(hierarchyFontSizes.every(size => size === "16px"), "stage, unit and subtopic labels should share the A1 heading font size");
+  await unitRows.nth(1).click();
+  assert.equal(await page.locator("#theory-tree .theory-unit-row[aria-expanded='true']").count(), 1, "only one unit may remain expanded at a time");
+  assert.equal(await unitRows.nth(0).getAttribute("aria-expanded"), "false", "opening another unit should collapse the previous one");
+  assert.equal(await unitRows.nth(1).getAttribute("aria-expanded"), "true", "the newly selected unit should be expanded");
+  const unitTwoTopics = page.locator("#theory-tree .theory-tree-topic");
+  assert.deepEqual(await unitTwoTopics.locator(".theory-tree-topic-name").allInnerTexts(), ["Países e idiomas","Artículos y concordancia","Artículos y adjetivos","Edad y procedencia"], "Unit 2 should retain its four planned subtopics");
+  const unitTwoChecks = [
+    {title:"Países e idiomas", terms:["(Italia)","italiano"]},
+    {title:"Artículos y concordancia", terms:["Artículos definidos","Artículos indefinidos","lo","masculino","gli","z, gn, ps o x","un’","femenino","il libro","i libri","lo studente","gli studenti","dei libri","degli amici","delle case"]},
+    {title:"Artículos y adjetivos", terms:["ragazzo","ragazza","Due ragazzi italiani.","Un ragazzo interessante.","Una ragazza interessante.","Due ragazzi interessanti."]},
+    {title:"Edad y procedencia", terms:["Quanti anni hai?","Di dove sei?","Ho vent’anni.","Vengo dal Cile.","essere di","venire da"]}
+  ];
+  for (let i=0;i<unitTwoChecks.length;i++) {
+    await unitTwoTopics.nth(i).click();
+    const check=unitTwoChecks[i];
+    assert.equal(await page.locator("#theory-title").innerText(),check.title,"Unit 2 topic title should match its content");
+    const body=page.locator("#theory-description");
+    assert.equal(await body.locator(".theory-subtopic-content").count(),1,"every developed topic should use the shared content wrapper");
+    assert.equal(await body.locator(".theory-subtopic-intro").count(),1,"every developed topic should begin with one concise introduction");
+    assert.ok(await body.locator(".theory-content-section").count()>0,"every developed topic should group its reference material into sections");
+    assert.equal(await body.locator(".speak-button").count(),0,"Theory must not show Play or speaker buttons");
+    const allTableCells=body.locator("table tbody td");
+    if (await allTableCells.count()) {
+      const tableBodySizes=await allTableCells.evaluateAll(cells=>cells.map(cell=>getComputedStyle(cell).fontSize));
+      assert.ok(tableBodySizes.every(size=>size==="15px"),"all Unit 2 subtopic tables should use the same 15px mobile body text as Articles and Adjectives");
+    }
+    const bodyText=(await body.innerText()).replace(/\s+/g," ").trim();
+    for (const term of check.terms) assert.ok(bodyText.includes(term), "Unit 2 content should include "+term);
+    assert.equal(await body.locator(".theory-variant-separator").evaluateAll(nodes=>nodes.some(node=>node.textContent.includes("//"))),false,"Unit 2 variants must use a single slash separator");
+    if (check.heading) {
+      const heading=body.locator("h3").filter({hasText:check.heading}).first();
+      assert.ok(await heading.locator("em").count()>0,"Italian headings should use bold italics without angle quotes");
+      assert.ok((await heading.innerText()).includes(" ("),"Italian headings should include Spanish translations");
+    }
+    const tables=body.locator("table");
+    assert.ok(await tables.count()>0,"each Unit 2 subtopic should contain a reference table");
+    for (let tableIndex=0;tableIndex<await tables.count();tableIndex++) {
+      const table=tables.nth(tableIndex);
+      const headers=(await table.locator("thead th").allInnerTexts()).map(v=>v.trim().toLowerCase());
+      if(i===0) assert.deepEqual(headers,["país","gentilicio","idioma"],"country table should identify country, demonym and language separately");
+      else if(i===1) assert.deepEqual(headers,["singular","plural","sustantivo / regla"],"article tables should use the approved three-column scheme");
+      else if(i===2 && tableIndex===0) assert.deepEqual(headers,["terminación","femenino","plural"],"adjective rule table should show endings, feminine and plural forms");
+      else if(i===2 && tableIndex===1) assert.deepEqual(headers,["italiano","español"],"adjective vocabulary should use Italian and Spanish columns");
+      else if(i===2 && tableIndex===2) assert.deepEqual(headers,["terminación","ejemplo aplicado"],"adjective examples should be organized by ending");
+      else assert.deepEqual(headers,["italiano","español"],"bilingual tables should use consistent column headings");
+      assert.equal(await table.locator("thead em").count(),0,"table headings must remain plain");
+      const widths=await table.locator("thead th").evaluateAll(cells=>cells.map(cell=>cell.getBoundingClientRect().width));
+      assert.ok(widths.every(width=>width>0),"table columns should have measurable widths");
+    }
+    if(i===1) {
+      assert.equal(await body.locator(".theory-rule-list").count(),0,"article intro should not be a bullet list");
+      assert.equal(await body.locator(".theory-slide-text").count(),2,"article subtopic should explain concordance and plural indefinite forms");
+      assert.ok(!(await body.innerText()).includes("…"),"article rules should not end in an unexplained ellipsis");
+    }
+    if(i===2) {
+      assert.equal(await body.locator(".theory-slide-text").count(),1,"adjectives should retain one introductory paragraph");
+      assert.equal(await body.locator(".theory-rule-list").count(),0,"adjective rules should use a simple table, not extended bullets");
+      const rules=body.locator(".adjective-rules-table");
+      assert.deepEqual((await rules.locator("tbody tr").allInnerTexts()).map(value=>value.replace(/\s+/g," ").trim()),["-o -a -i (masculino) / -e (femenino)","-e — -i (masculino y femenino)"],"adjective endings should map to feminine and plural forms");
+      const vocabulary=body.locator(".adjective-vocabulary-table");
+      assert.deepEqual((await vocabulary.locator("tbody tr").allInnerTexts()).map(value=>value.replace(/\s+/g," ").trim()),["bello bonito","buono bueno","grande grande","nuovo nuevo","piccolo pequeño","interessante interesante"],"frequent adjectives should appear with Spanish meanings before the examples");
+      assert.equal(await vocabulary.locator(".theory-target-tap[role=button]").count(),6,"each vocabulary adjective should have its own tappable TTS control");
+      const examples=body.locator(".adjective-examples-table");
+      assert.deepEqual(await examples.locator("tbody tr td:first-child").allInnerTexts(),["-o","-a","-i","-e (m./f.)","-i (de -e)"],"examples should cover masculine/feminine and singular/plural agreement");
+      assert.equal(await examples.locator(".theory-target-tap[role=button]").count(),7,"each Italian example phrase should have its own tappable TTS control");
+      const adjectiveTables=body.locator(".adjective-rules-table, .adjective-vocabulary-table, .adjective-examples-table");
+      const dimensions=await adjectiveTables.evaluateAll(nodes=>nodes.map(node=>({width:Math.round(node.getBoundingClientRect().width),fonts:[...node.querySelectorAll("tbody td")].map(cell=>getComputedStyle(cell).fontSize),wrap:[...node.querySelectorAll("th,td")].map(cell=>({overflow:getComputedStyle(cell).overflowWrap,word:getComputedStyle(cell).wordBreak,hyphens:getComputedStyle(cell).hyphens}))})));
+      assert.ok(dimensions.every(item=>item.width===dimensions[0].width && item.fonts.every(font=>font==="15px")),"adjective tables should share the same width and readable, uniform 15px mobile body text");
+      assert.ok(dimensions.every(item=>item.wrap.every(style=>style.overflow==="normal" && style.word==="normal" && style.hyphens==="none")),"table cells must wrap only between words and never split a word");
+      assert.equal(await body.locator(".theory-slide-text").first().evaluate(el=>getComputedStyle(el).overflowWrap),"normal","explanatory paragraphs must not split words either");
+      assert.ok((await examples.innerText()).includes("Un chico italiano.") && (await examples.innerText()).includes("Dos chicos italianos.") && (await examples.innerText()).includes("Dos chicas interesantes."),"examples should retain varied Spanish translations");
+    }
+    if(i===0) {
+      const countryTable=body.locator("table.country-language-table");
+      assert.equal(await countryTable.count(),1,"country-language table should use the balanced layout");
+      const headerWidths=await countryTable.locator("thead th").evaluateAll(cells=>cells.map(cell=>cell.getBoundingClientRect().width));
+      assert.ok(headerWidths[1]>=headerWidths[0] && headerWidths[1]>=headerWidths[2],"the longer demonym column should receive more space");
+      const tableMetrics=await countryTable.evaluate(el=>({right:el.getBoundingClientRect().right,parentRight:el.parentElement.getBoundingClientRect().right,cells:[...el.querySelectorAll("tbody tr:first-child td")].map(td=>({scrollWidth:td.scrollWidth,clientWidth:td.clientWidth}))}));
+      assert.ok(tableMetrics.right<=tableMetrics.parentRight+1,"country table must stay within its content container");
+      assert.ok(tableMetrics.cells.every(cell=>cell.scrollWidth<=cell.clientWidth+1),"country table text must wrap without overflowing its cells");
+      assert.ok(Math.max(...headerWidths)-Math.min(...headerWidths)>2,"column widths should adapt to content rather than be identical");
+      const countryRows=countryTable.locator("tbody tr");
+      for(let rowIndex=0;rowIndex<await countryRows.count();rowIndex++) {
+        const cellHeights=await countryRows.nth(rowIndex).locator("td").evaluateAll(cells=>cells.map(cell=>cell.getBoundingClientRect().height));
+        assert.ok(Math.max(...cellHeights)-Math.min(...cellHeights)<2,"cells in each country row should have uniform heights");
+      }
+      assert.equal(await countryTable.locator(".speak-button").count(),0,"country-language table should not display Play buttons");
+      const firstRow=countryRows.first();
+      assert.equal(await firstRow.locator("td").count(),3,"country, demonym and language must have separate columns");
+      assert.ok((await firstRow.locator("td").first().innerText()).includes("(Italia)"),"country cell should keep Spanish translation in parentheses");
+      for(let cellIndex=1;cellIndex<3;cellIndex++) {
+        assert.equal(await countryRows.locator("td").nth(cellIndex).locator(".theory-translation").count(),0,"parenthetical Spanish translations belong only in the first column");
+      }
+      const countryTargets=firstRow.locator("td").first().locator(".theory-target-tap[role=button]");
+      assert.equal(await countryTargets.count(),1,"Italian country name should remain individually tappable for pronunciation");
+      const demonymTargets=firstRow.locator("td").nth(1).locator(".theory-target-tap[role=button]");
+      assert.equal(await demonymTargets.count(),2,"slash-separated demonym forms should have independent pronunciation targets");
+      assert.equal(await firstRow.locator("td").nth(1).locator(".theory-variant-separator").first().getAttribute("data-separator"),"/","the original slash separator should remain visible between separately pronounceable forms");
+      for(let cellIndex=1;cellIndex<3;cellIndex++) assert.ok(await firstRow.locator("td").nth(cellIndex).locator(".theory-target-tap[role=button]").count()>0,"Italian demonym/language forms should remain individually tappable for pronunciation");
+      assert.equal(await body.locator(".theory-subtopic-intro").count(),1,"country subtopic should use the shared introduction block");
+    }
+    if(i===3) { assert.ok(!(await body.innerText()).includes("(formal)"),"translations should not contain parenthetical mini-explanations"); assert.ok((await body.innerText()).includes("Hai / sei") && (await body.innerText()).includes("ha / è"),"age and origin should distinguish informal and formal forms"); }
+    await page.locator("#theory-back").click();
+  }
+  await unitRows.nth(2).click();
+  const unitThreeTopics=page.locator("#theory-tree .theory-tree-topic");
+  const unitThreeChecks=[
+    {title:"Familia",terms:["la madre","il padre","i genitori","Mia sorella si chiama Anna."]},
+    {title:"Profesiones",terms:["il medico","la medica","lo studente","la studentessa","Sono insegnante."]},
+    {title:"Rutinas y lugares",terms:["svegliarsi","fare colazione","la casa","l’ufficio","Mi sveglio alle sette."]},
+    {title:"Días y fechas",terms:["lunedì","domenica","gennaio","Il mio compleanno è il primo maggio."]},
+    {title:"Presente habitual",terms:["Modelo -are","Modelo -ere","Modelo -ire","parliamo","prendiamo","dormiamo","Lavoro in ufficio."]},
+    {title:"Pasado (passato prossimo)",displayTitle:"Pasado (Passato prossimo (pretérito perfecto compuesto))",terms:["avere","essere","-ato","fatto","Sono arrivata a casa.","Ieri ho studiato italiano."]},
+    {title:"Futuro simple",terms:["futuro semplice","parlerò","prenderai","sar-","Domani lavorerò da casa."]},
+    {title:"Rutinas diarias",terms:["Mi sveglio alle sette.","Faccio colazione e vado al lavoro.","Vado a letto alle dieci e mezza."]},
+    {title:"La hora",terms:["Che ora è?","È l’una.","Sono le due.","e un quarto","meno un quarto","A che ora lavori?"]}
+  ];
+  assert.deepEqual(await unitThreeTopics.locator(".theory-tree-topic-name").allInnerTexts(),unitThreeChecks.map(item=>item.title),"Unit 3 should retain the nine planned subtopics in the specified order");
+  for(let i=0;i<unitThreeChecks.length;i++){
+    await unitThreeTopics.nth(i).click();
+    const check=unitThreeChecks[i];
+    assert.equal(await page.locator("#theory-title").innerText(),check.displayTitle || check.title,"Unit 3 topic title should match its content");
+    const body=page.locator("#theory-description");
+    assert.equal(await body.locator(".theory-subtopic-content").count(),1,"Unit 3 should use the shared content wrapper");
+    assert.equal(await body.locator(".theory-subtopic-intro").count(),1,"Unit 3 should include one concise introduction");
+    assert.ok(await body.locator(".theory-content-section").count()>0,"Unit 3 should group its reference content into sections");
+    assert.ok(await body.locator("table").count()>0,"each Unit 3 topic should include a reference table");
+    assert.equal(await body.locator(".speak-button").count(),0,"no Play or speaker buttons should appear in Unit 3");
+    const content=(await body.innerText()).replace(/\s+/g," ");
+    if(check.title==="Presente habitual") assert.equal(await body.locator(".theory-reference-table tbody tr td:first-child .theory-target-tap").count(),7,"all present-tense person labels should be individually pronounceable");
+    if(check.title==="Pasado (passato prossimo)") {
+      const participleExample=body.locator(".theory-reference-table tbody tr").first().locator("td").nth(2);
+      assert.equal(await participleExample.locator(".theory-target-tap").count(),2,"infinitive and participle separated by an arrow should be independently pronounceable");
+      assert.equal(await participleExample.locator(".theory-variant-separator").first().getAttribute("data-separator"),"→","the original arrow separator should remain visible");
+    }
+    for(const term of check.terms) assert.ok(content.toLocaleLowerCase().includes(term.toLocaleLowerCase()),"Unit 3 content should include "+term+" in "+check.title);
+    assert.equal(await body.locator(".theory-variant-separator").evaluateAll(nodes=>nodes.some(node=>node.textContent.includes("//"))),false,"Unit 3 variants must use a single slash separator");
+    const targets=body.locator(".theory-target-tap[role=button]");
+    assert.ok(await targets.count()>0,"Italian reference terms should be individually tappable");
+    assert.ok(await targets.evaluateAll(nodes=>nodes.every(node=>node.dataset.locale==="it-IT")),"all pronunciation targets must use Italian voice locale");
+    await page.locator("#theory-back").click();
+  }
+  for (let unitIndex=3;unitIndex<await unitRows.count();unitIndex++) {
+    await unitRows.nth(unitIndex).click();
+    const laterTopics=page.locator("#theory-tree .theory-tree-topic");
+    assert.ok(await laterTopics.count()>0,"later units must retain their planned subtopic titles");
+    for (let topicIndex=0;topicIndex<await laterTopics.count();topicIndex++) {
+      const laterTitle=await laterTopics.nth(topicIndex).locator(".theory-tree-topic-name").innerText();
+      await laterTopics.nth(topicIndex).click();
+      assert.ok((await page.locator("#theory-title").innerText()).toLocaleLowerCase().includes(laterTitle.split(" (")[0].toLocaleLowerCase()),"later-unit subtopic title must be preserved");
+      assert.equal((await page.locator("#theory-description").innerText()).trim(),"","Units 3–6 must contain no lesson text or residual data");
+      assert.equal(await page.locator("#theory-description table").count(),0,"Units 3–6 must contain no residual tables");
+      await page.locator("#theory-back").click();
+    }
+  }
+  await unitRows.nth(1).click();
+  const topicButton = page.locator("#theory-tree .theory-tree-topic").first();
+  await topicButton.click();
+  const lessonScroller=page.locator("#theory-detail .theory-slide-content");
+  assert.ok(parseFloat(await lessonScroller.evaluate(el=>getComputedStyle(el).paddingBottom))>=56 && parseFloat(await lessonScroller.evaluate(el=>getComputedStyle(el).paddingBottom))<=60,"lesson content should reserve about one third of the previous 170px footer gap");
+  assert.equal(await page.locator("#theory-detail").isVisible(), true, "Theory topic detail should open");
+  assert.equal(await page.locator("#theory-level-list").isVisible(), false, "detail should replace the dropdown stack in-flow");
+  assert.equal(await page.locator("#theory-detail").evaluate(el => getComputedStyle(el).position), "static", "detail should not be fullscreen/fixed");
+  assert.ok((await page.locator("#theory-title").innerText()).length > 0, "Theory detail should contain a title");
+  const categoryHeading = (await page.locator("#theory-category").textContent()).trim();
+  assert.ok(["Gramática","Vocabulario","Expresiones"].some(label => categoryHeading.includes(label)), "category label should remain readable next to its new line icon");
+  assert.equal(await page.locator("#theory-tree .theory-tree-unit.is-expanded .theory-unit-row").evaluate(el => getComputedStyle(el).backgroundColor), "rgb(227, 239, 250)", "unit cells should use the soft blue background");
+  assert.equal(await page.locator("#theory-tree .theory-unit-number").first().evaluate(el => getComputedStyle(el).color), "rgb(38, 62, 89)", "unit numbering should remain neutral");
+  assert.equal(await page.locator("#theory-tree .theory-unit-name").first().evaluate(el => getComputedStyle(el).color), "rgb(49, 91, 133)", "unit title should use the blue text accent");
+  assert.equal(await page.locator("#theory-tree .theory-unit-number").first().getAttribute("style"), "color:#263e59!important;-webkit-text-fill-color:#263e59", "unit numbering must carry an explicit neutral color");
+  assert.equal(await page.locator("#theory-tree .theory-unit-name").first().getAttribute("style"), "color:#315b85!important;-webkit-text-fill-color:#315b85", "unit name must carry the blue accent explicitly");
+  assert.equal(await page.locator("#theory-tree").evaluate(el => getComputedStyle(el).rowGap), "0px", "unit list should not add extra row gaps");
+  assert.equal(await page.locator("#theory-tree .theory-tree-unit").first().evaluate(el => getComputedStyle(el).marginBottom), "2px", "spacing between units should be compact");
+  // Content-specific assertions above cover Unit 1; category navigation is tested in its dedicated flow.
+  assert.equal(await page.locator("#theory-breadcrumb").innerText(), "A1 · Principiante > Datos personales y entorno", "breadcrumb should identify the expanded unit");
+   assert.equal(await page.locator(".theory-detail-topbar #theory-back").count(), 1, "back arrow should sit in the left slot of the top row");
+   assert.equal(await page.locator(".theory-detail-topbar .section-detail-title").innerText(), "Teoría", "detail header should identify the section");
+   assert.equal(await page.locator(".theory-detail-topbar #theory-audio-toggle").count(), 1, "detail header should include audio control");
+   assert.equal(await page.locator(".theory-detail-topbar #theory-breadcrumb").count(), 0, "hierarchy breadcrumb should not occupy the detail header");
+   assert.ok(await page.locator("#theory-category").evaluate(el => el.parentElement.classList.contains("theory-topic-heading")), "category and title should align left in their own block");
+  assert.ok(await page.locator("#theory-counter").evaluate(el => el.parentElement.classList.contains("theory-topic-title-row")), "subtopic counter should share the title row");
+  assert.equal(await page.locator(".theory-topic-title-row #theory-counter").count(), 1, "counter should appear exactly once beside the subtopic title");
+  assert.match(await page.locator("#theory-tree [data-category=" + '"vocabulary"' + "] .theory-tree-category-icon").innerText().catch(() => ""), /abc/i, "vocabulary icon should expose bilingual letter glyph");
+   assert.ok(await page.locator("#theory-tree .theory-tree-category-icon svg").count() > 0, "category rows should use line icons rather than the former text glyphs");
+  assert.equal(await page.locator("#theory-detail .back-control").count(), 1, "detail should contain exactly one back arrow");
+  // Use a developed Unit 1 topic for pronunciation interaction; Units 1–3 share the same tap-to-speak model.
+  await page.locator("#theory-back").click();
+  await unitRows.nth(0).click();
+  await page.locator("#theory-tree .theory-tree-topic").first().click();
+  const manualPronunciation = page.locator("#theory-description .theory-target-tap").first();
+  assert.ok(await manualPronunciation.count() > 0, "short target-language text should be directly tappable");
+  assert.equal(await manualPronunciation.getAttribute("data-locale"), "it-IT", "Italian target text must declare the it-IT locale");
+  assert.equal(await manualPronunciation.getAttribute("role"), "button", "tappable target text should expose button semantics");
+  await manualPronunciation.click();
+  await page.waitForFunction(() => window.__spoken?.length > 0);
+  assert.equal(await page.evaluate(() => window.__spoken.at(-1).lang), "it-IT", "tapping target text must invoke the Italian voice");
+  assert.equal(await page.evaluate(() => window.__spoken.at(-1).text.replace(/\s*\/\s*/g, " / ").replace(/\s+/g, " ").trim()), (await manualPronunciation.innerText()).replace(/\s*\/\s*/g, " / ").replace(/\s+/g, " ").trim(), "tapping target text must read that exact text, ignoring visual line breaks");
+  assert.equal(await page.locator("#theory-description .theory-target-tap + .speak-button").count(), 0, "short target text must not show a redundant play icon");
+  assert.ok(await page.locator("#theory-detail .theory-topic-heading").evaluate(el => parseFloat(getComputedStyle(el).marginBottom) <= 4), "detail heading should sit close to the start of its explanation");
+  assert.ok(await page.locator("#theory-detail .theory-slide-content").evaluate(el => parseFloat(getComputedStyle(el).paddingTop) <= 2), "theory body should start close below the topic heading");
+  await page.locator("#theory-back").click();
+  assert.equal(await page.locator("#theory-level-list").isVisible(), true, "the single back arrow should return to the unit tree");
+  assert.equal(await page.locator("#theory-tree .theory-unit-row[aria-expanded='true']").count(), 1, "returning from detail should preserve the expanded unit");
+
+  await page.locator('.bottom-nav [data-screen="stats"]').click();
+  await page.locator("#screen-stats").waitFor({ state: "visible" });
+  assert.ok(await page.locator("#statistics-content").count() === 1, "Statistics content should remain mounted");
+  assert.equal(await page.locator("#screen-stats > .screen-heading").evaluate(el => getComputedStyle(el).position), "sticky", "Statistics section title should remain fixed while scrolling, like other sections");
+  assert.deepEqual(pageErrors, [], "navigation and preserved sections should not produce browser errors");
+
+  await context.close();
 } finally {
   if (browser) await browser.close();
   server.kill("SIGTERM");

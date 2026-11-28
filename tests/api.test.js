@@ -102,16 +102,16 @@ test("tutor endpoint forwards validated context to the provider", async () => {
     provider: "test",
     generateTutorTurn: async input => {
       received = input;
-      return { message: "Vamos começar.", exercise: null, evaluation: null, learnerUpdate: null, nextAction: "answer" };
+      return { message: "Iniziamo.", exercise: null, evaluation: null, learnerUpdate: null, nextAction: "answer" };
     }
   }, async base => {
     const response = await fetch(base + "/api/tutor", {
       method: "POST", headers: { "content-type": "application/json" },
-      body: JSON.stringify({ userMessage: "Quiero practicar", learner: { targetLanguage: "pt-BR" } })
+      body: JSON.stringify({ userMessage: "Quiero practicar", learner: { targetLanguage: "it-IT" } })
     });
     assert.equal(response.status, 200);
-    assert.equal((await response.json()).message, "Vamos começar.");
-    assert.equal(received.learner.targetLanguage, "pt-BR");
+    assert.equal((await response.json()).message, "Iniziamo.");
+    assert.equal(received.learner.targetLanguage, "it-IT");
   });
 });
 
@@ -198,4 +198,29 @@ test("tutor endpoint bounds concurrent provider requests", async () => {
     assert.equal((await first).status, 200);
     assert.equal((await second).status, 200);
   });
+});
+
+
+test("preview password protects app and tutor endpoint while health stays available", async () => {
+  const previous = process.env.PREVIEW_PASSWORD;
+  process.env.PREVIEW_PASSWORD = "test-preview-secret";
+  try {
+    await withServer({ configured: false, provider: null }, async base => {
+      const health = await fetch(base + "/api/health");
+      assert.equal(health.status, 200);
+
+      const blocked = await fetch(base + "/");
+      assert.equal(blocked.status, 401);
+      assert.match(blocked.headers.get("www-authenticate") || "", /Basic realm/);
+
+      const authorized = await fetch(base + "/", {
+        headers: { authorization: "Basic " + Buffer.from("tester:test-preview-secret").toString("base64") }
+      });
+      assert.equal(authorized.status, 200);
+      assert.match(await authorized.text(), /Adaptive Language Tutor/);
+    });
+  } finally {
+    if (previous === undefined) delete process.env.PREVIEW_PASSWORD;
+    else process.env.PREVIEW_PASSWORD = previous;
+  }
 });

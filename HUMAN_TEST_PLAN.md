@@ -1,95 +1,70 @@
 # Plan de prueba humana — Adaptive Language Tutor
 
-**Objetivo:** validar la experiencia completa antes de declarar la aplicación lista para pruebas más amplias. Ejecutar con datos ficticios; nunca introducir información personal.
+**Alcance vigente — 27-11-2026:** aplicación español (`es-CL`) → italiano (`it-IT`). La UI activa contiene Teoría y Estadísticas. Unidades 1–3 tienen contenido desarrollado; Unidades 4–6 conservan títulos y jerarquía, con cuerpos vacíos. Ruta, Entrenamiento y tutor IA permanecen en espera, sin formar parte de la aceptación visual actual.
 
 ## 1. Preparación
 
-1. Clonar el repositorio y usar la rama `feature/ai-tutor-pedagogy`.
-2. Ejecutar `npm ci` y `npm run check`.
-3. Para probar el modo local, iniciar con `npm run dev` sin credenciales IA.
-4. Para probar el tutor real, configurar un archivo local `.env` con `AI_PROVIDER`, `AI_API_KEY` y `AI_MODEL`; no subirlo a Git.
-5. Iniciar la aplicación y comprobar que el estado de salud indica si el proveedor está configurado.
+1. Usar la rama `feature/mobile-bottom-navigation`.
+2. Confirmar que Render Preview está LIVE y corresponde al último commit funcional.
+3. Ejecutar `npm run check`, `npm test` y `npm run test:e2e` en CI.
+4. Abrir [Render Preview](https://adaptive-language-tutor-preview-5b3d.onrender.com/) en Android y escritorio.
 
-## 2. Modo local sin proveedor IA
+## 2. Idioma y navegación
 
-- [ ] La aplicación permite comenzar una sesión sin conexión a Gemini.
-- [ ] Portugués brasileño e inglés cargan actividades y opciones coherentes.
-- [ ] Las respuestas correctas, incorrectas y escritas actualizan el progreso.
-- [ ] Las pistas no revelan directamente la respuesta.
-- [ ] El resumen refleja turnos, precisión, rachas y vocabulario.
-- [ ] El repaso programado conserva la respuesta esperada y puede calificarse.
-- [ ] Desactivar el audio no impide completar ninguna actividad.
+- [ ] El selector ofrece únicamente Italiano.
+- [ ] La bandera visible es 🇮🇹 y el alcance se identifica como Español → Italiano.
+- [ ] No aparecen selectores de idioma personalizado ni catálogos de otras lenguas.
+- [ ] La navegación inferior mantiene las secciones y estados establecidos en PRODUCT_SPEC.md.
+- [ ] Al cambiar de pantalla o volver desde un detalle, se conserva la navegación prevista y se detiene el audio anterior.
 
-## 3. Tutor IA y multilingüismo
+## 3. Teoría — Unidades 1 a 3
 
-Probar al menos dos idiomas con proveedor real:
+- [ ] Unidades 1 y 2 conservan sus ocho subtemas y contenido aprobado sin regresiones.
+- [ ] Unidad 3 presenta sus nueve subtemas desarrollados: Familia, Profesiones, Rutinas y lugares, Días y fechas, Presente habitual, Pasado (passato prossimo), Futuro simple, Rutinas diarias y La hora.
+- [ ] Todos los subtemas desarrollados usan la misma estructura: introducción breve, bloques de referencia agrupados y ejemplos aplicados cuando corresponda.
+- [ ] Las tablas mantienen tamaño de texto de 15 px en móvil y 17 px en escritorio.
+- [ ] Las columnas se adaptan al contenido; el texto salta entre palabras, no se parte arbitrariamente y no provoca scroll horizontal de página.
+- [ ] Los encabezados, columnas, traducciones y ejemplos mantienen la jerarquía definida en PRODUCT_SPEC.md.
+- [ ] Todo fragmento italiano es pronunciable al tocar el propio texto y utiliza locale `it-IT`; no aparecen botones Play ni iconos de altavoz en Teoría. En prosa y títulos las expresiones italianas están en negrita y cursiva sin comillas angulares; en tablas, en negrita sin cursiva.
+- [ ] En formas separadas por /, guion o raya, cada variante se pronuncia por separado y se ve un solo separador «/» (nunca «//»); guiones y rayas originales se conservan.
+- [ ] La traducción española aparece en su columna/contexto de explicación y nunca se reproduce con voz italiana.
+- [ ] En Países e idiomas, la traducción española entre paréntesis aparece solo junto al país; gentilicio e idioma no repiten traducciones.
+- [ ] La navegación Anterior/Siguiente y el retorno mantienen el subtema y la unidad correctos. Al llegar al final de un tema, queda un margen visible suficiente antes de los botones; el último texto no queda cubierto por ellos.
 
-- [ ] Portugués brasileño: locale `pt-BR`.
-- [ ] Francés personalizado: locale `fr-FR`.
-- [ ] Inglés del catálogo local: locale `en`; evaluar naturalidad, corrección, vocabulario y situaciones reales.
-- [ ] Verificar que el idioma y locale elegidos llegan al tutor y se conservan en el resumen.
-- [ ] Completar una sesión de al menos tres respuestas.
-- [ ] Probar respuestas correctas, parciales, incorrectas y conversacionales.
-- [ ] Comprobar que el tutor evalúa la respuesta anterior antes de proponer la siguiente actividad.
-- [ ] Confirmar que la sesión no termina antes de la duración configurada.
-- [ ] Solicitar pistas y comprobar que no se crea una actividad nueva ni se incrementa el turno.
-- [ ] Provocar un error transitorio de red/proveedor y comprobar que el reintento no envía solicitudes duplicadas.
-- [ ] Ante un error del proveedor, comprobar que la interfaz muestra un mensaje genérico sin detalles técnicos internos ni contenido de la respuesta upstream.
-- [ ] Finalizar la sesión, revisar el resumen, recargar la página y confirmar persistencia.
-- [ ] Exportar el progreso y comprobar que el archivo JSON se descarga y contiene la sesión.
+## 4. Teoría — Unidades 4 a 6
 
-## 4. Audio y pronunciación
+- [ ] Se mantienen los títulos y subtemas previstos.
+- [ ] Al abrir cualquier subtema, se muestra su título, categoría y ruta de navegación.
+- [ ] El cuerpo permanece completamente vacío: sin párrafos, tablas, ejemplos, texto de relleno ni datos residuales.
+- [ ] La navegación Anterior/Siguiente no introduce contenido no desarrollado.
+- [ ] Ningún cambio de estilo o navegación modifica las Unidades 1–3.
 
-Realizar estas comprobaciones en un navegador de escritorio y en un teléfono real:
+## 5. Estadísticas y persistencia
 
-- [ ] El audio automático comienza tras una acción explícita del usuario.
-- [ ] El control global activa y desactiva la lectura; el estado se conserva al recargar.
-- [ ] Desactivar el audio cancela la locución en curso.
-- [ ] Solicitar una pista o enviar una respuesta mientras hay audio en curso detiene inmediatamente la locución anterior, sin esperar la respuesta del servidor.
-- [ ] Si una solicitud IA falla, no continúa reproduciéndose audio de la actividad anterior.
-- [ ] Reactivar el audio lee los fragmentos visibles del idioma objetivo, también en el panel de resumen.
-- [ ] Al cambiar entre resumen, lección y otras vistas, reactivar el audio no debe leer fragmentos de paneles ocultos.
-- [ ] La primera pista IA pronuncia automáticamente los fragmentos del idioma objetivo incluidos en la pista; la pista adicional también los reproduce.
-- [ ] En los ejercicios locales, las pistas y explicaciones pronuncian únicamente los fragmentos del idioma objetivo anotados para ese contenido, sin leer la frase explicativa completa en español.
-- [ ] Si solo existe una voz genérica del idioma (por ejemplo, `pt` sin variante regional), comprobar que se utiliza como fallback antes de recurrir a la voz predeterminada.
-- [ ] Los fragmentos de portugués usan `pt-BR`; los de francés usan `fr-FR`.
-- [ ] Los fragmentos del catálogo inglés usan locale `en` y seleccionan una voz inglesa compatible instalada en el dispositivo.
-- [ ] Los botones individuales reproducen solo su fragmento y permiten repetirlo.
-- [ ] El vocabulario del resumen se lee en el idioma objetivo y puede repetirse manualmente.
-- [ ] Cambiar de turno, iniciar otra sesión o entrar al repaso detiene la locución anterior.
-- [ ] Al avanzar entre tarjetas del repaso espaciado, no continúa la pronunciación de la tarjeta anterior.
-- [ ] Si el sistema no tiene una voz compatible, la práctica escrita sigue funcionando y la interfaz informa el fallback.
-- [ ] Comprobar que no se pronuncian por error las explicaciones auxiliares en español como si fueran texto objetivo.
+- [ ] Sin sesiones italianas, se muestra un estado vacío real, sin datos ficticios.
+- [ ] Las estadísticas visibles corresponden únicamente a Italiano.
+- [ ] Los registros históricos de idiomas retirados no se muestran como idiomas disponibles ni contaminan las métricas actuales.
+- [ ] Recargar la página conserva la selección, el audio y los datos italianos guardados.
+- [ ] Los registros antiguos no italianos se mantienen en almacenamiento local sin mostrarse; no se borran automáticamente durante esta limpieza.
 
-**Importante:** la disponibilidad y calidad de las voces dependen del navegador y del sistema operativo. Las pruebas simuladas de CI no sustituyen esta comprobación auditiva.
+## 6. Validación técnica y módulos en espera
 
-## 5. Persistencia, repaso y exportación
-
-- [ ] Cerrar una sesión y confirmar que aparece en el historial.
-- [ ] Recargar y comprobar que sesiones, vocabulario, patrones y tarjetas siguen presentes.
-- [ ] Calificar una tarjeta de repaso y confirmar que cambia su programación.
-- [ ] Verificar que una conversación libre sin respuesta única no se convierte en una tarjeta imposible de calificar.
-- [ ] Exportar progreso y comprobar que el JSON se puede abrir y contiene datos coherentes.
-
-## 6. Seguridad básica
-
-- [ ] Solicitar `/.env`, `/package.json`, `/server/provider.js` y `/tests/api.test.js`; todas deben devolver 404.
-- [ ] Confirmar las cabeceras `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` y `Permissions-Policy`.
-- [ ] Confirmar que no aparecen claves API, respuestas completas del alumno ni historiales privados en la consola del servidor.
-- [ ] Probar mensajes largos y solicitudes repetidas sin que la aplicación se bloquee.
+- [ ] `/api/health` responde correctamente.
+- [ ] `/.env`, `/package.json`, `/server/provider.js` y `/tests/api.test.js` no son accesibles desde el servidor estático.
+- [ ] Se mantienen las cabeceras de seguridad definidas en el backend.
+- [ ] Si se modifica o reactiva Ruta, Entrenamiento o tutor IA, comprobar que el origen sea español y el destino italiano; estas pruebas no son criterio de aceptación de la UI activa mientras sigan bloqueados.
 
 ## 7. Registro de resultados
 
-Para cada escenario registrar:
-
 | Campo | Resultado |
 |---|---|
+| Commit probado | |
+| Deploy LIVE de Render | |
 | Dispositivo y navegador | |
-| Idioma y locale | |
 | Escenario | |
 | Resultado (aprobado / fallido) | |
 | Pasos para reproducir | |
 | Captura o log sin datos personales | |
-| Severidad (bloqueante / alta / media / baja) | |
+| Severidad | |
 
-**Criterio de salida:** no declarar lista para prueba humana amplia mientras falle un flujo principal, no se confirme persistencia/exportación, o la lectura del idioma objetivo no se haya escuchado y verificado en al menos un dispositivo real.
+**Criterio de salida:** no declarar aceptada una versión si falla una prueba de navegación, contenido, persistencia o pronunciación de las Unidades 1–3, o si aparece contenido dentro de Unidades 4–6.

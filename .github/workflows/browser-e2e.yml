@@ -2,9 +2,9 @@ name: Browser E2E
 
 on:
   push:
-    branches: [feature/ai-tutor-pedagogy]
+    branches: [feature/ai-tutor-pedagogy, feature/mobile-bottom-navigation, recovery/intermediate-theory-content]
   pull_request:
-    branches: [main]
+    branches: [main, feature/mobile-bottom-navigation]
 
 jobs:
   browser-e2e:
