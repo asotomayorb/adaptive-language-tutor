@@ -2249,7 +2249,7 @@ function renderItalianAppliedTopic(category, index, locale) {
       "Pregunta por el estado de alguien y responde. «Come stai?» y «Come sta?» expresan el mismo mensaje en trato informal y formal.",
       "Para la edad se usa «avere» (tener). El origen puede expresarse con «essere di» (ser de) o «venire da» (venir de). «Hai / sei» se usa en trato informal; «ha / è» corresponde al tratamiento formal «Lei»."
     ];
-    return '<p class="theory-slide-text">' + introductions[index] + '</p><table class="theory-pronoun-table theory-bilingual-table"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' + rows(expressions[index]) + '</tbody></table>';
+    return '<p class="theory-slide-text">' + introductions[index] + '</p><table class="theory-pronoun-table theory-bilingual-table' + (index === 0 ? ' theory-greetings-table' : '') + '"><thead><tr><th>Italiano</th><th>Español</th></tr></thead><tbody>' + rows(expressions[index]) + '</tbody></table>';
   }
   return null;
 }
