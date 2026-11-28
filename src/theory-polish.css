@@ -75,3 +75,10 @@
 @media(max-width:620px){
   #screen-theory .theory-detail-inline .theory-slide-content{max-height:calc(100dvh - 245px)!important;}
 }
+
+/* Balance Italian/Spanish widths in greetings so neither language dominates. */
+#screen-theory .theory-greetings-table{table-layout:fixed!important;width:100%;}
+#screen-theory .theory-greetings-table th,
+#screen-theory .theory-greetings-table td{width:50%;min-width:0;overflow-wrap:anywhere;word-break:normal;vertical-align:top;}
+#screen-theory .theory-greetings-table .theory-speech-variant{display:inline;white-space:normal;overflow-wrap:anywhere;}
+#screen-theory .theory-greetings-table .theory-target-tap{white-space:normal;overflow-wrap:anywhere;}
