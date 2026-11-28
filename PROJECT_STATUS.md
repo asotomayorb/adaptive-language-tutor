@@ -110,3 +110,12 @@ Los registros históricos de sesiones de otros idiomas pueden permanecer en el a
 - HEAD de código previo al registro final: `f7b6d2cfc1bbb7f1d3509cdd713321b2ff1babba`. Las aserciones E2E se actualizaron para cubrir tipografía, ausencia de comillas angulares, separadores únicos y margen inferior; no se dispone aún de resultado CI para este HEAD.
 - Render LIVE actualizado: deploy `dep-dc4tsvh5efls73ankss0`, commit desplegado `549ef530fd26b37f69b65b1410966f9879f031d0`; build y deploy finalizaron correctamente. No se modificaron variables de entorno ni configuración de build.
 - Estado: [PENDIENTE: ejecutar E2E y completar validación visual humana en Android].
+
+## 11. Ajuste del margen inferior y balance de tabla de saludos (27-11-2026)
+
+- Checkpoint guardado antes de estos ajustes en `checkpoint/theory-units1-3-visual-adjustments-2026-11-27`, basado en el commit publicado `549ef530fd26b37f69b65b1410966f9879f031d0`.
+- Se redujo el espacio inferior del área desplazable de Teoría de 170 px a 56 px (aprox. un tercio), conservando el margen de seguridad para los botones Anterior/Siguiente.
+- La tabla de saludos y despedidas tiene ahora columnas italiana/española balanceadas 50/50 y permite que las frases italianas se ajusten en varias líneas, sin desplazar ni comprimir la traducción.
+- Archivos de código y pruebas: `src/theory-polish.css`, `src/app.js`, `tests/browser/e2e.js`. El E2E verifica el ancho de columnas y el margen actualizado; aún no hay resultado de ejecución.
+- Commit de código/pruebas: `c3b171e064b0b5950956c32fb063c80ab1ecfa1d`. El editor temporal de tamaños de texto no se ha añadido; se evaluó como factible y se propone mantenerlo separado de la interfaz de estudiante, con controles en px para título, párrafos y tablas.
+- Estado: [PENDIENTE: sincronizar Render y validar visualmente en Android; decidir si se implementa el editor temporal].
