@@ -108,6 +108,10 @@ try {
       const greetingCell = page.locator("#theory-description table tbody tr").first().locator("td").first();
       assert.equal(await greetingCell.locator(".theory-speech-variant").count(), 2, "paired greeting variants should share one cell with separate speech controls");
       assert.ok((await greetingCell.innerText()).includes("Buonasera"), "the second greeting variant should remain in the same cell");
+      const greetingTable = page.locator("#theory-description .theory-greetings-table");
+      const columnWidths = await greetingTable.locator("thead th").evaluateAll(nodes=>nodes.map(node=>Math.round(node.getBoundingClientRect().width)));
+      assert.ok(Math.abs(columnWidths[0]-columnWidths[1])<=2,"greeting columns should have balanced widths");
+      assert.equal(await greetingCell.locator(".theory-speech-variant").first().evaluate(el=>getComputedStyle(el).whiteSpace),"normal","Italian greeting phrases should wrap instead of pushing the Spanish column");
     }
     if (i === 1) {
       const nameQuestionCell = page.locator("#theory-description table tbody tr").nth(1).locator("td").first();
@@ -326,7 +330,7 @@ try {
   const topicButton = page.locator("#theory-tree .theory-tree-topic").first();
   await topicButton.click();
   const lessonScroller=page.locator("#theory-detail .theory-slide-content");
-  assert.ok(parseFloat(await lessonScroller.evaluate(el=>getComputedStyle(el).paddingBottom))>=170,"lesson content must reserve at least 170px below its final element for navigation controls");
+  assert.ok(parseFloat(await lessonScroller.evaluate(el=>getComputedStyle(el).paddingBottom))>=56 && parseFloat(await lessonScroller.evaluate(el=>getComputedStyle(el).paddingBottom))<=60,"lesson content should reserve about one third of the previous 170px footer gap");
   assert.equal(await page.locator("#theory-detail").isVisible(), true, "Theory topic detail should open");
   assert.equal(await page.locator("#theory-level-list").isVisible(), false, "detail should replace the dropdown stack in-flow");
   assert.equal(await page.locator("#theory-detail").evaluate(el => getComputedStyle(el).position), "static", "detail should not be fullscreen/fixed");
